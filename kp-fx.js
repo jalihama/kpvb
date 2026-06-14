@@ -78,8 +78,10 @@
     /* post-processing: render + bokeh DoF */
     composer = new THREE.EffectComposer(renderer);
     composer.addPass(new THREE.RenderPass(scene, camera));
-    bokeh = new THREE.BokehPass(scene, camera, { focus: 14.0, aperture: 0.009, maxblur: 0.08, width: innerWidth, height: innerHeight });
-    composer.addPass(bokeh);
+    if (innerWidth >= 760) {
+      bokeh = new THREE.BokehPass(scene, camera, { focus: 14.0, aperture: 0.009, maxblur: 0.08, width: innerWidth, height: innerHeight });
+      composer.addPass(bokeh);
+    }
     /* FXAA — EffectComposer bypasses the renderer's MSAA, so antialias the composed image */
     fxaa = new THREE.ShaderPass(THREE.FXAAShader);
     composer.addPass(fxaa);
@@ -89,6 +91,7 @@
 
     ready = true;
     sizeFg(); seedFg(); startFg();
+    document.addEventListener("visibilitychange", () => { if (document.hidden) { if (fgRaf) { cancelAnimationFrame(fgRaf); fgRaf = null; } } else startFg(); });
     loadModels();
     render(lastScroll);
   }
@@ -223,7 +226,8 @@
   function startFg() {
     if (REDUCE) return;                 // reduced motion → fireflies static (painted by render)
     if (fgRaf) return;
-    const loop = (now) => { paintFg(now); fgRaf = requestAnimationFrame(loop); };
+    let lastT = 0;
+    const loop = (now) => { fgRaf = requestAnimationFrame(loop); if (now - lastT < 15.5) return; lastT = now; paintFg(now); };
     fgRaf = requestAnimationFrame(loop);
   }
   function paintFg(now) {
