@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stoma – KP Kompaktzusammenfassung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #21262d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --green: #3fb950;
+    --teal: #39d353;
+    --blue: #58a6ff;
+    --orange: #f0883e;
+    --red: #f85149;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --accent-ilo: #58a6ff;
+    --accent-kolo: #3fb950;
+    --accent-uro: #bc8cff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 24px 16px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  header {
+    border-left: 3px solid var(--blue);
+    padding: 8px 0 8px 16px;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  header p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .card.full { grid-column: 1 / -1; }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .stoma-block {
+    border-top: 2px solid;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+  .stoma-block:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .stoma-block .name {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .stoma-block .loc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .stoma-block ul {
+    list-style: none;
+    padding: 0;
+  }
+  .stoma-block ul li {
+    font-size: 12px;
+    color: #cdd9e5;
+    padding: 2px 0;
+    padding-left: 12px;
+    position: relative;
+  }
+  .stoma-block ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  .ilo .stoma-block { border-color: var(--accent-ilo); }
+  .ilo .name { color: var(--accent-ilo); }
+  .kolo .stoma-block { border-color: var(--accent-kolo); }
+  .kolo .name { color: var(--accent-kolo); }
+  .uro .stoma-block { border-color: var(--accent-uro); }
+  .uro .name { color: var(--accent-uro); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 7px 8px;
+    border-bottom: 1px solid #21262d55;
+    color: #cdd9e5;
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  td strong { color: var(--text); }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-red { background: #3d1a1a; color: var(--red); }
+  .badge-orange { background: #2e1f0a; color: var(--orange); }
+  .badge-blue { background: #0d2a4a; color: var(--blue); }
+  .badge-green { background: #0d2a1a; color: var(--green); }
+
+  .alert {
+    background: #1c1208;
+    border-left: 3px solid var(--orange);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 12px;
+    color: #e6c98a;
+  }
+  .alert strong { color: var(--orange); }
+
+  .kp-scenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .scenario {
+    background: #0d1f30;
+    border: 1px solid #1d3a5a;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .scenario .q {
+    font-size: 12px;
+    color: #8ab4d4;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .scenario .a {
+    font-size: 12px;
+    color: var(--text);
+  }
+  .scenario .a span { color: var(--blue); font-weight: 600; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .tag {
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 3px 9px;
+    font-size: 11px;
+    color: #cdd9e5;
+  }
+
+  @media (max-width: 620px) {
+    .grid-2, .grid-3, .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<style id="kp-brand">
+:root{--bg:#061d28!important;--surface:#0f3848!important;--border:#1c4253!important;}
+body,h1,h2,h3,h4,h5,h6,p,li,td,th,span,div,a,button,input,select,nav,label{font-family:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif !important}
+code,.mono,pre,kbd,textarea{font-family:'Roboto Mono',ui-monospace,Menlo,Consolas,monospace !important}
+</style>
+<body>
+
+<header>
+  <h1>Stoma</h1>
+  <p>KP Kompaktzusammenfassung · Kenntnisprüfung</p>
+</header>
+
+<!-- Stomatypen -->
+<div class="grid-3">
+  <div class="card ilo">
+    <div class="card-title">
+      <span class="dot" style="background:var(--accent-ilo)"></span>
+      Ileostoma
+    </div>
+    <div class="stoma-block">
+      <div class="loc">Terminales Ileum → rechter Unterbauch</div>
+      <ul>
+        <li>Stuhl: flüssig–dünnbreiig</li>
+        <li>Enzymatisch aktiv → Hautirritationen!</li>
+        <li>Hohe Flüssigkeits- + Elektrolytverluste</li>
+        <li>Häufig doppelläufig (protektiv)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card kolo">
+    <div class="card-title">
+      <span class="dot" style="background:var(--accent-kolo)"></span>
+      Kolostoma
+    </div>
+    <div class="stoma-block">
+      <div class="loc">Sigma/Kolon → linker Unterbauch</div>
+      <ul>
+        <li>Stuhl: geformt bis breiig</li>
+        <li>Geringe metabolische Folgen</li>
+        <li>Irrigation möglich</li>
+        <li>Häufig endständig (permanent)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card uro">
+    <div class="card-title">
+      <span class="dot" style="background:var(--accent-uro)"></span>
+      Urostoma
+    </div>
+    <div class="stoma-block">
+      <div class="loc">Ileum-Conduit → Ureteren ausgeleitet</div>
+      <ul>
+        <li>Urin: kontinuierlich</li>
+        <li>Beutel immer notwendig</li>
+        <li>Ind.: Zystektomie, neurogene Blase</li>
+        <li>Immer endständig</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Indikationen + Temporär/Permanent -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">
+      <span class="dot" style="background:var(--yellow)"></span>
+      Indikationen
+    </div>
+    <table>
+      <thead>
+        <tr><th>Stoma</th><th>Indikation</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-blue">Ileostoma</span></td>
+          <td>Proktokolektomie (CU, M. Crohn), FAP, protektiv nach tiefer AR</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">Kolostoma</span></td>
+          <td>Rektumkarzinom (APR), Divertikulitis-Komplikation (Hartmann-OP)</td>
+        </tr>
+        <tr>
+          <td><span class="badge" style="background:#2a1a3d;color:var(--purple)">Urostoma</span></td>
+          <td>Harnblasenkarzinom (Zystektomie), neurogene Blase</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="dot" style="background:var(--muted)"></span>
+      Temporär vs. Permanent
+    </div>
+    <table>
+      <thead>
+        <tr><th></th><th>Temporär</th><th>Permanent</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ziel</strong></td>
+          <td>Anastomosenschutz</td>
+          <td>Dauerhafter Ersatz</td>
+        </tr>
+        <tr>
+          <td><strong>Form</strong></td>
+          <td>Doppelläufig</td>
+          <td>Endständig</td>
+        </tr>
+        <tr>
+          <td><strong>Beispiel</strong></td>
+          <td>Prot. Ileostoma nach tiefer AR</td>
+          <td>Kolostoma nach APR</td>
+        </tr>
+        <tr>
+          <td><strong>Rückverlagerung</strong></td>
+          <td>8–12 Wochen<br><span style="color:var(--orange);font-size:11px">→ vorher Kontrasteinlauf!</span></td>
+          <td>Nicht geplant</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Komplikationen -->
+<div class="card full" style="margin-bottom:14px">
+  <div class="card-title">
+    <span class="dot" style="background:var(--red)"></span>
+    Komplikationen
+  </div>
+  <div class="two-col">
+    <div>
+      <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Früh</p>
+      <table>
+        <thead><tr><th>Komplikation</th><th>Klinik</th><th>Management</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--red)">Ischämie/Nekrose</strong></td>
+            <td>Livide Verfärbung</td>
+            <td>Chirurgische Revision</td>
+          </tr>
+          <tr>
+            <td><strong>Retraktion</strong></td>
+            <td>Stoma zieht sich zurück</td>
+            <td>Revision</td>
+          </tr>
+          <tr>
+            <td><strong>Nachblutung</strong></td>
+            <td>Blut aus Stoma</td>
+            <td>Lokalmaßnahmen, ggf. Revision</td>
+          </tr>
+          <tr>
+            <td><strong>Ödem</strong></td>
+            <td>Schwellung</td>
+            <td>Meist passager</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Spät</p>
+      <table>
+        <thead><tr><th>Komplikation</th><th>Beschreibung</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Parastomale Hernie</strong></td>
+            <td>Häufigste Spätkomplikation, Darm neben Stoma</td>
+          </tr>
+          <tr>
+            <td><strong>Stomaprolaps</strong></td>
+            <td>Darmschlinge prolabiert durch Stoma</td>
+          </tr>
+          <tr>
+            <td><strong>Stomalstenose</strong></td>
+            <td>Narbige Einengung → ggf. Revision</td>
+          </tr>
+          <tr>
+            <td><strong>Hautirritationen</strong></td>
+            <td>Bes. Ileostoma, durch Verdauungsenzyme</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Metabolische Folgen -->
+<div class="card full" style="margin-bottom:14px">
+  <div class="card-title">
+    <span class="dot" style="background:var(--orange)"></span>
+    Metabolische Konsequenzen – Ileostoma
+  </div>
+  <div class="alert">
+    <strong>Merke:</strong> Ileostoma = hoher Verlust! Täglich 500–1500 ml Flüssigkeit + Elektrolyte
+  </div>
+  <table>
+    <thead>
+      <tr><th>Problem</th><th>Ursache</th><th>Folge / Management</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dehydratation</strong></td>
+        <td>Fehlende Kolonresorption</td>
+        <td>Flüssigkeitsbilanz, Elektrolytausgleich</td>
+      </tr>
+      <tr>
+        <td><strong>Hypokaliämie</strong></td>
+        <td>K⁺-Verlust im Dünndarmsekret</td>
+        <td>Kaliumsubstitution, regelmäßige Kontrollen</td>
+      </tr>
+      <tr>
+        <td><strong>Hyponatriämie</strong></td>
+        <td>Na⁺-Verlust</td>
+        <td>Orale Rehydratation, NaCl-Substitution</td>
+      </tr>
+      <tr>
+        <td><strong>Vitamin-B12-Mangel</strong></td>
+        <td>Resektion terminales Ileum &gt;60 cm</td>
+        <td>B12-Substitution i.m. alle 3 Monate</td>
+      </tr>
+      <tr>
+        <td><strong>Gallensäureverlustsyndrom</strong></td>
+        <td>Gallensäuren nicht rückresobiert</td>
+        <td>Diarrhö, Steatorrhö → Cholestyramin</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- KP-typische Fallszenarien -->
+<div class="card full">
+  <div class="card-title">
+    <span class="dot" style="background:var(--purple)"></span>
+    KP-typische Fallfragen
+  </div>
+  <div class="kp-scenarios">
+    <div class="scenario">
+      <div class="q">Patient nach Rektumexstirpation (APR), Stoma rechts unten, flüssiger Stuhl, K⁺ 2,8 mmol/l</div>
+      <div class="a">→ <span>Ileostoma mit Elektrolytverlust</span> · Kaliumsubstitution · Flüssigkeitsbilanz · Loperamid erwägen</div>
+    </div>
+    <div class="scenario">
+      <div class="q">Wann Rückverlagerung eines protektiven Ileostomas nach tiefer anteriorer Resektion?</div>
+      <div class="a">→ <span>8–12 Wochen postoperativ</span> · Vorher obligat: <span>Kontrasteinlauf</span> zum Anastomosencheck (Leckage ausschließen)</div>
+    </div>
+    <div class="scenario">
+      <div class="q">Livides, nicht blutierendes Stoma am 2. postoperativen Tag – was tun?</div>
+      <div class="a">→ <span>Stomaischemie/-nekrose</span> · Notfall: <span>chirurgische Revision</span></div>
+    </div>
+    <div class="scenario">
+      <div class="q">Welche Vitaminmangel nach ausgedehnter Ileumresektion?</div>
+      <div class="a">→ <span>Vitamin B12</span> (terminales Ileum) · Fettlösliche Vitamine <span>A, D, E, K</span> (Steatorrhö)</div>
+    </div>
+    <div class="scenario">
+      <div class="q">Patient mit Ileostoma seit 3 Jahren, neu: Bauchschmerzen, tastbare Resistenz neben Stoma</div>
+      <div class="a">→ <span>Parastomale Hernie</span> (häufigste Spätkomplikation) · Bildgebung, ggf. Herniotomie + Netzimplantation</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

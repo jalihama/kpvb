@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APS &amp; MEN – One Pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6F8; --card:#FFFFFF; --ink:#1E2A33; --ink-soft:#566571;
+    --line:#E1E7EC; --line-strong:#CDD6DD;
+    --aps:#0F756B; --aps-bg:#E2F1EF; --aps-d:#0c5e56;
+    --men:#7A4A9E; --men-bg:#F0E9F6; --men-d:#623c80;
+    --merke:#2B6CB0; --merke-bg:#EAF2FB;
+    --cave:#C2453C;  --cave-bg:#FBEAE6;
+    --esel:#B68309;  --esel-bg:#FCF5DC;
+    --yes:#3C8E59; --no:#9AA6AE; --pm:#B26A00;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size:14px; line-height:1.34; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px; margin:0 auto; padding:16px 16px 28px;}
+
+  header.mast{margin-bottom:8px;}
+  .eyebrow{font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:700;}
+  h1{font-size:1.4rem; line-height:1.12; margin:.08em 0 .04em; letter-spacing:-.01em;}
+  .sub{font-size:.82rem; color:var(--ink-soft); margin:0;}
+
+  .panel{border:1px solid var(--line); border-radius:11px; background:var(--card);
+    padding:10px 13px; margin-bottom:9px; border-top:3px solid;}
+  .panel.aps{border-top-color:var(--aps);}
+  .panel.men{border-top-color:var(--men);}
+  .ph{display:flex; align-items:baseline; gap:8px; margin:0 0 2px; flex-wrap:wrap;}
+  .ph h2{font-size:1.04rem; margin:0;}
+  .ph.aps h2{color:var(--aps-d);} .ph.men h2{color:var(--men-d);}
+  .ph .def{font-size:.78rem; color:var(--ink-soft); margin-left:2px;}
+
+  .mx{width:100%; border-collapse:collapse; margin:6px 0 3px; font-size:.82rem;}
+  .mx th,.mx td{padding:3px 8px; border-bottom:1px solid var(--line); text-align:center;}
+  .mx thead th{background:#F8FAFB; font-size:.76rem; border-bottom:2px solid var(--line-strong);}
+  .mx tbody th{text-align:left; font-weight:700; white-space:nowrap;}
+  .mx th.h-aps{color:var(--aps-d); background:var(--aps-bg);}
+  .mx th.h-men{color:var(--men-d); background:var(--men-bg);}
+  .mx .row-gene th,.mx .row-gene td{border-top:2px solid var(--line-strong); font-size:.77rem; color:var(--ink-soft); font-weight:700;}
+  .mx tbody tr:last-child td,.mx tbody tr:last-child th{border-bottom:none;}
+  .y{color:var(--yes); font-weight:700; font-size:.98rem;}
+  .n{color:var(--no);}
+  .pm{color:var(--pm); font-weight:700; font-size:.8rem;}
+  .ob{font-size:.7rem; color:var(--aps-d); font-weight:700;}
+
+  .mini{display:grid; gap:7px; margin-top:7px;}
+  .mini.two{grid-template-columns:1fr 1fr;}
+  .mini.three{grid-template-columns:1fr 1fr 1fr;}
+  .mc{border:1px solid var(--line); border-radius:9px; padding:7px 10px; border-left:4px solid var(--line-strong);}
+  .mc.aps{border-left-color:var(--aps);} .mc.men{border-left-color:var(--men);}
+  .mc .nm{font-weight:700; font-size:.88rem; display:inline;}
+  .mc .ep{font-size:.74rem; color:var(--ink-soft); display:inline; margin-left:5px;}
+  .mc ul{margin:3px 0 0; padding-left:15px;} .mc li{margin:1px 0; font-size:.79rem; line-height:1.3;}
+  .gene{display:inline-block; font-size:.66rem; font-weight:700; padding:1px 7px; border-radius:999px;
+    text-transform:uppercase; letter-spacing:.02em; margin-top:3px;}
+  .gene.aps{background:var(--aps-bg); color:var(--aps-d);}
+  .gene.men{background:var(--men-bg); color:var(--men-d);}
+
+  .box{border-radius:8px; padding:6px 11px; margin:7px 0 0; border-left:4px solid; font-size:.8rem; line-height:1.32;}
+  .box .lbl{font-size:.66rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; display:block; margin-bottom:1px;}
+  .box.merke{background:var(--merke-bg); border-left-color:var(--merke);} .box.merke .lbl{color:var(--merke);}
+  .box.cave{background:var(--cave-bg); border-left-color:var(--cave);} .box.cave .lbl{color:var(--cave);}
+  .box.esel{background:var(--esel-bg); border-left-color:var(--esel);} .box.esel .lbl{color:var(--esel);}
+  .boxrow{display:grid; grid-template-columns:1fr 1fr; gap:7px;}
+  b{font-weight:700;}
+  .keys{margin-top:8px; border:1px solid var(--line); border-radius:9px; padding:7px 11px; background:#FBFCFD;}
+  .keytitle{font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px;}
+  .keygrid{display:flex; gap:18px; font-size:.7rem; line-height:1.26; color:var(--ink-soft);}
+  .kcol{flex:1;}
+  .kcol div{margin-bottom:1px;}
+  .keygrid b{color:var(--ink); font-weight:700;}
+  .foot{font-size:.7rem; color:var(--ink-soft); margin-top:7px;}
+
+  @media (max-width:720px){ .mini.two,.mini.three,.boxrow{grid-template-columns:1fr;} .keygrid{flex-direction:column; gap:0;} }
+  @media print{
+    :root{--bg:#fff;}
+    @page{size:A4; margin:7.5mm;}
+    body{font-size:8.4pt; line-height:1.16;}
+    .wrap{padding:0; max-width:none;}
+    .mast{margin-bottom:5px;}
+    .panel,.mc,.box,.mx,.boxrow,.mini,.keys{break-inside:avoid;}
+    .panel{padding:8px 12px; margin-bottom:6px;}
+    .mx{margin:5px 0 2px;}
+    .mx th,.mx td{padding:2px 7px;}
+    .mini{gap:6px; margin-top:6px;}
+    .mc{padding:6px 9px;}
+    .mc ul{margin-top:2px;}
+    .box{padding:5px 10px; margin-top:6px;}
+    .boxrow{gap:6px;}
+    .mini.two{grid-template-columns:1fr 1fr;}
+    .mini.three{grid-template-columns:1fr 1fr 1fr;}
+    .boxrow{grid-template-columns:1fr 1fr;}
+    .keys{margin-top:6px; padding:6px 10px;}
+    .keygrid{display:flex; flex-direction:row; font-size:6.8pt; line-height:1.18;}
+    .foot{margin-top:5px;}
+    h1{font-size:13.5pt;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <div class="eyebrow">Examenswissen · One Pager</div>
+    <h1>Polyendokrine Autoimmunsyndrome (APS) &amp; Multiple Endokrine Neoplasien (MEN)</h1>
+    <p class="sub">Zwei Familien: <b>APS</b> = autoimmune <b>Zerstörung</b> mehrerer Drüsen · <b>MEN</b> = hereditäre <b>Tumoren</b> mehrerer Drüsen (alle autosomal‑dominant).</p>
+  </header>
+
+  <!-- APS -->
+  <div class="panel aps">
+    <div class="ph aps">
+      <h2>APS — Polyglanduläre Autoimmunsyndrome</h2>
+      <span class="def">gleichzeitiges autoimmunes Versagen mehrerer endokriner Drüsen</span>
+    </div>
+
+    <table class="mx">
+      <thead>
+        <tr>
+          <th style="text-align:left">Komponente</th>
+          <th class="h-aps">APS 1 · APECED</th>
+          <th class="h-aps">APS 2 · Schmidt</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th>Mukokutane Candidiasis</th><td class="y">✓</td><td class="n">—</td></tr>
+        <tr><th>Hypoparathyreoidismus</th><td class="y">✓</td><td class="n">—</td></tr>
+        <tr><th>M. Addison (NNR‑Insuffizienz)</th><td class="y">✓</td><td><span class="y">✓</span> <span class="ob">obligat</span></td></tr>
+        <tr><th>Autoimmun‑Thyreopathie</th><td class="pm">(±)</td><td class="y">✓</td></tr>
+        <tr><th>Typ‑1‑Diabetes</th><td class="pm">(±)</td><td class="y">✓</td></tr>
+        <tr class="row-gene"><th>Gen · Beginn</th><td>AIRE · autosomal‑rezessiv · Kindheit</td><td>HLA‑DR3/DR4 · polygen · Erwachsene (♀&gt;♂)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="mini two">
+      <div class="mc aps">
+        <span class="nm">APS Typ 1</span><span class="ep">APECED · Whitaker‑Trias (≥ 2/3)</span>
+        <ul>
+          <li><b>Trias =</b> Candidiasis + Hypoparathyreoidismus + M. Addison</li>
+          <li><b>AK:</b> Anti‑Typ‑I‑Interferon (charakteristisch)</li>
+          <li><b>Extras:</b> Hypogonadismus, perniziöse Anämie, Vitiligo, Alopezie, ektodermale Dystrophie (Zahnschmelz/Nägel)</li>
+        </ul>
+        <span class="gene aps">AIRE‑Gen · AR · Kindheit</span>
+      </div>
+      <div class="mc aps">
+        <span class="nm">APS Typ 2</span><span class="ep">Schmidt‑Syndrom · häufigste Form</span>
+        <ul>
+          <li><b>Obligat Addison</b> + Thyreopathie (Hashimoto/Basedow) und/oder T1DM</li>
+          <li>Addison + Thyreoiditis + T1DM = <b>Carpenter‑Syndrom</b></li>
+          <li><b>Extras:</b> Vitiligo, perniziöse Anämie, Zöliakie, Myasthenia gravis</li>
+        </ul>
+        <span class="gene aps">HLA‑DR3/DR4 · Erwachsene</span>
+      </div>
+    </div>
+
+    <div class="box merke">
+      <span class="lbl">Merke</span>
+      <b>APS 1</b> = AIRE, Kindheit, <b>Candidiasis + Hypopara + Addison</b>. <b>APS 2 (Schmidt)</b> = Erwachsene, <b>Addison + Schilddrüse</b> (± T1DM). Typ 3 = Thyreopathie + weitere Autoimmunerkrankung, aber <b>ohne</b> Addison.
+    </div>
+  </div>
+
+  <!-- MEN -->
+  <div class="panel men">
+    <div class="ph men">
+      <h2>MEN — Multiple Endokrine Neoplasien</h2>
+      <span class="def">hereditäre Tumorsyndrome mehrerer endokriner Organe · alle autosomal‑dominant</span>
+    </div>
+
+    <table class="mx">
+      <thead>
+        <tr>
+          <th style="text-align:left">Tumor / Organ</th>
+          <th class="h-men">MEN 1 · Wermer</th>
+          <th class="h-men">MEN 2A · Sipple</th>
+          <th class="h-men">MEN 2B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th>Nebenschilddrüse → pHPT</th><td class="y">✓</td><td class="y">✓</td><td class="n">—</td></tr>
+        <tr><th>Pankreas‑NET</th><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+        <tr><th>Hypophysenadenom</th><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+        <tr><th>Medulläres SD‑Ca (MTC)</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><th>Phäochromozytom</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><th>Mukosale Neurome + marfanoid</th><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+        <tr class="row-gene"><th>Gen</th><td>MEN1 (Menin) · 11q13</td><td>RET · 10q11</td><td>RET (M918T)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="mini three">
+      <div class="mc men">
+        <span class="nm">MEN 1</span><span class="ep">Wermer · „3 P"</span>
+        <ul>
+          <li><b>P</b>arathyreoidea: pHPT (~90 %, meist 1. Manifestation)</li>
+          <li><b>P</b>ankreas‑NET: Gastrinom (Zollinger‑Ellison), Insulinom, VIPom, Glukagonom</li>
+          <li><b>P</b>ituitary: meist Prolaktinom · auch Karzinoide, NNR‑Adenome</li>
+        </ul>
+        <span class="gene men">MEN1 · Menin (Tumorsuppressor)</span>
+      </div>
+      <div class="mc men">
+        <span class="nm">MEN 2A</span><span class="ep">Sipple‑Syndrom</span>
+        <ul>
+          <li><b>MTC</b> ~95 % (C‑Zellen → Calcitonin)</li>
+          <li><b>Phäochromozytom</b> ~50 %</li>
+          <li><b>pHPT</b> ~20–30 %</li>
+        </ul>
+        <span class="gene men">RET‑Protoonkogen</span>
+      </div>
+      <div class="mc men">
+        <span class="nm">MEN 2B</span><span class="ep">früher „MEN 3"</span>
+        <ul>
+          <li><b>MTC</b> (aggressiver, früher Beginn)</li>
+          <li><b>Phäochromozytom</b></li>
+          <li>mukosale Neurome, GI‑Ganglioneuromatose, <b>marfanoid</b> · <b>kein</b> pHPT</li>
+        </ul>
+        <span class="gene men">RET · M918T</span>
+      </div>
+    </div>
+
+    <div class="boxrow">
+      <div class="box esel">
+        <span class="lbl">Eselsbrücke</span>
+        <b>MEN 1 = 3 P</b> (Parathyreoidea, Pankreas, Pituitary). <b>2A</b> = + Parathyreoidea · <b>2B</b> = + Neurome/marfanoid (<b>keine</b> Parathyreoidea). Beide MEN 2 = <b>RET</b> + MTC + Phäo.
+      </div>
+      <div class="box cave">
+        <span class="lbl">Cave</span>
+        Bei MEN 2 vor jeder OP <b>Phäochromozytom ausschließen / zuerst operieren</b> (hypertensive Krise). MTC → <b>prophylaktische Thyreoidektomie</b> (Zeitpunkt nach RET‑Risiko); Marker: <b>Calcitonin</b> + CEA.
+      </div>
+    </div>
+  </div>
+
+  <div class="keys">
+    <div class="keytitle">Abkürzungen</div>
+    <div class="keygrid">
+      <div class="kcol">
+        <div><b>AIRE</b> — Autoimmun‑Regulator (Gen)</div>
+        <div><b>AK</b> — Antikörper</div>
+        <div><b>APECED</b> — Autoimmun‑Polyendokrinopathie–Candidiasis–ektodermale Dystrophie (= APS 1)</div>
+        <div><b>APS</b> — autoimmunes polyglanduläres Syndrom</div>
+        <div><b>AR</b> — autosomal‑rezessiv</div>
+        <div><b>Ca</b> — Karzinom</div>
+        <div><b>CEA</b> — karzinoembryonales Antigen (Tumormarker)</div>
+        <div><b>GI</b> — gastrointestinal</div>
+      </div>
+      <div class="kcol">
+        <div><b>HLA</b> — humanes Leukozytenantigen (DR3/DR4 = Subtypen)</div>
+        <div><b>IFN</b> — Interferon</div>
+        <div><b>M.</b> — Morbus (z. B. M. Addison)</div>
+        <div><b>M918T</b> — spezifische RET‑Mutation (MEN 2B)</div>
+        <div><b>MEN</b> — multiple endokrine Neoplasie</div>
+        <div><b>MTC</b> — medulläres Schilddrüsenkarzinom (C‑Zell‑Ca)</div>
+        <div><b>NET</b> — neuroendokriner Tumor</div>
+      </div>
+      <div class="kcol">
+        <div><b>NNR</b> — Nebennierenrinde</div>
+        <div><b>pHPT</b> — primärer Hyperparathyreoidismus</div>
+        <div><b>Pituitary</b> — (engl.) Hypophyse</div>
+        <div><b>RET</b> — Protoonkogen („rearranged during transfection")</div>
+        <div><b>SD(‑Ca)</b> — Schilddrüse(nkarzinom)</div>
+        <div><b>T1DM</b> — Typ‑1‑Diabetes mellitus</div>
+        <div><b>VIPom</b> — VIP‑produzierender Tumor (vasoaktives intest. Peptid)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Lernübersicht zu APS und MEN · ersetzt keine Leitlinie oder ärztliche Entscheidung; Häufigkeiten sind Richtwerte, Auflistungen beispielhaft.</div>
+
+</div>
+</body>
+</html>

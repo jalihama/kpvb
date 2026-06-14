@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vorhofflimmern – Klinische Referenz &amp; Therapiealgorithmus</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#eef5f8;font-family:'Roboto Flex',system-ui,sans-serif;font-weight:400;padding:20px 18px 30px;-webkit-font-smoothing:antialiased}
+
+header{text-align:center;margin-bottom:16px;padding-bottom:16px;border-bottom:2px solid #08222c;max-width:1420px;margin-left:auto;margin-right:auto}
+header h1{font-weight:700;font-size:1.45rem;color:#08222c;letter-spacing:-.4px}
+header p{color:#45697a;font-size:11px;font-weight:500;margin-top:5px;text-transform:uppercase;letter-spacing:2px}
+
+.ov{max-width:1420px;margin:0 auto 10px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:7px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:7px}
+
+/* CARDS */
+.c{border-radius:4px;padding:8px 9px}
+.cb{background:#f0f4ff;border:1.5px solid #2a4a7f}
+.cg{background:#edf7f0;border:1.5px solid #1a8a40}
+.ca{background:#fff8ec;border:1.5px solid #cc8800}
+.cr{background:#fff5f5;border:1.5px solid #b02020}
+.cd{background:#eaf1f3;border:2px solid #08222c}
+.cw{background:#fff;border:1.5px solid #cddbe0}
+.ctag{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:1.4px;margin-bottom:2px}
+.cb .ctag{color:#2a4a7f}.cg .ctag{color:#1a6b3a}.ca .ctag{color:#8a5500}.cr .ctag{color:#b02020}.cd .ctag{color:#555}.cw .ctag{color:#5e7e8a}
+.ctit{font-weight:600;font-size:0.78rem;color:#08222c;margin-bottom:4px;line-height:1.25}
+.cdiv{border:none;border-top:1px solid;margin:3px 0 4px}
+.cb .cdiv{border-color:#b8c8f0}.cg .cdiv{border-color:#cde8d5}.ca .cdiv{border-color:#f0ddb0}.cr .cdiv{border-color:#f0c0c0}.cd .cdiv{border-color:#cddbe0}.cw .cdiv{border-color:#e0dbd2}
+.cbody{font-size:10px;color:#13323d;line-height:1.52}
+.cbody ul{list-style:none}
+.cbody ul li{padding-left:10px;position:relative;margin-bottom:1.5px}
+.cbody ul li::before{content:'–';position:absolute;left:0;color:#aaa}
+.cbody ul li.s{padding-left:18px}
+.cbody ul li.s::before{content:'·';left:10px;color:#999}
+.cbody ul li.s2{padding-left:26px}
+.cbody ul li.s2::before{content:'›';left:18px;color:#bbb}
+.cave{color:#b02020;font-weight:600}.first{color:#1a6b3a;font-weight:600}.ki{color:#b02020;font-weight:600}.amb{color:#8a5500;font-weight:600}.blu{color:#2a4a7f;font-weight:600}.mut{color:#666}.it{font-style:italic}
+
+/* PIRATES */
+.pirates{background:#08222c;color:#fff;border-radius:3px;padding:5px 7px;margin-top:6px;font-size:9.5px;line-height:1.65}
+.pirates .pt{font-weight:700;font-size:10.5px;letter-spacing:.5px;margin-bottom:2px}
+
+/* KLASSIFIKATION MINI TABLES */
+.ktab{width:100%;border-collapse:collapse;font-size:9.5px;margin-top:2px}
+.ktab th{background:#08222c;color:#fff;padding:2px 6px;text-align:left;font-weight:600;font-size:8.5px;text-transform:uppercase;letter-spacing:.8px}
+.ktab td{padding:2.5px 6px;border-bottom:1px solid #e0dbd2;vertical-align:top;line-height:1.4}
+.ktab tr:last-child td{border-bottom:none}
+.ktab td:first-child{font-weight:600;color:#08222c;white-space:nowrap}
+.ktab td.freq{font-weight:700;color:#2a4a7f;width:90px}
+.ktab .rowr{background:#fff5f5}.ktab .rown{background:#edf7f0}.ktab .rowb{background:#f0f4ff}
+
+/* AF-CARE */
+.afcare-wrap{max-width:1100px;margin:12px auto 12px}
+.afcare{display:grid;grid-template-columns:repeat(4,1fr);border:2px solid #08222c;border-radius:4px;overflow:hidden}
+.afcare-hd{grid-column:1/-1;background:#08222c;color:#fff;padding:5px 12px;font-weight:700;font-size:0.73rem;text-transform:uppercase;letter-spacing:2px;text-align:center}
+.afcare-p{padding:8px 10px;background:#fff;border-right:1px solid #cddbe0}
+.afcare-p:last-child{border-right:none}
+.af-l{font-weight:700;font-size:1.5rem;color:#08222c;line-height:1}
+.af-kw{font-weight:600;font-size:0.72rem;color:#08222c;margin-bottom:3px}
+.af-bd{font-size:9.5px;color:#333;line-height:1.5}
+
+/* WRAP */
+.wrap{display:flex;justify-content:center;overflow-x:auto;margin:0 auto 14px}
+
+/* SCORE TABLES */
+.score-wrap{max-width:1100px;margin:0 auto 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.score-card{background:#fff;border:1.5px solid #08222c;border-radius:4px;overflow:hidden}
+.score-hd{background:#08222c;color:#fff;padding:5px 10px;font-weight:700;font-size:0.72rem;letter-spacing:.5px}
+.stab{width:100%;border-collapse:collapse;font-size:10px}
+.stab th{background:#eaf1f3;font-weight:600;padding:3px 7px;text-align:left;border-bottom:1px solid #cddbe0;font-size:8.5px;text-transform:uppercase;letter-spacing:.8px;color:#555}
+.stab td{padding:3.5px 7px;border-bottom:1px solid #e1ebee;vertical-align:top;line-height:1.45}
+.stab tr:last-child td{border-bottom:none}
+.stab .abbr{font-weight:700;font-size:11px;color:#08222c;width:28px}
+.stab .pts{text-align:right;font-weight:700}
+.stab .tot{background:#eef5f8;font-weight:600}
+.stab .interp{background:#edf7f0}
+.score-note{padding:4px 7px;font-size:9px;color:#555;border-top:1px solid #e1ebee;font-style:italic}
+
+/* KOMPLIKATIONEN */
+.komp-wrap{max-width:1100px;margin:0 auto 14px}
+.komp-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sect-h{font-weight:700;font-size:0.83rem;color:#08222c;margin-bottom:6px;letter-spacing:-.1px;border-bottom:1.5px solid #08222c;padding-bottom:4px}
+
+/* NOTES */
+.notes{max-width:1420px;margin:14px auto 0;border-top:2px solid #08222c;padding-top:14px}
+.notes-t{font-weight:700;font-size:.85rem;color:#08222c;margin-bottom:2px}
+.notes-s{font-size:9px;font-weight:500;color:#45697a;text-transform:uppercase;letter-spacing:1.8px;margin-bottom:10px}
+.ng{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.nc{background:#fff;border:1px solid #cddbe0;border-radius:3px;padding:7px 10px 7px 14px;position:relative}
+.nc .bar{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:3px 0 0 3px}
+.nc .bar.bl{background:#2a4a7f}.nc .bar.am{background:#7a4a00}.nc .bar.rd{background:#b02020}.nc .bar.mu{background:#45697a}.nc .bar.gr{background:#1a6b3a}
+.nc-l{font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#5e7e8a;margin-bottom:1px}
+.nc-t{font-weight:600;font-size:.78rem;color:#08222c;margin-bottom:4px}
+.nc-b{font-size:10.5px;color:#13323d;line-height:1.6}
+.nc-b ul{list-style:none}
+.nc-b ul li{padding-left:12px;position:relative;margin-bottom:1px}
+.nc-b ul li::before{content:'–';position:absolute;left:0;color:#aaa}
+
+footer{max-width:1420px;margin:14px auto 0;padding-top:12px;border-top:1px solid #cddbe0;color:#5e7e8a;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Vorhofflimmern (AFib) – Klinische Referenz &amp; Therapiealgorithmus</h1>
+  <p>ESC-Leitlinie 2024 · AMBOSS · AF-CARE-Konzept · Approbationsvorbereitung M3</p>
+</header>
+
+<!-- ============================================================
+     ÜBERSICHT – KLINISCHER ÜBERBLICK
+     ============================================================ -->
+<div class="ov">
+
+<!-- ROW 1: Definition/Epi | Ätiologie Chronisch | Trigger+PIRATES | Klassif-Freq | Klassif-Dauer -->
+<div class="g5">
+
+  <!-- 1: Definition + Epidemiologie -->
+  <div class="c cb">
+    <div class="ctag">Definition &amp; Epidemiologie</div>
+    <div class="ctit">Vorhofflimmern (AFib)</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <ul>
+        <li><span class="blu">Häufigste anhaltende Herzrhythmusstörung</span> im Erwachsenenalter</li>
+        <li>Supraventrikuläre Arrhythmie: unkoordinierte, schnelle Vorhofaktivität → Verlust der effektiven Vorhofkontraktion → unregelmäßige Ventrikelfrequenz bei intakter AV-Überleitung</li>
+        <li class="s"><span class="cave">Stets sekundäre Genese</span> – mind. 1 RF immer vorhanden!</li>
+      </ul>
+      <hr class="cdiv" style="margin-top:5px">
+      <ul>
+        <li>~60 Mio. Betroffene weltweit · bis zu <b>1%</b> der Gesamtbevölkerung</li>
+        <li>Prävalenzanstieg auf bis zu <b>10%</b> bei Personen ≥65 Jahre</li>
+        <li>Geschlecht: <b>♂ &gt; ♀</b></li>
+        <li>Erhöhtes Schlaganfallrisiko <span class="cave">5-fach</span> ↑ (kardioembolisch, insb. aus LAA)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2: Ätiologie – Chronische RF -->
+  <div class="c ca">
+    <div class="ctag">Ätiologie · Chronisch</div>
+    <div class="ctit">Chronische Risikofaktoren</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8a5500;margin-bottom:2px">Nicht-modifizierbar</div>
+      <ul>
+        <li>Alter – <span class="amb">stärkster Risikofaktor</span></li>
+        <li>Ethnie (helle Hautfarbe)</li>
+        <li>Genetik (~140 Genloci identifiziert, familiäre Häufung)</li>
+      </ul>
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8a5500;margin:4px 0 2px">Kardial – modifizierbar</div>
+      <ul>
+        <li>Herzinsuffizienz jeder Genese (AFib bei <b>~50%</b>!)</li>
+        <li>Kardiomyopathien ± HI</li>
+        <li><span class="amb">Arterielle Hypertonie</span> / hochnormaler BD – häufigster modif. RF</li>
+        <li>KHK · Klappenvitien (insb. <b>Mitralklappenvitien</b>)</li>
+        <li>Sick-Sinus-Syndrom · Präexzitationssyndrome</li>
+        <li>Angeborene Herzfehler (EMAH)</li>
+      </ul>
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8a5500;margin:4px 0 2px">Extrakardial – modifizierbar</div>
+      <ul>
+        <li>OSAS · COPD · Diabetes mellitus · Adipositas · Alkohol · Bewegungsmangel</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3: Triggerfaktoren + PIRATES -->
+  <div class="c ca">
+    <div class="ctag">Ätiologie · Akut</div>
+    <div class="ctit">Akute Triggerfaktoren</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8a5500;margin-bottom:2px">Kardial</div>
+      <ul>
+        <li>Akutes Koronarsyndrom (ACS)</li>
+        <li>Akute Myokarditis</li>
+        <li>Lungenarterienembolie (LAE)</li>
+      </ul>
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8a5500;margin:4px 0 2px">Extrakardial</div>
+      <ul>
+        <li>Hyperthyreose</li>
+        <li>Infektionen / Sepsis</li>
+        <li>Elektrolytstörungen: insb. <span class="cave">Hypokaliämie</span></li>
+        <li>AECOPD</li>
+        <li>Akute Alkoholintoxikation (Holiday-Heart-Syndrom)</li>
+        <li>Anämie (allg. Tachykardie-Trigger)</li>
+      </ul>
+      <div class="pirates">
+        <div class="pt">🏴 PIRATES-Akronym</div>
+        <b>P</b>ulmonale Erkr. · <b>I</b>schämie · <b>R</b>heumatische Herzerkr. · <b>A</b>nämie · <b>T</b>hyroidea · <b>E</b>thanol · <b>S</b>epsis
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: Klassifikation Kammerfrequenz -->
+  <div class="c cd">
+    <div class="ctag">Klassifikation · Frequenz</div>
+    <div class="ctit">Nach Kammerfrequenz</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <table class="ktab">
+        <tr><th>Bezeichnung</th><th>Frequenz</th></tr>
+        <tr class="rowr">
+          <td>Tachyarrhythmia absoluta</td>
+          <td class="freq" style="color:#b02020">&gt;100–110/min</td>
+        </tr>
+        <tr class="rown">
+          <td>Normofrequente Arrhythmia absoluta</td>
+          <td class="freq" style="color:#1a6b3a">60–100/min</td>
+        </tr>
+        <tr class="rowb">
+          <td>Bradyarrhythmia absoluta</td>
+          <td class="freq" style="color:#2a4a7f">&lt;60/min</td>
+        </tr>
+      </table>
+      <div style="margin-top:6px;font-size:9.5px;color:#555;font-style:italic">Die absolute Arrhythmie (unregelmäßige Herzaktion) ist das klinische Leitsymptom unabhängig von der Frequenz.</div>
+    </div>
+  </div>
+
+  <!-- 5: Klassifikation Dauer/Häufigkeit -->
+  <div class="c cd">
+    <div class="ctag">Klassifikation · Dauer</div>
+    <div class="ctit">Nach Häufigkeit / Dauer</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <table class="ktab">
+        <tr><th>Begriff</th><th>Definition</th></tr>
+        <tr>
+          <td>Paroxysmal</td>
+          <td>Konversion in Sinusrhythmus ≤7 d (spontan oder durch Intervention)</td>
+        </tr>
+        <tr style="background:#fafaf8">
+          <td>Persistierend</td>
+          <td>Dauer &gt;7 d (inkl. Kardioversion nach &gt;7 d)</td>
+        </tr>
+        <tr>
+          <td>Langanhaltend persistierend</td>
+          <td>Bereits &gt;12 Mon. bei Entscheidung zur Rhythmuskontrolle</td>
+        </tr>
+        <tr style="background:#fafaf8">
+          <td>Permanent</td>
+          <td>Akzeptiertes AFib ohne Rhythmuskontrollziel (ärztlich + Patient)</td>
+        </tr>
+      </table>
+      <div style="margin-top:5px;font-size:9px;color:#b02020;font-weight:500">Veraltet (ESC 2024 nicht mehr empfohlen): „Lone AFib", „valvuläres/nicht-valvuläres AFib", „chronisches AFib"</div>
+    </div>
+  </div>
+
+</div><!-- /g5 -->
+
+<!-- ROW 2: Symptomatik | EKG-Diagnostik | Klinik+Labor | DDx+Vorhofflattern -->
+<div class="g4">
+
+  <!-- Symptomatik -->
+  <div class="c cg">
+    <div class="ctag">Symptomatik</div>
+    <div class="ctit">Klinische Präsentation</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#1a6b3a;margin-bottom:2px">Symptomatisch · bis zu 90%!</div>
+      <ul>
+        <li>Palpitationen (häufigste Erstbeschwerde)</li>
+        <li>Dyspnoe</li>
+        <li>Erschöpfung / Fatigue</li>
+        <li>Herzinsuffizienz-Verschlechterung</li>
+        <li>Schwindel · (Prä-)Synkope</li>
+        <li>Angina pectoris</li>
+        <li>Verstärkung von Angststörungen und/oder Depressionen</li>
+        <li>Bei Tachyarrhythmie: Lungenödem · kardiogener Schock</li>
+      </ul>
+      <hr class="cdiv">
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#1a6b3a;margin-bottom:2px">Asymptomatisch · selten</div>
+      <div style="font-size:9.5px;color:#555;font-style:italic">Trotzdem erhöhtes Schlaganfallrisiko – keine klinische Besserung = kein Schutz!</div>
+    </div>
+  </div>
+
+  <!-- EKG-Diagnostik -->
+  <div class="c cb">
+    <div class="ctag">Diagnostik · EKG</div>
+    <div class="ctit">Diagnosesicherung: nur per EKG!</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <!-- Mini EKG SVG -->
+      <svg viewBox="0 0 250 58" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:250px;display:block;margin:3px 0 5px;background:#fffef5;border:1px solid #ddd;border-radius:2px">
+        <line x1="0" y1="34" x2="250" y2="34" stroke="#e8e8d0" stroke-width="0.5"/>
+        <polyline
+          points="0,34 4,32 7,36 11,33 14,35 17,32 21,34 24,33 28,35 30,34
+                  31,36 32,11 33,52 35,34
+                  38,32 41,35 44,32 48,34 51,33 55,35 58,32 62,34 64,33
+                  66,36 67,11 68,52 70,34
+                  72,32 75,35 78,32 81,34 83,32 86,35 88,33
+                  92,36 93,11 94,52 96,34
+                  99,32 103,35 106,32 110,34 113,32 117,35 120,33 124,34 127,32 130,35
+                  131,36 132,11 133,52 135,34
+                  138,32 142,35 145,32 149,34 152,32 156,35 159,33 163,34 166,32 170,35 173,32 177,34
+                  178,36 179,11 180,52 182,34
+                  185,32 189,35 192,32 196,34 199,32 203,35 206,33 210,34 213,32 217,35 220,32 224,34 227,32 231,35 234,32 238,34 241,32 245,35 248,33 250,34"
+          fill="none" stroke="#1a4a2a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- RR interval markers -->
+        <circle cx="32" cy="8" r="1.5" fill="#2a4a7f"/>
+        <circle cx="67" cy="8" r="1.5" fill="#2a4a7f"/>
+        <circle cx="93" cy="8" r="1.5" fill="#2a4a7f"/>
+        <circle cx="132" cy="8" r="1.5" fill="#2a4a7f"/>
+        <circle cx="179" cy="8" r="1.5" fill="#2a4a7f"/>
+        <polyline points="32,8 67,8 93,8 132,8 179,8" fill="none" stroke="#2a4a7f" stroke-width="0.8" stroke-dasharray="2 1"/>
+        <text x="125" y="55" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#b02020" font-weight="700">kein P · irreguläre RR · schmale QRS</text>
+      </svg>
+      <ul>
+        <li><span class="cave">Fehlen von P-Wellen</span></li>
+        <li>Unregelmäßige RR-Intervalle (absolute Arrhythmie)</li>
+        <li>I.d.R. <b>schmale QRS-Komplexe</b> (&lt;120 ms)</li>
+        <li>Ggf. Flimmerwellen (f-Wellen) in V₁ · Vorhoffrequenz <b>350–600/min</b></li>
+        <li class="s">Pulsdefizit: periphere HF &lt; EKG-HF</li>
+        <li>Ggf. Langzeit-EKG / ambulantes Monitoring</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Klinische Untersuchung + Labor -->
+  <div class="c cb">
+    <div class="ctag">Diagnostik · Klinik &amp; Labor</div>
+    <div class="ctit">Hinweise + Weiterführende Diagnostik</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#2a4a7f;margin-bottom:2px">Klinische Untersuchung</div>
+      <ul>
+        <li>Pulspalpation: unregelmäßige Herzaktion</li>
+        <li>Auskultation: wechselnde Lautstärke des 1. Herztons</li>
+        <li>Pulsdefizit: periphere HF &lt; auskultierbare / EKG-HF</li>
+        <li>Hinweise auf stattgehabte Embolien: Schlaganfall/TIA · Niereninfarkt · Milzinfarkt · Mesenterialinfarkt</li>
+      </ul>
+      <hr class="cdiv">
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#2a4a7f;margin-bottom:2px">Labordiagnostik</div>
+      <ul>
+        <li>Großes Blutbild</li>
+        <li>Serumelektrolyte (insb. <span class="cave">Kalium!</span>)</li>
+        <li>Nieren- und Leberparameter</li>
+        <li><span class="amb">Schilddrüsenparameter</span> (TSH)</li>
+        <li>Serumglucose · HbA1c</li>
+        <li>Gerinnungsparameter</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Differenzialdiagnosen + Vorhofflattern -->
+  <div class="c cr">
+    <div class="ctag">Differenzialdiagnosen · Vorhofflattern</div>
+    <div class="ctit">DDx &amp; Vorhofflattern (AFlut)</div>
+    <hr class="cdiv">
+    <div class="cbody">
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#b02020;margin-bottom:2px">Schmalkomplextachykardien</div>
+      <ul>
+        <li>AVNRT / AVRT</li>
+        <li><b>Vorhofflattern</b> (wichtigste DDx!)</li>
+      </ul>
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#b02020;margin:4px 0 2px">Breitkomplextachykardien</div>
+      <ul>
+        <li>SVT + Schenkelblock</li>
+        <li>FBI-Tachykardie (AFib + WPW → breiter QRS)</li>
+        <li>Ventrikuläre Tachykardie (VT)</li>
+      </ul>
+      <hr class="cdiv">
+      <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#b02020;margin-bottom:2px">Vorhofflattern</div>
+      <ul>
+        <li>2.-häufigste anh. Arrhythmie · &gt;50% entwickeln auch AFib</li>
+        <li>EKG: <b>Sägezahnmuster</b> · II/III/aVF <span class="cave">negativ</span> · V₁ positiv</li>
+        <li>Vorhof-HF 250–320/min · meist 2:1-Überleitung → Kammer-HF 120–160/min</li>
+        <li>Typisch: <span class="mut it">"fast up, slow down"</span> in V₁</li>
+        <li>Therapie TEP: wie AFib nach CHA₂DS₂VA-Score</li>
+        <li>Rhythmus: <span class="first">CTI-Ablation = Standardtherapie</span> · Frequenz: BB oder NDCA</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /g4 -->
+</div><!-- /ov -->
+
+<!-- ============================================================
+     AF-CARE BANNER
+     ============================================================ -->
+<div class="afcare-wrap">
+  <div class="afcare">
+    <div class="afcare-hd">AF-CARE · ESC 2024 · Strukturiertes Therapiekonzept bei Vorhofflimmern</div>
+    <div class="afcare-p">
+      <div class="af-l">C</div>
+      <div class="af-kw">Komorbiditäten &amp; Risikofaktoren</div>
+      <div class="af-bd">Upstream-Therapie: Behandlung zugrundeliegender Ursachen (AHT, DM, Adipositas, OSAS, Alkohol) · Ziel: Wirksamkeit aller anderen Säulen↑</div>
+    </div>
+    <div class="afcare-p">
+      <div class="af-l">A</div>
+      <div class="af-kw">Antikoagulation</div>
+      <div class="af-bd">Thromboembolieprophylaxe nach CHA₂DS₂VA-Score · bei Erstdiagnose + jeder Folgevorstellung erheben · DOAK 1. Wahl</div>
+    </div>
+    <div class="afcare-p">
+      <div class="af-l">R</div>
+      <div class="af-kw">Reduktion der Symptome</div>
+      <div class="af-bd">Frequenzkontrolle und/oder Rhythmuskontrolle · individuelle Entscheidung · Ziel: Lebensqualitätsverbesserung</div>
+    </div>
+    <div class="afcare-p">
+      <div class="af-l">E</div>
+      <div class="af-kw">Reevaluation</div>
+      <div class="af-bd">Regelmäßige Neubewertung aller Säulen · CHA₂DS₂VA-Score + Blutungsrisiko bei jeder Vorstellung reassessieren</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     THERAPIEALGORITHMUS SVG
+     ============================================================ -->
+<div class="wrap">
+<svg width="1100" height="840" viewBox="0 0 1100 840" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#555"/>
+  </marker>
+  <marker id="arr-d" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#aaa"/>
+  </marker>
+  <style>
+    text{font-family:'Roboto Flex',system-ui,sans-serif;font-size:11px;fill:#08222c;font-weight:400}
+    .tag{font-size:9px;font-weight:600;letter-spacing:1.3px;text-transform:uppercase}
+    .lbl{font-size:10px;font-weight:500;fill:#444}
+    .title{font-size:13px;font-weight:600}
+    .cave{fill:#b02020;font-weight:700}
+    .first{fill:#1a6b3a;font-weight:700}
+    .ki{fill:#b02020;font-weight:700}
+    .mut{fill:#666;font-style:italic}
+  </style>
+</defs>
+
+<!-- ===================== CONNECTORS ===================== -->
+
+<!-- START → Upstream -->
+<line x1="550" y1="58" x2="550" y2="76" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Upstream → AK -->
+<line x1="550" y1="150" x2="550" y2="166" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- AK → three branch lines from junction at y=248 -->
+<!-- Left branch → Score-0 box -->
+<polyline points="550,248 550,255 165,255 165,262" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Center branch → Score-1 box -->
+<line x1="550" y1="248" x2="550" y2="262" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Right branch → Score-≥2 box -->
+<polyline points="550,248 550,255 935,255 935,262" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Branch labels -->
+<text x="360" y="251" class="lbl" text-anchor="middle">Score 0</text>
+<text x="570" y="251" class="lbl">Score 1</text>
+<text x="745" y="251" class="lbl" text-anchor="middle">Score ≥ 2</text>
+
+<!-- Score-1 box → dashed → reconverge junction at 550,376 -->
+<polyline points="550,335 550,376" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-d)"/>
+<text x="560" y="360" font-size="9" fill="#aaa" font-style="italic">ggf. OAK</text>
+
+<!-- Score-≥2 box → solid → reconverge junction at 550,376 -->
+<polyline points="935,335 935,376 550,376" fill="none" stroke="#555" stroke-width="2"/>
+
+<!-- Reconverge dot + → OAK box -->
+<circle cx="550" cy="376" r="4.5" fill="#555"/>
+<line x1="550" y1="376" x2="550" y2="388" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- OAK box → Symptomkontrolle -->
+<line x1="550" y1="487" x2="550" y2="503" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- LAA dashed connector -->
+<line x1="875" y1="435" x2="890" y2="435" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-d)"/>
+
+<!-- Symptomkontrolle → split junction at y=578 -->
+<line x1="550" y1="573" x2="550" y2="580" stroke="#555" stroke-width="2"/>
+<!-- → Frequenz box -->
+<polyline points="550,580 255,580 255,586" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- → Rhythmus box -->
+<polyline points="550,580 845,580 845,586" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Split labels -->
+<text x="400" y="577" class="lbl" text-anchor="middle">Frequenzkontrolle</text>
+<text x="700" y="577" class="lbl" text-anchor="middle">Rhythmuskontrolle</text>
+
+<!-- Split junction dot -->
+<circle cx="550" cy="580" r="4.5" fill="#555"/>
+
+<!-- Frequenz + Rhythmus → reconverge at y=755 -->
+<polyline points="255,742 255,755 550,755" fill="none" stroke="#555" stroke-width="2"/>
+<polyline points="845,742 845,755 550,755" fill="none" stroke="#555" stroke-width="2"/>
+<circle cx="550" cy="755" r="4.5" fill="#555"/>
+<line x1="550" y1="755" x2="550" y2="770" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- ===================== BOXES ===================== -->
+
+<!-- Box 1: START pill -->
+<rect x="350" y="18" width="400" height="40" rx="20" fill="#08222c"/>
+<text x="550" y="43" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">Diagnose gesichert: Vorhofflimmern</text>
+
+<!-- Box 2: Upstream-Therapie -->
+<rect x="220" y="76" width="660" height="74" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="240" y="95" class="tag" fill="#8a5500">Schritt C · Upstream-Therapie · sofort &amp; kontinuierlich</text>
+<text x="240" y="116" class="title" fill="#08222c">Komorbiditäten + Lebensstil behandeln</text>
+<line x1="240" y1="122" x2="868" y2="122" stroke="#f0ddb0" stroke-width="1"/>
+<text x="240" y="135" font-size="10.5" fill="#555">Fokus auf individuell größte RF: AHT · Diabetes · OSAS · Adipositas · Alkohol · Bewegungsmangel</text>
+<text x="240" y="149" font-size="10.5" fill="#555">Realistische Zielsetzung · Gemeinsame Entscheidungsfindung · Wirksamkeit der übrigen Säulen↑</text>
+
+<!-- Box 3: CHA₂DS₂VA Decision -->
+<rect x="170" y="166" width="760" height="82" rx="5" fill="#fff" stroke="#08222c" stroke-width="2"/>
+<circle cx="924" cy="164" r="12" fill="#08222c"/>
+<text x="924" y="169" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="190" y="186" class="tag" fill="#555">Schritt A · Thromboembolieprophylaxe · bei Erstdiagnose + jeder Folgevorstellung re-evaluieren</text>
+<text x="550" y="210" class="title" text-anchor="middle" fill="#08222c">CHA₂DS₂VA-Score erheben (Max. 8 Punkte)</text>
+<text x="550" y="228" font-size="10.5" text-anchor="middle" fill="#555">Erhöhtes Blutungsrisiko ist per se <tspan class="cave">keine</tspan> Kontraindikation für OAK! → Risikofaktoren modifizieren</text>
+<text x="550" y="244" font-size="9.5" text-anchor="middle" fill="#888" font-style="italic">Detaillierte Score-Tabelle ↓ Abschnitt unten</text>
+
+<!-- Branch junction dot -->
+<circle cx="550" cy="248" r="4.5" fill="#555"/>
+
+<!-- Box 4a: Score 0 -->
+<rect x="30" y="262" width="270" height="73" rx="4" fill="#eaf1f3" stroke="#999" stroke-width="1.5"/>
+<text x="50" y="280" class="tag" fill="#777">Score 0 — niedriges Risiko</text>
+<text x="50" y="298" font-size="12" font-weight="600" fill="#08222c">Keine routinemäßige OAK</text>
+<line x1="50" y1="304" x2="288" y2="304" stroke="#ddd" stroke-width="1"/>
+<text x="50" y="318" font-size="10.5" fill="#555">Reevaluation bei jeder Folgevorstellung</text>
+<text x="50" y="330" font-size="9.5" fill="#888" font-style="italic">RF können sich über Zeit ändern!</text>
+
+<!-- Box 4b: Score 1 -->
+<rect x="385" y="262" width="330" height="73" rx="4" fill="#fff8ec" stroke="#cc8800" stroke-width="1.5"/>
+<text x="405" y="280" class="tag" fill="#8a5500">Score 1 — individuell</text>
+<text x="405" y="298" font-size="12" font-weight="600" fill="#08222c">OAK individuell abwägen</text>
+<line x1="405" y1="304" x2="703" y2="304" stroke="#f0ddb0" stroke-width="1"/>
+<text x="405" y="318" font-size="10.5" fill="#6a4000">Blutungsrisiko vs. Thromboembolierisiko</text>
+<text x="405" y="330" font-size="10" fill="#6a4000">Patientenpräferenz einbeziehen</text>
+
+<!-- Box 4c: Score ≥2 -->
+<rect x="795" y="262" width="280" height="73" rx="4" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="815" y="280" class="tag" fill="#1a6b3a">Score ≥ 2 — definitiv</text>
+<text x="815" y="298" font-size="12" font-weight="600" fill="#08222c">OAK definitiv indiziert</text>
+<line x1="815" y1="304" x2="1063" y2="304" stroke="#cde8d5" stroke-width="1"/>
+<text x="815" y="318" font-size="10.5" fill="#1a4a2a">Sofort beginnen — keine Verzögerung!</text>
+<text x="815" y="330" font-size="10" fill="#1a4a2a">Auch bei Z.n. mech. Klappenersatz / MS</text>
+
+<!-- Box 5: OAK-Auswahl -->
+<rect x="175" y="388" width="700" height="99" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="195" y="406" class="tag" fill="#1a6b3a">Orale Antikoagulation · Substanzwahl</text>
+<text x="195" y="426" class="title" fill="#08222c">Antikoagulanzien bei Vorhofflimmern</text>
+<line x1="195" y1="432" x2="863" y2="432" stroke="#cde8d5" stroke-width="1"/>
+<text x="195" y="447" font-size="11"><tspan class="first">1. Wahl: </tspan><tspan fill="#1a4a2a">DOAK — Apixaban · Rivaroxaban · Edoxaban · Dabigatran</tspan></text>
+<text x="195" y="462" font-size="11"><tspan class="ki">2. Wahl: </tspan><tspan fill="#555">VKA (Phenprocoumon · Warfarin) — obligat bei mind. mittelgr. Mitralstenose / Z.n. mech. HKE</tspan></text>
+<text x="195" y="476" font-size="11" fill="#555">Ausnahme: <tspan font-weight="600" fill="#333">Heparin</tspan> — peripartale Phase · Interventionen · KI für DOAK + VKA</text>
+<text x="195" y="487" font-size="10" fill="#888" font-style="italic">Kein Thrombozytenaggregationshemmer als Ersatz für OAK bei VHF!</text>
+
+<!-- Box LAA-Verschluss (dashed side box) -->
+<rect x="892" y="388" width="200" height="99" rx="4" fill="#fff5f5" stroke="#b02020" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text x="906" y="406" class="tag" fill="#b02020">Sonderfall · OAK-KI</text>
+<text x="906" y="424" font-size="12" font-weight="600" fill="#08222c">LAA-Verschluss</text>
+<line x1="906" y1="430" x2="1080" y2="430" stroke="#f0c0c0" stroke-width="1"/>
+<text x="906" y="445" font-size="10" fill="#555">Indikation:</text>
+<text x="906" y="459" font-size="10" fill="#555">· Absolute KI für OAK oder</text>
+<text x="906" y="473" font-size="10" fill="#555">· Zusätzlich zu OAK bei</text>
+<text x="906" y="484" font-size="10" fill="#555">  geplanter OP / Hybrid-Ablation</text>
+
+<!-- Box 6: Symptomkontrolle -->
+<rect x="200" y="503" width="700" height="70" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<circle cx="894" cy="501" r="12" fill="#08222c"/>
+<text x="894" y="506" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="220" y="522" class="tag" fill="#555">Schritt R · Symptomkontrolle · individuelle Entscheidung</text>
+<text x="550" y="544" class="title" text-anchor="middle" fill="#08222c">Frequenz- und/oder Rhythmuskontrolle?</text>
+<text x="550" y="562" font-size="10.5" text-anchor="middle" fill="#555">Beide Strategien dienen der Symptomkontrolle · können kombiniert werden · kein Mortalitätsvorteil bewiesen</text>
+
+<!-- Box 7a: Frequenzkontrolle -->
+<rect x="10" y="586" width="490" height="156" rx="5" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="30" y="604" class="tag" fill="#2a4a7f">Frequenzkontrolle</text>
+<text x="30" y="622" class="title" fill="#08222c">Medikamentöse Frequenzkontrolle</text>
+<line x1="30" y1="628" x2="488" y2="628" stroke="#b8c8f0" stroke-width="1"/>
+<text x="30" y="643" font-size="10.5" fill="#333"><tspan font-weight="600">Initiales Ziel: </tspan><tspan>&lt;110/min (moderate Kontrolle, alle)</tspan></text>
+<text x="30" y="657" font-size="10.5" fill="#333"><tspan font-weight="600">Striktes Ziel: </tspan><tspan>&lt;80/min — bei anh. Symptomen unter moderater Kontrolle</tspan></text>
+<text x="30" y="671" font-size="11"><tspan class="first">Mittel der Wahl: </tspan><tspan fill="#333">Betablocker · NDCA (Verapamil/Diltiazem) · Digitalisglykoside</tspan></text>
+<text x="30" y="685" font-size="10.5"><tspan font-weight="600" fill="#555">Bradyarrhythmie-Mgmt: </tspan><tspan fill="#555">Freq.-Medis pausieren → Atropin → ggf. temporäre SM-Therapie</tspan></text>
+<line x1="30" y1="692" x2="488" y2="692" stroke="#b8c8f0" stroke-width="1"/>
+<text x="30" y="706" font-size="10.5"><tspan font-weight="600" fill="#555">Invasiv – Ultima Ratio: </tspan><tspan fill="#555">Insuffizienz unter Dreifachtherapie →</tspan></text>
+<text x="30" y="720" font-size="10.5" fill="#555">AV-Knotenablation + CRT-/Schrittmacherimplantation (→ Schrittmacherabhängigkeit!)</text>
+<text x="30" y="735" font-size="10"><tspan class="cave">Cave Präexzitation (WPW): </tspan><tspan fill="#888">Keine BB, NDCA, Adenosin, Digitalis! → Risiko Degeneration in VF!</tspan></text>
+
+<!-- Box 7b: Rhythmuskontrolle -->
+<rect x="600" y="586" width="490" height="156" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="620" y="604" class="tag" fill="#1a6b3a">Rhythmuskontrolle</text>
+<text x="620" y="622" class="title" fill="#08222c">EKV · Med. Antiarrhythmika · Ablation</text>
+<line x1="620" y1="628" x2="1078" y2="628" stroke="#cde8d5" stroke-width="1"/>
+<text x="620" y="643" font-size="10.5" fill="#333"><tspan font-weight="600">Elektrokardioversion (EKV): </tspan><tspan>Notfall = instabile Hämodynamik (sofort!)</tspan></text>
+<text x="620" y="657" font-size="10.5" fill="#555">Elektiv = persistierendes AFib zur Symptom-Rhythmus-Korrelation · Analgosedierung nötig</text>
+<text x="620" y="671" font-size="10.5" fill="#333"><tspan font-weight="600">Med. Antiarrhythmika: </tspan><tspan>Flecainid / Propafenon (p.o./i.v.) · Vernakalant (i.v.)</tspan></text>
+<text x="620" y="685" font-size="10.5" fill="#555">Amiodaron (i.v./p.o.) · Dronedaron (p.o.) · Pill-in-the-pocket-Prinzip</text>
+<line x1="620" y1="692" x2="1078" y2="692" stroke="#cde8d5" stroke-width="1"/>
+<text x="620" y="707" font-size="11"><tspan class="first">Katheterablation (PVI): </tspan><tspan fill="#333">Erstlinientherapie bei paroxysmalem AFib</tspan></text>
+<text x="620" y="721" font-size="10.5" fill="#555">Besser als Antiarrhythmika beim parox. AFib · Pulmonalvenenisolation + 3D-Mapping</text>
+<text x="620" y="735" font-size="10.5" fill="#555">Cox-MAZE (Chirurgisch): bei gleichzeitigem Mitralklappeneingriff · transmurale Ablation + LAA-Resektion</text>
+
+<!-- Box 8: Reevaluation -->
+<rect x="225" y="770" width="650" height="52" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="245" y="789" class="tag" fill="#8a5500">Schritt E · Regelmäßige Reevaluation</text>
+<text x="550" y="811" class="title" text-anchor="middle" fill="#08222c">CHA₂DS₂VA + Blutungsrisiko neu bewerten · Therapiestrategie anpassen</text>
+
+</svg>
+</div><!-- /wrap -->
+
+<!-- ============================================================
+     CHA₂DS₂VA-SCORE + BLUTUNGSRISIKO TABELLEN
+     ============================================================ -->
+<div class="score-wrap">
+
+  <!-- CHA₂DS₂VA -->
+  <div class="score-card">
+    <div class="score-hd">CHA₂DS₂VA-Score · ESC 2024 · Thromboembolierisiko bei Vorhofflimmern</div>
+    <table class="stab">
+      <tr><th class="abbr">Akr.</th><th>Risikofaktor</th><th>Definition</th><th>Pkt.</th></tr>
+      <tr>
+        <td class="abbr">C</td>
+        <td>Herzinsuffizienz</td>
+        <td>Symptome einer HI oder LVEF ≤40% ohne Symptome</td>
+        <td class="pts">1</td>
+      </tr>
+      <tr style="background:#fafaf8">
+        <td class="abbr">H</td>
+        <td>Art. Hypertonie</td>
+        <td>&gt;140/90 mmHg in ≥2 Messungen in Ruhe oder antihypertensive Behandlung</td>
+        <td class="pts">1</td>
+      </tr>
+      <tr>
+        <td class="abbr">A₂</td>
+        <td>Alter ≥75 Jahre</td>
+        <td>Unabhängiger RF für thromboembolische Ereignisse</td>
+        <td class="pts" style="color:#b02020">2</td>
+      </tr>
+      <tr style="background:#fafaf8">
+        <td class="abbr">D</td>
+        <td>Diabetes mellitus</td>
+        <td>NBS &gt;125 mg/dL (7 mmol/L) oder Behandlung mit Antidiabetika / Insulin</td>
+        <td class="pts">1</td>
+      </tr>
+      <tr>
+        <td class="abbr">S₂</td>
+        <td>Schlaganfall / TIA / TE</td>
+        <td>Z.n. thromboembolischem Ereignis (inkl. systemischer Thromboembolie)</td>
+        <td class="pts" style="color:#b02020">2</td>
+      </tr>
+      <tr style="background:#fafaf8">
+        <td class="abbr">V</td>
+        <td>Vaskuläre Erkrankung</td>
+        <td>KHK inkl. Angina pectoris, Z.n. MI / Revaskularisierung · pAVK · Aortenplaque ≥4 mm</td>
+        <td class="pts">1</td>
+      </tr>
+      <tr>
+        <td class="abbr">A</td>
+        <td>Alter 65–74 Jahre</td>
+        <td>Unabhängiger RF für thromboembolische Ereignisse</td>
+        <td class="pts">1</td>
+      </tr>
+      <tr class="tot">
+        <td colspan="3" style="font-weight:700">Maximalpunktzahl</td>
+        <td class="pts">8</td>
+      </tr>
+      <tr class="interp">
+        <td colspan="4" style="padding:4px 7px;font-size:9.5px">
+          <b>0 Pkt:</b> Niedriges TE-Risiko · keine routinemäßige OAK &nbsp;|&nbsp;
+          <b>1 Pkt:</b> Individuell abwägen &nbsp;|&nbsp;
+          <b>≥2 Pkt:</b> <span style="color:#b02020;font-weight:700">Erhöhtes Risiko → OAK definitiv indiziert</span>
+        </td>
+      </tr>
+    </table>
+    <div class="score-note">Früher CHA₂DS₂VASc-Score (mit „Sc" für Sex/female). ESC 2024: „Sc" entfernt, da kein unabhängiger RF. Score bei Erstdiagnose + jeder Folgevorstellung erheben!</div>
+  </div>
+
+  <!-- Blutungsrisiko -->
+  <div class="score-card">
+    <div class="score-hd">Blutungsrisikofaktoren unter OAK · ESC 2024 (ehemals HAS-BLED)</div>
+    <table class="stab">
+      <tr><th>Kategorie</th><th>Risikofaktoren</th></tr>
+      <tr>
+        <td style="font-weight:600;white-space:nowrap;color:#b02020;font-size:10px">Nicht-modifizierbar</td>
+        <td>
+          Alter &gt;65 Jahre<br>
+          Z.n. schwerem Blutungsereignis<br>
+          Schwere (dialysepflichtige) chronische Nierenerkrankung oder Transplantatniere<br>
+          Schwere Leberfunktionsstörung / Leberzirrhose<br>
+          Z.n. Schlaganfall, Kleingefäß-KHK<br>
+          Diabetes mellitus
+        </td>
+      </tr>
+      <tr style="background:#fafaf8">
+        <td style="font-weight:600;white-space:nowrap;color:#cc8800;font-size:10px">Potenziell<br>modifizierbar</td>
+        <td>
+          Anämie<br>
+          Thrombozytopenie oder gestörte Thrombozytenfunktion<br>
+          Schlechtes Management einer VKA-Therapie (z.B. TTR &lt;70%)<br>
+          Komedikation mit TAH / NSAR
+        </td>
+      </tr>
+    </table>
+    <div class="score-note">
+      <b>Wichtig:</b> Erhöhtes Blutungsrisiko ist keine Kontraindikation für OAK! → Modifizierbare RF einstellen + engmaschiges Follow-up.<br>
+      HAS-BLED-Score: früher empfohlen, mittlerweile durch individuelle Risikobeurteilung ersetzt (ESC 2024).
+    </div>
+  </div>
+
+</div><!-- /score-wrap -->
+
+<!-- ============================================================
+     KOMPLIKATIONEN
+     ============================================================ -->
+<div class="komp-wrap">
+  <div class="sect-h">Komplikationen</div>
+  <div class="komp-g">
+
+    <div class="c cr">
+      <div class="ctag">Akute Komplikationen</div>
+      <div class="ctit">Thromboembolien + Hämodynamik</div>
+      <hr class="cdiv">
+      <div class="cbody">
+        <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#b02020;margin-bottom:2px">Thrombenbildung (insb. im LAA) → Thromboembolien</div>
+        <ul>
+          <li><span class="cave">Ischämischer Schlaganfall / TIA</span> — häufigste und gefährlichste Komplikation</li>
+          <li>Niereninfarkt · Milzinfarkt</li>
+          <li>Akute Mesenterialischämie (Ileus-Risiko!)</li>
+          <li>Akute Extremitätenischämie</li>
+          <li class="s" style="font-weight:600">Wichtigste Embolieorgane: Gehirn · Niere · Milz</li>
+        </ul>
+        <hr class="cdiv">
+        <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#b02020;margin-bottom:2px">Hämodynamische Komplikation</div>
+        <ul>
+          <li>Akute Linksherzinsuffizienz → kardiales Lungenödem</li>
+          <li class="s">Insb. bei tachykardem Vorhofflimmern mit vorgeschädigtem Myokard</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="c ca">
+      <div class="ctag">Chronische Komplikation</div>
+      <div class="ctit">Tachykardiomyopathie</div>
+      <hr class="cdiv">
+      <div class="cbody">
+        <ul>
+          <li><span class="amb">Definition:</span> Herzinsuffizienz aufgrund tachykarder und/oder arrhythmischer Herzrhythmusstörung</li>
+          <li><span class="amb">Ätiologie:</span> AFib und Vorhofflattern (häufigste Ursachen) · seltener AVNRT, AVRT · ventrikuläre Extrasystolie</li>
+          <li><span class="amb">Klinik:</span> Symptome einer Herzinsuffizienz</li>
+          <li><span class="amb">Diagnostik:</span> <span class="cave">Ausschlussdiagnose!</span> Häufig erst retrospektiv gestellt</li>
+          <li><span class="amb">Therapie:</span> Beendigung der Herzrhythmusstörung + Beginn/Optimierung der Herzinsuffizienztherapie</li>
+          <li style="font-style:italic;color:#555">Merke: Tachykardiomyopathie ist reversibel bei erfolgreicher Rhythmus- oder Frequenzkontrolle!</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /komp-wrap -->
+
+<!-- ============================================================
+     NOTES
+     ============================================================ -->
+<div class="notes">
+  <div class="notes-t">Ergänzende Hinweise</div>
+  <div class="notes-s">Aus dem Originaltext · Therapiedetails · Wichtige Merksätze</div>
+  <div class="ng">
+
+    <div class="nc">
+      <div class="bar bl"></div>
+      <div class="nc-l">Antikoagulation</div>
+      <div class="nc-t">Peri-Kardioversion</div>
+      <div class="nc-b"><ul>
+        <li><b>Instabile Hämodynamik:</b> Notfall-EKV → AK so schnell wie möglich beginnen</li>
+        <li><b>Stabile Hämodynamik + Dauer &lt;24h:</b> AK nach CHA₂DS₂VA-Score; wenn indiziert, vor KV beginnen</li>
+        <li><b>Dauer ≥24h oder unklar:</b> EKV erst nach ≥3 Wochen therapeutischer AK <i>oder</i> TEE mit Thrombenausschluss</li>
+        <li><b>Nach KV (AFib ≥24h):</b> Mind. 4 Wochen AK, danach Reevaluation nach Score</li>
+        <li><span class="cave">Cave:</span> AFib &lt;24h + Score 0 → AK optional; Score ≥1 → mind. 4 Wochen AK</li>
+      </ul></div>
+    </div>
+
+    <div class="nc">
+      <div class="bar rd"></div>
+      <div class="nc-l">Vorhofflattern · EKG</div>
+      <div class="nc-t">EKG-Muster + Therapie</div>
+      <div class="nc-b"><ul>
+        <li>Typisches „Counter Clockwise"-Flattern (ca. 90%): Sägezahnmuster in II/III/aVF <span class="cave">negativ</span>, V₁ positiv</li>
+        <li>Vorhoffrequenz 250–320/min · meist 2:1-Überleitung → Kammerfrequenz 120–160/min</li>
+        <li>Atypisches Flattern (ca. 5%): keine pathognomonischen EKG-Muster</li>
+        <li>Thromboembolieprophylaxe: wie AFib nach CHA₂DS₂VA-Score</li>
+        <li><span class="first">CTI-Katheterablation</span> = Standardtherapie der Rhythmuskontrolle bei typischem Flattern</li>
+        <li>&gt;50% der Betroffenen entwickeln zusätzlich AFib!</li>
+      </ul></div>
+    </div>
+
+    <div class="nc">
+      <div class="bar am"></div>
+      <div class="nc-l">Antiarrhythmika</div>
+      <div class="nc-t">Substanzwahl + Wichtige Hinweise</div>
+      <div class="nc-b"><ul>
+        <li>Flecainid / Propafenon: <span class="cave">KI bei struktureller Herzerkrankung</span> (proarrhythmisch!)</li>
+        <li>Vernakalant (i.v.): rasch wirksam, nur bei AFib (nicht bei AFlut)</li>
+        <li>Amiodaron: breitestes Indikationsspektrum incl. HI; <span class="cave">erhebliche NW</span> (Schilddrüse, Lunge, Leber, Auge) bei Langzeittherapie</li>
+        <li>Dronedaron: geringere NW als Amiodaron, <span class="cave">KI bei schwerer HI oder permanentem AFib</span></li>
+        <li>Pill-in-the-pocket: Selbstmedikation bei nachgewiesener Sicherheit (Flecainid/Propafenon) — stärkt Selbstwirksamkeit</li>
+        <li><span class="cave">Antiarrhythmika sind NW-reiche Substanzen</span> — Einsatz wohlüberlegt!</li>
+      </ul></div>
+    </div>
+
+    <div class="nc">
+      <div class="bar mu"></div>
+      <div class="nc-l">Katheterablation</div>
+      <div class="nc-t">PVI · Indikation &amp; Methode</div>
+      <div class="nc-b"><ul>
+        <li><span class="first">Erstlinientherapie beim paroxysmalen AFib</span> — überlegen gegenüber med. Antiarrhythmika</li>
+        <li>Alternative bei KI für oder Wirkverlust von Antiarrhythmika</li>
+        <li>Methode: Pulmonalvenenisolation (PVI) + gezielte Ablation mit 3D-Mapping</li>
+        <li>Vorteil: keine systemischen AA-NW · möglicherweise positiver Effekt auf strukturelles Remodeling</li>
+        <li>Nachteile: Invasivität · Analgosedierung · eingriffsspezifische Risiken</li>
+        <li>Erfolgsversprechend: kurz bestehendes, insb. paroxysmales AFib + adäquate Upstream-Therapie</li>
+      </ul></div>
+    </div>
+
+    <div class="nc" style="grid-column:1/3">
+      <div class="bar rd"></div>
+      <div class="nc-l">Wichtige Kontraindikationen &amp; Verbote</div>
+      <div class="nc-t">Kritische Merksätze für M3</div>
+      <div class="nc-b" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <ul>
+          <li><span class="cave">VHF mit Präexzitation (WPW):</span> Keine BB, NDCA, Adenosin, Digitalis → Blockade AV-Knoten → accessory pathway führt Stimulus → Degeneration in VF!</li>
+          <li><span class="cave">Instabile Hämodynamik + Tachyarrhythmia absoluta:</span> Direkte elektrische Kardioversion — keine medikamentöse Frequenzkontrolle first!</li>
+          <li>AV-Knotenablation = Ultima Ratio → erzeugt <span class="cave">komplette Schrittmacherabhängigkeit</span>!</li>
+        </ul>
+        <ul>
+          <li>Erhöhtes Blutungsrisiko ist <span class="cave">keine</span> Kontraindikation für OAK → RF modifizieren + engmaschig überwachen</li>
+          <li>DOAK bei mind. mittelgr. Mitralstenose oder Z.n. mech. HKE: <span class="cave">kontraindiziert</span> → VKA obligat</li>
+          <li>Antiarrhythmika bei Langzeittherapie: Nutzen-Risiko-Abwägung bei jeder Folgevorstellung!</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="nc" style="grid-column:3/5">
+      <div class="bar gr"></div>
+      <div class="nc-l">Frequenz- vs. Rhythmuskontrolle</div>
+      <div class="nc-t">Strategievergleich</div>
+      <div class="nc-b" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#2a4a7f;margin-bottom:3px">Frequenzkontrolle</div>
+          <ul>
+            <li><span class="first">Vorteile:</span> Schneller Wirkeintritt · sichere Anwendung</li>
+            <li><span class="cave">Nachteile:</span> Kein Einfluss auf strukturelle Langzeitveränderungen · erhöhtes Bradykardierisiko</li>
+            <li>Initiale Basistherapie bei Erstdiagnose</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#1a6b3a;margin-bottom:3px">Rhythmuskontrolle</div>
+          <ul>
+            <li><span class="first">Vorteile:</span> Möglicherweise positiver Einfluss auf strukturelles Remodeling</li>
+            <li><span class="cave">Nachteile:</span> Erhöhtes TE-Risiko · geringere Erfolgsaussichten bei fortgeschrittenem Remodeling</li>
+            <li>Besonders erfolgreich bei kurzem, paroxysmalem AFib + adäquater Upstream-Therapie</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ng -->
+</div><!-- /notes -->
+
+<footer>
+  <span>ESC Guidelines for AFib Management 2024 · AMBOSS Vorhofflimmern · AF-CARE-Konzept</span>
+  <span>Vorhofflimmern · Klinische Referenz &amp; Therapiealgorithmus · M3-Approbation</span>
+</footer>
+
+</body>
+</html>

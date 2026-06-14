@@ -302,13 +302,13 @@
     const mRBC2 = new THREE.MeshStandardMaterial({ color: 0x9e1520, roughness: .5, metalness: .05, transparent: true });
     const mWBC = new THREE.MeshStandardMaterial({ color: 0xe9e2f0, roughness: .65, transparent: true, flatShading: true });
     const mPLT = new THREE.MeshStandardMaterial({ color: 0xd8b389, roughness: .7, transparent: true, flatShading: true });
-    const N = innerWidth < 760 ? 42 : Math.round(Math.min(150, 90 + innerWidth / 14)); cells = [];
+    const N = innerWidth < 760 ? 80 : Math.round(Math.min(150, 90 + innerWidth / 14)); cells = [];
     for (let i = 0; i < N; i++) {
       const roll = Math.random(); let mesh, scale;
       if (roll < 0.78) { mesh = new THREE.Mesh(rbcGeo, (Math.random() < .5 ? mRBC : mRBC2).clone()); scale = .5 + Math.random() * .18; }
       else if (roll < 0.93) { mesh = new THREE.Mesh(pltGeo, mPLT.clone()); scale = .5 + Math.random() * .3; }
       else { mesh = new THREE.Mesh(wbcGeo, mWBC.clone()); scale = .7 + Math.random() * .25; }
-      mesh.scale.setScalar(scale); mesh.rotation.set(Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28); mesh.frustumCulled = false;
+      mesh.scale.setScalar(innerWidth < 760 ? scale * 1.5 : scale); mesh.rotation.set(Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28); mesh.frustumCulled = false;
       helixGroup.add(mesh);
       cells.push({ mesh, baseT: Math.random(), flow: 0.00010 + Math.random() * 0.00004, offAng: Math.random() * 6.28, offRad: Math.random() * 3.4, spin: new THREE.Vector3((Math.random() - .5) * .006, (Math.random() - .5) * .006, (Math.random() - .5) * .006) });
     }

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thromboseprophylaxe – Algorithmus</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #eef5f8;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #08222c;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #08222c;
+    letter-spacing: -0.4px;
+  }
+  header p {
+    color: #45697a;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  header .warn {
+    display: inline-block;
+    margin-top: 8px;
+    background: #fff8ec;
+    border: 1px solid #cc8800;
+    border-radius: 3px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #8a5500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  .notes {
+    max-width: 1060px;
+    margin: 20px auto 0;
+    border-top: 2px solid #08222c;
+    padding-top: 14px;
+  }
+  .notes-title {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #08222c;
+    margin-bottom: 2px;
+    letter-spacing: -0.1px;
+  }
+  .notes-subtitle {
+    font-size: 9px;
+    font-weight: 500;
+    color: #45697a;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+  }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .note-card {
+    background: #fff;
+    border: 1px solid #cddbe0;
+    border-radius: 3px;
+    padding: 7px 10px 7px 14px;
+    position: relative;
+  }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .note-card .bar.blue  { background: #2a4a7f; }
+  .note-card .bar.amber { background: #7a4a00; }
+  .note-card .bar.red   { background: #b02020; }
+  .note-card .bar.green { background: #1a6b3a; }
+  .note-card .bar.muted { background: #45697a; }
+
+  .note-card-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #5e7e8a;
+    margin-bottom: 1px;
+  }
+  .note-card-title {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #08222c;
+    margin-bottom: 4px;
+    letter-spacing: -0.1px;
+  }
+  .note-card-body {
+    font-size: 10.5px;
+    font-weight: 400;
+    color: #13323d;
+    line-height: 1.6;
+  }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  .cave  { color: #b02020; font-weight: 600; }
+  .ki    { color: #b02020; font-weight: 600; }
+  .neg   { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+
+  footer {
+    max-width: 1100px;
+    margin: 14px auto 0;
+    padding-top: 12px;
+    border-top: 1px solid #cddbe0;
+    color: #5e7e8a;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Thromboseprophylaxe – Algorithmus</h1>
+  <p>AMBOSS · AWMF S2k-Leitlinie 2023 · DGA</p>
+  <div class="warn">⚠ Eigene Erstellung – Fehler möglich. Bitte gegenchecken.</div>
+</header>
+
+<div class="wrap">
+<svg width="1100" height="965" viewBox="0 0 1100 965" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#555"/>
+  </marker>
+  <marker id="arr-red" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#b02020"/>
+  </marker>
+  <style>
+    text {
+      font-family: 'Roboto Flex', system-ui, sans-serif;
+      font-size: 11.5px;
+      font-weight: 400;
+      fill: #08222c;
+    }
+    .tag {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+    .lbl {
+      font-size: 10.5px;
+      font-weight: 500;
+      fill: #444;
+    }
+    .title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .cave  { fill: #b02020; font-weight: 700; }
+    .first { fill: #1a6b3a; font-weight: 700; }
+    .muted { fill: #666; }
+  </style>
+</defs>
+
+<!-- ============================================================
+     CONNECTORS  (drawn first — below all boxes)
+     ============================================================ -->
+
+<!-- START → Box2 -->
+<line x1="550" y1="57" x2="550" y2="78" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box2 → three risk branches (junction dot at bottom center) -->
+<circle cx="550" cy="198" r="4.5" fill="#555"/>
+<polyline points="550,198 189,198 189,253" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="550" y1="198" x2="550" y2="253" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<polyline points="550,198 911,198 911,253" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Branch labels -->
+<text x="358" y="214" class="lbl" text-anchor="middle">Niedriges Risiko</text>
+<text x="752" y="214" class="lbl" text-anchor="middle">Hohes Risiko</text>
+
+<!-- Risk boxes → reconverge → Basismaßnahmen -->
+<polyline points="189,333 189,408 544,408" fill="none" stroke="#555" stroke-width="2"/>
+<line x1="550" y1="348" x2="550" y2="408" stroke="#555" stroke-width="2"/>
+<polyline points="911,363 911,408 556,408" fill="none" stroke="#555" stroke-width="2"/>
+<circle cx="550" cy="408" r="4.5" fill="#555"/>
+<line x1="550" y1="408" x2="550" y2="413" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box4 Basis → Box5 Physik -->
+<line x1="550" y1="491" x2="550" y2="510" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- KI box ← dashed connection from Box5 left -->
+<line x1="250" y1="550" x2="232" y2="550" stroke="#b02020" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-red)"/>
+
+<!-- Box5 Physik → Box6 Medikamentös -->
+<line x1="550" y1="590" x2="550" y2="610" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box6 → Box7 Dauer -->
+<line x1="550" y1="742" x2="550" y2="760" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box7 → three duration boxes (junction dot at bottom) -->
+<circle cx="550" cy="830" r="4.5" fill="#555"/>
+<polyline points="550,830 189,830 189,858" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="550" y1="830" x2="550" y2="858" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<polyline points="550,830 911,830 911,858" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Duration branch labels -->
+<text x="358" y="845" class="lbl" text-anchor="middle">Viszeralchirurgie</text>
+<text x="757" y="845" class="lbl" text-anchor="middle">Hüft-TEP / Becken</text>
+
+<!-- ============================================================
+     BOXES WITH TEXT
+     ============================================================ -->
+
+<!-- ── START pill ── -->
+<rect x="310" y="18" width="480" height="39" rx="20" fill="#08222c"/>
+<text x="550" y="43" style="fill:#fff" font-size="14" font-weight="700" text-anchor="middle">Thromboseprophylaxe – Indikation geprüft</text>
+
+<!-- ── Box2: Risikostratifizierung ── -->
+<rect x="170" y="78" width="760" height="120" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<circle cx="923" cy="76" r="12" fill="#08222c"/>
+<text x="923" y="81" style="fill:#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="190" y="97" class="tag" fill="#555">Schritt 1 · Risikostratifizierung</text>
+<text x="550" y="119" class="title" text-anchor="middle" fill="#08222c">Thromboserisiko abschätzen</text>
+<line x1="190" y1="127" x2="918" y2="127" stroke="#d5cfc5" stroke-width="1"/>
+<text x="550" y="145" font-size="11" text-anchor="middle" fill="#444">Expositionelle RF: OP · Immobilisation · Trauma · Schwangerschaft · Malignomtherapie · Langstreckenflug</text>
+<text x="550" y="163" font-size="11" text-anchor="middle" fill="#444">Dispositionelle RF: Thrombophilie · frühere VTE · Malignom · Adipositas (BMI >30) · Alter >60 · Östrogentherapie</text>
+<text x="550" y="180" font-size="10" text-anchor="middle" fill="#888" font-style="italic">Beide Kategorien gemeinsam bewerten → Gesamtrisiko = Exposition + Disposition (z.B. Caprini-Score)</text>
+
+<!-- ── Box3a: Niedriges Risiko ── -->
+<rect x="44" y="253" width="290" height="80" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="64" y="272" class="tag" fill="#1a6b3a">Niedriges Thromboserisiko</text>
+<line x1="64" y1="278" x2="322" y2="278" stroke="#cde8d5" stroke-width="1"/>
+<text x="64" y="294" font-size="10.5" fill="#1a4a2a">· Kleiner Eingriff · kurze OP-Dauer</text>
+<text x="64" y="309" font-size="10.5" fill="#1a4a2a">· Keine / wenige dispositionelle RF</text>
+<text x="64" y="324" font-size="10.5" fill="#1a4a2a">· Ambulant oder kurzstationär</text>
+
+<!-- ── Box3b: Mittleres Risiko ── -->
+<rect x="405" y="253" width="290" height="95" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="425" y="272" class="tag" fill="#8a5500">Mittleres Thromboserisiko</text>
+<line x1="425" y1="278" x2="683" y2="278" stroke="#f0ddb0" stroke-width="1"/>
+<text x="425" y="294" font-size="10.5" fill="#6a4000">· Größere abdomin./thorakale Chirurgie</text>
+<text x="425" y="309" font-size="10.5" fill="#6a4000">· Internistische Erkrankung + Immobil.</text>
+<text x="425" y="324" font-size="10.5" fill="#6a4000">· Moderate Thrombophilie</text>
+<text x="425" y="339" font-size="10.5" fill="#6a4000">· Gynäkologie · Urologie</text>
+
+<!-- ── Box3c: Hohes Risiko ── -->
+<rect x="766" y="253" width="290" height="110" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="786" y="272" class="tag" fill="#b02020">Hohes Thromboserisiko</text>
+<line x1="786" y1="278" x2="1044" y2="278" stroke="#f0c0c0" stroke-width="1"/>
+<text x="786" y="294" font-size="10.5" fill="#7a1a1a">· Hüft-/Knie-TEP · Hüftnahe Fraktur</text>
+<text x="786" y="309" font-size="10.5" fill="#7a1a1a">· Malignomchirurgie</text>
+<text x="786" y="324" font-size="10.5" fill="#7a1a1a">· Schwere Thrombophilie · APS</text>
+<text x="786" y="339" font-size="10.5" fill="#7a1a1a">· Frühere VTE · Rezidiv-Ereignis</text>
+<text x="786" y="354" font-size="10.5" fill="#7a1a1a">· Mehrere dispositionelle RF</text>
+
+<!-- ── Box4: Basismaßnahmen ── -->
+<rect x="250" y="413" width="600" height="78" rx="5" fill="#fff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="270" y="432" class="tag" fill="#2a4a7f">Schritt 2 · Basismaßnahmen — immer</text>
+<text x="270" y="453" class="title" fill="#08222c">Allgemeine Maßnahmen</text>
+<line x1="270" y1="461" x2="838" y2="461" stroke="#b8c8f0" stroke-width="1"/>
+<text x="270" y="474" font-size="10.5" fill="#333">Frühmobilisation · Bewegungsübungen / Muskelpumpe · Ausreichende Flüssigkeitszufuhr</text>
+<text x="270" y="488" font-size="10.5" fill="#333">Beine hochlagern · Einschnürende Kleidung meiden · <tspan font-weight="500">Keine Bettruhe!</tspan></text>
+
+<!-- ── Box5: Physikalische Maßnahmen ── -->
+<rect x="250" y="510" width="600" height="80" rx="5" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="1.5"/>
+<text x="270" y="528" class="tag" fill="#2a4a7f">Physikalische Maßnahmen — zusätzlich anwendbar (alle Risikogruppen)</text>
+<line x1="270" y1="534" x2="838" y2="534" stroke="#b8c8f0" stroke-width="1"/>
+<text x="270" y="548" font-size="10.5" fill="#333">MTPS (Antithrombose-Strümpfe): hoher Ruhedruck — auch bei Bettlägerigkeit einsetzbar</text>
+<text x="270" y="563" font-size="10.5" fill="#333">Med. Kompressionsstrümpfe: nur bei erhaltener Mobilität wirksam · IPK: bei Immobilität</text>
+<text x="270" y="578" font-size="10.5"><tspan class="cave">Cave:</tspan><tspan fill="#555"> Kein belegter Zusatznutzen physikalischer Maßnahmen in Kombination mit Medikament</tspan></text>
+
+<!-- ── KI Box (physikalische Maßnahmen) ── -->
+<rect x="15" y="510" width="215" height="80" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text x="33" y="527" class="tag" fill="#b02020">KI phys. Maßnahmen</text>
+<line x1="33" y1="533" x2="218" y2="533" stroke="#f0c0c0" stroke-width="1"/>
+<text x="33" y="547" font-size="10" fill="#7a1a1a">· Fortgeschr. pAVK (abs.)</text>
+<text x="33" y="561" font-size="10" fill="#7a1a1a">· Phlegmasia coerulea dolens</text>
+<text x="33" y="575" font-size="10" fill="#7a1a1a">· Dekompens. Herzinsuffizienz</text>
+<text x="33" y="585" font-size="9" fill="#999" font-style="italic">(rel.: Neuropathie · Wunden)</text>
+
+<!-- ── Box6: Medikamentöse Prophylaxe ── -->
+<rect x="155" y="610" width="790" height="132" rx="5" fill="#fafaf8" stroke="#888" stroke-width="1.5"/>
+<!-- Tag line -->
+<text x="175" y="626" class="tag" fill="#555">Schritt 3 · Medikamentöse Prophylaxe — risikoadaptiert · bei mittlerem/hohem Risiko</text>
+<!-- Header divider -->
+<line x1="155" y1="632" x2="945" y2="632" stroke="#cddbe0" stroke-width="1"/>
+<!-- Vertical column dividers -->
+<line x1="418" y1="632" x2="418" y2="742" stroke="#cddbe0" stroke-width="1"/>
+<line x1="680" y1="632" x2="680" y2="742" stroke="#cddbe0" stroke-width="1"/>
+
+<!-- Column 1: Niedrig -->
+<text x="285" y="649" text-anchor="middle" font-size="11" font-weight="600" fill="#1a6b3a">● Niedriges Risiko</text>
+<text x="175" y="668" font-size="10.5" fill="#1a6b3a" font-weight="600" font-style="italic">Keine med. Prophylaxe</text>
+<text x="175" y="684" font-size="10" fill="#555">Basismaßnahmen ausreichend</text>
+<text x="175" y="700" font-size="10" fill="#888" font-style="italic">± MTPS nach Indikation</text>
+
+<!-- Column 2: Mittel -->
+<text x="549" y="649" text-anchor="middle" font-size="11" font-weight="600" fill="#7a4a00">● Mittleres Risiko</text>
+<text x="436" y="668" font-size="10.5" fill="#6a4000" font-weight="600">NMH: 1. Wahl</text>
+<text x="436" y="684" font-size="10" fill="#555">Dalteparin · Enoxaparin</text>
+<text x="436" y="699" font-size="10" fill="#888" font-style="italic">z.B. Enoxaparin 20–40 mg/d s.c.</text>
+<text x="436" y="714" font-size="10" fill="#555">Alternative: UFH 3×5.000 IE s.c.</text>
+<text x="436" y="729" font-size="9.5" fill="#888" font-style="italic">Beginn: unmittelbar perioperativ</text>
+
+<!-- Column 3: Hoch -->
+<text x="812" y="649" text-anchor="middle" font-size="11" font-weight="600" fill="#b02020">● Hohes Risiko</text>
+<text x="698" y="668" font-size="10.5" fill="#b02020" font-weight="600">NMH bevorzugt</text>
+<text x="698" y="684" font-size="10" fill="#555">Dalteparin · Enoxaparin</text>
+<text x="698" y="699" font-size="10" fill="#555">Alternative: Fondaparinux 2,5 mg/d s.c.</text>
+<text x="698" y="714" font-size="10" fill="#6a4000" font-weight="500">Orthopäd. Eingriffe → ggf. DOAK:</text>
+<text x="698" y="729" font-size="10" fill="#555">Apixaban · Rivaroxaban · Dabigatran</text>
+
+<!-- ── Box7: Dauer ── -->
+<rect x="230" y="760" width="640" height="70" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<circle cx="864" cy="758" r="12" fill="#08222c"/>
+<text x="864" y="763" style="fill:#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="250" y="779" class="tag" fill="#555">Schritt 4 · Wie lange prophylaxieren?</text>
+<text x="550" y="801" font-size="11" text-anchor="middle" fill="#08222c">Grundsätzlich bis zur vollständigen Mobilisation</text>
+<text x="550" y="820" font-size="10.5" text-anchor="middle" fill="#555">Bei eingriffsspezifischer Empfehlung: verlängert → Standarddauern unten</text>
+
+<!-- ── Box8a: Viszeralchirurgie ── -->
+<rect x="44" y="858" width="290" height="88" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="1.5"/>
+<text x="64" y="877" class="tag" fill="#8a5500">7 Tage</text>
+<text x="64" y="899" class="title" fill="#08222c">Viszeralchirurgie</text>
+<line x1="64" y1="907" x2="322" y2="907" stroke="#f0ddb0" stroke-width="1"/>
+<text x="64" y="921" font-size="10.5" fill="#6a4000">Größere abdominal- / thorakale</text>
+<text x="64" y="936" font-size="10.5" fill="#6a4000">Eingriffe ohne spez. Verlängerung</text>
+
+<!-- ── Box8b: Kniegelenkersatz ── -->
+<rect x="405" y="858" width="290" height="88" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="1.5"/>
+<text x="425" y="877" class="tag" fill="#b02020">11–14 Tage</text>
+<text x="425" y="899" class="title" fill="#08222c">Kniegelenkersatz</text>
+<line x1="425" y1="907" x2="683" y2="907" stroke="#f0c0c0" stroke-width="1"/>
+<text x="425" y="921" font-size="10.5" fill="#7a1a1a">Endoprothetik Kniegelenk</text>
+<text x="425" y="936" font-size="10.5" fill="#7a1a1a">Bis ausreichende Mobilisation</text>
+
+<!-- ── Box8c: Hüftgelenkersatz / Becken ── -->
+<rect x="766" y="858" width="290" height="97" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="786" y="877" class="tag" fill="#b02020">4–5 Wochen</text>
+<text x="786" y="899" class="title" fill="#08222c">Hüft-TEP · Becken</text>
+<line x1="786" y1="907" x2="1044" y2="907" stroke="#f0c0c0" stroke-width="1"/>
+<text x="786" y="921" font-size="10.5" fill="#7a1a1a">Hüft-TEP · Hüftnahe Frakturversorgung</text>
+<text x="786" y="936" font-size="10.5" fill="#7a1a1a">Beckennahe Eingriffe</text>
+<text x="786" y="948" font-size="9.5" fill="#b02020" font-weight="600">Verlängern bei fortbestehender Immobilität</text>
+
+</svg>
+</div>
+
+<!-- ============================================================
+     NOTES SECTION
+     ============================================================ -->
+<div class="notes">
+  <div class="notes-title">Ergänzende Hinweise</div>
+  <div class="notes-subtitle">Aus dem AMBOSS-Artikel · nicht direkt im Algorithmus abgebildet · ⚠ Eigene Erstellung – bitte gegenchecken</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Physikalische Maßnahmen</div>
+      <div class="note-card-title">MTPS vs. Kompressionsstrümpfe</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>MTPS</strong> (Antithrombose-Strümpfe): hoher Ruhedruck durch hohe Elastizität — auch bei Bettlägerigkeit einsetzbar</li>
+          <li><strong>Med. Kompressionsstrümpfe</strong>: entfalten Druck nur bei Bewegung (distal → proximal) — <span class="cave">nur bei erhaltener Mobilität wirksam</span></li>
+          <li>Kein belegter additiver Effekt physikalischer Maßnahmen bei Kombination mit medikamentöser Prophylaxe</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Kontraindikationen</div>
+      <div class="note-card-title">KI physikalischer Maßnahmen</div>
+      <div class="note-card-body">
+        <ul>
+          <li><span class="cave">Absolut:</span> Fortgeschrittene pAVK · Phlegmasia coerulea dolens · dekompensierte Herzinsuffizienz</li>
+          <li><span class="cave">Relativ:</span> Fortgeschrittene periphere Neuropathie (z.B. Diabetes mellitus)</li>
+          <li><span class="cave">Relativ:</span> Nässende Wunden / Hautinfektionen der Extremität</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">DOAKs · Zulassung</div>
+      <div class="note-card-title">DOAK in der Prophylaxe: beschränktes Spektrum</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Zugelassen bei <strong>orthopädischen Eingriffen</strong>: Apixaban, Rivaroxaban, Dabigatran (Knie-/Hüftgelenkersatz)</li>
+          <li>Beschränkteres Zulassungsspektrum als NMH / Fondaparinux</li>
+          <li><span class="cave">Cave:</span> Start erst nach ausreichender Hämostase — nicht präoperativ</li>
+          <li>VKA: zugelassen zur Prophylaxe, aber wegen verzögertem Wirkeintritt kaum eingesetzt</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">UFH · Sonderindikationen</div>
+      <div class="note-card-title">Wann unfraktioniertes Heparin?</div>
+      <div class="note-card-body">
+        <ul>
+          <li><span class="ki">KI für NMH / Fondaparinux:</span> schwere Niereninsuffizienz / Dialyse → UFH</li>
+          <li>Antagonisierbar mit Protamin (Vorteil perioperativ, z.B. bei Reinterventionen)</li>
+          <li>Höheres HIT-Risiko als NMH → NMH möglichst bevorzugen</li>
+          <li>Monitoring: aPTT (therapeutische Dosis) · prophylaktische Dosis: keine aPTT-Kontrolle erforderlich</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Schwangerschaft</div>
+      <div class="note-card-title">Thromboseprophylaxe peripartal</div>
+      <div class="note-card-body">
+        <ul>
+          <li>NMH bevorzugt in Schwangerschaft (kein Plazentatransfer, günstiges NW-Profil, kein HIT)</li>
+          <li>DOAKs und VKA: <span class="neg">kontraindiziert</span> in Schwangerschaft und Stillzeit</li>
+          <li>Peripartale Phase: UFH bevorzugen (rasche Antagonisierbarkeit mit Protamin)</li>
+          <li>Thromboembolien = eine der häufigsten tödlich verlaufenden Erkrankungen in Schwangerschaft / Wochenbett</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Thrombophilie</div>
+      <div class="note-card-title">Einfluss auf Prophylaxeentscheidung</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Heterozygote Faktor-V-Leiden-Mutation allein → <span class="neg">keine</span> dauerhafte Sekundärprophylaxe (DGIM-Empfehlung)</li>
+          <li>Schwere Thrombophilie (APS, Antithrombin-Mangel, Protein C/S-Mangel): individuelle Risikoabwägung</li>
+          <li>Thrombophilie-Screening: <span class="cave">nur</span> wenn therapeutische Konsequenz erwartet wird — nicht Routine</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>AMBOSS · AWMF S2k-Leitlinie: Diagnostik und Therapie der Venenthrombose und Lungenembolie (2023)</span>
+  <span>Thromboseprophylaxe · Algorithmus v1</span>
+</footer>
+
+</body>
+</html>

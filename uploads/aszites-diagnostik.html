@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aszites – Diagnostikalgorithmus</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f0ece3;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #1a1814;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #1a1814;
+    letter-spacing: -0.4px;
+  }
+  header p {
+    color: #5a5650;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  /* ── Notes section ── */
+  .notes {
+    max-width: 1060px;
+    margin: 20px auto 0;
+    border-top: 2px solid #1a1814;
+    padding-top: 14px;
+  }
+  .notes-title {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #1a1814;
+    margin-bottom: 2px;
+    letter-spacing: -0.1px;
+  }
+  .notes-subtitle {
+    font-size: 9px;
+    font-weight: 500;
+    color: #5a5650;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+  }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .note-card {
+    background: #fff;
+    border: 1px solid #c8c2b5;
+    border-radius: 3px;
+    padding: 7px 10px 7px 14px;
+    position: relative;
+  }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .note-card .bar.blue  { background: #2a4a7f; }
+  .note-card .bar.amber { background: #7a4a00; }
+  .note-card .bar.red   { background: #b02020; }
+  .note-card .bar.muted { background: #5a5650; }
+  .note-card .bar.green { background: #1a6b3a; }
+
+  .note-card-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #7a7468;
+    margin-bottom: 1px;
+  }
+  .note-card-title {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #1a1814;
+    margin-bottom: 4px;
+    letter-spacing: -0.1px;
+  }
+  .note-card-body {
+    font-size: 10.5px;
+    font-weight: 400;
+    color: #2a2820;
+    line-height: 1.6;
+  }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  .cave  { color: #b02020; font-weight: 600; }
+  .ki    { color: #b02020; font-weight: 600; }
+  .neg   { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+
+  footer {
+    max-width: 1100px;
+    margin: 14px auto 0;
+    padding-top: 12px;
+    border-top: 1px solid #c8c2b5;
+    color: #7a7468;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Aszites – Diagnostikalgorithmus</h1>
+  <p>AMBOSS · Klinische Untersuchung · Aszitespunktion · Transsudat / Exsudat</p>
+</header>
+
+<div class="wrap">
+<svg width="1100" height="1000" viewBox="0 0 1100 1000" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#555"/>
+  </marker>
+  <marker id="arr-dash" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#aaa"/>
+  </marker>
+  <style>
+    text {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 11.5px;
+      font-weight: 400;
+      fill: #1a1814;
+    }
+    .tag  { font-size: 9.5px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    .lbl  { font-size: 10.5px; font-weight: 500; fill: #444; }
+    .title { font-size: 13px; font-weight: 600; }
+    .cave  { fill: #b02020; font-weight: 700; }
+    .first { fill: #1a6b3a; font-weight: 700; }
+    .ki    { fill: #b02020; font-weight: 700; }
+    .muted { fill: #666; }
+  </style>
+</defs>
+
+<!-- ============================================================
+     1. CONNECTORS  (drawn first — below all boxes)
+     ============================================================ -->
+
+<!-- START → Box1 -->
+<line x1="500" y1="57" x2="500" y2="97" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box1 → Box2 -->
+<line x1="500" y1="197" x2="500" y2="222" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box2 → Box3 (Ja) -->
+<line x1="500" y1="292" x2="500" y2="317" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="466" y="306" font-size="9.5" font-weight="600" fill="#1a6b3a">Ja ↓</text>
+
+<!-- Box2 → Kein Aszites (dashed, right) -->
+<line x1="760" y1="257" x2="793" y2="257" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arr-dash)"/>
+<rect x="795" y="241" width="238" height="34" rx="3" fill="#f5f0e8" stroke="#bbb" stroke-width="1" stroke-dasharray="4 2"/>
+<text x="812" y="257" font-size="10" font-weight="500" fill="#888">Nein → Kein Aszites:</text>
+<text x="812" y="270" font-size="10" font-weight="500" fill="#888">andere Diagnosen erwägen</text>
+
+<!-- Box3 → three parallel tracks -->
+<polyline points="500,407 500,427 190,427 190,437" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<polyline points="500,407 500,427 550,427 550,437" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<polyline points="500,407 500,427 910,427 910,437" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="190" y="423" class="lbl" text-anchor="middle">Makroskopie</text>
+<text x="550" y="423" class="lbl" text-anchor="middle">Labor / SAAG</text>
+<text x="910" y="423" class="lbl" text-anchor="middle">Zytologie / Mikrobio</text>
+
+<!-- Three boxes → reconverge → SAAG box -->
+<line x1="190" y1="592" x2="190" y2="610" stroke="#555" stroke-width="2"/>
+<line x1="550" y1="592" x2="550" y2="610" stroke="#555" stroke-width="2"/>
+<line x1="910" y1="592" x2="910" y2="610" stroke="#555" stroke-width="2"/>
+<line x1="190" y1="610" x2="910" y2="610" stroke="#555" stroke-width="2"/>
+<line x1="500" y1="610" x2="500" y2="620" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- SAAG box → Transsudat / Exsudat split -->
+<polyline points="500,687 500,697 280,697 280,707" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<polyline points="500,687 500,697 820,697 820,707" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="390" y="691" class="lbl" text-anchor="middle">SAAG ≥ 1,1 g/dL</text>
+<text x="660" y="691" class="lbl" text-anchor="middle">SAAG &lt; 1,1 g/dL</text>
+
+<!-- ============================================================
+     2. JUNCTION DOTS
+     ============================================================ -->
+<circle cx="500" cy="427" r="4.5" fill="#555"/>
+<circle cx="500" cy="610" r="4.5" fill="#555"/>
+<circle cx="500" cy="697" r="4.5" fill="#555"/>
+
+<!-- ============================================================
+     3. BOXES  (painted on top of connectors)
+     ============================================================ -->
+
+<!-- ── START pill ── -->
+<rect x="260" y="18" width="480" height="39" rx="20" fill="#1a1814"/>
+<text x="500" y="43" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">Klinischer Verdacht: Aszites</text>
+
+<!-- ── BOX 1: Klinische Untersuchung ── -->
+<rect x="240" y="97" width="520" height="100" rx="5" fill="#fff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="260" y="116" class="tag" fill="#2a4a7f">Schritt 1 · Klinische Untersuchung + Serumlabor</text>
+<text x="260" y="137" class="title" fill="#1a1814">Körperliche Befunde &amp; Basisdiagnostik</text>
+<text x="260" y="155" font-size="11" fill="#333">Undulation · Flankendämpfung · Wechsel des Klopfschalls bei Lageänderung</text>
+<text x="260" y="171" font-size="11" fill="#333">Serum: Albumin · Elektrolyte · ggf. Hypalbuminämie / Hyponatriämie (Verdünnung!)</text>
+<text x="260" y="187" font-size="10.5"><tspan class="cave">Cave:</tspan><tspan fill="#555"> Dyspnoe bei massivem Aszites (Zwerchfellhochstand) · Bauchwandhernien durch Druckanstieg</tspan></text>
+
+<!-- ── BOX 2: Bildgebung (decision) ── -->
+<rect x="240" y="222" width="520" height="70" rx="5" fill="#f5f0e8" stroke="#1a1814" stroke-width="2"/>
+<circle cx="754" cy="220" r="12" fill="#1a1814"/>
+<text x="754" y="225" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="260" y="241" class="tag" fill="#555">Schritt 2 · Bildgebung</text>
+<text x="500" y="262" class="title" text-anchor="middle" fill="#1a1814">Sonografie — Aszites bestätigt?</text>
+<text x="500" y="279" font-size="11" text-anchor="middle" fill="#555">Methode der Wahl · zuverlässig auch bei kleinen Mengen · CT: flüssigkeitsisodense Areale</text>
+
+<!-- ── BOX 3: Diagnostische Punktion ── -->
+<rect x="240" y="317" width="520" height="90" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="260" y="336" class="tag" fill="#1a6b3a">Schritt 3 · Diagnostische Aszitespunktion — obligat!</text>
+<text x="260" y="356" class="title" fill="#1a1814">Jeder neu diagnostizierte Aszites soll punktiert werden</text>
+<text x="260" y="373" font-size="11" fill="#1a4a2a">Sonografisch gesteuert · Punktionsort: lateraler Unterbauch (Monro-Punkt) · Rückenlage</text>
+<text x="260" y="389" font-size="11" fill="#1a4a2a">Obligat: Zellzahl · Eiweiß · Mikrobiologie (Proben in Blutkulturflaschen inokulieren)</text>
+<text x="260" y="403" font-size="10.5"><tspan class="cave">Cave:</tspan><tspan fill="#555"> Punktion VOR Antibiotika-Gabe · Albumin 6–8 g/L bei großvolumiger Parazentese (&gt;5 L)</tspan></text>
+
+<!-- ── BOX A: Makroskopischer Aspekt ── -->
+<rect x="40" y="437" width="300" height="155" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="60" y="456" class="tag" fill="#8a5500">Makroskopischer Aspekt</text>
+<text x="60" y="475" class="title" fill="#1a1814">Aussehen des Punktats</text>
+<line x1="60" y1="483" x2="328" y2="483" stroke="#f0ddb0" stroke-width="1"/>
+<text x="60" y="498" font-size="10.5" fill="#444">Klar / strohgelb → Transsudat (unauffällig)</text>
+<text x="60" y="514" font-size="10.5"><tspan fill="#b02020" font-weight="600">Blutig </tspan><tspan fill="#444">→ Hämorrhagisch (Malignom, Pankreatitis, Tbc)</tspan></text>
+<text x="60" y="530" font-size="10.5"><tspan fill="#b02020" font-weight="600">Trüb </tspan><tspan fill="#444">→ PMN↑ (Peritonitis) / Eiweiß↑ (Exsudat)</tspan></text>
+<text x="60" y="546" font-size="10.5"><tspan fill="#8a5500" font-weight="600">Milchig-trüb </tspan><tspan fill="#444">→ Chylöser Aszites (Chylomikronen)</tspan></text>
+<text x="60" y="562" font-size="10" fill="#888" font-style="italic">Ductus-thoracicus-Kompression/-Ruptur</text>
+<text x="60" y="577" font-size="10" fill="#666">→ Richtungsweisend — kein Alleindiagnosekriterium</text>
+
+<!-- ── BOX B: SAAG / Labor ── -->
+<rect x="400" y="437" width="300" height="155" rx="5" fill="#f5f0e8" stroke="#1a1814" stroke-width="2"/>
+<text x="420" y="456" class="tag" fill="#555">Laborchemie · Schlüsselparameter</text>
+<text x="420" y="475" class="title" fill="#1a1814">SAAG &amp; Eiweißgehalt</text>
+<line x1="420" y1="483" x2="688" y2="483" stroke="#c8c2b5" stroke-width="1"/>
+<text x="420" y="498" font-size="10.5" fill="#333">SAAG = Serum-Albumin − Aszites-Albumin (g/dL)</text>
+<text x="420" y="514" font-size="10.5"><tspan fill="#1a6b3a" font-weight="700">SAAG ≥ 1,1 </tspan><tspan fill="#333">→ Transsudat (portale Hypert.)</tspan></text>
+<text x="420" y="530" font-size="10.5"><tspan fill="#b02020" font-weight="700">SAAG &lt; 1,1 </tspan><tspan fill="#333">→ Exsudat</tspan></text>
+<text x="420" y="546" font-size="10.5" fill="#333">Eiweiß &lt;2,5 g/dL → Transsudat · &gt;2,5 → Exsudat</text>
+<text x="420" y="562" font-size="10" fill="#b02020"><tspan font-weight="700">Cave: </tspan>Tumormarker (CA-125 etc.) <tspan font-weight="700">nicht</tspan> empfohlen!</text>
+<text x="420" y="577" font-size="10" fill="#888" font-style="italic">Opt.: LDH · Fibronektin · Lipase (pankreatogen?)</text>
+
+<!-- ── BOX C: Zytologie / Mikrobiologie ── -->
+<rect x="760" y="437" width="300" height="155" rx="5" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="780" y="456" class="tag" fill="#2a4a7f">Zytologie + Mikrobiologie</text>
+<text x="780" y="475" class="title" fill="#1a1814">Zellanalyse &amp; Keimnachweis</text>
+<line x1="780" y1="483" x2="1048" y2="483" stroke="#b8c8f0" stroke-width="1"/>
+<text x="780" y="498" font-size="10.5"><tspan fill="#b02020" font-weight="700">PMN &gt;250/μL </tspan><tspan fill="#333">→ Diagnosekriterium SBP!</tspan></text>
+<text x="780" y="514" font-size="10.5" fill="#333">Lymphozyten↑ → Lymphom · abdominelle Tbc</text>
+<text x="780" y="530" font-size="10.5" fill="#333">Mikrobiologie: Erregernachweis häufig negativ!</text>
+<text x="780" y="546" font-size="10.5" fill="#333">Proben in Blutkulturflaschen inokulieren</text>
+<text x="780" y="562" font-size="10" fill="#666">ggf. Immunzytochemie bei Malignom-Verdacht</text>
+<text x="780" y="577" font-size="10" fill="#b02020" font-weight="600">Einsendung stets VOR Antibiotika-Gabe!</text>
+
+<!-- ── BOX 4: SAAG Klassifikation (decision) ── -->
+<rect x="235" y="620" width="530" height="67" rx="5" fill="#f5f0e8" stroke="#1a1814" stroke-width="2"/>
+<circle cx="760" cy="618" r="12" fill="#1a1814"/>
+<text x="760" y="623" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="255" y="639" class="tag" fill="#555">Schritt 4 · Differenzierung Transsudat / Exsudat</text>
+<text x="500" y="659" class="title" text-anchor="middle" fill="#1a1814">SAAG-basierte Klassifikation des Aszites</text>
+<text x="500" y="676" font-size="10.5" text-anchor="middle" fill="#666">Transsudat: SAAG ≥ 1,1 · Eiweiß &lt;2,5 g/dL  |  Exsudat: SAAG &lt;1,1 · Eiweiß &gt;2,5 g/dL</text>
+
+<!-- ── BOX 5a: Transsudat ── -->
+<rect x="40" y="707" width="480" height="195" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="60" y="726" class="tag" fill="#1a6b3a">Transsudat · SAAG ≥ 1,1 g/dL · Eiweiß &lt; 2,5 g/dL</text>
+<text x="60" y="747" class="title" fill="#1a1814">Ursachen — Transsudat</text>
+<line x1="60" y1="755" x2="508" y2="755" stroke="#cde8d5" stroke-width="1"/>
+<text x="60" y="771" font-size="11" fill="#333"><tspan font-weight="600">Hepatisch (75%): </tspan>Leberzirrhose (häufigste Ursache!)</text>
+<text x="60" y="787" font-size="11" fill="#333">Budd-Chiari-Syndrom · Portale Hypertension jeglicher Genese</text>
+<text x="60" y="803" font-size="11" fill="#333"><tspan font-weight="600">Kardial: </tspan>Rechtsherzinsuffizienz · Pericarditis constrictiva</text>
+<text x="60" y="819" font-size="11" fill="#333"><tspan font-weight="600">Hypalbuminämie: </tspan>Nephrotisches Syndrom · Malnutrition</text>
+<text x="60" y="835" font-size="11" fill="#333">Jede Leberfunktionsstörung (Hypalbuminämie)</text>
+<text x="60" y="851" font-size="11" fill="#333"><tspan font-weight="600">Lymphfisteln: </tspan>Chylöser Aszites (Ductus-thoracicus-Pathologie)</text>
+<!-- Therapy hint sub-block -->
+<rect x="40" y="870" width="480" height="32" fill="#d8f0e0"/>
+<line x1="40" y1="870" x2="520" y2="870" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="60" y="884" font-size="10.5" fill="#1a4a2a"><tspan font-weight="600">Therapie: </tspan>Spironolacton (1. Wahl) ± Schleifendiuretikum · K+ und Krea kontrollieren</text>
+<text x="60" y="897" font-size="10" fill="#1a4a2a">Refraktär → Clonidin · Parazentese · TIPS (bei portaler Hypertension)</text>
+
+<!-- ── BOX 5b: Exsudat ── -->
+<rect x="580" y="707" width="480" height="195" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="600" y="726" class="tag" fill="#b02020">Exsudat · SAAG &lt; 1,1 g/dL · Eiweiß &gt; 2,5 g/dL</text>
+<text x="600" y="747" class="title" fill="#1a1814">Ursachen — Exsudat</text>
+<line x1="600" y1="755" x2="1048" y2="755" stroke="#f0c0c0" stroke-width="1"/>
+<text x="600" y="771" font-size="11" fill="#333"><tspan font-weight="600">Maligne: </tspan>Peritonealkarzinose · Lebermalignome</text>
+<text x="600" y="787" font-size="11" fill="#333"><tspan font-weight="600">Entzündlich: </tspan>Peritonitis (SBP, sek. bakt., Tbc, mykotisch)</text>
+<text x="600" y="803" font-size="11" fill="#333">Pankreatitis · Perikarditis</text>
+<text x="600" y="819" font-size="11" fill="#333"><tspan font-weight="600">Pankreatogen: </tspan>Lipase↑ im Aszitespunktat charakteristisch</text>
+<text x="600" y="835" font-size="11" fill="#333"><tspan font-weight="600">Chylös: </tspan>Ductus-thoracicus-Kompr./-Ruptur</text>
+<text x="600" y="851" font-size="11" fill="#333">(bei portaler HTN oder Malignom; milchig-trübes Punktat)</text>
+<!-- Cave sub-block -->
+<rect x="580" y="870" width="480" height="32" fill="#fdeaea"/>
+<line x1="580" y1="870" x2="1060" y2="870" stroke="#b02020" stroke-width="1.5"/>
+<text x="600" y="884" font-size="10.5"><tspan class="cave">Cave: </tspan><tspan fill="#333">Diuretika nicht effektiv! Kausale Therapie vordringlich</tspan></text>
+<text x="600" y="897" font-size="10" fill="#333">Malignom → onkologische Therapie + kurzfristige Parazentesen</text>
+
+<!-- ── SBP Cave box ── -->
+<rect x="40" y="922" width="1020" height="68" rx="5" fill="#fdeaea" stroke="#b02020" stroke-width="1.5" stroke-dasharray="6 3"/>
+<text x="60" y="941" class="tag" fill="#b02020">Komplikation · Spontan-Bakterielle Peritonitis (SBP)</text>
+<line x1="60" y1="949" x2="1048" y2="949" stroke="#f0c0c0" stroke-width="1"/>
+<text x="60" y="964" font-size="11" fill="#333">
+  <tspan font-weight="600">Diagnose: </tspan>PMN &gt;250/μL im Aszitespunktat (ohne andere intraabdominelle Ursache) · häufig symptomarm!
+</text>
+<text x="60" y="979" font-size="11">
+  <tspan class="ki">Therapie 1. Wahl: </tspan>
+  <tspan fill="#333">Cephalosporine 3. Gen. i.v. · Punktion VOR Antibiotika · Erregernachweis häufig </tspan>
+  <tspan class="cave">negativ</tspan>
+  <tspan fill="#333"> (geringe Bakteriendichte)</tspan>
+</text>
+<text x="680" y="964" font-size="11" fill="#b02020">
+  Erstmanifestation bei Leberzirrhose = prognostisch ungünstig!
+</text>
+
+</svg>
+</div>
+
+<!-- ============================================================
+     NOTES SECTION
+     ============================================================ -->
+<div class="notes">
+  <div class="notes-title">Ergänzende Hinweise</div>
+  <div class="notes-subtitle">Aus dem AMBOSS-Quelldokument · nicht direkt im Algorithmus abgebildet</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">SAAG · Berechnung</div>
+      <div class="note-card-title">Serum-Aszites-Albumin-Gradient</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Bestimmung: Serum-Albumin minus Aszites-Albumin (g/dL)</li>
+          <li>SAAG ≥ 1,1 g/dL: <strong>Transsudat</strong> — portale Hypertension wahrscheinlich</li>
+          <li>SAAG &lt; 1,1 g/dL: <strong>Exsudat</strong> — maligne / entzündliche Genese</li>
+          <li>Eiweißgrenzwert bei Aszites: 2,5 g/dL (abweichend vom Pleuraerguss!)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Diagnostik · Cave</div>
+      <div class="note-card-title">Was nicht empfohlen wird</div>
+      <div class="note-card-body">
+        <ul>
+          <li><span class="cave">Tumormarker</span> (CA-19-9, CA-125, AFP) im Aszitespunktat zur Unterscheidung maligne/benigne sind <strong>nicht empfohlen</strong></li>
+          <li>Mikrobiologischer Erregernachweis gelingt bei SBP oft <span class="neg">nicht</span> — geringe Bakteriendichte im Punktat</li>
+          <li>Immunzytochemie / Histologie ist sinnvoll bei konkretem Malignom-Verdacht</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">SBP · Risikofaktoren</div>
+      <div class="note-card-title">Wer ist besonders gefährdet?</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Fortgeschrittene Leberzirrhose mit Aszites</li>
+          <li>Aszites-Eiweißgehalt &lt;1 g/dL</li>
+          <li>Zustand nach SBP (hohes Rezidivrisiko)</li>
+          <li>Gastrointestinale Blutung (kurzfristig erhöhtes SBP-Risiko)</li>
+          <li><span class="cave">Klinik:</span> Häufig symptomarm — Diagnose nur durch Punktion!</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Punktion · Technik</div>
+      <div class="note-card-title">Durchführung &amp; Albumin-Substitution</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Rückenlage oder leichte Seitenlage</li>
+          <li>Bevorzugter Punktionsort: rechter/linker lateraler Unterbauch (z.B. Monro-Punkt)</li>
+          <li>Sonografische Kontrolle der größten Aszitesansammlung vor Punktion</li>
+          <li>Großvolumige Parazentese (&gt;5 L): i.v.-Albumin <strong>6–8 g/L</strong> Aszites zur Kreislaufstabilisierung</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">Therapie · Refraktärer Aszites</div>
+      <div class="note-card-title">Wenn Diuretika nicht ausreichen</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Clonidin</strong> additiv (nach Ausschluss von KI) als Therapieversuch</li>
+          <li>Deeskalation nicht-selektiver Betablocker bei Ösophagusvarizen prüfen</li>
+          <li>Parazentese (therapeutisch)</li>
+          <li>Bei portal-hypertensiver Genese: <strong>TIPS</strong>-Implantation möglich</li>
+          <li><span class="cave">Cave Diuretika:</span> Zurückhaltend bei schwerer Hyponatriämie, hepatischer Enzephalopathie oder Niereninsuffizienz</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Sekundärprävention · SBP</div>
+      <div class="note-card-title">Antibiotische SBP-Prophylaxe</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Nach überstandener SBP: <strong>Sekundärprophylaxe</strong> indiziert</li>
+          <li>Therapie der Grunderkrankung ist primär — z.B. Antikoagulation bei Pfortaderthrombose, Tuberkulostatika bei Tbc-Peritonitis</li>
+          <li>Regelmäßige Gewichts- und Laborkontrollen (K+, Krea)</li>
+          <li>Natriumrestriktion und Flüssigkeitsrestriktion (Hyponatriämie)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>AMBOSS · Aszites · Diagnostik und Differenzialdiagnose</span>
+  <span>Aszites – Diagnostikalgorithmus · Fehler möglich, Gegenprüfung empfohlen</span>
+</footer>
+
+</body>
+</html>

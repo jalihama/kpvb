@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akute Pankreatitis – Diagnose &amp; Klinik</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f0ece3;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 20px 20px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    max-width: 1100px;
+    margin: 0 auto 14px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #1a1814;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  header h1 { font-size: 1.45rem; font-weight: 700; color: #1a1814; letter-spacing: -0.4px; }
+  header .meta { font-size: 10px; font-weight: 500; color: #5a5650; text-transform: uppercase; letter-spacing: 2px; text-align: right; }
+
+  .grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1.5px solid #c8c2b5;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card.span2 { grid-column: span 2; }
+
+  .card-hd {
+    padding: 7px 11px 6px;
+    border-bottom: 1px solid #e8e4dc;
+  }
+  .card-tag {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 2px;
+  }
+  .card-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1a1814;
+    letter-spacing: -0.1px;
+  }
+  .card-bd {
+    padding: 8px 11px 10px;
+    font-size: 10.5px;
+    line-height: 1.58;
+    color: #2a2820;
+    flex: 1;
+  }
+
+  /* colour themes */
+  .blue  { border-color: #2a4a7f; }
+  .blue  .card-hd  { background: #eef2fa; }
+  .blue  .card-tag { color: #2a4a7f; }
+
+  .green { border-color: #1a8a40; }
+  .green .card-hd  { background: #edf7f0; }
+  .green .card-tag { color: #1a6b3a; }
+
+  .amber { border-color: #cc8800; }
+  .amber .card-hd  { background: #fff8ec; }
+  .amber .card-tag { color: #8a5500; }
+
+  .red   { border-color: #b02020; }
+  .red   .card-hd  { background: #fff5f5; }
+  .red   .card-tag { color: #b02020; }
+
+  .muted { border-color: #8a8479; }
+  .muted .card-hd  { background: #f5f3ef; }
+  .muted .card-tag { color: #5a5650; }
+
+  /* typography helpers */
+  ul.li { list-style: none; }
+  ul.li li { padding-left: 11px; position: relative; margin-bottom: 1px; }
+  ul.li li::before { content: '–'; position: absolute; left: 0; color: #bbb; }
+  hr.t { border: none; border-top: 1px solid #e8e4dc; margin: 6px 0; }
+  .lbl { font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #7a7468; margin-bottom: 2px; }
+  .cave { color: #b02020; font-weight: 600; }
+  .pos  { color: #1a6b3a; font-weight: 600; }
+  strong { font-weight: 600; }
+
+  /* Atlanta boxes */
+  .atlanta { display: flex; gap: 6px; margin-top: 8px; }
+  .ab {
+    flex: 1; border-radius: 3px; padding: 6px 8px; font-size: 10.5px; border: 1.5px solid;
+  }
+  .ab.le { background: #edf7f0; border-color: #1a8a40; }
+  .ab.mo { background: #fff8ec; border-color: #cc8800; }
+  .ab.sv { background: #fff5f5; border-color: #b02020; }
+  .ab-ttl { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
+  .le .ab-ttl { color: #1a6b3a; }
+  .mo .ab-ttl { color: #8a5500; }
+  .sv .ab-ttl { color: #b02020; }
+  .ab-let { font-size: 9px; font-weight: 700; margin-top: 4px; }
+  .le .ab-let { color: #1a6b3a; }
+  .mo .ab-let { color: #8a5500; }
+  .sv .ab-let { color: #b02020; }
+
+  /* criteria row */
+  .crit-row { display: flex; gap: 5px; margin-top: 8px; }
+  .crit {
+    flex: 1; border: 1.5px solid #2a4a7f; border-radius: 3px; padding: 5px 7px; font-size: 10px;
+    background: #f4f7fd;
+  }
+  .crit-n { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #2a4a7f; margin-bottom: 2px; }
+
+  /* table */
+  table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  th { font-weight: 600; text-align: left; padding: 3px 8px 3px 0; background: #f5f3ef;
+       font-size: 8px; text-transform: uppercase; letter-spacing: 0.8px; color: #777; border-bottom: 1px solid #ddd; }
+  td { padding: 2.5px 8px 2.5px 0; border-top: 1px solid #ede9e1; vertical-align: top; }
+  td:first-child { font-weight: 600; color: #1a1814; width: 34%; }
+
+  /* imaging row */
+  .img-row { display: flex; gap: 5px; margin-bottom: 5px; }
+  .img-num {
+    width: 18px; height: 18px; border-radius: 50%; background: #2a4a7f; color: #fff;
+    font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* path arrow */
+  .path {
+    display: flex; align-items: flex-start; gap: 5px;
+    margin-bottom: 4px; font-size: 10.5px;
+  }
+  .path-arr { color: #aaa; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+
+  footer {
+    max-width: 1100px; margin: 12px auto 0; padding-top: 10px;
+    border-top: 1px solid #c8c2b5; color: #7a7468; font-size: 10px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px;
+    display: flex; justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Akute Pankreatitis &mdash; Diagnose &amp; Klinik</h1>
+    <p style="font-size:10px;font-weight:500;color:#5a5650;text-transform:uppercase;letter-spacing:2px;margin-top:3px">AMBOSS · Revidierte Atlanta-Klassifikation 2012</p>
+  </div>
+  <div class="meta">Seite 1 / 3</div>
+</header>
+
+<div class="grid">
+
+  <!-- ── DEFINITION + ATLANTA ── -->
+  <div class="card blue span2">
+    <div class="card-hd">
+      <div class="card-tag">Definition · Atlanta-Klassifikation 2012</div>
+      <div class="card-title">Schweregrade &amp; Diagnosekriterien</div>
+    </div>
+    <div class="card-bd">
+      <p>Primär <strong>sterile Entzündung</strong> der Bauchspeicheldrüse mit unphysiologischer Enzymaktivierung. Phasen: <strong>Frühphase</strong> (Wo.&thinsp;1) · <strong>Spätphase</strong> (ab Wo.&thinsp;2). Morphologie: <strong>interstitiell-ödematös</strong> (~85%) vs. <strong>nekrotisierend</strong> (~15%).</p>
+
+      <div class="atlanta">
+        <div class="ab le">
+          <div class="ab-ttl">Leicht</div>
+          <div>Keine lokalen Nekrosen, kein Organversagen</div>
+          <div class="ab-let">Letalität: 0,1%</div>
+        </div>
+        <div class="ab mo">
+          <div class="ab-ttl">Mittelschwer</div>
+          <div>Lokale/systemische Komplikationen <em>oder</em> passageres Organversagen (&lt;48&thinsp;h)</div>
+          <div class="ab-let">Letalität: 2,1%</div>
+        </div>
+        <div class="ab sv">
+          <div class="ab-ttl">Schwer</div>
+          <div>Anhaltendes Organversagen (&gt;48&thinsp;h) oder Multiorganversagen</div>
+          <div class="ab-let">Letalität: 52,2%</div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px;padding:6px 9px;background:#f0f4fd;border-radius:3px;border-left:3px solid #2a4a7f">
+        <div class="lbl" style="margin-bottom:4px">Diagnosekriterien — mind. 2 von 3 erforderlich</div>
+        <div class="crit-row">
+          <div class="crit">
+            <div class="crit-n">① Schmerz</div>
+            Akut beginnender Oberbauchschmerz, oft gürtelförmig mit Ausstrahlung in den Rücken
+          </div>
+          <div class="crit">
+            <div class="crit-n">② Lipase ≥ 3× Norm</div>
+            &gt;180 U/L — sensitivster &amp; spezifischster Parameter; Höhe ≠ Schweregrad
+          </div>
+          <div class="crit">
+            <div class="crit-n">③ Bildgebung</div>
+            Primär transabdominelle Sonografie; ggf. CT/MRT im Verlauf
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ÄTIOLOGIE ── -->
+  <div class="card amber">
+    <div class="card-hd">
+      <div class="card-tag">Ätiologie · I&thinsp;GET&thinsp;SMASHED</div>
+      <div class="card-title">Ursachen der AP</div>
+    </div>
+    <div class="card-bd">
+      <div class="lbl">Häufigste Ursachen</div>
+      <ul class="li">
+        <li><strong>~45%</strong> Biliär — Choledocholithiasis, Papillenstenose</li>
+        <li><strong>~35%</strong> Äthyltoxisch (Alkohol)</li>
+        <li><strong>~15%</strong> Idiopathisch</li>
+      </ul>
+      <hr class="t">
+      <div class="lbl">Weitere (I GET SMASHED)</div>
+      <ul class="li" style="font-size:10px">
+        <li><strong>M</strong>etabolisch: Hypertriglyzeridämie, Hyperkalzämie (pHPT)</li>
+        <li><strong>T</strong>rauma: stumpfes Abdominaltrauma; iatrogen (ERCP)</li>
+        <li><strong>D</strong>rugs: Azathioprin, Statine, Steroide u.a.</li>
+        <li><strong>A</strong>utoimmun: Sjögren-Syndrom, rheumat. Erkrankungen</li>
+        <li>Hereditär: Trypsinogen-Mutation · Pancreas divisum · Tumor</li>
+        <li>Infektionen: Mumps, hepatotrope Viren, Mykoplasmen</li>
+      </ul>
+      <div style="margin-top:5px;font-size:9.5px;color:#8a5500;font-style:italic">Rauchen ↑ Risiko für nicht-biliäre AP</div>
+    </div>
+  </div>
+
+  <!-- ── PATHOPHYSIOLOGIE ── -->
+  <div class="card muted">
+    <div class="card-hd">
+      <div class="card-tag">Pathophysiologie</div>
+      <div class="card-title">Autodigestion &amp; Systemeffekte</div>
+    </div>
+    <div class="card-bd">
+      <div class="lbl">Pankreatische Autodigestion</div>
+      <div class="path"><span class="path-arr">→</span><span>Intrapankreatische Enzymaktivierung (Trypsin)</span></div>
+      <div class="path"><span class="path-arr">→</span><span>Autodigestion der Acinuszellen</span></div>
+      <div class="path"><span class="path-arr">→</span><span>Inflammatorische Reaktion: Proteolyse, Blutung, Ödem, Vasodilatation</span></div>
+      <div class="path"><span class="path-arr">→</span><span>Bei schwerem Verlauf: Nekrotisierung → Infektion, Abszess, Sepsis</span></div>
+      <hr class="t">
+      <div class="lbl">Fettgewebsnekrose + Saponifikation</div>
+      <div class="path"><span class="path-arr">→</span><span>Freie Lipasen/Proteasen → Parenchymnekrose</span></div>
+      <div class="path"><span class="path-arr">→</span><span>Freigesetzte Fettsäuren binden Ca²⁺ → Kalkseifen (Saponifikation)</span></div>
+      <div style="padding:4px 7px;background:#fff5f5;border-radius:3px;font-size:10px;margin-top:3px">
+        <span class="cave">Serum-Ca²⁺ ↓</span> = quantitativer Marker für Gewebsschaden → Prognoseparameter!
+      </div>
+      <hr class="t">
+      <div class="lbl">Intravasale Volumendepletion</div>
+      <div class="path"><span class="path-arr">→</span><span>Vasodilatation + Kapillarleck → Flüssigkeit retroperitoneal / Aszites</span></div>
+      <div class="path"><span class="path-arr">→</span><span>Hypotonie → ↓ Organperfusion (v.a. Niere)</span></div>
+    </div>
+  </div>
+
+  <!-- ── SYMPTOMATIK ── -->
+  <div class="card green">
+    <div class="card-hd">
+      <div class="card-tag">Symptomatik</div>
+      <div class="card-title">Leitsymptome &amp; Befunde</div>
+    </div>
+    <div class="card-bd">
+      <div class="lbl">Leitsymptome</div>
+      <ul class="li">
+        <li><strong>Oberbauchschmerz</strong> — akut, gürtelförmig, Ausstrahlung Rücken</li>
+        <li>Kolikartig bei biliärer Genese</li>
+        <li>Übelkeit, Erbrechen</li>
+        <li>„Gummibauch" — prall-elastisches Abdomen</li>
+      </ul>
+      <hr class="t">
+      <div class="lbl">Weitere Zeichen</div>
+      <ul class="li">
+        <li>Meteorismus, paralytischer (Sub-)Ileus</li>
+        <li>Fieber, Tachykardie, Hypotonie, Oligurie/Anurie</li>
+        <li>Aszites, Pleuraerguss, Ikterus (biliär)</li>
+        <li>EKG-Veränderungen (bei Hypokalzämie)</li>
+      </ul>
+      <hr class="t">
+      <div class="lbl">Hautzeichen — nekrotisierende AP</div>
+      <ul class="li">
+        <li><strong>Cullen-Zeichen</strong>: bläulich-livide Ekchymosen, periumbilikal</li>
+        <li><strong>Grey-Turner-Zeichen</strong>: Flankenregion</li>
+        <li><strong>Fox-Zeichen</strong>: Leistenregion</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── LABOR ── -->
+  <div class="card blue span2">
+    <div class="card-hd">
+      <div class="card-tag">Labordiagnostik</div>
+      <div class="card-title">Laborwerte bei akuter Pankreatitis</div>
+    </div>
+    <div class="card-bd" style="padding:4px 0 6px">
+      <table>
+        <thead>
+          <tr>
+            <th style="padding-left:11px">Parameter</th>
+            <th>Befund / klinische Bedeutung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding-left:11px"><span class="pos">Lipase ↑↑</span></td>
+            <td>≥ 3× Norm (&gt;180 U/L) → sensitivster + spezifischster Parameter. <span class="cave">Höhe ≠ Schweregrad!</span></td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">Amylase ↑</td>
+            <td>Weniger spezifisch; erhöht auch bei anderen Erkrankungen</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">ALT ↑</td>
+            <td>Hinweis auf <strong>biliäre Genese</strong></td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">γGT ↑ + MCV ↑</td>
+            <td>Hinweis auf <strong>äthyltoxische Genese</strong></td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">CRP ↑</td>
+            <td>&gt;90 mg/L innerhalb 48 h oder &gt;190 mg/L nach 48 h → schwerer Verlauf</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">Leukozyten ↑, PCT ↑</td>
+            <td>Entzündungszeichen; PCT-Erhöhung → V.a. bakterielle Infektion/Sepsis</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">Hämatokrit</td>
+            <td>↑ bei Aufnahme (♂ &gt;43%, ♀ ≥40%) → progn. ungünstig · Abfall &gt;10% nach 48 h → schwere AP (Ranson)</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">LDH ↑↑</td>
+            <td>Zelluntergang; Prognoseparameter (Ranson-Kriterien)</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px"><span class="cave">Ca²⁺ ↓</span></td>
+            <td>Saponifikation bei Nekrose → <span class="cave">ungünstige Prognose</span>. Hyperkalzämie kann Ursache, Hypokalzämie Folge sein!</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px"><span class="cave">Glucose &gt;125 mg/dL</span></td>
+            <td>Bei Diagnosestellung prognostisch ungünstig</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">Harnstoff ↑</td>
+            <td>&gt;1,8 mmol/L innerhalb 48 h → prognostisch ungünstig</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">Kreatinin ↑</td>
+            <td>Volumenmangel / prärenale Niereninsuffizienz</td>
+          </tr>
+          <tr>
+            <td style="padding-left:11px">Triglyzeride ↑↑</td>
+            <td>Mögliche auslösende Ursache der AP</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── BILDGEBUNG ── -->
+  <div class="card blue">
+    <div class="card-hd">
+      <div class="card-tag">Apparative Diagnostik · Stufendiagnostik</div>
+      <div class="card-title">Bildgebung</div>
+    </div>
+    <div class="card-bd">
+      <div style="display:flex;flex-direction:column;gap:6px">
+
+        <div style="display:flex;gap:7px;align-items:flex-start">
+          <div style="width:20px;height:20px;border-radius:50%;background:#2a4a7f;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+          <div>
+            <div style="font-size:9.5px;font-weight:700;color:#2a4a7f;margin-bottom:1px">Sonografie — Primärdiagnostik (immer!)</div>
+            <ul class="li" style="font-size:10px">
+              <li>Ödematöse Aufquellung, verminderte Echogenität</li>
+              <li>Choledocholithiasis / Gallenwegerweiterung (biliäre AP)</li>
+              <li>Komplikationen: Nekrosen, Pseudozysten, Flüssigkeit</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:7px;align-items:flex-start">
+          <div style="width:20px;height:20px;border-radius:50%;background:#4a6a9f;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+          <div>
+            <div style="font-size:9.5px;font-weight:700;color:#4a6a9f;margin-bottom:1px">Endosonografie — im Intervall</div>
+            <div style="font-size:10px">Unklarheiten nach Sono; V.a. kleinere Konkremente / Tumor; hohe Ortsauflösung</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:7px;align-items:flex-start">
+          <div style="width:20px;height:20px;border-radius:50%;background:#b02020;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+          <div>
+            <div style="font-size:9.5px;font-weight:700;color:#b02020;margin-bottom:1px">CT mit KM — <span style="font-size:9px;font-style:italic">nicht initial!</span></div>
+            <ul class="li" style="font-size:10px">
+              <li><span class="cave">Frühphase: nicht indiziert</span> (DGIM Klug entscheiden)</li>
+              <li>V.a. Komplikationen, Verlaufskontrollen</li>
+              <li>Nekroseareale, Lagebeziehung, Schweregradeinschätzung</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:7px;align-items:flex-start">
+          <div style="width:20px;height:20px;border-radius:50%;background:#6a6060;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div>
+          <div>
+            <div style="font-size:9.5px;font-weight:700;color:#5a5650;margin-bottom:1px">MRT / MRCP</div>
+            <div style="font-size:10px">Gallengangsmorphologie; KM-KI gegen CT; nach idiopathischer AP ohne Sono-Befund</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:7px;align-items:flex-start">
+          <div style="width:20px;height:20px;border-radius:50%;background:#8a8479;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">5</div>
+          <div>
+            <div style="font-size:9.5px;font-weight:700;color:#8a8479;margin-bottom:1px">Röntgen Thorax / Abdomen</div>
+            <div style="font-size:10px">Pleuraerguss, Pneumonie; (Sub-)Ileus-Kontrolle</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span>AMBOSS · Akute Pankreatitis · Diagnose &amp; Klinik · Seite 1 / 3</span>
+  <span>Fehler möglich — Quercheck empfohlen</span>
+</footer>
+
+</body>
+</html>

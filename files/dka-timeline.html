@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diabetische Ketoazidose (DKA) — Therapieverlauf & Details</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#eef5f8;--surf:#ffffff;--ink:#08222c;--ink2:#13323d;--muted:#45697a;
+    --line:#cddbe0;--hair:#e1ebee;--accent:#0a7c9c;--cave:#b02020;
+    --ok-bg:#e1f5ee;--ok-bd:#0f6e56;--warn-bg:#faeed2;--warn-bd:#854f0b;--stop-bg:#fbe6e4;--stop-bd:#b02020;
+    --f:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --m:'Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media(prefers-color-scheme:dark){:root{
+    --bg:#0a2733;--surf:#0f3848;--ink:#e3eef2;--ink2:#bcd2da;--muted:#8fb0bc;
+    --line:#1c4253;--hair:#163542;--accent:#24c4e6;--cave:#f08a82;
+    --ok-bg:#0e3a32;--ok-bd:#2f9e84;--warn-bg:#3a2f17;--warn-bd:#d09a3e;--stop-bg:#3a1f1d;--stop-bd:#e0726a;
+  }}
+  body{background:var(--bg);color:var(--ink);font-family:var(--f);padding:24px 18px 46px;-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:920px;margin:0 auto}
+  header{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:22px}
+  h1{font-size:1.45rem;font-weight:700;letter-spacing:-.4px}
+  .sub{font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:7px}
+  .timeline-img{display:block;width:100%;max-width:780px;margin:0 auto 26px;border:1px solid var(--line);border-radius:12px;background:var(--surf);padding:12px}
+  section.block{margin-bottom:13px;background:var(--surf);border:1px solid var(--line);border-radius:11px;padding:14px 17px}
+  .lbl{font:600 10px/1 var(--m);letter-spacing:1.6px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .b{font-size:13.5px;line-height:1.62;color:var(--ink2)}
+  .b b{color:var(--ink);font-weight:600}
+  .cave{color:var(--cave);font-weight:600}
+  .mono{font-family:var(--m);font-size:12.5px}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12.5px}
+  th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--hair);border-right:1px solid var(--hair)}
+  th{background:var(--bg);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  td:first-child{font-weight:600;color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+  td:last-child,th:last-child{border-right:none}
+  .kgate{list-style:none;margin:9px 0 0;display:flex;flex-direction:column;gap:6px}
+  .kgate li{padding:8px 12px;border-radius:8px;font-size:13px;border-left:4px solid;line-height:1.5}
+  .kgate .hi{background:var(--bg);border-color:var(--muted)}
+  .kgate .mid{background:var(--ok-bg);border-color:var(--ok-bd)}
+  .kgate .lo{background:var(--stop-bg);border-color:var(--stop-bd)}
+  .kgate .note{background:transparent;border-color:var(--warn-bd);color:var(--muted);font-style:italic;font-size:12px}
+  .kgate b{color:var(--ink)}
+  .gloss{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:6px}
+  footer{max-width:920px;margin:18px auto 0;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:10.5px;text-align:center;letter-spacing:.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Diabetische Ketoazidose (DKA) · Therapieverlauf</h1>
+    <p class="sub">Volumen → K-Gate → Insulin · Erhaltung · Auflösung</p>
+  </header>
+
+  <img class="timeline-img" src="dka-timeline.svg" alt="DKA – Swimlane-Therapieverlauf mit zwei Synchronisationspunkten">
+
+  <section class="block">
+    <div class="lbl">Diagnose</div>
+    <div class="b">Trias: <b>Hyperglykämie</b> (BZ &gt;250 mg/dL) + <b>Ketonnachweis</b> (β-HB) + <b>metabolische Azidose</b> mit positiver Anionenlücke. <span class="mono">pH &lt;7,3 · HCO₃⁻ &lt;18 mmol/L · AG &gt;10–12</span>. <span class="cave">Cave:</span> euglykäme DKA unter SGLT2-Inhibitoren. <span class="gloss">(Konsensus 2024: Anionenlücke nicht mehr Primärkriterium; β-HB ≥3 mmol/L als Ketonkriterium.)</span></div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Schweregrad</div>
+    <div class="b">BZ &gt;250 + Ketone positiv in allen Graden.</div>
+    <table>
+      <tr><th>Kriterium</th><th>Leicht</th><th>Mittel</th><th>Schwer</th></tr>
+      <tr><td>pH (art.)</td><td>7,25–7,3</td><td>7,0–7,24</td><td>&lt;7,0</td></tr>
+      <tr><td>Bikarbonat</td><td>15–18</td><td>10–15</td><td>&lt;10 mmol/L</td></tr>
+      <tr><td>Anionenlücke</td><td>&gt;10</td><td>&gt;12</td><td>&gt;12</td></tr>
+      <tr><td>Vigilanz</td><td>wach</td><td>wach–somnolent</td><td>somnolent–komatös</td></tr>
+    </table>
+    <div class="gloss">DD HHS: BZ &gt;600 · pH &gt;7,3 · HCO₃⁻ &gt;18 · Ketone negativ/minimal.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Initialdiagnostik</div>
+    <div class="b">BZ + Ketone (β-HB), venöse BGA mit AG, Elektrolyte (Na/K/Mg/Cl/Phosphat), Harnstoff/Kreatinin, BB/CRP (±PCT), HbA1c, Troponin/Lipase nach Verdacht, Urin-Stix.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Volumen</div>
+    <div class="b">Balancierte Vollelektrolytlösung; Defizit ~6–8 L, Ersatz <b>5–10 L/24–36 h</b> (≥15 % KG); Steuerung MAP &gt;65, ZVD 8–12, Diurese; Glukose-Trägerwechsel bei BZ ≤250. <span class="cave">Cave</span> Überwässerung (Hirn-/Lungenödem), Vorsicht bei Herzinsuffizienz/CKD.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Kalium — Ziel 4–5 mmol/L · Kontrolle 2-stündlich · ≤10 mmol/h peripher, ≤20 über ZVK</div>
+    <ul class="kgate">
+      <li class="hi"><b>&gt;5,5</b> → keine Gabe, Insulin starten, nachmessen</li>
+      <li class="mid"><b>3,5–5,5</b> → 10–20 mmol/h (≈40 mmol/1000 mL), Insulin parallel</li>
+      <li class="lo"><b>&lt;3,5</b> → KCl zuerst, Insulin pausieren bis K⁺ ≥3,5</li>
+      <li class="note">2024-Konsensus: Substitution bereits ab K⁺ &lt;5,0 mmol/L.</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Insulin</div>
+    <div class="b">Start <b>½ h nach Volumenbeginn</b>; Bolus 0,1 IE/kg → Perfusor; BZ-Abfall 50–100 mg/dL/h, in 24 h nicht &lt;250; &lt;40/h → Rate ×1,5; ≤250 → Glukose dazu, Insulin weiter; <b>Ziel = Ketonkörper-Clearance</b>, nicht Normoglykämie. Umstellung s.c. bei Auflösung mit 1–2 h Überlappung → Basis-Bolus 0,3–0,6 IE/kg/Tag.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Bikarbonat</div>
+    <div class="b">Nur <b>pH &lt;7,0</b>, immer mit Kalium; <span class="mono">NaHCO₃ (mmol) = −BE × kg × 0,3</span>; Risiken: Hypokaliämie, Hirnödem, ↓ O₂-Abgabe.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Phosphat & Natrium</div>
+    <div class="b">Phosphat nur &lt;0,3 mmol/L bzw. bei Symptomatik (Konsensus: &lt;1,0), nicht bei Hypokalzämie; korrigiertes Na +1,6 mmol/L pro 100 mg/dL BZ über 100.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Monitoring</div>
+    <div class="b">h 1–4 stündlich BZ/Na/K/BGA; 2–4-stündlich Kreatinin/Harnstoff/Phosphat; täglich Ca/Cl/CK/BB/Urin-Ketone.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Auslöser</div>
+    <div class="b">Infekt/Sepsis (häufigster situativer), fehlende/fehlerhafte Insulingabe, Erstmanifestation (~25 %), MI/Pankreatitis/OP.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Komplikationen — meist iatrogen</div>
+    <div class="b">Hypoglykämie, Hypokaliämie, hyperchlorämische Azidose, <b>Hirnödem</b> (v. a. Kinder/Jugendliche: Kopfschmerz, Vigilanz↓, Bradykardie + Hypertonie), Lungenödem; selten DIC, Mesenterialischämie.</div>
+  </section>
+
+  <section class="block">
+    <div class="lbl">Auflösung</div>
+    <div class="b">BZ &lt;200 · HCO₃⁻ ≥18 · venöser pH &gt;7,3 <span class="gloss">(Konsensus: zusätzlich β-HB &lt;0,6 mmol/L).</span></div>
+  </section>
+</div>
+<footer>KP-Atlas · Detailebene DKA — Fakten, Dosierungen, Kriterien · Konsensus 2024</footer>
+</body>
+</html>

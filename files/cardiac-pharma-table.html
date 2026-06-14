@@ -1,0 +1,148 @@
+<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kardiale Pharmakologie — Inotropie · Chronotropie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-background-primary:#ffffff;--color-background-secondary:#e4eef1;--color-text-primary:#08222c;--color-text-secondary:#45697a;--color-border-tertiary:#cddbe0;--color-border-secondary:#b9cdd4;--color-background-info:#dcf0f6;--color-text-info:#0a6b86;--color-border-info:#7fcfe2;--border-radius-md:10px;--font-sans:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--page-bg:#eef5f8;}
+@media(prefers-color-scheme:dark){:root{--color-background-primary:#0f3848;--color-background-secondary:#0c2f3d;--color-text-primary:#e3eef2;--color-text-secondary:#9fc0cc;--color-border-tertiary:#1c4253;--color-border-secondary:#25515f;--color-background-info:#0e3c4a;--color-text-info:#7fdcef;--color-border-info:#1f6f86;--page-bg:#0a2733;}}
+html{background:var(--page-bg)}body{margin:0;background:var(--page-bg);color:var(--color-text-primary);font-family:var(--font-sans);padding:26px 20px 42px}
+.kp-wrap{max-width:960px;margin:0 auto}h1.kp-title{text-align:center;font-size:1.4rem;font-weight:700;color:var(--color-text-primary);border-bottom:2px solid var(--color-text-primary);padding-bottom:16px;margin:0 0 20px}
+</style></head><body><div class="kp-wrap"><h1 class="kp-title">Kardiale Pharmakologie — Inotropie · Chronotropie</h1>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .wrap { padding: 1rem 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 1.25rem; font-size: 13px; color: var(--color-text-secondary); }
+  .leg { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+  .dot-up { background: #1D9E75; }
+  .dot-down { background: #E24B4A; }
+  .dot-none { background: #B4B2A9; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 10px; font-weight: 500; font-size: 12px; color: var(--color-text-secondary); border-bottom: 1px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+  td { padding: 9px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: middle; color: var(--color-text-primary); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--color-background-secondary); }
+  .drug { font-weight: 500; }
+  .class { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .cell { display: flex; align-items: center; gap: 6px; }
+  .note { font-size: 11px; color: var(--color-text-secondary); font-style: italic; margin-top: 2px; }
+  .tag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 500; margin-left: 4px; }
+  .tag-star { background: #FAEEDA; color: #633806; }
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  button.filter-btn { font-size: 12px; padding: 4px 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
+  button.filter-btn.active { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
+</style>
+
+<div class="wrap">
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filter('all', this)">All drugs</button>
+    <button class="filter-btn" onclick="filter('pos-ino', this)">+ Inotropic</button>
+    <button class="filter-btn" onclick="filter('neg-chrono', this)">- Chronotropic</button>
+    <button class="filter-btn" onclick="filter('antiarrhythmic', this)">Antiarrhythmic</button>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><div class="dot dot-up"></div> Positive / increases</div>
+    <div class="leg"><div class="dot dot-down"></div> Negative / decreases</div>
+    <div class="leg"><div class="dot dot-none"></div> No significant effect</div>
+  </div>
+
+  <table id="drug-table">
+    <thead>
+      <tr>
+        <th style="min-width:130px">Drug</th>
+        <th>Inotropic<br><span style="font-weight:400;font-size:10px;">force</span></th>
+        <th>Chronotropic<br><span style="font-weight:400;font-size:10px;">rate</span></th>
+        <th>Dromotropic<br><span style="font-weight:400;font-size:10px;">conduction</span></th>
+        <th>Lusitropic<br><span style="font-weight:400;font-size:10px;">relaxation</span></th>
+        <th style="min-width:140px">Why you care</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<script>
+const UP = '<div class="dot dot-up"></div>';
+const DN = '<div class="dot dot-down"></div>';
+const NU = '<div class="dot dot-none"></div>';
+
+const drugs = [
+  {
+    name: "Adrenaline", cls: "Catecholamine", tags: ["pos-ino"],
+    ino: UP, chrono: UP, dromo: UP, lusi: UP,
+    note: "The emergency drug — pushes everything up. Used in cardiac arrest & anaphylaxis."
+  },
+  {
+    name: "Dobutamine", cls: "Beta-1 agonist", tags: ["pos-ino"],
+    ino: UP, chrono: `<div class="cell">${UP}<span style="font-size:10px;color:var(--color-text-secondary)">mildly</span></div>`, dromo: NU, lusi: UP,
+    note: "Mainly used in acute heart failure to squeeze harder. Not for long-term."
+  },
+  {
+    name: "Digoxin", cls: "Cardiac glycoside", tags: ["pos-ino", "neg-chrono", "antiarrhythmic"],
+    ino: UP, chrono: DN, dromo: DN, lusi: NU,
+    note: `The classic exam trap <span class="tag tag-star">KP pearl</span> — only drug that's + inotropic AND − chronotropic. Narrow safety window.`
+  },
+  {
+    name: "Metoprolol", cls: "Beta-1 blocker", tags: ["neg-chrono", "antiarrhythmic"],
+    ino: DN, chrono: DN, dromo: DN, lusi: NU,
+    note: "Cornerstone of HFrEF treatment. Slows everything. Also used in rate control."
+  },
+  {
+    name: "Atropine", cls: "Anticholinergic", tags: ["pos-ino"],
+    ino: NU, chrono: UP, dromo: UP, lusi: NU,
+    note: "Blocks vagus nerve → heart speeds up. First line for symptomatic bradycardia."
+  },
+  {
+    name: "Verapamil", cls: "CCB (non-DHP)", tags: ["neg-chrono", "antiarrhythmic"],
+    ino: DN, chrono: DN, dromo: DN, lusi: NU,
+    note: "Rate control in AF/flutter. Avoid in HFrEF — dangerously negative inotropic."
+  },
+  {
+    name: "Amiodarone", cls: "Class III antiarrhythmic", tags: ["antiarrhythmic"],
+    ino: NU, chrono: DN, dromo: DN, lusi: NU,
+    note: "The 'does everything' antiarrhythmic. Toxic side effects (thyroid, lung, liver) but very effective."
+  },
+  {
+    name: "Levosimendan", cls: "Calcium sensitizer", tags: ["pos-ino"],
+    ino: UP, chrono: `<div class="cell">${UP}<span style="font-size:10px;color:var(--color-text-secondary)">reflex</span></div>`, dromo: NU, lusi: UP,
+    note: "Unique: positive inotropic AND lusitropic. Used in acute decompensated HF."
+  },
+  {
+    name: "Ivabradine", cls: "If-channel blocker", tags: ["neg-chrono"],
+    ino: NU, chrono: DN, dromo: NU, lusi: NU,
+    note: "Pure rate reducer — doesn't touch force or BP. Used in HFrEF with high resting HR."
+  },
+  {
+    name: "Noradrenaline", cls: "Alpha > Beta agonist", tags: [],
+    ino: `<div class="cell">${UP}<span style="font-size:10px;color:var(--color-text-secondary)">mild</span></div>`, chrono: `<div class="cell">${DN}<span style="font-size:10px;color:var(--color-text-secondary)">reflex</span></div>`, dromo: NU, lusi: NU,
+    note: "Mainly vasoconstrictor (septic shock). Reflex bradycardia from high BP."
+  },
+];
+
+function renderRow(d) {
+  return `<tr data-tags="${d.tags.join(' ')}">
+    <td><div class="drug">${d.name}</div><div class="class">${d.cls}</div></td>
+    <td><div class="cell">${d.ino}</div></td>
+    <td><div class="cell">${d.chrono}</div></td>
+    <td><div class="cell">${d.dromo}</div></td>
+    <td><div class="cell">${d.lusi}</div></td>
+    <td><div>${d.note}</div></td>
+  </tr>`;
+}
+
+document.getElementById('tbody').innerHTML = drugs.map(renderRow).join('');
+
+function filter(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#tbody tr').forEach(row => {
+    if (tag === 'all') { row.style.display = ''; return; }
+    const tags = row.dataset.tags || '';
+    row.style.display = tags.includes(tag) ? '' : 'none';
+  });
+}
+</script>
+
+</div></body></html>

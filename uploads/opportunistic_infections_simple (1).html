@@ -1,0 +1,57 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; }
+.chart { padding: 1.5rem 0; }
+.row { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+.cd4-badge { min-width: 72px; text-align: right; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); padding-top: 6px; flex-shrink: 0; }
+.bar-track { flex: 1; }
+.bar { height: 36px; border-radius: 8px; display: flex; align-items: center; padding: 0 14px; font-size: 13px; font-weight: 500; position: relative; }
+.infections { font-size: 12px; color: var(--color-text-secondary); margin-top: 5px; line-height: 1.6; }
+.axis-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 10px; display: flex; justify-content: space-between; padding-left: 86px; }
+</style>
+
+<div class="chart">
+  <div class="axis-label"><span>CD4 count →</span><span>← more immunosuppressed</span></div>
+
+  <div class="row">
+    <div class="cd4-badge">any CD4</div>
+    <div class="bar-track">
+      <div class="bar" style="width:100%; background:#E6F1FB; color:#0C447C">TB · Herpes zoster</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cd4-badge">&lt; 400</div>
+    <div class="bar-track">
+      <div class="bar" style="width:80%; background:#E1F5EE; color:#085041">Oral candidiasis</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cd4-badge">&lt; 200</div>
+    <div class="bar-track">
+      <div class="bar" style="width:40%; background:#FAEEDA; color:#633806">PCP · Oesophageal candidiasis · Kaposi sarcoma · PML</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cd4-badge">&lt; 100</div>
+    <div class="bar-track">
+      <div class="bar" style="width:24%; background:#FBEAF0; color:#72243E">Toxoplasmosis · Cryptococcal meningitis</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cd4-badge">&lt; 50</div>
+    <div class="bar-track">
+      <div class="bar" style="width:12%; background:#F7C1C1; color:#501313">MAC · CMV · Aspergillosis</div>
+    </div>
+  </div>
+
+  <div style="padding-left:86px; margin-top:18px; display:flex; gap:16px; flex-wrap:wrap; font-size:11px; color:var(--color-text-secondary)">
+    <span>🔵 Bacterial</span>
+    <span>🟢 Fungal</span>
+    <span>🟠 Mixed</span>
+    <span>🔴 Viral/Disseminated</span>
+  </div>
+</div>

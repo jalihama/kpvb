@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akute Pankreatitis – Therapiealgorithmus</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #eef5f8;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 20px 20px 26px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #08222c;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 { font-family: 'Roboto Flex', system-ui, sans-serif; font-weight: 700; font-size: 1.45rem; color: #08222c; letter-spacing: -0.4px; }
+  header p  { color: #45697a; font-size: 10px; font-weight: 500; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px; }
+
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  /* ── Notes section ── */
+  .notes { max-width: 1100px; margin: 18px auto 0; border-top: 2px solid #08222c; padding-top: 13px; }
+  .notes-title { font-family: 'Roboto Flex', system-ui, sans-serif; font-weight: 700; font-size: 0.85rem; color: #08222c; margin-bottom: 2px; letter-spacing: -0.1px; }
+  .notes-subtitle { font-size: 9px; font-weight: 500; color: #45697a; text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 10px; }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .note-card {
+    background: #fff; border: 1px solid #cddbe0; border-radius: 3px;
+    padding: 7px 10px 7px 14px; position: relative;
+  }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .bar.blue  { background: #2a4a7f; }
+  .bar.amber { background: #7a4a00; }
+  .bar.red   { background: #b02020; }
+  .bar.green { background: #1a6b3a; }
+
+  .note-card-label { font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #5e7e8a; margin-bottom: 1px; }
+  .note-card-title { font-family: 'Roboto Flex', system-ui, sans-serif; font-weight: 600; font-size: 0.78rem; color: #08222c; margin-bottom: 4px; letter-spacing: -0.1px; }
+  .note-card-body { font-size: 10.5px; font-weight: 400; color: #13323d; line-height: 1.6; }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  .cave  { color: #b02020; font-weight: 600; }
+  .pos   { color: #1a6b3a; font-weight: 600; }
+
+  footer {
+    max-width: 1100px; margin: 13px auto 0; padding-top: 11px;
+    border-top: 1px solid #cddbe0; color: #5e7e8a; font-size: 10px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px;
+    display: flex; justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Akute Pankreatitis &mdash; Therapiealgorithmus</h1>
+  <p>AMBOSS · PANCREAS-Schema · Stationäre Therapie</p>
+</header>
+
+<div class="wrap">
+<svg width="1100" height="880" viewBox="0 0 1100 880" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#555"/>
+  </marker>
+  <marker id="arr-dash" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#aaa"/>
+  </marker>
+  <style>
+    text { font-family: 'Roboto Flex', system-ui, sans-serif; font-size: 11.5px; font-weight: 400; fill: #08222c; }
+    .tag  { font-size: 9.5px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    .lbl  { font-size: 10.5px; font-weight: 500; fill: #444; }
+    .title { font-size: 13px; font-weight: 600; }
+    .cave { fill: #b02020; font-weight: 700; }
+    .pos  { fill: #1a6b3a; font-weight: 700; }
+    .ki   { fill: #b02020; font-weight: 700; }
+    .mut  { fill: #666; }
+  </style>
+</defs>
+
+<!-- ============================================================
+     CONNECTORS
+     ============================================================ -->
+
+<!-- Box1 → Box2 -->
+<line x1="510" y1="57" x2="510" y2="95" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box2 → Box3 -->
+<line x1="510" y1="147" x2="510" y2="182" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box3 → Box4 (Decision) -->
+<line x1="510" y1="307" x2="510" y2="342" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="516" y="328" class="lbl" fill="#888">Schweregrad?</text>
+
+<!-- Box4 → BoxLeicht -->
+<polyline points="510,412 510,432 235,432 235,452" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="367" y="426" class="lbl" text-anchor="middle">Leicht</text>
+
+<!-- Box4 → BoxSchwer -->
+<polyline points="510,412 510,432 810,432 810,452" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="660" y="426" class="lbl" text-anchor="middle">Mittelschwer / Schwer</text>
+
+<!-- BoxLeicht → reconverge -->
+<polyline points="235,577 235,600 504,600" fill="none" stroke="#555" stroke-width="2"/>
+<!-- BoxSchwer → reconverge -->
+<polyline points="810,577 810,600 516,600" fill="none" stroke="#555" stroke-width="2"/>
+
+<!-- Junction dot -->
+<circle cx="510" cy="600" r="4.5" fill="#555"/>
+
+<!-- Reconverge → Box6 (Biliäre AP) -->
+<line x1="510" y1="600" x2="510" y2="637" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- ── Dashed: Antibiotika side branch ── -->
+<polyline points="855,265 970,265 970,455" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#arr-dash)"/>
+<text x="920" y="258" text-anchor="middle" font-size="8.5" font-weight="500" fill="#aaa">nur wenn</text>
+<text x="920" y="270" text-anchor="middle" font-size="8.5" font-weight="500" fill="#aaa">indiziert</text>
+
+<!-- ── Dashed: Verhalt side branch ── -->
+<polyline points="855,700 970,700 970,660" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#arr-dash)"/>
+
+<!-- ============================================================
+     BOXES
+     ============================================================ -->
+
+<!-- ── BOX 1: START pill ── -->
+<rect x="280" y="18" width="460" height="39" rx="20" fill="#08222c"/>
+<text x="510" y="43" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">Diagnose gesichert: Akute Pankreatitis</text>
+
+<!-- ── BOX 2: Stationäre Aufnahme ── -->
+<rect x="250" y="95" width="520" height="52" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="272" y="114" class="tag" fill="#b02020">Sofortmaßnahme — immer!</text>
+<text x="272" y="132" class="title" fill="#08222c">Stationäre Aufnahme</text>
+<text x="272" y="147" font-size="10.5" fill="#444">Jede akute Pankreatitis muss stationär überwacht werden. Zuweisung Normalstation oder ICU je nach Verlauf.</text>
+
+<!-- ── BOX 3: Basistherapie ── -->
+<rect x="150" y="182" width="705" height="125" rx="5" fill="#fff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="170" y="200" class="tag" fill="#2a4a7f">Schritt 1 · Basistherapie — sofort · immer</text>
+<text x="170" y="220" class="title" fill="#08222c">PANCREAS — Basismaßnahmen</text>
+<line x1="170" y1="228" x2="843" y2="228" stroke="#c8d8f5" stroke-width="1"/>
+<text x="170" y="243" font-size="10.5"><tspan font-weight="600" fill="#2a4a7f">P</tspan><tspan fill="#444"> Perfusion: Kristalloide 200–250 mL/h initial; dann bedarfsadaptiert (Ziel: mind. 3–4 L/d).</tspan><tspan class="cave"> Cave: </tspan><tspan fill="#444">Nierenversagen / Herzinsuffizienz → Restriktion</tspan></text>
+<text x="170" y="260" font-size="10.5"><tspan font-weight="600" fill="#2a4a7f">A</tspan><tspan fill="#444"> Analgesie: Nicht-Opioid-Analgetikum als Basis ± hochpotentes Opioid bei Bedarf — essenziell!</tspan></text>
+<text x="170" y="277" font-size="10.5"><tspan font-weight="600" fill="#2a4a7f">N</tspan><tspan fill="#444"> Nutrition: Frühzeitig enteral (sobald Appetit vorhanden).</tspan><tspan class="cave"> Nahrungskarenz nicht mehr empfohlen!</tspan></text>
+<text x="170" y="294" font-size="10.5"><tspan font-weight="600" fill="#2a4a7f">C</tspan><tspan fill="#444"> Clinical: Vitalzeichen, Diurese, Labor (CRP 48h, Hk, Krea, Ca²⁺). Thromboseprophylaxe (NMH).</tspan></text>
+
+<!-- ── BOX 4: Schweregrad-Entscheidung ── -->
+<rect x="215" y="342" width="590" height="70" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<circle cx="797" cy="340" r="12" fill="#08222c"/>
+<text x="797" y="345" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="235" y="361" class="tag" fill="#555">Schritt 2 · Atlanta-Klassifikation · Verlaufsbewertung nach 48 h</text>
+<text x="510" y="384" font-size="11.5" text-anchor="middle" fill="#08222c">Wie schwer ist der Verlauf?</text>
+<text x="510" y="402" font-size="10" text-anchor="middle" fill="#666">CRP · Hämatokrit-Verlauf · Harnstoff · Kalzium · klinisches Bild · Organfunktion</text>
+
+<!-- ── BOX 5a: Leicht ── -->
+<rect x="50" y="452" width="370" height="125" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="70" y="471" class="tag" fill="#1a6b3a">Leicht · Ca. 80%</text>
+<text x="70" y="490" class="title" fill="#08222c">Konservatives Management</text>
+<line x1="70" y1="498" x2="408" y2="498" stroke="#cde8d5" stroke-width="1"/>
+<text x="70" y="512" font-size="10.5" fill="#1a4a2a">· Normalstation</text>
+<text x="70" y="527" font-size="10.5" fill="#1a4a2a">· Frühzeitige enterale Ernährung (sobald Appetit)</text>
+<text x="70" y="542" font-size="10.5" fill="#1a4a2a">· Kein prophylaktisches Antibiotikum!</text>
+<text x="70" y="557" font-size="10.5" fill="#1a4a2a">· Rasche Besserung erwartet · Letalität: 0,1%</text>
+<text x="70" y="572" font-size="10" fill="#777" font-style="italic">CT Frühphase nicht indiziert</text>
+
+<!-- ── BOX 5b: Schwer / Mittelschwer ── -->
+<rect x="620" y="452" width="380" height="125" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="640" y="471" class="tag" fill="#b02020">Mittelschwer / Schwer · Ca. 20%</text>
+<text x="640" y="490" class="title" fill="#08222c">Intensivierte Überwachung</text>
+<line x1="640" y1="498" x2="988" y2="498" stroke="#f0c0c0" stroke-width="1"/>
+<text x="640" y="512" font-size="10.5" fill="#333">· Schwer → ICU-Aufnahme</text>
+<text x="640" y="527" font-size="10.5" fill="#333">· Beatmung bei ARDS · Nierenersatz bei ANV</text>
+<text x="640" y="542" font-size="10.5" fill="#333">· PPI-Stressulkusprophylaxe (z.B. Pantoprazol)</text>
+<text x="640" y="557" font-size="10.5"><tspan class="cave">· Kein</tspan><tspan fill="#333"> prophylaktisches Antibiotikum! (nur bei Indikation)</tspan></text>
+<text x="640" y="572" font-size="10" fill="#777" font-style="italic">Letalität: mittel 2,1% · schwer 52,2%</text>
+
+<!-- ── DASHED: Antibiotika ── -->
+<rect x="977" y="455" width="113" height="118" rx="4" fill="#fff5f5" stroke="#b02020" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text x="990" y="472" class="tag" fill="#b02020">Antibiotika</text>
+<text x="990" y="487" font-size="9.5" font-weight="600" fill="#b02020">Nur bei:</text>
+<text x="990" y="501" font-size="9.5" fill="#333">· Eitrige Cholangitis</text>
+<text x="990" y="515" font-size="9.5" fill="#333">· Infizierte Nekrose</text>
+<line x1="990" y1="523" x2="1082" y2="523" stroke="#f0c0c0" stroke-width="1"/>
+<text x="990" y="537" font-size="8.5" fill="#b02020" font-weight="600">NICHT</text>
+<text x="990" y="549" font-size="8.5" fill="#555">prophylaktisch!</text>
+<text x="990" y="562" font-size="8.5" fill="#555">Kein Benefit</text>
+
+<!-- ── DASHED: Verhalt / Nekrose ── -->
+<rect x="977" y="637" width="113" height="158" rx="4" fill="#fff8ec" stroke="#cc8800" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text x="990" y="654" class="tag" fill="#8a5500">Verhalt / Nekrose</text>
+<text x="990" y="669" font-size="9.5" font-weight="600" fill="#8a5500">Indikation:</text>
+<text x="990" y="683" font-size="9" fill="#333">· Kompression durch</text>
+<text x="990" y="695" font-size="9" fill="#333">  großen Verhalt</text>
+<text x="990" y="707" font-size="9" fill="#333">· Beginnendes MOV</text>
+<text x="990" y="719" font-size="9" fill="#333">· Infizierte Nekrose</text>
+<line x1="990" y1="727" x2="1082" y2="727" stroke="#f0ddb0" stroke-width="1"/>
+<text x="990" y="741" font-size="9" font-weight="600" fill="#8a5500">Vorgehen:</text>
+<text x="990" y="753" font-size="9" fill="#333">1. Endoskopisch</text>
+<text x="990" y="764" font-size="9" fill="#333">   (transgastral)</text>
+<text x="990" y="775" font-size="9" fill="#333">2. Perkutan</text>
+<text x="990" y="787" font-size="9" fill="#333">3. Chirurgisch</text>
+
+<!-- ── BOX 6: Biliäre Genese + ERCP ── -->
+<rect x="140" y="637" width="820" height="205" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<circle cx="952" cy="635" r="12" fill="#08222c"/>
+<text x="952" y="640" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="160" y="656" class="tag" fill="#8a5500">Schritt 3 · Bei biliärer Genese (ca. 45%)</text>
+<text x="160" y="675" class="title" fill="#08222c">ERCP + Cholezystektomie</text>
+<line x1="160" y1="684" x2="948" y2="684" stroke="#f0ddb0" stroke-width="1"/>
+
+<!-- Vertical divider between ERCP and CCE columns -->
+<line x1="548" y1="690" x2="548" y2="832" stroke="#f0ddb0" stroke-width="1" stroke-dasharray="3 2"/>
+
+<!-- Left column: ERCP -->
+<text x="168" y="702" font-size="9" font-weight="600" fill="#888" letter-spacing="0.5">ERCP-INDIKATIONEN</text>
+<text x="168" y="719" font-size="11" fill="#333"><tspan font-weight="600" fill="#b02020">Cholangitis:</tspan><tspan> ERCP + Papillotomie sofort</tspan><tspan font-weight="600" fill="#b02020"> &lt;24 h</tspan></text>
+<text x="168" y="736" font-size="11" fill="#333"><tspan font-weight="600">Choledocholithiasis</tspan><tspan> ohne Cholangitis:</tspan></text>
+<text x="168" y="752" font-size="10.5" fill="#555">→ Spontanen Steinabgang abwarten (kann spontan erfolgen)</text>
+<text x="168" y="767" font-size="10.5" fill="#555">→ ERCP + Papillotomie bei kein Abgang <tspan font-weight="600" fill="#8a5500">spätestens nach 48 h</tspan></text>
+<text x="168" y="784" font-size="10" fill="#777" font-style="italic">Frühere ERCP bei: schwerer AP, eindeutiger Klinik,</text>
+<text x="168" y="797" font-size="10" fill="#777" font-style="italic">großem impaktiertem Konkrement, progrediente Cholestase</text>
+<text x="168" y="813" font-size="9" fill="#aaa" font-style="italic">Cave: optimaler Zeitpunkt ohne Cholangitis noch diskutiert</text>
+<text x="168" y="830" font-size="10.5" fill="#555">ERCP-Zugang: Darstellung Gallengang-/Pankreasgangsystem + Intervention (Steinextraktion, Stent)</text>
+
+<!-- Right column: CCE -->
+<text x="558" y="702" font-size="9" font-weight="600" fill="#888" letter-spacing="0.5">CHOLEZYSTEKTOMIE (REZIDIVPROPHYLAXE)</text>
+<text x="558" y="719" font-size="11" fill="#333"><tspan font-weight="600" fill="#1a6b3a">Leichte AP:</tspan><tspan> früh-elektiv, innerhalb des stationären</tspan></text>
+<text x="558" y="734" font-size="11" fill="#333">Aufenthalts (nach <tspan font-weight="600">≥72 h</tspan> nach Ausheilung)</text>
+<text x="558" y="751" font-size="10.5" fill="#777" font-style="italic">Empfehlung: im gleichen Aufenthalt (verhindert Rezidiv)</text>
+<line x1="558" y1="760" x2="948" y2="760" stroke="#f0ddb0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="558" y="776" font-size="11" fill="#333"><tspan font-weight="600" fill="#b02020">Schwere AP:</tspan><tspan> ca. 6 Wochen nach Ausheilung</tspan></text>
+<text x="558" y="792" font-size="10.5" fill="#777" font-style="italic">(Stabiler Zustand, Entzündung abgeklungen)</text>
+<line x1="558" y1="801" x2="948" y2="801" stroke="#f0ddb0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="558" y="817" font-size="10.5" fill="#555"><tspan font-weight="600">Ziel: </tspan><tspan>Prävention eines erneuten biliären Pankreatitisschubs</tspan></text>
+<text x="558" y="832" font-size="10.5" fill="#555"><tspan font-weight="600">Wenn ERCP durchgeführt: </tspan><tspan>Papillotomie bereits als Rezidivprophylaxe</tspan></text>
+
+</svg>
+</div>
+
+<!-- ============================================================
+     NOTES SECTION
+     ============================================================ -->
+<div class="notes">
+  <div class="notes-title">Ergänzende Hinweise</div>
+  <div class="notes-subtitle">Aus dem Originaltext · wichtige Details</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Flüssigkeit · PANCREAS-P</div>
+      <div class="note-card-title">Volumensubstitution</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Initial 200–250 mL/h Kristalloide iv.</li>
+          <li>Dann kontrolliert, bedarfsadaptiert</li>
+          <li>Ziel: mind. 3–4 L/d (wichtigste Einzelmaßnahme!)</li>
+          <li><span class="cave">Cave:</span> Nierenversagen/Herzinsuffizienz → Volumenzufuhr reduzieren</li>
+          <li>Zu viel Flüssigkeit → intraabdomineller Druck ↑!</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Indikation · Operative Therapie</div>
+      <div class="note-card-title">Explorative Laparotomie</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Arrosionsblutung (Gefäßarrosion)</li>
+          <li>Perforation eines Hohlorgans</li>
+          <li>Darmischämie</li>
+          <li>Abdominelles Kompartmentsyndrom</li>
+          <li>Andere akute Abdominalursachen</li>
+        </ul>
+        <div style="margin-top:4px;font-size:9.5px;color:#b02020;font-style:italic">Mediane Laparotomie mit Inspektion des gesamten Bauchraums</div>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Monitoring · PANCREAS-C</div>
+      <div class="note-card-title">Verlaufskontrolle</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Vitalzeichen, Diurese (Ziel: &gt;0,5 mL/kg/h)</li>
+          <li>Labor: CRP nach 48 h, Hämatokrit, Ca²⁺, Kreatinin</li>
+          <li>Schmerzentwicklung (NRS)</li>
+          <li>Bildgebung bei V.a. Komplikation (CT: nicht initial!)</li>
+          <li>Intensivüberwachung bei Schwerem Verlauf (SpO₂, Bilanz)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Nutrition · PANCREAS-N</div>
+      <div class="note-card-title">Ernährung &amp; UFH-Sonderfall</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Frühzeitig enteral, sobald Appetit — Nahrungskarenz <span class="cave">nicht mehr</span> empfohlen!</li>
+          <li>Bei schwerem Verlauf/Ileus: nasojejunale Sonde</li>
+          <li>Parenterale Ernährung nur wenn enteral nicht möglich</li>
+          <li><span class="cave">UFH:</span> bei Nierenversagen/Dialyse (statt NMH) oder Thrombektomie, peripartal</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>AMBOSS · Akute Pankreatitis · Therapiealgorithmus · Seite 2 / 3</span>
+  <span>Fehler möglich — Quercheck empfohlen</span>
+</footer>
+
+</body>
+</html>

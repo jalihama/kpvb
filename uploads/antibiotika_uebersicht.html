@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antibiotika – Übersicht für die KP</title>
+<style>
+  :root {
+    --bg: #0e1418;
+    --panel: #16201f;
+    --panel-2: #1d2b29;
+    --ink: #e8efe9;
+    --ink-dim: #9db0a8;
+    --line: #2a3a37;
+    --accent: #d8a44e;
+    /* Angriffspunkt-Farben */
+    --c-wall: #c75c4a;     /* Zellwand */
+    --c-30s:  #4a8fc7;     /* 30S Ribosom */
+    --c-50s:  #5cb88a;     /* 50S Ribosom */
+    --c-dna:  #a86cc7;     /* DNA / Gyrase */
+    --c-folat:#c7a44a;     /* Folsäure */
+    font-synthesis: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.55;
+    padding: 0 0 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* Header */
+  header {
+    padding: 48px 24px 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .sub {
+    color: var(--ink-dim);
+    margin-top: 12px;
+    font-size: 15px;
+    max-width: 60ch;
+  }
+
+  /* Controls */
+  .controls {
+    max-width: 1100px;
+    margin: 28px auto 0;
+    padding: 0 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  .search {
+    flex: 1 1 240px;
+    min-width: 200px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--ink);
+    font-size: 14px;
+    font-family: inherit;
+  }
+  .search::placeholder { color: var(--ink-dim); }
+  .search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+  .chip {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    border-radius: 100px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--ink); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip[aria-pressed="true"] { background: var(--accent); color: #1a1206; border-color: var(--accent); font-weight: 600; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  /* Grid */
+  .grid {
+    max-width: 1100px;
+    margin: 28px auto 0;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .card.hidden { display: none; }
+  .card:hover { transform: translateY(-2px); }
+  .card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .card h2 { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  .target-tag {
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .substances {
+    margin: 12px 0 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-size: 12.5px;
+    color: var(--ink);
+  }
+  .field { margin-top: 11px; }
+  .field-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .field-val { font-size: 13.5px; }
+  .field-val.nw { color: #f0b8b0; }
+  .field-val strong { color: var(--accent); font-weight: 600; }
+
+  /* Merkhilfe table */
+  .merk {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    padding: 0 24px;
+  }
+  .merk h3 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .merk p.lead { color: var(--ink-dim); font-size: 14px; margin-bottom: 18px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  th, td { text-align: left; padding: 13px 16px; font-size: 14px; border-bottom: 1px solid var(--line); }
+  th { background: var(--panel-2); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; display: flex; align-items: center; gap: 9px; }
+
+  .empty {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 24px;
+    color: var(--ink-dim);
+    text-align: center;
+    display: none;
+  }
+  .count { color: var(--ink-dim); font-size: 13px; margin: 18px 24px 0; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  footer { max-width: 1100px; margin: 56px auto 0; padding: 24px; color: var(--ink-dim); font-size: 12.5px; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Infektiologie · KP-Vorbereitung</div>
+  <h1>Antibiotika nach Angriffspunkt</h1>
+  <p class="sub">Substanzgruppen, Wirkspektrum, Mechanismus und relevante Nebenwirkungen. Filterbar nach Zielstruktur — die Achse, nach der Schmidmaier gern strukturiert abfragt.</p>
+</header>
+
+<div class="controls">
+  <input type="text" class="search" id="search" placeholder="Suche: Substanz, Erreger, Nebenwirkung…" aria-label="Antibiotika durchsuchen">
+  <div class="filters" id="filters">
+    <button class="chip" data-filter="all" aria-pressed="true">Alle</button>
+    <button class="chip" data-filter="wall" aria-pressed="false"><span class="dot" style="background:var(--c-wall)"></span>Zellwand</button>
+    <button class="chip" data-filter="30s" aria-pressed="false"><span class="dot" style="background:var(--c-30s)"></span>30S Ribosom</button>
+    <button class="chip" data-filter="50s" aria-pressed="false"><span class="dot" style="background:var(--c-50s)"></span>50S Ribosom</button>
+    <button class="chip" data-filter="dna" aria-pressed="false"><span class="dot" style="background:var(--c-dna)"></span>DNA / Gyrase</button>
+    <button class="chip" data-filter="folat" aria-pressed="false"><span class="dot" style="background:var(--c-folat)"></span>Folsäure</button>
+  </div>
+</div>
+
+<p class="count" id="count"></p>
+<div class="grid" id="grid"></div>
+<div class="empty" id="empty">Keine Treffer. Filter zurücksetzen oder Suche anpassen.</div>
+
+<section class="merk">
+  <h3>Merkhilfe: Angriffspunkte</h3>
+  <p class="lead">Wenn du eine Substanz nicht zuordnen kannst, frag dich zuerst: Wo greift sie an?</p>
+  <table>
+    <thead><tr><th>Zielstruktur</th><th>Klassen</th></tr></thead>
+    <tbody>
+      <tr><td><span class="dot" style="background:var(--c-wall)"></span>Zellwand</td><td>β-Laktame (Penicilline, Cephalosporine, Carbapeneme), Glykopeptide</td></tr>
+      <tr><td><span class="dot" style="background:var(--c-30s)"></span>30S-Ribosom</td><td>Aminoglykoside, Tetracycline</td></tr>
+      <tr><td><span class="dot" style="background:var(--c-50s)"></span>50S-Ribosom</td><td>Makrolide, Linezolid, Chloramphenicol</td></tr>
+      <tr><td><span class="dot" style="background:var(--c-dna)"></span>DNA / Gyrase</td><td>Fluorchinolone (Gyrase + Topoisomerase IV), Metronidazol (DNA-Strangbrüche)</td></tr>
+      <tr><td><span class="dot" style="background:var(--c-folat)"></span>Folsäuresynthese</td><td>Cotrimoxazol (Sulfonamid + Trimethoprim)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  Schnellreferenz zur eigenen KP-Vorbereitung · Dosierungen und Resistenzlage immer nach aktueller Leitlinie / Antibiogramm prüfen.
+</footer>
+
+<script>
+const TARGETS = {
+  wall:  { label: "Zellwand",      color: "var(--c-wall)" },
+  "30s": { label: "30S Ribosom",   color: "var(--c-30s)" },
+  "50s": { label: "50S Ribosom",   color: "var(--c-50s)" },
+  dna:   { label: "DNA / Gyrase",  color: "var(--c-dna)" },
+  folat: { label: "Folsäure",      color: "var(--c-folat)" },
+};
+
+const DATA = [
+  {
+    name: "Penicilline", target: "wall",
+    substances: ["Amoxicillin","Ampicillin","Piperacillin","Flucloxacillin"],
+    mech: "β-Laktam-Ring bindet PBP → Hemmung der Zellwandsynthese",
+    spec: "Grampositive, einige Gramnegative; Piperacillin/Tazobactam: Breitspektrum inkl. <strong>Pseudomonas</strong>",
+    nw: "Allergie bis Anaphylaxie, Exanthem, Diarrhö"
+  },
+  {
+    name: "Cephalosporine", target: "wall",
+    substances: ["Cefuroxim (2.)","Ceftriaxon (3.)","Cefepim (4.)"],
+    mech: "β-Laktam wie Penicilline",
+    spec: "Mit steigender Generation weniger Grampositive, mehr Gramnegative; Cefepim: <strong>Pseudomonas</strong>",
+    nw: "Kreuzallergie mit Penicillinen (~2%), Diarrhö"
+  },
+  {
+    name: "Carbapeneme", target: "wall",
+    substances: ["Meropenem","Imipenem","Ertapenem"],
+    mech: "β-Laktam, resistent gegen die meisten β-Laktamasen",
+    spec: "Sehr breit inkl. <strong>ESBL-Keime</strong>; Meropenem auch Pseudomonas",
+    nw: "Krampfanfälle (Imipenem), Übelkeit — Reserveantibiotikum!"
+  },
+  {
+    name: "Glykopeptide", target: "wall",
+    substances: ["Vancomycin","Teicoplanin"],
+    mech: "Hemmung der Zellwandsynthese durch Bindung an D-Ala-D-Ala (anderer Angriffspunkt als β-Laktame)",
+    spec: "Nur Grampositive, v.a. <strong>MRSA, Enterokokken, C. difficile</strong> (Vanco oral)",
+    nw: "Nephro-/Ototoxizität, Red-Man-Syndrom bei zu schneller Infusion"
+  },
+  {
+    name: "Aminoglykoside", target: "30s",
+    substances: ["Gentamicin","Tobramycin","Amikacin"],
+    mech: "Hemmung der 30S-Untereinheit, bakterizid",
+    spec: "Gramnegative, Pseudomonas (in Kombination)",
+    nw: "<strong>Nephro- und Ototoxizität</strong> — TDM obligat!"
+  },
+  {
+    name: "Tetracycline", target: "30s",
+    substances: ["Doxycyclin","Tigecyclin"],
+    mech: "Hemmung der 30S-Untereinheit des Ribosoms",
+    spec: "Atypische Erreger, Borrelien, Rickettsien, MRSA (Tigecyclin)",
+    nw: "Photosensibilisierung, Zahnverfärbung bei Kindern, Hepatotoxizität"
+  },
+  {
+    name: "Makrolide", target: "50s",
+    substances: ["Azithromycin","Clarithromycin","Erythromycin"],
+    mech: "Hemmung der 50S-Untereinheit → Proteinsynthesehemmung",
+    spec: "Grampositive, <strong>atypische Erreger</strong> (Mykoplasmen, Chlamydien, Legionellen)",
+    nw: "QT-Verlängerung, GI-Beschwerden, CYP3A4-Inhibition"
+  },
+  {
+    name: "Fluorchinolone", target: "dna",
+    substances: ["Ciprofloxacin","Levofloxacin","Moxifloxacin"],
+    mech: "Hemmung von DNA-Gyrase und Topoisomerase IV",
+    spec: "Gramnegative; Cipro: Pseudomonas; Levo/Moxi: auch atypische + Pneumokokken",
+    nw: "<strong>Sehnenschäden</strong> (Tendinitis, Ruptur), QT-Verlängerung, ZNS (Krampf), KI in Schwangerschaft"
+  },
+  {
+    name: "Nitroimidazole", target: "dna",
+    substances: ["Metronidazol"],
+    mech: "DNA-Strangbrüche durch reaktive Metaboliten",
+    spec: "Anaerobier, Protozoen (Giardia, Trichomonas, Amöben)",
+    nw: "Metallic taste, <strong>Disulfiram-Reaktion mit Alkohol</strong>, periphere Neuropathie"
+  },
+  {
+    name: "Sulfonamide / Trimethoprim", target: "folat",
+    substances: ["Cotrimoxazol (TMP/SMX)"],
+    mech: "Hemmung der Folsäuresynthese an zwei verschiedenen Schritten",
+    spec: "Grampositive + Gramnegative, <strong>Pneumocystis jirovecii</strong> (PCP-Prophylaxe)",
+    nw: "Allergische Reaktionen, Nephrotoxizität, Knochenmarksuppression"
+  },
+];
+
+const grid = document.getElementById('grid');
+const searchEl = document.getElementById('search');
+const countEl = document.getElementById('count');
+const emptyEl = document.getElementById('empty');
+let activeFilter = 'all';
+
+function render() {
+  grid.innerHTML = '';
+  DATA.forEach(d => {
+    const t = TARGETS[d.target];
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.style.borderLeftColor = t.color;
+    card.dataset.target = d.target;
+    card.dataset.text = (d.name + ' ' + d.substances.join(' ') + ' ' + d.spec + ' ' + d.nw + ' ' + d.mech).toLowerCase();
+    card.innerHTML = `
+      <div class="card-top">
+        <h2>${d.name}</h2>
+        <span class="target-tag" style="background:${t.color}22;color:${t.color}">${t.label}</span>
+      </div>
+      <div class="substances">${d.substances.map(s => `<span class="pill">${s}</span>`).join('')}</div>
+      <div class="field"><div class="field-label">Mechanismus</div><div class="field-val">${d.mech}</div></div>
+      <div class="field"><div class="field-label">Wirkspektrum</div><div class="field-val">${d.spec}</div></div>
+      <div class="field"><div class="field-label">Nebenwirkungen</div><div class="field-val nw">${d.nw}</div></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function applyFilters() {
+  const q = searchEl.value.trim().toLowerCase();
+  let visible = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const matchFilter = activeFilter === 'all' || card.dataset.target === activeFilter;
+    const matchSearch = !q || card.dataset.text.includes(q);
+    const show = matchFilter && matchSearch;
+    card.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  countEl.textContent = `${visible} von ${DATA.length} Substanzgruppen`;
+  emptyEl.style.display = visible === 0 ? 'block' : 'none';
+}
+
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.chip');
+  if (!btn) return;
+  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+  btn.setAttribute('aria-pressed', 'true');
+  activeFilter = btn.dataset.filter;
+  applyFilters();
+});
+
+searchEl.addEventListener('input', applyFilters);
+
+render();
+applyFilters();
+</script>
+</body>
+</html>

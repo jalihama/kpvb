@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kardiologie Pharmakologie — KP Referenz v2.1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+  :root {
+    --bg:#0e1117;--bg2:#161b25;--bg3:#1e2535;--bg4:#252e42;
+    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+    --text:#e8eaf0;--text2:#8b92a8;--text3:#555e78;
+    --accent:#4a9eff;--warn:#f59e0b;--warn-bg:rgba(245,158,11,0.1);
+    --danger:#ef4444;--danger-bg:rgba(239,68,68,0.1);
+    --success:#22c55e;--success-bg:rgba(34,197,94,0.1);
+    --info:#3b82f6;--info-bg:rgba(59,130,246,0.1);
+    --new:#a78bfa;--new-bg:rgba(167,139,250,0.1);
+    --font:'Roboto Flex',system-ui,sans-serif;--mono:'Roboto Mono',monospace;
+    --r:8px;--rl:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+  .header{background:var(--bg2);border-bottom:1px solid var(--border2);padding:20px 24px 16px;position:sticky;top:0;z-index:100}
+  .header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+  .logo-title{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-0.3px}
+  .logo-sub{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em}
+  .version-tag{font-family:var(--mono);font-size:10px;color:var(--accent);background:var(--info-bg);border:1px solid rgba(74,158,255,0.2);padding:3px 8px;border-radius:4px;white-space:nowrap;margin-top:2px}
+  .stats{display:flex;gap:16px;flex-wrap:wrap}
+  .stat{display:flex;align-items:center;gap:6px}
+  .stat-n{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text)}
+  .stat-n.blue{color:var(--accent)}.stat-n.green{color:var(--success)}.stat-n.purple{color:var(--new)}
+  .stat-l{font-size:11px;color:var(--text3);line-height:1.3}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .search-wrap{position:relative;flex:1;min-width:220px;max-width:380px}
+  .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;pointer-events:none}
+  input[type=text]{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 12px 8px 32px;border-radius:var(--r);outline:none;transition:border-color 0.15s}
+  input[type=text]:focus{border-color:rgba(74,158,255,0.4)}
+  input[type=text]::placeholder{color:var(--text3)}
+  .font-ctrl{display:flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:3px 6px;flex-shrink:0}
+  .font-btn{background:transparent;border:none;color:var(--text2);font-family:var(--mono);font-size:12px;font-weight:500;cursor:pointer;padding:3px 7px;border-radius:4px;transition:background 0.12s,color 0.12s;line-height:1}
+  .font-btn:hover{background:var(--bg4);color:var(--text)}
+  .font-btn.font-reset{font-size:14px;opacity:0.6}.font-btn.font-reset:hover{opacity:1}
+  .font-label{font-family:var(--mono);font-size:10px;color:var(--text3);min-width:34px;text-align:center;user-select:none}
+  .filter-pills{display:flex;gap:5px;flex-wrap:wrap}
+  .pill{font-size:11px;padding:5px 11px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s;white-space:nowrap;font-family:var(--font)}
+  .pill:hover{background:var(--bg3);color:var(--text)}
+  .pill.on{background:var(--bg4);border-color:rgba(74,158,255,0.3);color:var(--text);font-weight:500}
+  .main{max-width:980px;margin:0 auto;padding:20px 20px 60px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+  .legend-dot{width:8px;height:8px;border-radius:2px}
+  .drug-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:8px;overflow:hidden;transition:border-color 0.15s}
+  .drug-card:hover{border-color:var(--border2)}
+  .drug-card.open{border-color:rgba(74,158,255,0.2)}
+  .card-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+  .card-header:hover .card-name{color:var(--accent)}
+  .cat-bar{width:5px;height:44px;border-radius:3px;flex-shrink:0}
+  .card-meta{flex:1;min-width:0}
+  .card-name{font-size:17px;font-weight:600;color:#ffffff;letter-spacing:-0.2px;transition:color 0.15s}
+  .card-sub{font-size:12px;color:var(--text2);margin-top:3px}
+  .card-ex{font-family:var(--mono);font-size:11px;color:#7dd3fc;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:150px;flex-shrink:0}
+  .tag{font-size:9px;font-weight:500;padding:2px 7px;border-radius:10px;letter-spacing:0.04em;white-space:nowrap}
+  .tag-kp{background:var(--warn-bg);color:var(--warn);border:1px solid rgba(245,158,11,0.2)}
+  .tag-new{background:var(--new-bg);color:var(--new);border:1px solid rgba(167,139,250,0.2)}
+  .tag-upd{background:var(--success-bg);color:var(--success);border:1px solid rgba(34,197,94,0.2)}
+  .chevron{font-size:10px;color:var(--text3);transition:transform 0.2s;flex-shrink:0}
+  .drug-card.open .chevron{transform:rotate(180deg)}
+  .card-body{display:none;border-top:1px solid var(--border);padding:16px}
+  .drug-card.open .card-body{display:block}
+  .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .section{background:var(--bg3);border-radius:var(--r);padding:11px 13px}
+  .section.full{grid-column:1/-1}
+  .sec-label{font-family:var(--mono);font-size:9px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
+  .sec-text{font-size:12px;color:var(--text2);line-height:1.7}
+  .sec-text ul{padding-left:14px}
+  .sec-text li{margin-bottom:4px}
+  .pearl-box{background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.18);border-radius:var(--r);padding:11px 13px;margin-bottom:10px}
+  .pearl-label{font-family:var(--mono);font-size:9px;font-weight:500;color:var(--warn);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px}
+  .pearl-text{font-size:12px;color:var(--text);line-height:1.7}
+  .danger-box{background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.18);border-radius:var(--r);padding:11px 13px;margin-bottom:10px}
+  .danger-label{font-family:var(--mono);font-size:9px;font-weight:500;color:var(--danger);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px}
+  .danger-text{font-size:12px;color:var(--text2);line-height:1.7}
+  .update-box{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.16);border-radius:var(--r);padding:11px 13px}
+  .update-label{font-family:var(--mono);font-size:9px;font-weight:500;color:var(--success);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px}
+  .update-text{font-size:11px;color:var(--text3);line-height:1.6}
+  .no-results{text-align:center;padding:40px;color:var(--text3);font-size:13px;display:none}
+  .footer{text-align:center;padding:20px;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);margin-top:20px}
+  @media print{
+    body{background:white;color:#111}
+    .header{position:static;background:white;border-bottom:2px solid #ddd}
+    .card-body{display:block!important}
+    .drug-card{border:1px solid #ddd;page-break-inside:avoid}
+    .section{background:#f8f8f8}
+    .pearl-box{background:#fffbeb;border-color:#d97706}
+    .danger-box{background:#fff5f5;border-color:#dc2626}
+    .update-box{background:#f0fff4;border-color:#16a34a}
+    .chevron,.controls{display:none}
+    .card-name{color:#111!important}
+    .card-ex{color:#1d4ed8!important}
+    .sec-text,.danger-text,.card-sub{color:#444}
+    .sec-label,.pearl-label,.danger-label,.update-label,.logo-sub{color:#666}
+    .pearl-text,.update-text{color:#222}
+  }
+  @media(max-width:640px){
+    .section-grid{grid-template-columns:1fr}
+    .header-top{flex-direction:column}
+    .card-tags{max-width:100px}
+  }
+</style>
+<style id="kp-brand">
+:root{--bg:#061d28!important;--bg2:#0a2a38!important;--bg3:#0e3344!important;--bg4:#14495c!important;--accent:#24c4e6!important;}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="logo-title">Kardiologie Pharmakologie</div>
+      <div class="logo-sub">KENNTNISPRÜFUNG · APPROBATION · LMU</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <div class="version-tag">v2.1 — ESC/DGK 2024/2025</div>
+      <div class="stats">
+        <div class="stat"><span class="stat-n" id="tc">0</span><span class="stat-l">Gruppen<br>gesamt</span></div>
+        <div class="stat"><span class="stat-n blue" id="shown">0</span><span class="stat-l">Gefiltert<br>angezeigt</span></div>
+        <div class="stat"><span class="stat-n purple">2</span><span class="stat-l">Neue<br>Einträge</span></div>
+        <div class="stat"><span class="stat-n green">9</span><span class="stat-l">Aktu&shy;alisiert<br>2024/25</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="srch" placeholder="Suche: Wirkstoff, Indikation, Gruppe..." oninput="filterAll()">
+    </div>
+    <div class="font-ctrl">
+      <button class="font-btn" onclick="changeFont(-1)" title="Schrift kleiner">A−</button>
+      <span class="font-label" id="font-label">100%</span>
+      <button class="font-btn" onclick="changeFont(1)" title="Schrift größer">A+</button>
+      <button class="font-btn font-reset" onclick="changeFont(0)" title="Zurücksetzen">↺</button>
+    </div>
+    <div class="filter-pills" id="pills"></div>
+  </div>
+</div>
+<div class="main">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> KP-Wichtig</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> Neu 2024/25</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Aktualisiert</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Cave/Gefahr</div>
+    <div class="legend-item" style="margin-left:auto;font-size:11px;color:#555e78">ESC HTN 2024 · ESC VHF 2024 · ESC HF 2023 · ESC ACS 2023 · ESC/EAS Lipide 2025</div>
+  </div>
+  <div id="cards"></div>
+  <div class="no-results" id="nr">Keine Einträge gefunden.</div>
+</div>
+<div class="footer">Kardiologie Pharmakologie KP-Referenz v2.1 &nbsp;·&nbsp; ESC/DGK Leitlinienstand 2024/2025 &nbsp;·&nbsp; Für Lernzwecke — kein Ersatz für klinisches Urteil</div>
+<script>
+const CATS_ORDER=["Herzinsuffizienz / KHK","Antihypertensiva","Antiischämisch","Diuretika","Antiarrhythmika","Lipidsenker","Thrombozytenaggregationshemmer","Antikoagulation","HFrEF / Diabetes","HFrEF / KHK"];
+let fontStep=3;
+const FONT_SCALES=[0.75,0.82,0.9,1.0,1.1,1.2,1.32,1.45,1.6];
+const FONT_LABELS=["75%","82%","90%","100%","110%","120%","132%","145%","160%"];
+function changeFont(dir){
+  if(dir===0){fontStep=3;}else{fontStep=Math.max(0,Math.min(8,fontStep+dir));}
+  document.getElementById("cards").style.zoom=FONT_SCALES[fontStep];
+  document.getElementById("font-label").textContent=FONT_LABELS[fontStep];
+}
+const CAT_COLORS={"Herzinsuffizienz / KHK":"#185FA5","Antihypertensiva":"#7F77DD","Antiischämisch":"#993C1D","Diuretika":"#BA7517","Antiarrhythmika":"#A32D2D","Lipidsenker":"#555e78","Thrombozytenaggregationshemmer":"#3C3489","Antikoagulation":"#712B13","HFrEF / Diabetes":"#0F6E56","HFrEF / KHK":"#533FAA"};
+const D=[
+{id:"bb",cat:"Herzinsuffizienz / KHK",name:"Beta-Blocker (β-Blocker)",
+sub:"Bremsen das Herz · senken Sauerstoffbedarf · schützen nach Herzinfarkt",
+ex:"Bisoprolol · Metoprolol succinat · Carvedilol · Nebivolol",kp:true,upd:true,
+mech:"Das Herz reagiert auf Stresshormone (Adrenalin, Noradrenalin), indem es schneller und stärker schlägt. Beta-Blocker blockieren die Andockstellen (Beta-1-Rezeptoren) für diese Stresshormone am Herzmuskel. Dadurch schlägt das Herz langsamer, schwächer und ruhiger — es braucht weniger Sauerstoff. Außerdem wird weniger Renin (ein Hormon das den Blutdruck erhöht) aus der Niere ausgeschüttet. Carvedilol blockiert zusätzlich noch Alpha-1-Rezeptoren in den Gefäßen → Gefäße weiten sich. Wichtig: Metoprolol tartrat (kurzwirksam) ist NICHT für Herzinsuffizienz (Herzschwäche) zugelassen — nur Metoprolol succinat (die Retardform mit gleichmäßiger Wirkstoffabgabe).",
+ind:"<ul><li>Herzschwäche mit verminderter Pumpfunktion (Ejektionsfraktion ≤40 %) — senkt die Sterblichkeit nachweislich (Studien: CIBIS-II für Bisoprolol, MERIT-HF für Metoprolol succinat, COPERNICUS für Carvedilol)</li><li>Koronare Herzerkrankung (Verengung der Herzkranzgefäße) und stabile Angina pectoris (Brustschmerz bei Belastung)</li><li>Herzrhythmusstörungen: Vorhofflimmern (Herzrate bremsen), supraventrikuläre Tachykardien (Anfälle von sehr schnellem Herzschlag)</li><li>Nach Herzinfarkt (Schutz vor erneutem Infarkt)</li><li>Bluthochdruck — aber laut ESC 2024 NICHT mehr als erste Wahl bei unkompliziertem Bluthochdruck, nur wenn gleichzeitig Herzschwäche, koronare Herzerkrankung oder Herzrhythmusstörung vorliegt</li><li>Schilddrüsenüberfunktion (lindert die Herzsymptome)</li></ul>",
+ki:"<ul><li>AV-Block 2. oder 3. Grades ohne Herzschrittmacher (die elektrische Überleitung zum Herzkammermuskel ist bereits blockiert — Beta-Blocker verschlimmern dies)</li><li>Sick-Sinus-Syndrom (Schwäche des Herzschrittmachers)</li><li>Akut dekompensierte Herzschwäche (wenn das Herz gerade versagt — erst stabilisieren, dann Beta-Blocker einführen)</li><li>Herzfrequenz unter 50 Schlägen/Minute</li><li>Schweres Asthma bronchiale (Beta-Blocker können die Bronchien verengen — COPD ist keine absolute Kontraindikation)</li><li>Phäochromozytom (Tumor der Nebenniere, der Adrenalin ausschüttet) — ohne vorherigen Alpha-Blocker gefährlich</li></ul>",
+ww:"<ul><li>Verapamil oder Diltiazem (Nicht-Dihydropyridin-Calciumkanalblocker) + Beta-Blocker → lebensgefährlicher AV-Block und Kreislaufversagen — ABSOLUT VERBOTEN zu kombinieren</li><li>Digoxin: beide bremsen das Herz → Herzschlag kann gefährlich langsam werden</li><li>Ibuprofen, Diclofenac und andere Schmerzmittel (sog. nicht-steroidale Antirheumatika): schwächen die blutdrucksenkende Wirkung ab</li><li>Insulin und Blutzucker-Tabletten: Beta-Blocker maskieren die Warnsymptome einer Unterzuckerung (zittern, Herzrasen bleiben aus) — nur Schwitzen bleibt</li><li>Clonidin: Bei plötzlichem Absetzen von Clonidin kann eine gefährliche Blutdruckkrise entstehen</li></ul>",
+nw:"Langsamer Herzschlag (Bradykardie), AV-Block, kalte Hände und Füße (Durchblutungsstörungen), Müdigkeit, Luftnot bei Asthma/COPD (Bronchospasmus), Erektionsstörungen, Maskierung von Unterzuckerungs-Symptomen beim Diabetiker, lebhafte Träume/Albträume (v.a. bei fettlöslichen Präparaten wie Metoprolol oder Propranolol, die ins Gehirn gelangen)",
+pearl:"ESC Hypertonie-Leitlinie 2024: Beta-Blocker sind KEIN erster Schritt bei unkompliziertem Bluthochdruck mehr — aber unverzichtbar bei Herzschwäche, koronarer Herzerkrankung und Herzrhythmusstörungen. Sterblichkeitsvorteil bei Herzschwäche nur für Bisoprolol, Carvedilol und Metoprolol succinat belegt — nicht für andere Beta-Blocker! Metoprolol tartrat (kurzwirksam) hat KEINE Zulassung bei Herzinsuffizienz. NIEMALS abrupt absetzen — das Herz reagiert mit einem Rebound (plötzlich viel mehr Adrenalinwirkung → Brustschmerz, Herzinfarkt möglich).",
+danger:"Verapamil oder Diltiazem zusammen mit Beta-Blocker ist absolut verboten — lebensgefährlicher AV-Block! Abruptes Absetzen kann einen Herzinfarkt auslösen.",
+upd:"ESC Hypertonie 2024: Beta-Blocker nicht mehr erste Wahl bei unkompliziertem Bluthochdruck. Nur bei zwingenden Begleiterkrankungen (Herzschwäche, KHK, Rhythmusstörungen) einsetzen."},
+
+{id:"ace",cat:"Herzinsuffizienz / KHK",name:"ACE-Hemmer",
+sub:"Entspannen die Blutgefäße · entlasten das Herz · schützen die Niere",
+ex:"Ramipril · Lisinopril · Enalapril · Perindopril · Captopril",kp:true,upd:false,
+mech:"Im Körper gibt es das Renin-Angiotensin-Aldosteron-System (RAAS) — eine Hormonkette, die den Blutdruck und den Wasserhaushalt regelt. Ein zentrales Enzym in dieser Kette heißt ACE (Angiotensin-Converting-Enzyme). ACE wandelt das wirkungslose Angiotensin I in Angiotensin II um — ein starkes Hormon, das Blutgefäße verengt und die Nebenniere stimuliert, Aldosteron (salzretentionshormon) auszuschütten. ACE-Hemmer blockieren dieses Enzym: weniger Angiotensin II → Blutgefäße weiten sich → Herz muss weniger gegen Widerstand pumpen (Vor- und Nachlast sinken). Gleichzeitig wird ein weiterer Effekt ausgelöst: Bradykinin (ein gefäßerweiternd wirkender Botenstoff) wird nicht mehr abgebaut → Bradykinin reichert sich an. Das ist nützlich fürs Herz, verursacht aber als Nebenwirkung den typischen Reizhusten.",
+ind:"<ul><li>Herzschwäche mit verminderter Pumpfunktion (Ejektionsfraktion ≤40 %) — 1. Wahl, senkt Sterblichkeit (CONSENSUS-Studie, SOLVD-Studie)</li><li>Nach Herzinfarkt — besonders wenn die Pumpfunktion eingeschränkt ist</li><li>Bluthochdruck — erste Wahl laut ESC Hypertonie-Leitlinie 2024</li><li>Diabetische und nicht-diabetische Nierenschäden (vermindert Eiweißverlust im Urin, verlangsamt Nierenversagen)</li><li>Asymptomatische eingeschränkte Herzpumpfunktion (schützt vor späterer Herzschwäche)</li></ul>",
+ki:"<ul><li>Schwangerschaft — absolut verboten! Verursacht schwere Fehlbildungen, besonders an den Nieren des Ungeborenen (im 2. und 3. Trimester lebensbedrohlich)</li><li>Angioödem in der Vorgeschichte (gefährliche Schwellung im Hals-/Zungenbereich) — auch wenn das Angioödem durch einen anderen ACE-Hemmer ausgelöst wurde</li><li>Beidseitige Nierenarterienstenose (Verengung beider Nierenarterien) — ACE-Hemmer können dann die Nierenfunktion dramatisch verschlechtern</li><li>Kalium im Blut über 5,5 mmol/l</li><li>Kombination mit Aliskiren bei Diabetikern oder bei eingeschränkter Nierenfunktion (Kreatinin-Clearance unter 60 ml/min)</li></ul>",
+ww:"<ul><li>Kaliumsparende Wassertabletten (Spironolacton, Eplerenon) und Sartane: Kalium kann auf gefährliche Werte ansteigen</li><li>Ibuprofen, Diclofenac (nicht-steroidale Antirheumatika): schwächen die Wirkung ab und schaden der Niere</li><li>Sacubitril/Valsartan (Entresto): Mindestens 36 Stunden Pause nach der letzten ACE-Hemmer-Dosis nötig — sonst stark erhöhtes Angioödem-Risiko!</li><li>Lithium (Stimmungsstabilisator bei Psychiatrie): ACE-Hemmer erhöhen den Lithiumspiegel → Vergiftungsgefahr</li><li>Antidiabetika (Insulin, Tabletten): Unterzuckerungsrisiko kann leicht steigen</li></ul>",
+nw:"Trockener Reizhusten (bei 10–15 % der Patienten, durch angesammeltes Bradykinin — typischste Nebenwirkung!), Angioödem (seltene aber lebensbedrohliche Schwellung der Lippen/Zunge/Kehle), Blutdruckabfall nach der ersten Dosis (deshalb: niedrig anfangen), Anstieg des Kaliums im Blut, Anstieg des Kreatinins (Nierenwert — bis 30–50 % zu Beginn normal und gewollt, kein Absetzgrund), Schwindel",
+pearl:"Ein Kreatinin-Anstieg von bis zu 30–50 % nach dem Beginn eines ACE-Hemmers ist gewollt und zeigt, dass das Medikament wirkt (die Niere wird entlastet). Erst bei stärkerem Anstieg oder Hyperkaliämie über 6,0 mmol/l absetzen. Reizhusten ist durch Bradykinin bedingt → Wechsel auf ein Sartan (ARB). 36-Stunden-Pause vor Entresto ist Pflicht. Ziel: höchste vom Patienten tolerierte Dosis erreichen.",
+danger:"Schwangerschaft = absolut verboten! Angioödem in der Vorgeschichte = absolute Kontraindikation für alle ACE-Hemmer und auch für Sacubitril/Valsartan."},
+
+{id:"arb",cat:"Herzinsuffizienz / KHK",name:"AT1-Antagonisten (Sartane / ARBs)",
+sub:"Wie ACE-Hemmer — aber ohne Husten · keine Bradykinin-Wirkung",
+ex:"Valsartan · Candesartan · Losartan · Irbesartan · Olmesartan",kp:false,upd:false,
+mech:"Sartane greifen eine Stufe nach den ACE-Hemmern in derselben Hormonkette (RAAS) an. Sie blockieren nicht die Bildung von Angiotensin II, sondern dessen Andockstelle (AT1-Rezeptor). Angiotensin II wird also produziert, kann aber nicht andocken und nichts bewirken → gleiche blutdrucksenkende Wirkung wie ACE-Hemmer. Entscheidender Unterschied: Bradykinin wird nicht beeinflusst — daher kein Reizhusten und kein Angioödem.",
+ind:"<ul><li>Herzschwäche mit verminderter Pumpfunktion — wenn ACE-Hemmer wegen Husten oder Angioödem nicht vertragen werden (Candesartan, Valsartan)</li><li>Bluthochdruck — erste Wahl laut ESC 2024</li><li>Diabetische Nierenschädigung (schützt die Niere, mindert Eiweißverlust im Urin)</li></ul>",
+ki:"<ul><li>Schwangerschaft — absolut verboten, genau wie ACE-Hemmer (Fehlbildungen des Ungeborenen)</li><li>Beidseitige Nierenarterienstenose</li><li>Erhöhtes Kalium im Blut</li><li>Kombination mit ACE-Hemmer: gleichzeitige Gabe beider Substanzen erhöht das Risiko für Kaliumanstieg, Blutdruckabfall und Nierenversagen, ohne einen zusätzlichen Nutzen zu haben</li></ul>",
+ww:"<ul><li>Kaliumsparende Wassertabletten und andere RAAS-Hemmer → Kaliumanstieg</li><li>Ibuprofen, Diclofenac: schwächen die Wirkung ab, schaden der Niere</li><li>Nicht mit ACE-Hemmern kombinieren (doppelte RAAS-Blockade ohne Zusatznutzen)</li></ul>",
+nw:"Kein Reizhusten (das ist der größte Vorteil gegenüber ACE-Hemmern), sehr selten Angioödem, Blutdruckabfall, Kaliumanstieg, leichter Kreatinin-Anstieg",
+pearl:"Sartane sind die erste Wahl, wenn ein Patient wegen Husten keinen ACE-Hemmer verträgt. Der fehlende Husten ist durch den fehlenden Bradykinin-Effekt bedingt. Niemals mit ACE-Hemmern kombinieren — die ESC-Leitlinien warnen ausdrücklich davor.",
+danger:""},
+
+{id:"arni",cat:"Herzinsuffizienz / KHK",name:"ARNI — Sacubitril/Valsartan (Entresto)",
+sub:"Doppelwirkung: Schutzhormone erhöhen + Angiotensin blockieren · Teil der Fantastischen Vier",
+ex:"Sacubitril/Valsartan (Entresto) — einziges Präparat dieser Klasse",kp:true,upd:true,
+mech:"Sacubitril/Valsartan (Entresto) vereint zwei Wirkmechanismen in einer Tablette. Sacubitril hemmt das Enzym Neprilysin, das normalerweise schützende Herzpeptide (BNP, ANP — natürliche Hormone, die das Herz entlasten, indem sie Gefäße weiten und Salz über die Niere ausscheiden) abbaut. Wird Neprilysin gehemmt, bleiben diese schützenden Hormone länger aktiv → mehr Gefäßweitung, mehr Salz- und Wasserausscheidung, weniger krankhaftes Herzumbau (Fibrose). Valsartan ist ein Sartan und blockiert den Angiotensin-II-Rezeptor (wie beschrieben). Zusammen wirken beide Teile stärker als ein ACE-Hemmer allein.",
+ind:"<ul><li>Herzschwäche mit verminderter Pumpfunktion (Ejektionsfraktion ≤40 %) — ersetzt den ACE-Hemmer oder das Sartan, Teil der sog. Fantastischen Vier (Klasse I, ESC 2021)</li><li>Herzschwäche mit leicht eingeschränkter Pumpfunktion (Ejektionsfraktion 41–49 %) — kann erwogen werden (Klasse IIb, ESC 2023 Update)</li><li>Nur wenn der Patient stabil ist — nicht bei akut dekompensierter Herzschwäche starten</li></ul>",
+ki:"<ul><li>Kombination mit ACE-Hemmern ist absolut verboten — mindestens 36 Stunden Pause nach der letzten ACE-Hemmer-Dosis einhalten, sonst stark erhöhtes Risiko für ein lebensbedrohliches Angioödem (Schwellung der Atemwege)</li><li>Angioödem in der Vorgeschichte (durch ACE-Hemmer oder Sartane)</li><li>Schwere Leberinsuffizienz (Child-Pugh C)</li><li>Schwangerschaft</li><li>Systolischer Blutdruck unter 100 mmHg</li></ul>",
+ww:"<ul><li>ACE-Hemmer: 36-Stunden-Auswaschphase ist Pflicht — ohne Pause droht ein lebensbedrohliches Angioödem!</li><li>Kaliumsparende Mittel, Aldosteron-Antagonisten: Kaliumanstieg möglich</li><li>Ibuprofen, Diclofenac: Wirkungsschwächung und Nierenschaden</li></ul>",
+nw:"Blutdruckabfall (häufig — Vorsicht bei der Startdosis!), erhöhtes Kalium, Verschlechterung der Nierenfunktion (kontrollieren), selten Angioödem, Schwindel",
+pearl:"Die PARADIGM-HF-Studie zeigte: Sacubitril/Valsartan senkt die kardiovaskuläre Sterblichkeit und Krankenhausaufnahmen wegen Herzschwäche besser als Enalapril allein. ESC 2023 Update: Entresto kann jetzt auch bei leicht eingeschränkter Pumpfunktion (EF 41–49 %) erwogen werden. Die 36-Stunden-Pause nach dem letzten ACE-Hemmer ist nicht optional — sie rettet Leben.",
+danger:"36 Stunden Pause nach ACE-Hemmer vor Entresto-Start = absolut obligatorisch! Angioödem in der Vorgeschichte = absolute Kontraindikation.",
+upd:"ESC Herzinsuffizienz 2023: Entresto kann jetzt auch bei Ejektionsfraktion 41–49 % erwogen werden (Klasse IIb). Zuvor nur bei EF ≤40 %."},
+
+{id:"ccb",cat:"Antihypertensiva",name:"Calciumkanalblocker (CCB)",
+sub:"Zwei völlig verschiedene Typen: Gefäßerweiterer (DHP) vs. Herzbremser (Non-DHP)",
+ex:"Dihydropyridine: Amlodipin, Nifedipin · Nicht-DHP: Verapamil, Diltiazem",kp:true,upd:true,
+mech:"Calcium ist der Auslöser für die Muskelkontraktion — sowohl im Herzmuskel als auch in den Gefäßmuskeln. Calciumkanalblocker blockieren die Kalzium-Einströmung durch bestimmte Kanäle (L-Typ). Aber die zwei Gruppen wirken ganz unterschiedlich: Dihydropyridine (DHP, z.B. Amlodipin, Nifedipin) wirken fast ausschließlich auf die Blutgefäße → Gefäße weiten sich, Blutdruck sinkt. Das Herz selbst wird kaum direkt beeinflusst. Nicht-Dihydropyridine (Non-DHP, z.B. Verapamil, Diltiazem) wirken vor allem auf das Herz → Herzschlag wird langsamer (wie ein Beta-Blocker), die elektrische Überleitung zum Herzmuskel wird gebremst, und das Herz schlägt schwächer. Zusätzlich wirken auch sie etwas gefäßerweiternd.",
+ind:"<ul><li>DHP (Amlodipin, Nifedipin retard): Bluthochdruck — erste Wahl laut ESC 2024, vorzugsweise als Kombipräparat. Auch bei stabiler Angina pectoris (Brustschmerz)</li><li>Non-DHP (Verapamil, Diltiazem): Vorhofflimmern — Herzrate bremsen (Frequenzkontrolle). Auch bei stabiler Angina pectoris, wenn Beta-Blocker nicht vertragen werden</li><li>Raynaud-Syndrom (kalte blaue Finger): Nifedipin retard</li><li>Blutung unter der Hirnhaut (Subarachnoidalblutung): Nimodipin (wirkt gezielt auf Hirngefäße)</li><li>Bluthochdruck in der Schwangerschaft: Nifedipin</li></ul>",
+ki:"<ul><li>Non-DHP bei Herzschwäche mit verminderter Pumpfunktion VERBOTEN — Verapamil und Diltiazem schwächen das bereits kranke Herz weiter (negativ-inotrop). Amlodipin ist dagegen sicher!</li><li>Non-DHP nicht kombinieren mit Beta-Blockern (AV-Block-Gefahr!)</li><li>Non-DHP nicht bei Wolff-Parkinson-White-Syndrom (WPW) mit Vorhofflimmern — sie verlangsamen den AV-Knoten, die elektrischen Impulse nutzen dann eine gefährliche Umgehungsbahn → Kammerflimmern</li><li>Kurzwirksames Nifedipin (nicht retardiert): nicht bei akutem Herzinfarkt oder instabiler Angina — es verursacht reflektorisches Herzrasen</li></ul>",
+ww:"<ul><li>Verapamil + Beta-Blocker: Beide bremsen das Herz — zusammen kann die elektrische Überleitung zum Herzmuskel vollständig blockieren (AV-Block) → ABSOLUT VERBOTEN</li><li>Verapamil + Digoxin: Verapamil erhöht den Digoxin-Spiegel im Blut → Vergiftungsgefahr</li><li>Verapamil oder Diltiazem + Simvastatin: blockieren ein Leberenzym (CYP3A4), das Simvastatin abbaut → Simvastatin-Spiegel steigt stark → Muskelschäden möglich</li></ul>",
+nw:"DHP (Amlodipin, Nifedipin): Reflexherzrasen nach kurzwirksamen Formen, Hitzegefühl und Hautrötung (Flush), Kopfschmerzen, Knöchelschwellung (Wassereinlagerung durch Gefäßerweiterung — nicht herzbedingt!). Non-DHP (Verapamil, Diltiazem): Langsamer Herzschlag, AV-Block, Verstopfung (Verapamil — sehr häufig!), Schwächung der Herzpumpkraft",
+pearl:"ESC Hypertonie 2024: Amlodipin ist erste Wahl bei Bluthochdruck, vorzugsweise als Kombipräparat in einer Tablette. Neues Blutdruckziel: systolisch 120–129 mmHg. Amlodipin darf bei Herzschwäche gegeben werden (PRAISE-Studien bestätigten: neutral, kein Schaden). Verapamil + Beta-Blocker ist eine lebensgefährliche Kombination. Non-DHP niemals bei Herzschwäche mit reduzierter Pumpfunktion.",
+danger:"Verapamil oder Diltiazem + Beta-Blocker = absolut verboten → AV-Block! Non-DHP NICHT bei Herzschwäche mit reduzierter Pumpfunktion einsetzen.",
+upd:"ESC Hypertonie 2024: DHP-Calciumkanalblocker explizit erste Wahl. Kombipräparate bevorzugt. Neues RR-Ziel: systolisch 120–129 mmHg (Paradigmenwechsel gegenüber früherem Ziel <140 mmHg)."},
+
+{id:"loop",cat:"Diuretika",name:"Schleifendiuretika",
+sub:"Stärkste Wassertabletten · wirken auch bei schlechter Nierenfunktion",
+ex:"Furosemid · Torasemid (bevorzugt bei chronischer Herzinsuffizienz)",kp:true,upd:false,
+mech:"Die Niere hat verschiedene Abschnitte, in denen sie Salz und Wasser zurückgewinnt. Schleifendiuretika blockieren einen Salzkanal (NKCC2-Cotransporter) in einem besonders wichtigen Abschnitt, der Henle-Schleife. Dieser Kanal transportiert normalerweise gleichzeitig Natrium, Kalium und Chlorid zurück ins Blut. Wenn er blockiert ist, bleiben viel mehr Salz und Wasser im Urin → sehr starke Entwässerung. Der Effekt funktioniert auch bei stark eingeschränkter Nierenfunktion (anders als Thiazide, die bei schlechten Nierenwerten versagen).",
+ind:"<ul><li>Herzinsuffizienz mit Stauungszeichen (Beinödeme, Wassereinlagerungen in der Lunge, Luftnot) — akut und chronisch</li><li>Akutes Lungenödem (lebensbedrohliche Flüssigkeit in der Lunge) — intravenöse Gabe als Notfallmaßnahme</li><li>Chronische Niereninsuffizienz mit Ödemen (weil sie auch bei schlechter Nierenfunktion wirken)</li><li>Leberzirrhose mit Aszites (Wassereinlagerung im Bauch) — kombiniert mit Spironolacton</li><li>Lebensbedrohlich erhöhtes Kalzium im Blut (Hyperkalzämie) — erzwingt Kalziumausscheidung</li></ul>",
+ki:"<ul><li>Kein Urin (Anurie) — absolute Kontraindikation: wenn die Niere keinen Urin mehr produziert, kann das Diuretikum nicht wirken</li><li>Ausgeprägte Austrocknung oder Volumenmangel (Hypovolämie) — würde den Zustand gefährlich verschlechtern</li><li>Schon bestehender Kaliummangel — erst korrigieren, dann beginnen</li></ul>",
+ww:"<ul><li><b>Wichtig — indirektes Risiko bei gleichzeitiger Digoxin-Therapie:</b> Schleifendiuretika lassen den Körper viel Kalium verlieren. Digoxin (ein anderes Herzmedikament) wirkt, indem es die Natrium-Kalium-Pumpe im Herzmuskel blockiert. Kalium konkurriert dabei mit Digoxin um dieselbe Bindungsstelle — bei niedrigem Kalium im Blut bindet Digoxin viel stärker und toxischer, auch wenn der gemessene Digoxin-Blutspiegel normal ist. Ergebnis: Kaliumverlust durch Schleifendiuretikum → Digoxin-Vergiftung mit Herzrhythmusstörungen. Lösung: Kalium im Blut regelmäßig messen!</li><li>Aminoglykoside (Antibiotika wie Gentamicin, Tobramycin): zusammen erhöhtes Risiko für Nierenschäden und Hörschäden</li><li>Ibuprofen, Diclofenac und ähnliche Schmerzmittel: schwächen die entwässernde Wirkung ab</li><li>Lithium: durch den Salzverlust kann der Lithiumspiegel im Blut steigen → Vergiftungsgefahr</li></ul>",
+nw:"Kaliummangel (Hypokaliämie — wichtigste Nebenwirkung, kann Herzrhythmusstörungen verursachen!), Natriumabfall, Austrocknungsgefahr, Magnesiumverlust, erhöhte Harnsäure (Gicht-Anfall möglich!), metabolische Alkalose (Blut wird etwas basischer), Hörverlust bei sehr schneller intravenöser Gabe besonders bei bereits eingeschränkter Nierenfunktion (Ototoxizität)",
+pearl:"Torasemid ist bei chronischer Herzinsuffizienz besser als Furosemid: Torasemid wird nach dem Schlucken fast vollständig ins Blut aufgenommen (80–100 %), Furosemid dagegen nur etwa 50 % — und die Aufnahme bei Herzinsuffizienz ist noch unzuverlässiger. Außerdem wirkt Torasemid länger und hat weniger Rebound-Diurese. Wichtig: Wenn ein Patient gleichzeitig Digoxin nimmt (z.B. wegen Vorhofflimmern oder Herzinsuffizienz) und mit einem Schleifendiuretikum behandelt wird, muss der Kaliumspiegel regelmäßig kontrolliert werden — der Kaliummangel durch das Diuretikum macht Digoxin toxischer!",
+danger:"Wenn gleichzeitig Digoxin gegeben wird: Kaliummangel durch Schleifendiuretikum → Digoxin wirkt giftiger → lebensgefährliche Herzrhythmusstörungen!"},
+
+{id:"thia",cat:"Diuretika",name:"Thiazide und Thiazid-ähnliche Diuretika",
+sub:"Schwächere Wassertabletten · erste Wahl bei Bluthochdruck",
+ex:"Hydrochlorothiazid (HCT) · Chlortalidon · Indapamid",kp:false,upd:true,
+mech:"Thiazide blockieren einen Salzkanal (NCC-Cotransporter) im distalen Tubulus der Niere — einem anderen Abschnitt als die Schleifendiuretika. Dieser Kanal transportiert Natrium und Chlorid zurück. Ist er blockiert, wird mehr Natrium und Wasser ausgeschieden → Blutdruck sinkt. Gleichzeitig wird paradoxerweise mehr Kalzium zurückgehalten (nützlich bei Nierensteinen aus Kalzium!). Thiazide versagen, wenn die Nierenfunktion stark eingeschränkt ist (Kreatinin-Clearance unter 30 ml/min), weil sie nicht mehr ausreichend in den Tubulus transportiert werden.",
+ind:"<ul><li>Bluthochdruck — erste Wahl laut ESC 2024, vor allem als Kombinationspräparat zusammen mit ACE-Hemmer und Calciumkanalblocker in einer Tablette</li><li>Kalzium-Nierensteine (Kalziumoxalat): wegen der paradoxen Kalzium-Retention im Blut wird weniger Kalzium über den Urin ausgeschieden</li><li>Zentraler Diabetes insipidus (zu viel Urinproduktion durch Mangel an ADH): Thiazide vermindern durch einen paradoxen Mechanismus die Urinmenge</li></ul>",
+ki:"<ul><li>Kreatinin-Clearance unter 30 ml/min (stark eingeschränkte Nierenfunktion) — dann auf Schleifendiuretika umstellen</li><li>Gicht — Thiazide erhöhen die Harnsäure, was einen Gichtanfall auslösen kann</li><li>Schwerer Kaliummangel oder Natriumunterschuss im Blut</li></ul>",
+ww:"<ul><li><b>Wichtig — indirektes Risiko bei gleichzeitiger Digoxin-Therapie:</b> Thiazide lassen die Niere mehr Kalium ausscheiden. Das senkt den Kaliumspiegel im Blut. Kalium und Digoxin (ein anderes Herzmedikament) konkurrieren an derselben Bindungsstelle im Herzmuskel — weniger Kalium bedeutet, dass Digoxin dort stärker bindet und giftiger wirkt, selbst wenn der Digoxin-Blutspiegel normal ist. Bei gleichzeitiger Einnahme beider Medikamente ist daher eine regelmäßige Kontrolle des Kaliumwerts Pflicht.</li><li>Lithium (Stimmungsstabilisator): Kalium- und Natriumverlust durch Thiazide erhöht den Lithiumspiegel im Blut → Vergiftungsgefahr</li><li>Antidiabetika: Thiazide erhöhen den Blutzucker leicht — Diabetiker brauchen manchmal eine Dosisanpassung</li><li>Ibuprofen, Diclofenac: schwächen die blutdrucksenkende Wirkung ab</li></ul>",
+nw:"Kaliummangel, Natriumabfall, erhöhte Harnsäure (Gicht!), erhöhter Blutzucker (erhöhtes Diabetesrisiko bei Langzeitanwendung), leichter Anstieg von Blutfetten (LDL-Cholesterin, Triglyzeride), Magnesiumverlust",
+pearl:"ESC Hypertonie 2024: Kombipräparate sind Standard — ein Blutdruckmittel allein reicht selten. Typische erste Kombination: ACE-Hemmer + Calciumkanalblocker + Thiazid in einer Tablette. Neues Blutdruckziel: systolisch 120–129 mmHg. Chlortalidon wirkt länger als Hydrochlorothiazid (bis zu 72 Stunden vs. 6–12 Stunden). Indapamid hat weniger Stoffwechsel-Nebenwirkungen. Bei Nierenfunktions-Kreatinin-Clearance unter 30 ml/min sind Thiazide wirkungslos — auf Schleifendiuretikum umstellen.",
+danger:"",
+upd:"ESC Hypertonie 2024: Kombipräparat ist erste Wahl. Neues Blutdruckziel: systolisch 120–129 mmHg — Paradigmenwechsel (früher <140 mmHg)."},
+
+{id:"mra",cat:"Diuretika",name:"Aldosteron-Antagonisten (steroidale MRA)",
+sub:"Kaliumsparende Wassertabletten · schützen das Herz vor Vernarbung · Teil der Herzinsuffizienz-Basistherapie",
+ex:"Spironolacton · Eplerenon (Inspra)",kp:true,upd:true,
+mech:"Aldosteron ist ein Hormon der Nebenniere, das in der Niere (im Sammelrohr) Natrium zurückhält und gleichzeitig Kalium ausscheidet. Spironolacton und Eplerenon blockieren den Aldosteron-Rezeptor → weniger Natriumrückhaltung → leichte Entwässerung, weniger Kaliumverlust (kaliumsparend). Besonders wichtig: Aldosteron fördert auch krankhaftes Narbengewebe (Fibrose) im Herzmuskel. Aldosteron-Blocker hemmen diesen Umbau und schützen das Herz langfristig. Spironolacton ist nicht ganz spezifisch und blockiert auch andere Hormonrezeptoren — z.B. Androgen- (männliche Sexualhormone) und Progesteronrezeptoren → das erklärt die Nebenwirkung der Brustschwellung bei Männern.",
+ind:"<ul><li>Herzschwäche mit stark verminderter Pumpfunktion (Ejektionsfraktion ≤35 %, NYHA-Klasse II–IV) — senkt Sterblichkeit nachweislich: RALES-Studie (Spironolacton), EMPHASIS-HF-Studie (Eplerenon)</li><li>Nach Herzinfarkt mit Herzschwäche</li><li>Primärer Hyperaldosteronismus (Conn-Syndrom — Tumor der Nebenniere produziert zu viel Aldosteron)</li><li>Leberzirrhose mit Aszites (Bauchflüssigkeit) — kombiniert mit Furosemid</li></ul>",
+ki:"<ul><li>Kalium im Blut über 5,0 mmol/l — da die Mittel kaliumsparend sind, kann Hyperkaliämie entstehen</li><li>Eplerenon bei der Herzinsuffizienz-Indikation: Kreatinin-Clearance unter 50 ml/min (laut Fachinformation — deutlich strenger als Spironolacton!)</li><li>Spironolacton: Vorsicht bei Kreatinin-Clearance unter 30 ml/min</li><li>Morbus Addison (Nebennierenrindeninsuffizienz)</li></ul>",
+ww:"<ul><li>ACE-Hemmer oder Sartane: beide heben bereits den Kaliumspiegel — zusammen mit Aldosteron-Antagonisten droht gefährliche Hyperkaliämie. Kalium engmaschig kontrollieren!</li><li>Ibuprofen, Diclofenac: schwächen die Wirkung ab und erhöhen das Hyperkaliämie-Risiko zusätzlich</li><li>Kalium-Nahrungsergänzungsmittel und kaliumreiche Kost: Kaliumanstieg</li><li>Digoxin: Spironolacton kann den Digoxinspiegel im Blut erhöhen</li></ul>",
+nw:"Hyperkaliämie (wichtigste Nebenwirkung — Kalium kann auf gefährliche Werte steigen!). Spironolacton: Brustschwellung (Gynäkomastie) und Brustschmerzen bei Männern, Menstruationsstörungen und Libidoverlust bei Frauen (wegen Antiandrogen-Effekt auf Sexualhormon-Rezeptoren). Eplerenon ist viel selektiver für den Aldosteronrezeptor → diese hormonellen Nebenwirkungen treten kaum auf.",
+pearl:"Wenn ein Mann Brustschmerzen oder Brustschwellung unter Spironolacton bekommt → auf Eplerenon wechseln. Aber Vorsicht: Eplerenon ist bei der Herzinsuffizienz-Indikation strenger begrenzt (Kreatinin-Clearance unter 50 ml/min ist eine Kontraindikation — das wissen viele nicht!). Kalium vor Start messen, nach 1–2 Wochen kontrollieren, dann regelmäßig. RALES-Studie: Spironolacton senkte die Sterblichkeit bei schwerer Herzinsuffizienz um 30 %. Für Herzschwäche mit erhaltener oder leicht reduzierter Pumpfunktion + diabetische Nierenerkrankung: Finerenon (neuer, selektiver, nicht-steroidaler Aldosteron-Antagonist) ist inzwischen empfohlen.",
+danger:"Hyperkaliämie bei gleichzeitiger ACE-Hemmer- oder Sartan-Therapie — Kaliumkontrolle ist Pflicht! Eplerenon-Kontraindikation bei Herzinsuffizienz: Kreatinin-Clearance unter 50 ml/min.",
+upd:"Eplerenon bei Herzinsuffizienz: Kontraindikation ab Kreatinin-Clearance <50 ml/min (nicht erst <30). Für Herzschwäche mit erhaltener Pumpfunktion + diabetische Nierenerkrankung → Finerenon empfohlen (eigener Eintrag)."},
+
+{id:"finerenone",cat:"Diuretika",name:"Finerenon (Kerendia) — nicht-steroidaler Aldosteron-Antagonist",
+sub:"Neue Klasse · sehr selektiv · für Herzschwäche mit erhaltener Pumpfunktion + diabetische Nierenerkrankung",
+ex:"Finerenon (Kerendia) — einziges Präparat dieser neuen Klasse",kp:true,isNew:true,
+mech:"Finerenon blockiert wie Spironolacton den Aldosteron-Rezeptor — aber mit einem grundlegend anderen chemischen Gerüst (nicht-steroidaler Aufbau). Das hat wichtige Vorteile: Die Bindung an den Aldosteron-Rezeptor ist stärker und selektiver. Da Finerenon kein steroidales Grundgerüst hat, bindet es NICHT an Androgen-, Östrogen- oder Progesteron-Rezeptoren → keine Brustschwellung, keine Hormonstörungen. Außerdem wird Finerenon über das Leberenzym CYP3A4 abgebaut (Wechselwirkungen mit CYP3A4-hemmenden Medikamenten beachten!). Anti-Fibrose- und anti-entzündliche Wirkung im Herz und in der Niere.",
+ind:"<ul><li>Diabetische Nierenerkrankung (Niereninsuffizienz bei Diabetes mellitus Typ 2) — Klasse I-Empfehlung laut ESC 2023 Update (basierend auf den FIDELIO-DKD- und FIGARO-DKD-Studien)</li><li>Herzschwäche mit leicht eingeschränkter oder erhaltener Pumpfunktion (Ejektionsfraktion 41 % oder darüber) — FINEARTS-HF-Studie (ESC Kongress 2024): senkt Krankenhausaufnahmen wegen Herzinsuffizienz und kardiovaskulären Tod</li><li>Vorbeugung von Herzinsuffizienz bei Patienten mit diabetischer Nierenerkrankung — kombiniert mit SGLT2-Inhibitoren</li></ul>",
+ki:"<ul><li>Kalium im Blut über 5,0 mmol/l</li><li>Gleichzeitige starke Hemmer des Leberenzyms CYP3A4 (z.B. bestimmte Pilzmittel wie Itraconazol, Clarithromycin) — diese lassen den Finerenon-Spiegel gefährlich ansteigen</li><li>Schwere Niereninsuffizienz (Kreatinin-Clearance unter 25 ml/min — je nach Indikation)</li><li>Morbus Addison</li></ul>",
+ww:"<ul><li>ACE-Hemmer, Sartane und SGLT2-Inhibitoren: Kaliumanstieg möglich — Kalium überwachen</li><li>Starke CYP3A4-Hemmer (Azol-Antimykotika, Clarithromycin): erhöhen den Finerenon-Spiegel im Blut stark → Kontraindikation</li><li>Kaliumreiche Nahrung und Nahrungsergänzungsmittel: Hyperkaliämie</li></ul>",
+nw:"Hyperkaliämie (seltener als bei Spironolacton/Eplerenon), keine Gynäkomastie, keine Sexualhormon-Nebenwirkungen, leichter Anstieg des Kreatinins (gutartig)",
+pearl:"FINEARTS-HF-Studie (präsentiert beim ESC-Kongress 2024): Finerenon senkte Krankenhausaufnahmen wegen Herzinsuffizienz und kardiovaskulären Tod bei Patienten mit Herzinsuffizienz und erhaltener oder leicht reduzierter Pumpfunktion — zusätzlich zu einer bestehenden SGLT2-Inhibitor-Therapie. Das macht Finerenon zunehmend prüfungsrelevant als mögliche neue Komponente der Herzinsuffizienz-Therapie. Im Gegensatz zu Spironolacton keine hormonellen Nebenwirkungen (kein steroidales Gerüst).",
+danger:""},
+
+{id:"nitrat",cat:"Antiischämisch",name:"Nitrate",
+sub:"Erweitern Herzkranzgefäße · entlasten das Herz durch Venenerweiterung",
+ex:"Nitroglyzerin (GTN, sublingual/Spray) · Isosorbiddinitrat (ISDN) · Isosorbidmononitrat (ISMN)",kp:true,upd:false,
+mech:"Nitrate werden im Körper zu Stickstoffmonoxid (NO) umgebaut. NO entspannt die Muskelzellen der Blutgefäße durch eine Signalkette (Aktivierung der Guanylatzyklase → mehr cyclisches GMP → Gefäßmuskel erschlafft). Hauptwirkung: Venen erweitern sich → das Herz bekommt weniger Blut zurück (Vorlast sinkt) → Herz hat weniger zu tun. Bei höheren Dosen weiten sich auch Arterien (Nachlast sinkt). Außerdem erweitern Nitrate direkt die Herzkranzgefäße und öffnen Umgehungsgefäße (Kollateralen).",
+ind:"<ul><li>Akuter Angina-pectoris-Anfall (Brustschmerz durch Sauerstoffmangel am Herzen): sublinguales Nitroglyzerin oder Spray wirkt nach 1–2 Minuten — Soforttherapie!</li><li>Dauerhafte Vorbeugung von Angina-Anfällen: ISMN retard (langwirksam)</li><li>Akutes Koronarsyndrom (drohender oder stattfindender Herzinfarkt): intravenös bei anhaltenden Schmerzen</li><li>Akute Herzinsuffizienz mit Bluthochdruck und Stauung (Flüssigkeit in der Lunge)</li><li>Akutes Lungenödem: intravenöse Gabe zur schnellen Druckentlastung</li></ul>",
+ki:"<ul><li>Blutdruck systolisch unter 90 mmHg — Nitrate senken den Druck weiter, Schockgefahr</li><li>Flüssigkeitsmangel (Hypovolämie)</li><li>Hypertrophe obstruktive Kardiomyopathie (HOCM — Herz mit verdicktem Muskel der die Ausflussbahn verengt): Vorlastsenkung verstärkt die Obstruktion</li><li>PDE-5-Hemmer (Sildenafil/Viagra, Vardenafil, Tadalafil/Cialis) — absolute Kontraindikation! (siehe unten)</li><li>Rechtsherzinfarkt — das rechte Herz braucht ausreichend Füllung (Vorlast), Nitrate entziehen ihm genau diese Füllung → Schock</li></ul>",
+ww:"<ul><li>PDE-5-Hemmer (Sildenafil, Vardenafil: 24 Stunden Pause; Tadalafil: 48 Stunden Pause wegen sehr langer Wirkdauer): Beide Substanzgruppen weiten Blutgefäße, aber über verschiedene Wege, die sich gegenseitig stark verstärken → potenziell tödlicher Blutdruckabfall</li><li>Alle anderen Blutdrucksenker, Wassertabletten, Alkohol: Blutdruckabfall verstärkt</li><li>Intravenöses Heparin bei hochdosierten Nitraten: Heparinwirkung kann abgeschwächt werden</li></ul>",
+nw:"Kopfschmerzen (sehr häufig, durch Gefäßerweiterung im Kopf — dosisabhängig), Hitzegefühl (Flush), Blutdruckabfall, Reflextachykardie (schneller Herzschlag als Reaktion auf Druckabfall) bei kurzwirksamen Formen. Bei Dauergebrauch: Nitrattoleranz (das Herz gewöhnt sich an das Medikament, Wirkung lässt nach)",
+pearl:"Nitrattoleranz entsteht bei kontinuierlicher Einnahme — deshalb muss ein nitratfreies Intervall von 8–12 Stunden eingehalten werden, meist nachts. Sildenafil (Viagra) 24 Stunden, Tadalafil (Cialis) 48 Stunden Pause vor Nitrat-Gabe — wegen der sehr langen Halbwertszeit von Tadalafil! Rechtsherzinfarkt: Nitrate sind strikt verboten — der rechte Ventrikel ist preloadabhängig, d.h. er braucht ausreichend Füllung. GTN sublingual: bis zu 3-mal im Abstand von 5 Minuten möglich; wenn kein Erfolg → Notarzt rufen.",
+danger:"PDE-5-Hemmer + Nitrate = absolut verboten, potenziell tödlicher Blutdruckabfall! Rechtsherzinfarkt + Nitrate = kardiogener Schock!"},
+
+{id:"anti",cat:"Antiarrhythmika",name:"Antiarrhythmika (Vaughan-Williams-Klassifikation)",
+sub:"Vier Klassen mit völlig verschiedenen Angriffspunkten am Herzen · AF-CARE 2024",
+ex:"Klasse Ic: Flecainid · Klasse III: Amiodaron, Sotalol · Sonstige: Adenosin, Lidocain",kp:true,upd:true,
+mech:"Herzrhythmusstörungen entstehen, wenn elektrische Signale im Herzen falsch geleitet werden. Antiarrhythmika greifen an verschiedenen Ionenkanälen an: Klasse I (Natriumkanal-Blocker): verlangsamen die elektrische Erregung der Herzmuskelzellen. Ia (z.B. Chinidin): breites Spektrum, verlängern auch QT-Zeit. Ib (z.B. Lidocain): nur für lebensbedrohliche Rhythmusstörungen der Herzkammern (intravenös). Ic (z.B. Flecainid, Propafenon): sehr stark, aber GEFÄHRLICH bei vorgeschädigtem Herz. Klasse II: Beta-Blocker (Natriumkanal-Blockade indirekt, bereits beschrieben). Klasse III (Kaliumkanal-Blocker, z.B. Amiodaron, Sotalol): verlangsamen die Repolarisation, verlängern die QT-Zeit im EKG. Klasse IV: Nicht-DHP-Calciumkanalblocker (Verapamil, Diltiazem), bremsen den AV-Knoten. Sonderfall Adenosin: natürlicher Botenstoff, blockiert kurzzeitig die AV-Überleitung → stoppt Tachykardien, die den AV-Knoten benutzen. Sonderfall Digitalis: bremst die AV-Überleitung über den Vagusnerv.",
+ind:"<ul><li>Vorhofflimmern (VHF) — Herzrate bremsen (Frequenzkontrolle): Beta-Blocker (erste Wahl), Nicht-DHP-Calciumkanalblocker (Verapamil, Diltiazem), Digitalis (nachgeordnet)</li><li>VHF — Sinusrhythmus wiederherstellen und halten (Rhythmuskontrolle): Flecainid oder Propafenon nur bei strukturell gesundem Herz; Amiodaron bei vorgeschädigtem Herz</li><li>ESC VHF-Leitlinie 2024: Katheterablation ist jetzt eine erste Wahl (nicht nur zweite) bei symptomatischem paroxysmalem Vorhofflimmern</li><li>Lebensbedrohliche Kammertachykardie oder Kammerflimmern (Reanimation nach Defibrillation): Amiodaron intravenös</li><li>Anfälle von sehr schnellem Herzschlag aus dem Vorhof (supraventrikuläre Tachykardie, SVT): Adenosin intravenös — Mittel der Wahl für die Akuttherapie</li></ul>",
+ki:"<ul><li>Flecainid/Propafenon bei vorgeschädigtem Herz, nach Herzinfarkt oder bei Herzinsuffizienz absolut verboten — tödlich erhöhtes Risiko (CAST-Studie!)</li><li>Amiodaron: Schilddrüsenüber- oder -unterfunktion, Lungenfibrose (relative Kontraindikation), schwere Lebererkrankung</li><li>Sotalol: verlängerte QT-Zeit im EKG, Kaliummangel, AV-Block, Herzinsuffizienz</li><li>Adenosin: Asthma bronchiale (kann Bronchospasmus auslösen), AV-Block Grad 2 oder 3</li></ul>",
+ww:"<ul><li>Kombination mehrerer QT-verlängernder Substanzen (Makrolid-Antibiotika wie Clarithromycin, Azol-Antimykotika, Antipsychotika, trizyklische Antidepressiva + Antiarrhythmika Klasse I oder III) → lebensgefährliche Torsade-de-Pointes-Tachykardie (besondere Form der Kammertachykardie)</li><li>Amiodaron + Digoxin: Amiodaron erhöht den Digoxin-Spiegel im Blut → Vergiftungsgefahr</li><li>Amiodaron + Vitamin-K-Antagonisten (Phenprocoumon, Warfarin): INR steigt stark an → Blutungsrisiko</li><li>Amiodaron + Simvastatin: Muskelschäden-Risiko erhöht</li></ul>",
+nw:"Amiodaron (besonders viele Langzeit-Nebenwirkungen bei langem Halbwertsleben ~40-55 Tage): Einlagerungen in der Hornhaut des Auges (Cornea-Mikrodepots, fast immer reversibel), Schilddrüsenüber- oder -unterfunktion (!), Leberschäden, Lungenfibrose (chronische Vernarbung der Lunge — ernst!), blaugraue Hautverfärbung an lichtexponierten Stellen, Überempfindlichkeit gegen Sonnenlicht (Photosensibilisierung), periphere Nervenschäden. Monitoring: Schilddrüsenwert (TSH) und Leberwerte alle 6 Monate; Röntgen-Thorax jährlich. Flecainid: proarrhythmisch (kann selbst Rhythmusstörungen auslösen). Sotalol: verlängert QT → Torsade-de-Pointes-Gefahr.",
+pearl:"ESC VHF-Leitlinie 2024 — neues AF-CARE-Framework (ersetzt das frühere ABC-Schema): C=Komorbiditäten managen, A=Schlaganfall verhindern, R=Herzrate/Rhythmus kontrollieren, E=Evaluation. Wichtige Änderung: Der Schlaganfall-Risikorechner heißt jetzt CHA₂DS₂-VA (das Geschlecht wurde als Punkt entfernt, weil es keine unabhängige Risikoerhöhung darstellt). Katheterablation ist erste Wahl für symptomatisches paroxysmales VHF. Kardioversion (elektrische Schocktherapie): jetzt Sicherheitsgrenze 24 Stunden (früher 48 Stunden). CAST-Studie 1989: Flecainid und Encainid erhöhten die Sterblichkeit nach Herzinfarkt — deshalb Klasse-Ic-Antiarrhythmika nur bei gesundem Herz! Amiodaron: Monitoring alle 6 Monate!",
+danger:"Flecainid bei vorgeschädigtem Herz (nach Herzinfarkt, Herzinsuffizienz) = verboten — erhöht die Sterblichkeit (CAST-Studie)! QT-verlängernde Kombinationen → Torsade de Pointes (lebensgefährliche Rhythmusstörung)!",
+upd:"ESC VHF 2024: AF-CARE ersetzt ABC. CHA₂DS₂-VA Score (Geschlecht entfernt). Katheterablation = erste Wahl bei paroxysmalem VHF. Kardioversion: Grenze 24 h (vorher 48 h)."},
+
+{id:"dig",cat:"Antiarrhythmika",name:"Herzglykoside — Digoxin und Digitoxin",
+sub:"Stärken das Herz · bremsen den Herzschlag · enge therapeutische Breite",
+ex:"Digoxin (über die Niere ausgeschieden) · Digitoxin (über die Leber ausgeschieden)",kp:true,upd:false,
+mech:"Herzglykoside hemmen eine Pumpe in der Herzmuskelzellmembran: die Natrium-Kalium-ATPase. Diese Pumpe pumpt normalerweise Natrium aus der Zelle heraus und Kalium hinein. Ist sie gehemmt, bleibt mehr Natrium in der Zelle. Da Natrium und Kalzium über einen anderen Tauscher (Na/Ca-Exchanger) verknüpft sind, führt mehr intrazelluläres Natrium dazu, dass auch mehr Kalzium in der Zelle verbleibt. Mehr Kalzium = stärkere Herzkontraktion (positiv-inotroper Effekt). Außerdem wird über den Vagusnerv die elektrische Überleitung vom Vorhof zum Herzmuskel (AV-Knoten) gebremst → Herzschlag verlangsamt (negativ-chronotrop) und Herzfrequenz bei Vorhofflimmern gesenkt.",
+ind:"<ul><li>Vorhofflimmern mit zu schneller Herzrate — Herzfrequenz bremsen (Frequenzkontrolle), besonders wenn gleichzeitig Herzinsuffizienz vorliegt. Laut ESC VHF 2024 aber nachgeordnete Option (Beta-Blocker bevorzugt)</li><li>Chronische Herzinsuffizienz mit reduzierter Pumpfunktion — wenn trotz optimaler Basistherapie (Beta-Blocker, ACE-Hemmer, Aldosteron-Antagonist, SGLT2-Inhibitor) Symptome bestehen. Wichtig: Digoxin senkt nicht die Sterblichkeit (DIG-Studie), reduziert aber Krankenhausaufnahmen wegen Herzinsuffizienz</li></ul>",
+ki:"<ul><li>AV-Block 2. oder 3. Grades ohne Schrittmacher — Digoxin bremst die AV-Überleitung weiter</li><li>Wolff-Parkinson-White-Syndrom (WPW) mit Vorhofflimmern — absolut verboten! Digoxin blockiert den normalen AV-Knoten, treibt aber die elektrischen Impulse über eine gefährliche Umgehungsbahn → extrem schnelle Kammererregung → Kammerflimmern</li><li>Hypertrophe obstruktive Kardiomyopathie (verdickte Herzwand mit Ausflussbahn-Obstruktion)</li><li>Kaliummangel vor Therapiebeginn erst korrigieren!</li><li>Ventrikuläre Tachykardie</li></ul>",
+ww:"<ul><li>Kaliummangel (durch Schleifendiuretika oder Thiazide): Kalium und Digoxin konkurrieren um dieselbe Bindungsstelle an der Natrium-Kalium-ATPase. Bei Kaliummangel bindet Digoxin viel stärker → Vergiftungsgefahr auch bei normalen Digoxin-Serumspiegeln!</li><li>Verapamil, Amiodaron, Chinidin: erhöhen den Digoxin-Spiegel im Blut — Digoxin-Dosis halbieren!</li><li>Erhöhtes Kalzium im Blut (Hyperkalzämie): verstärkt die Herzglykosid-Wirkung → Vergiftungsgefahr</li><li>Spironolacton: kann den Digoxin-Spiegel leicht erhöhen</li></ul>",
+nw:"Durch die sehr enge therapeutische Breite (wirksame Dosis liegt nah an der Giftdosis): Verlangsamter Herzschlag, AV-Block, Übelkeit, Erbrechen, Appetitlosigkeit, Gelbsehen (Xanthopsie — klassisches Zeichen der Digitalis-Vergiftung!), Sehstörungen mit Halo-Erscheinungen, Herzrhythmusstörungen (Bigeminus — nach jedem normalen Schlag ein Extrasystem, Trigeminus, Kammertachykardie), Verwirrtheit besonders bei älteren Patienten",
+pearl:"Die therapeutische Breite ist extrem eng. Angestrebter Digoxin-Spiegel im Blut bei Herzinsuffizienz: 0,5–0,9 ng/ml. Die DIG-Studie zeigte: höhere Spiegel erhöhen die Sterblichkeit! Digitoxin hat einen anderen Zielbereich (8–18 ng/ml) und wird in der Leber abgebaut — bei Niereninsuffizienz daher besser geeignet als Digoxin. Antidot bei schwerer Digitalis-Vergiftung: Digoxin-Fab-Antikörper (binden das Digitalis im Blut, schnell wirksam). WPW + Vorhofflimmern = absolute Kontraindikation!",
+danger:"WPW + Vorhofflimmern + Digoxin = Kammerflimmern! Kaliummangel + Digoxin = Vergiftungsgefahr auch bei normalem Spiegel!"},
+
+{id:"statin",cat:"Lipidsenker",name:"Statine (HMG-CoA-Reduktase-Hemmer)",
+sub:"Wichtigste Cholesterin-Senker · schützen Blutgefäße · SCORE2/SCORE2-OP ab 2025",
+ex:"Atorvastatin · Rosuvastatin (hochpotent) · Simvastatin · Pravastatin",kp:true,upd:true,
+mech:"Die Leber produziert selbst Cholesterin — ein wichtiger Baustein für Zellmembranen und Hormone. Das Schlüsselenzym dieser körpereigenen Produktion heißt HMG-CoA-Reduktase. Statine hemmen genau dieses Enzym kompetitiv (sie konkurrieren mit dem natürlichen Substrat um den Platz im Enzym). Die Leber produziert dadurch weniger eigenes Cholesterin. Als Reaktion darauf baut die Leber mehr LDL-Rezeptoren auf ihrer Oberfläche ein — die nehmen mehr LDL-Cholesterin (das 'schlechte' Cholesterin) aus dem Blut auf → LDL-Spiegel im Blut sinkt. Zusätzlich haben Statine 'pleiotrope Effekte': sie stabilisieren Ablagerungen in Blutgefäßen (Plaques), wirken entzündungshemmend und schützen das Gefäßinnere.",
+ind:"<ul><li>Herzinfarkt, Schlaganfall oder koronare Herzerkrankung — zweite Prävention (nach dem Ereignis): Klasse I, so früh und hochdosiert wie möglich</li><li>Vorbeugung eines ersten Herzinfarkts bei erhöhtem Risiko — Risikobewertung jetzt mit SCORE2 und SCORE2-OP (neue Risikorechner aus ESC/EAS 2025, ersetzt das alte SCORE-System)</li><li>Akutes Koronarsyndrom (drohender/stattfindender Herzinfarkt): laut ESC/EAS 2025 sofort hochdosierter Statin + Ezetimib kombiniert bei Aufnahme ins Krankenhaus (nicht mehr erst abwarten)</li><li>Familiäre Hypercholesterinämie (erbliche schwere Fettstoffwechselstörung)</li><li>HIV-Patienten ab 40 Jahren: Statine empfohlen, unabhängig vom Cholesterinwert (ESC/EAS 2025)</li></ul>",
+ki:"<ul><li>Schwangerschaft und Stillzeit — absolut verboten (Cholesterin ist für die Entwicklung des Fötus notwendig, Statine stören diesen Prozess)</li><li>Aktive Lebererkrankung oder schwere Leberfunktionsstörung</li><li>CK-Wert (Creatin-Kinase, Muskelenzym) über dem 5-fachen Normwert — aktive Muskelerkrankung muss ausgeschlossen sein</li><li>Kombination mit starken Hemmern des Leberenzyms CYP3A4 (z.B. Clarithromycin, Itraconazol) bei Statinen, die diesen Weg benutzen</li></ul>",
+ww:"<ul><li>CYP3A4-Hemmer (Clarithromycin, Itraconazol, Ketoconazol, und auch Grapefruitsaft!): erhöhen den Spiegel von Simvastatin und Atorvastatin im Blut stark → Muskelschäden möglich. Pravastatin und Rosuvastatin werden nicht über CYP3A4 abgebaut → sichere Alternativen</li><li>Gemfibrozil (ein Triglyzerid-Senker): erhöht das Muskelschäden-Risiko bei Statinen sehr stark — möglichst meiden</li><li>Amiodaron, Verapamil, Diltiazem: erhöhen Statinspiegel ebenfalls</li><li>Ciclosporin (Immunsuppressivum nach Transplantation): sehr starke Erhöhung des Statin-Spiegels</li></ul>",
+nw:"Muskelschmerzen (Myalgie) — häufigstes Beschwerdebild, meistens gutartig. Muskelentzündung (Myopathie) — selten, aber ernstzunehmen. Rhabdomyolyse (Muskelzerfall) — sehr selten, aber lebensgefährlich (Nierenversagen durch Myoglobin im Urin!). Leichter Anstieg der Leberwerte. Leicht erhöhtes Diabetesrisiko bei Langzeiteinnahme (ca. 10–13 % Risikoanstieg)",
+pearl:"ESC/EAS 2025 Focused Update — wichtigste Neuerungen: LDL-Ziele unverändert (sehr hohes Risiko: unter 1,4 mmol/l und mindestens 50 % Reduktion). Neu: SCORE2/SCORE2-OP ersetzt das alte SCORE-System (schätzt jetzt auch nicht-tödliche Ereignisse und gilt bis 89 Jahre). Bei Herzinfarkt: sofort hochdosierter Statin + Ezetimib zusammen — nicht erst abwarten. Bempedoinsäure: neue erste Wahl für Statin-intolerante Patienten (Klasse I). Einmalige Lp(a)-Messung für alle Erwachsenen empfohlen (erhöhtes Lp(a) als eigenständiger Herzrisikofaktor).",
+danger:"Rhabdomyolyse: CK über dem 10-fachen Normwert + Muskelschwäche + brauner Urin → Statin sofort absetzen, Nierenfunktion notfallmäßig überwachen!",
+upd:"ESC/EAS 2025: SCORE2/SCORE2-OP ersetzt SCORE. ACS: sofort Statin+Ezetimib kombiniert. Bempedoinsäure Klasse I bei Statin-Intoleranz. Lp(a)-Screening einmalig für alle Erwachsenen."},
+
+{id:"bempedoic",cat:"Lipidsenker",name:"Bempedoinsäure + Ezetimib",
+sub:"Für Statin-intolerante Patienten · Klasse I seit ESC/EAS 2025 · kein Muskelschmerz-Risiko",
+ex:"Bempedoinsäure (Nilemdo) · Kombipräparat Bempedoinsäure + Ezetimib (Nustendi)",kp:true,isNew:true,
+mech:"Bempedoinsäure hemmt ein Enzym (ATP-Citrat-Lyase, ACL), das noch vor dem von Statinen gehemmten Enzym (HMG-CoA-Reduktase) in der Cholesterinsynthese-Kette der Leber sitzt. Das Besondere: Bempedoinsäure ist ein Prodrug — es muss erst in der Leber aktiviert werden (durch das Enzym ACSVL1). Dieses Aktivierungsenzym ist im Skelettmuskel nicht vorhanden! Daher wird Bempedoinsäure im Muskel gar nicht aktiviert → kein direkter Angriff auf den Muskelstoffwechsel → kein Muskelschmerzrisiko. Ezetimib hemmt einen Transporter im Dünndarm (NPC1L1), der Cholesterin aus dem Darm ins Blut aufnimmt → weniger Cholesterin-Aufnahme mit dem Essen. Beide zusammen: additive LDL-Senkung von ca. 35–40 %.",
+ind:"<ul><li>Statin-Intoleranz (Muskelschmerzen oder Muskelschäden durch Statine) — Bempedoinsäure als erste Wahl: Klasse I laut ESC/EAS 2025 (basierend auf der CLEAR-Outcomes-Studie 2023)</li><li>Ergänzung zur maximal verträglichen Statin-Therapie, wenn das LDL-Cholesterin-Ziel trotzdem nicht erreicht wird</li><li>Familiäre Hypercholesterinämie</li><li>Ezetimib: wird allgemein als Ergänzung zu Statinen eingesetzt, wenn das LDL-Ziel mit Statin allein nicht erreicht wird</li></ul>",
+ki:"<ul><li>Bempedoinsäure: Schwangerschaft, schwere Niereninsuffizienz (Kreatinin-Clearance unter 30 ml/min)</li><li>Ezetimib: aktive Lebererkrankung — wenn gleichzeitig mit einem Statin gegeben wird</li></ul>",
+ww:"<ul><li>Bempedoinsäure + Simvastatin über 20 mg oder Pravastatin über 40 mg: Bempedoinsäure hemmt einen Transporter (OATP1B1), der diese Statine in die Leber transportiert → Statinspiegel steigt im Blut → Muskelrisiko. Dosisgrenze einhalten!</li><li>Ezetimib: kaum klinisch relevante Wechselwirkungen</li></ul>",
+nw:"Bempedoinsäure: Erhöhung der Harnsäure im Blut (erhöhtes Gichtrisiko — wichtig!), Sehnen-Entzündung (Tendinitis) und sehr selten Sehnenriss (v.a. Kniescheibensehne), leichter Kreatinin-Anstieg (gutartig). Ezetimib: sehr gut verträglich, selten Magen-Darm-Beschwerden",
+pearl:"CLEAR-Outcomes-Studie (2023): Bempedoinsäure senkte bei Statin-intoleranten Hochrisikopatienten die kardiovaskulären Ereignisse (Herzinfarkt, Schlaganfall) signifikant. Das Entscheidende: Bempedoinsäure wirkt nur in der Leber (fehlendes Aktivierungsenzym im Muskel) → das Hauptproblem der Statine (Muskelschmerzen) tritt nicht auf. Prüfungs-Cave: erhöhte Harnsäure → Gichttrigger, und Sehnenprobleme (Patellarsehne) als spezifische Nebenwirkung.",
+danger:"Gichtanfall durch Harnsäureanstieg möglich. Sehnenriss-Risiko — Cave bei bekannten Sehnenerkrankungen oder gleichzeitiger Fluorchinolon-Antibiotika-Therapie."},
+
+{id:"anti2",cat:"Thrombozytenaggregationshemmer",name:"Thrombozytenaggregationshemmer",
+sub:"Blutplättchen hemmen · ASS + P2Y12-Blocker · doppelte Hemmung nach Herzinfarkt/Stent",
+ex:"ASS (Aspirin) · Clopidogrel · Ticagrelor (Brilique) · Prasugrel (Efient)",kp:true,upd:false,
+mech:"Blutplättchen (Thrombozyten) sind kleine Blutzellen, die bei einer Gefäßverletzung verklumpen und einen Pfropf bilden — nützlich bei Wunden, aber gefährlich, wenn sich Plaques in Herzkranzgefäßen aufreißen (dann entsteht ein Herzinfarkt). Thrombozytenaggregationshemmer verhindern dieses Verklumpen. ASS (Acetylsalicylsäure): hemmt das Enzym COX-1 dauerhaft und unwiderruflich. COX-1 produziert Thromboxan A2 — ein Botenstoff, der Blutplättchen zur Verklumpung anregt. Ohne Thromboxan verklumpen die Blutplättchen viel schlechter — für deren gesamte Lebensdauer (7–10 Tage). P2Y12-Inhibitoren (Clopidogrel, Ticagrelor, Prasugrel): blockieren einen anderen Verklumpungsreiz, nämlich den Rezeptor für ADP (ein weiterer Botenstoff, der Blutplättchen aktiviert). Clopidogrel und Prasugrel sind Prodrugs — sie müssen in der Leber aktiviert werden. Ticagrelor bindet direkt, reversibel.",
+ind:"<ul><li>ASS niedrig dosiert (75–100 mg täglich): nach Herzinfarkt, bei koronarer Herzerkrankung, nach Stent, nach ischämischem Schlaganfall — lebenslange Einnahme</li><li>Doppelte Hemmung (ASS + P2Y12-Hemmer, sog. DAPT): nach akutem Koronarsyndrom 12 Monate; nach geplantem Stent 1–6 Monate</li><li>Ticagrelor ist bei akutem Koronarsyndrom besser als Clopidogrel (PLATO-Studie: weniger kardiovaskuläre Todesfälle)</li><li>Prasugrel bei Herzkathetereingriffen (PCI) stärker als Clopidogrel (TRITON-Studie)</li></ul>",
+ki:"<ul><li>ASS: Kinder unter 12 Jahren (Reye-Syndrom — seltene aber schwere Hirnschädigung mit Leberversagen), aktive Magenblutung, Analgetika-Asthma (Überempfindlichkeit gegen Aspirin und andere Schmerzmittel)</li><li>Prasugrel: Schlaganfall oder vorübergehende Durchblutungsstörung (TIA) in der Vorgeschichte — stark erhöhtes Hirnblutungsrisiko! Auch relative Kontraindikation bei Alter über 75 Jahre oder Körpergewicht unter 60 kg</li><li>Ticagrelor: schwere Leberinsuffizienz, aktive Blutung</li></ul>",
+ww:"<ul><li>Kombination mit oralen Gerinnungshemmern (Vitamin-K-Antagonisten oder direkte orale Antikoagulantien) = dreifache Antithrombotische Therapie (Triple-Therapie): stark erhöhtes Blutungsrisiko — so kurz wie möglich halten!</li><li>Ibuprofen: hemmt COX-1 ebenfalls, aber reversibel — wenn Ibuprofen vor ASS eingenommen wird, blockiert es die Andockstelle und ASS kann nicht mehr dauerhaft binden → ASS-Wirkung verloren. Ibuprofen immer nach ASS einnehmen oder besser meiden</li><li>Clopidogrel + Omeprazol (Magenschutzmittel): Omeprazol hemmt das Leberenzym CYP2C19, das Clopidogrel aktiviert → weniger Clopidogrel-Wirkung (klinische Relevanz ist umstritten; Pantoprazol als Alternative)</li></ul>",
+nw:"Blutungen aus dem Magen-Darm-Trakt (häufigstes Problem bei ASS, besonders langfristig — deshalb Magenschutz erwägen), Atemnot (spezifisch für Ticagrelor — ein direkter Effekt am Atemzentrum, unabhängig vom Herzschlag), erhöhte Harnsäure bei niedrig dosiertem ASS (Gichtgefahr), allgemein erhöhte Blutungsneigung bei allen Substanzen",
+pearl:"Ticagrelor ist Clopidogrel beim akuten Koronarsyndrom überlegen (PLATO-Studie). Clopidogrel ist ein Prodrug, das über das Leberenzym CYP2C19 aktiviert wird — ca. 30 % der Europäer sind sog. Poor-Metabolizer (schwache Aktivierer dieses Enzyms) und haben daher eine verminderte Clopidogrel-Wirkung. Prasugrel ist das stärkste P2Y12-Medikament, aber absolut kontraindiziert bei Patienten mit Schlaganfall oder TIA in der Vorgeschichte. Triple-Therapie (Antikoagulation + doppelte Thrombozytenhemmung): Dauer auf ein Minimum begrenzen.",
+danger:"Triple-Therapie (Blutgerinnungshemmer + ASS + P2Y12-Hemmer) = massiv erhöhtes Blutungsrisiko — Dauer minimieren!"},
+
+{id:"ac",cat:"Antikoagulation",name:"Gerinnungshemmer (Antikoagulantien)",
+sub:"Heparin · Marcumar/Phenprocoumon (VKA) · Neue Blutverdünner (DOAK)",
+ex:"Heparin/NMH · Phenprocoumon (Marcumar) · Rivaroxaban, Apixaban (Eliquis), Dabigatran",kp:true,upd:true,
+mech:"Blutgerinnsel entstehen durch eine Kaskade von Gerinnungsfaktoren. Gerinnungshemmer greifen an verschiedenen Stellen an. Unfraktioniertes Heparin (UFH): aktiviert Antithrombin III, ein körpereigenes Gerinnungshemm-Protein → hemmt Thrombin (Faktor IIa) und Faktor Xa. Wirkung sofort, gut steuerbar, intravenös. Niedermolekulare Heparine (NMH, z.B. Enoxaparin): hemmen vorwiegend Faktor Xa. Unter die Haut gespritzt, keine aPTT-Überwachung nötig. Vitamin-K-Antagonisten (VKA, z.B. Phenprocoumon/Marcumar): Die Blutungsgerinnung braucht Vitamin K, um die Faktoren II, VII, IX und X herzustellen. VKA blockieren diesen Herstellungsprozess in der Leber → langsamer Wirkeintritt, sehr viele Wechselwirkungen, INR-Monitoring nötig. Direkte orale Antikoagulantien (DOAK): Faktor-Xa-Hemmer (Rivaroxaban, Apixaban, Edoxaban) oder Thrombinhemmer (Dabigatran) — greifen direkt am Gerinnungsfaktor an, vorhersehbarere Wirkung, keine routinemäßige Blutspiegelmessung nötig.",
+ind:"<ul><li>Vorhofflimmern (Schlaganfall-Vorbeugung): DOAK sind erste Wahl. ESC VHF 2024: Risikorechner CHA₂DS₂-VA Score (Geschlecht wurde als Punkt entfernt!). Antikoagulation empfohlen: Männer ab 1 Punkt, Frauen ab 2 Punkten</li><li>Tiefe Beinvenenthrombose und Lungenembolie: DOAK erste Wahl</li><li>Mechanische Herzklappen (z.B. künstliche Herzklappenklappe aus Metall): NUR Vitamin-K-Antagonisten! DOAKs sind hier absolut verboten (RE-ALIGN-Studie)</li><li>Heparin-induzierte Thrombozytopenie Typ II (HIT II, schwere Immunreaktion auf Heparin mit gefährlichen Blutgerinnseln): alle Heparine sofort stoppen, auf Argatroban oder Fondaparinux wechseln</li><li>Schwangerschaft: Niedermolekulare Heparine (VKA und DOAKs sind in der Schwangerschaft verboten)</li></ul>",
+ki:"<ul><li>DOAK: mechanische Herzklappen (absolut!), Schwangerschaft, schwere Leberinsuffizienz. Nierenfunktions-Grenzen: Dabigatran bei Kreatinin-Clearance unter 30; Rivaroxaban/Apixaban bei Kreatinin-Clearance unter 15 ml/min (bei TVT/LE-Indikation)</li><li>HIT II: alle Heparinformen sofort stoppen — auch niedermolekulare Heparine!</li><li>VKA: absolut verboten im ersten Schwangerschaftsdrittel (Embryopathie) und in den letzten Wochen vor der Geburt</li></ul>",
+ww:"<ul><li>Vitamin-K-Antagonisten haben extrem viele Wechselwirkungen über das Leberenzym CYP2C9: Antibiotika (erhöhen INR), Antimykotika (erhöhen INR), grünes Gemüse (Vitamin K in Spinat, Brokkoli, Grünkohl senkt INR) — Ernährung muss konstant sein!</li><li>DOAK: Medikamente, die P-Glykoprotein oder CYP3A4 hemmen (z.B. Clarithromycin, Ketoconazol), erhöhen den DOAK-Spiegel. Rifampicin, Phenytoin und andere Leberenzym-Induktoren senken den Spiegel stark</li><li>Alle Gerinnungshemmer + Thrombozytenaggregationshemmer: massiv erhöhtes Blutungsrisiko</li></ul>",
+nw:"Blutungen (die wichtigste und häufigste Nebenwirkung — von kleinen Hämatomen bis zur lebensbedrohlichen Hirnblutung). Heparin-induzierte Thrombozytopenie Typ I (HIT I): harmloser Abfall der Blutplättchen in den ersten Tagen, selbstlimitierend. HIT II: schwere Immunreaktion etwa 5–14 Tage nach Heparin-Beginn — Thrombozytensturz + paradoxe Thrombosen → lebensgefährlich. Vitamin-K-Antagonisten: Hautnekrosen bei Protein-C-Mangel (Protein C ist ein natürlicher Gerinnungshemmer, der auch VKA-abhängig ist und schneller abfällt als die Gerinnungsfaktoren)",
+pearl:"Blutgerinnsel-Risikoabschätzung bei Vorhofflimmern: Der CHA₂DS₂-VA-Score addiert je einen Punkt für Herzinsuffizienz (C), Bluthochdruck (H), Alter ≥75 Jahre (2 Punkte, A), Diabetes (D), Schlaganfall/TIA (2 Punkte, S), Gefäßerkrankung (V), Alter 65–74 Jahre (A) — Geschlecht ist seit ESC VHF 2024 kein Punkt mehr! Überwachung: UFH → aPTT 1,5–2,5-fach der Norm; Vitamin-K-Antagonisten → INR 2–3 (bei mechanischer Mitralklappe 2,5–3,5); DOAKs → keine Routinemessung. HIT II: Blutplättchen fallen, aber Thrombosen entstehen paradoxerweise → alle Heparine sofort stoppen! Antidote: Protaminsulfat (Heparin), Vitamin K + PPSB-Konzentrat (Marcumar), Idarucizumab (Dabigatran), Andexanet alfa (Faktor-Xa-Hemmer).",
+danger:"Mechanische Herzklappen + DOAK = absolut verboten (RE-ALIGN-Studie: mehr Schlaganfälle und Blutungen)! HIT II: alle Heparine sofort stoppen!",
+upd:"ESC VHF 2024: CHA₂DS₂-VA Score (Geschlecht nicht mehr als Risikopunkt). Antikoagulation empfohlen: Männer ab 1 Punkt, Frauen ab 2 Punkten."},
+
+{id:"sglt2",cat:"HFrEF / Diabetes",name:"SGLT2-Inhibitoren (Gliflozine)",
+sub:"Teil der Fantastischen Vier · wirken bei JEDER Ejektionsfraktion · schützen Herz und Niere",
+ex:"Dapagliflozin (Forxiga) · Empagliflozin (Jardiance)",kp:true,upd:true,
+mech:"SGLT2 (Sodium-Glucose-Cotransporter 2) ist ein Eiweiß in den Nierenzellen, das Glukose (Zucker) und Natrium gemeinsam aus dem Urin zurück ins Blut transportiert. SGLT2-Inhibitoren blockieren diesen Transporter → Glukose kann nicht zurückgeholt werden → der Urin enthält viel Zucker (Glukosurie) → Blutzucker sinkt. Gleichzeitig geht auch mehr Natrium und Wasser verloren → leichte Entwässerung, Blutdruck sinkt leicht, Herz wird entlastet (weniger Vor- und Nachlast). Das erklärt die Wirkung bei Herzinsuffizienz, unabhängig davon ob der Patient Diabetiker ist! Zusätzlich gibt es Hinweise auf direkte Effekte am Herzmuskel: weniger krankhafter Umbau (anti-fibrotisch), weniger Entzündung.",
+ind:"<ul><li>Herzinsuffizienz mit stark verminderter Pumpfunktion (Ejektionsfraktion ≤40 %) — Klasse I: DAPA-HF-Studie (Dapagliflozin), EMPEROR-Reduced-Studie (Empagliflozin)</li><li>Herzinsuffizienz mit leicht eingeschränkter oder erhaltener Pumpfunktion (Ejektionsfraktion über 40 %) — Klasse I (ESC HF 2023 Update: SGLT2-Inhibitoren jetzt für alle Ejektionsfraktionen empfohlen!)</li><li>Typ-2-Diabetes mit erhöhtem Herzkreislauf-Risiko</li><li>Chronische Nierenerkrankung (Dapagliflozin: DAPA-CKD-Studie; Empagliflozin: EMPA-KIDNEY-Studie)</li></ul>",
+ki:"<ul><li>Dapagliflozin bei Herzinsuffizienz: Nierenfiltrationswert (GFR) unter 25 ml/min (DAPA-HF-Studie schloss Patienten ab GFR 25 ein — nicht 20!)</li><li>Empagliflozin bei Herzinsuffizienz: GFR unter 20 ml/min</li><li>Typ-1-Diabetes: Risiko einer euglykämischen diabetischen Ketoazidose (gefährliche Übersäuerung des Blutes, obwohl der Blutzucker normal ist)</li><li>Schwangerschaft und Stillzeit</li></ul>",
+ww:"<ul><li>Insulin und Sulfonylharnstoffe (blutzuckersenkende Tabletten): erhöhtes Unterzuckerungsrisiko → Dosisanpassung nötig</li><li>Schleifendiuretika: beide entwässern → Austrocknung möglich</li><li>Lithium: Natrium-Ausscheidung kann den Lithiumspiegel im Blut beeinflussen</li></ul>",
+nw:"Pilzinfektionen an Genitalien (sehr häufig, besonders bei Frauen, weil der zuckerhaltige Urin die Schleimhäute reizt), Harnwegsinfekte, häufiges Wasserlassen, Austrocknung, euglykämische diabetische Ketoazidose (gefährliche Blutübersäuerung bei normalem Blutzucker — besonders bei Fasten, Operation, Alkohol oder Typ-1-Diabetes!), Fournier-Gangrän (sehr seltene, aber gefährliche Gewebsinfektion im Genitalbereich)",
+pearl:"Die sog. Fantastischen Vier bei Herzinsuffizienz mit reduzierter Pumpfunktion: ACE-Hemmer oder Entresto + Beta-Blocker + Aldosteron-Antagonist + SGLT2-Inhibitor — alle vier haben Klasse-I-Empfehlung. ESC Herzinsuffizienz 2023: SGLT2-Inhibitoren gelten jetzt für alle Herzinsuffizienz-Typen, nicht mehr nur bei reduzierter Pumpfunktion. Vor jeder geplanten Operation mindestens 3 Tage (72 Stunden, nicht 48!) vorher absetzen — euglykämische Ketoazidose-Vorbeugung. GFR-Grenze für Dapagliflozin bei Herzinsuffizienz: GFR 25 (nicht 20!).",
+danger:"Vor OP mindestens 72 Stunden absetzen! Euglykämische Ketoazidose bei normalem Blutzucker möglich — auch ohne Diabetes!",
+upd:"Korrekturen: perioperative Pause 72 h (nicht 48 h). Dapagliflozin bei Herzinsuffizienz: ab GFR 25 (nicht 20). ESC HF 2023: SGLT2-Inhibitoren jetzt für alle Herzinsuffizienz-Typen (alle Ejektionsfraktionen)."},
+
+{id:"ivab",cat:"HFrEF / KHK",name:"Ivabradin (Procoralan)",
+sub:"Verlangsamt nur den Herzschlag · schwächt das Herz nicht · nur bei Sinusrhythmus",
+ex:"Ivabradin (Procoralan) — einziges Präparat dieser Klasse",kp:false,upd:false,
+mech:"Im Sinusknoten (dem natürlichen Schrittmacher des Herzens) gibt es einen besonderen Ionenkanal — den sog. HCN-Kanal (funny current, If). Dieser Kanal ist dafür verantwortlich, dass der Sinusknoten spontan periodisch elektrische Signale erzeugt. Ivabradin blockiert selektiv diesen Kanal im Sinusknoten → der Sinusknoten feuert langsamer → das Herz schlägt langsamer. Wichtig: Ivabradin beeinflusst ausschließlich den Sinusknoten. Es wirkt nicht auf den Herzmuskel (keine Schwächung der Pumpleistung), nicht auf die AV-Überleitung und nicht auf die Blutgefäße — das unterscheidet es grundlegend von Beta-Blockern.",
+ind:"<ul><li>Herzinsuffizienz mit stark verminderter Pumpfunktion (Ejektionsfraktion ≤35 %, Herzfrequenz ≥75 Schlägen/Minute trotz maximal tolerierter Beta-Blocker-Dosis, NYHA-Klasse II–IV)</li><li>Stabile Angina pectoris (Brustschmerz bei Belastung) mit Herzfrequenz ≥70 Schlägen/Minute bei Patienten, die Beta-Blocker nicht vertragen</li></ul>",
+ki:"<ul><li>Vorhofflimmern oder Vorhofflattern — Ivabradin wirkt nur auf den Sinusknoten. Bei Vorhofflimmern gibt es keinen funktionierenden Sinusknoten mehr → das Medikament ist komplett wirkungslos. Zusätzlich absolute Kontraindikation</li><li>Herzfrequenz unter 60 Schlägen/Minute, AV-Block 2. oder 3. Grades</li><li>Schwere Leberinsuffizienz</li><li>Starke Hemmer des Leberenzyms CYP3A4 (z.B. bestimmte Pilzmittel, Clarithromycin)</li><li>Schwangerschaft</li></ul>",
+ww:"<ul><li>Hemmer von CYP3A4 (z.B. Azol-Antimykotika wie Ketoconazol, das Antibiotikum Clarithromycin): erhöhen den Ivabradin-Spiegel stark → gefährliche Bradykardie</li><li>Beta-Blocker, Verapamil, Diltiazem: alle bremsen den Herzschlag → additive Bradykardie</li></ul>",
+nw:"Phosphene (helle Lichtblitze oder Leuchterscheinungen im Gesichtsfeld, besonders beim Übergang von Dunkel zu Hell — z.B. beim Einfahren in einen beleuchteten Tunnel — häufige, aber harmlose und reversible Nebenwirkung), verlangsamter Herzschlag, leicht erhöhtes Risiko für Vorhofflimmern",
+pearl:"SHIFT-Studie: Ivabradin senkte bei Herzinsuffizienz die Krankenhausaufnahmen. Nur bei Sinusrhythmus wirksam! Bei Vorhofflimmern völlig wirkungslos UND kontraindiziert. Phosphene (Lichtblitze) sind die charakteristischste Nebenwirkung — harmlos, aber Patienten müssen wissen, dass die Fahrtauglichkeit beeinträchtigt sein kann, besonders beim Wechsel zwischen Dunkel und Hell (Tunnel, Dämmerung). Immer dokumentieren und den Patienten informieren.",
+danger:"Vorhofflimmern = absolute Kontraindikation. Phosphene → Patienten über eingeschränkte Fahrtauglichkeit aufklären!"}
+];
+
+let activeCat="";
+function getCats(){const c=[...new Set(D.map(d=>d.cat))];return CATS_ORDER.filter(x=>c.includes(x));}
+function renderPills(){
+  const el=document.getElementById("pills");
+  let h=`<button class="pill on" onclick="setFilter(this,'')" data-cat="">Alle</button>`;
+  getCats().forEach(c=>{h+=`<button class="pill" onclick="setFilter(this,'${c.replace(/'/g,"\\'")}' )" data-cat="${c}">${c}</button>`;});
+  el.innerHTML=h;
+}
+function setFilter(btn,cat){
+  activeCat=cat;
+  document.querySelectorAll(".pill").forEach(p=>p.classList.toggle("on",p.dataset.cat===cat));
+  filterAll();
+}
+function toggle(id){document.getElementById("card_"+id).classList.toggle("open");}
+function filterAll(){
+  const q=document.getElementById("srch").value.toLowerCase().trim();
+  let vis=0;
+  D.forEach(d=>{
+    const el=document.getElementById("card_"+d.id);
+    if(!el)return;
+    const cm=!activeCat||d.cat===activeCat;
+    const tm=!q||[d.name,d.sub,d.ex,d.ind||"",d.mech||"",d.pearl||"",d.cat,d.ki||"",d.ww||""].some(f=>f&&f.toLowerCase().includes(q));
+    el.style.display=(cm&&tm)?"":"none";
+    if(cm&&tm)vis++;
+  });
+  document.getElementById("shown").textContent=vis;
+  document.getElementById("nr").style.display=vis===0?"block":"none";
+}
+function renderCards(){
+  const container=document.getElementById("cards");
+  let html="";
+  D.forEach(d=>{
+    const col=CAT_COLORS[d.cat]||"#888";
+    const tags=[];
+    if(d.kp)tags.push('<span class="tag tag-kp">KP-Wichtig</span>');
+    if(d.isNew)tags.push('<span class="tag tag-new">NEU 2024/25</span>');
+    else if(d.upd)tags.push('<span class="tag tag-upd">Aktualisiert</span>');
+    const dh=d.danger?`<div class="danger-box"><div class="danger-label">&#9888; Gefahr / Cave</div><div class="danger-text">${d.danger}</div></div>`:"";
+    const uh=d.upd&&typeof d.upd==="string"?`<div class="update-box"><div class="update-label">ESC/DGK Update-Hinweis</div><div class="update-text">${d.upd}</div></div>`:"";
+    html+=`<div class="drug-card" id="card_${d.id}">
+<div class="card-header" onclick="toggle('${d.id}')">
+<div class="cat-bar" style="background:${col}"></div>
+<div class="card-meta">
+<div class="card-name">${d.name}</div>
+<div class="card-sub">${d.sub}</div>
+<div class="card-ex">${d.ex}</div>
+</div>
+<div class="card-tags">${tags.join("")}</div>
+<div class="chevron">▼</div>
+</div>
+<div class="card-body">
+<div class="section-grid">
+<div class="section"><div class="sec-label">Wie es wirkt</div><div class="sec-text">${d.mech}</div></div>
+<div class="section"><div class="sec-label">Anwendungsgebiete</div><div class="sec-text">${d.ind}</div></div>
+<div class="section"><div class="sec-label">Wann nicht geben (Kontraindikationen)</div><div class="sec-text">${d.ki}</div></div>
+<div class="section"><div class="sec-label">Wechselwirkungen</div><div class="sec-text">${d.ww}</div></div>
+<div class="section full"><div class="sec-label">Nebenwirkungen</div><div class="sec-text">${d.nw}</div></div>
+</div>
+<div class="pearl-box"><div class="pearl-label">&#9670; KP-Perle</div><div class="pearl-text">${d.pearl}</div></div>
+${dh}${uh}
+</div>
+</div>`;
+  });
+  container.innerHTML=html;
+  document.getElementById("tc").textContent=D.length;
+  document.getElementById("shown").textContent=D.length;
+}
+renderCards();
+renderPills();
+</script>
+</body>
+</html>

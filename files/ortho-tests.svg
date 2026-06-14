@@ -1,0 +1,293 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1540" height="2137" viewBox="0 0 1540 2137" lang="de" role="img" aria-labelledby="svgTitle svgDesc">
+<title id="svgTitle">Klinische Zeichen und Tests in der Orthopädie – nach Körperregion geordnet</title>
+<desc id="svgDesc">Übersicht orthopädischer Untersuchungszeichen und -tests, gruppiert nach Körperregion (Kniegelenk, Hüftgelenk, Schulter, Wirbelsäule, Hand) sowie allgemeinen Untersuchungsmethoden. Innerhalb jeder Region sind die Tests nach untersuchter Struktur bzw. vermuteter Pathologie geordnet.</desc>
+<defs><filter id="cardShadow" x="-6%" y="-6%" width="112%" height="118%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1f2937" flood-opacity="0.10"></feDropShadow></filter></defs>
+<rect width="1540" height="2137" fill="#eef5f8"></rect>
+<text class="h1" x="40" y="84" fill="#08222c">Klinische Zeichen &amp; Tests in der Orthopädie</text>
+<text class="h2" x="40" y="112" fill="#6b7280">Geordnet nach Körperregion und untersuchter Struktur · Stütz- und Bewegungsapparat · 53 Einträge</text>
+<rect x="40" y="130" width="1460" height="2" rx="1" fill="#dbe4e7"></rect>
+<g role="group" aria-label="Allgemeine Untersuchungsmethoden">
+<rect x="40" y="178" width="1460" height="216" rx="16" fill="#f1f3f6"></rect>
+<path d="M56,178 h1428 a16,16 0 0 1 16,16 v30 h-1460 v-30 a16,16 0 0 1 16,-16 z" fill="#5b6472"></path>
+<text class="band" x="62" y="208" fill="#ffffff">Allgemeine Untersuchungsmethoden</text>
+<rect x="1362" y="189" width="116" height="24" rx="12" fill="#ffffff" fill-opacity="0.92"></rect>
+<text class="count" x="1420" y="205" fill="#5b6472" text-anchor="middle">2 Methoden</text>
+<g role="group" aria-label="Neutral-Null-Methode">
+<rect x="62.0" y="242" width="700.0" height="130" rx="11" fill="#ffffff" stroke="#5b6472" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="62.0" y="242" width="4" height="130" rx="2" fill="#5b6472"></rect>
+<text class="eyebrow" x="78.0" y="264" fill="#5b6472">Standardisierte Methode</text>
+<text class="boxtitle" x="78.0" y="284" fill="#08222c">Neutral-Null-Methode</text>
+<text class="mline" x="78.0" y="308" fill="#6b7280">Bestimmung des Bewegungsmaßes jedes Gelenks in Winkelgraden:</text>
+<text class="mline" x="78.0" y="323" fill="#6b7280">Extension – Neutral-0-Stellung – Flexion. Die 0 steht mittig, sofern die</text>
+<text class="mline" x="78.0" y="338" fill="#6b7280">Neutralstellung durchlaufen wird; andernfalls steht dort das Bewegungsdefizit.</text>
+<text class="mline" x="78.0" y="353" fill="#6b7280">Ausgangsposition: aufrechter Stand, Arme hängend, Daumen nach vorne.</text>
+</g>
+<g role="group" aria-label="Umfangsdifferenz der Extremitäten">
+<rect x="778.0" y="242" width="700.0" height="115" rx="11" fill="#ffffff" stroke="#5b6472" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="778.0" y="242" width="4" height="115" rx="2" fill="#5b6472"></rect>
+<text class="eyebrow" x="794.0" y="264" fill="#5b6472">Objektivierung</text>
+<text class="boxtitle" x="794.0" y="284" fill="#08222c">Umfangsdifferenz der Extremitäten</text>
+<text class="mline" x="794.0" y="308" fill="#6b7280">Bewegungseinschränkungen (z. B. durch Arthrose) führen zur Atrophie der</text>
+<text class="mline" x="794.0" y="323" fill="#6b7280">unterbelasteten Muskelgruppen. Die Messung des Extremitätenumfangs</text>
+<text class="mline" x="794.0" y="338" fill="#6b7280">objektiviert diese Muskelatrophie im Seitenvergleich.</text>
+</g>
+</g>
+<g role="group" aria-label="Kniegelenk">
+<rect x="40" y="416" width="1460" height="359" rx="16" fill="#ecfbf8"></rect>
+<path d="M56,416 h1428 a16,16 0 0 1 16,16 v30 h-1460 v-30 a16,16 0 0 1 16,-16 z" fill="#0d8f86"></path>
+<text class="band" x="62" y="446" fill="#ffffff">Kniegelenk</text>
+<rect x="1290" y="427" width="188" height="24" rx="12" fill="#ffffff" fill-opacity="0.92"></rect>
+<text class="count" x="1384" y="443" fill="#0d8f86" text-anchor="middle">18 Tests / Zeichen</text>
+<g role="group" aria-label="Beinachsen">
+<rect x="62.0" y="480" width="342.0" height="162" rx="11" fill="#ffffff" stroke="#0d8f86" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="62.0" y="480" width="4" height="162" rx="2" fill="#0d8f86"></rect>
+<text class="eyebrow" x="78.0" y="502" fill="#0d8f86">Beurteilung der</text>
+<text class="boxtitle" x="78.0" y="522" fill="#08222c">Beinachsen</text>
+<text class="axissub" x="78.0" y="547" fill="#0d8f86">Von ventral</text>
+<circle cx="82.0" cy="564" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="94.0" y="568" fill="#08222c">Genu valgum  ·  Genu varum</text>
+<text class="axissub" x="78.0" y="593" fill="#0d8f86">Von lateral</text>
+<circle cx="82.0" cy="610" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="94.0" y="614" fill="#08222c">Genu recurvatum  ·  Genu flexum</text>
+</g>
+<g role="group" aria-label="Kreuzbänder">
+<rect x="420.0" y="480" width="342.0" height="186" rx="11" fill="#ffffff" stroke="#0d8f86" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="420.0" y="480" width="4" height="186" rx="2" fill="#0d8f86"></rect>
+<text class="eyebrow" x="436.0" y="502" fill="#0d8f86">Untersuchung der</text>
+<text class="boxtitle" x="436.0" y="522" fill="#08222c">Kreuzbänder</text>
+<circle cx="440.0" cy="547" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="452.0" y="551" fill="#08222c">Schubladen-Tests</text>
+<circle cx="440.0" cy="576" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="452.0" y="580" fill="#08222c">Lachman-Test</text>
+<circle cx="440.0" cy="605" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="452.0" y="609" fill="#08222c">Pivot-Shift-Test</text>
+<circle cx="440.0" cy="634" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="452.0" y="638" fill="#08222c">Gravity-Sign</text>
+</g>
+<g role="group" aria-label="Menisken">
+<rect x="778.0" y="480" width="342.0" height="273" rx="11" fill="#ffffff" stroke="#0d8f86" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="778.0" y="480" width="4" height="273" rx="2" fill="#0d8f86"></rect>
+<text class="eyebrow" x="794.0" y="502" fill="#0d8f86">Untersuchung der</text>
+<text class="boxtitle" x="794.0" y="522" fill="#08222c">Menisken</text>
+<circle cx="798.0" cy="547" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="810.0" y="551" fill="#08222c">Steinmann-I-Zeichen</text>
+<circle cx="798.0" cy="576" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="810.0" y="580" fill="#08222c">Steinmann-II-Zeichen</text>
+<circle cx="798.0" cy="605" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="810.0" y="609" fill="#08222c">Böhler-Zeichen</text>
+<circle cx="798.0" cy="634" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="810.0" y="638" fill="#08222c">Payr-Zeichen</text>
+<circle cx="798.0" cy="663" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="810.0" y="667" fill="#08222c">McMurray-Test</text>
+<circle cx="798.0" cy="692" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="810.0" y="696" fill="#08222c">Bragard-Test</text>
+<circle cx="798.0" cy="721" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="810.0" y="725" fill="#08222c">Apley-Grinding-Zeichen</text>
+</g>
+<g role="group" aria-label="Patella">
+<rect x="1136.0" y="480" width="342.0" height="215" rx="11" fill="#ffffff" stroke="#0d8f86" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="1136.0" y="480" width="4" height="215" rx="2" fill="#0d8f86"></rect>
+<text class="eyebrow" x="1152.0" y="502" fill="#0d8f86">Untersuchung der</text>
+<text class="boxtitle" x="1152.0" y="522" fill="#08222c">Patella</text>
+<circle cx="1156.0" cy="547" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="1168.0" y="551" fill="#08222c">Patellaverschieblichkeit</text>
+<circle cx="1156.0" cy="576" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="1168.0" y="580" fill="#08222c">Facettendruckschmerz</text>
+<circle cx="1156.0" cy="605" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="1168.0" y="609" fill="#08222c">Tanzende Patella</text>
+<circle cx="1156.0" cy="634" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="1168.0" y="638" fill="#08222c">Zohlen-Zeichen</text>
+<circle cx="1156.0" cy="663" r="3.4" fill="#0d8f86"></circle>
+<text class="item" x="1168.0" y="667" fill="#08222c">Apprehension-Test der Patella</text>
+</g>
+</g>
+<g role="group" aria-label="Hüftgelenk">
+<rect x="40" y="797" width="1460" height="401" rx="16" fill="#f4f0fd"></rect>
+<path d="M56,797 h1428 a16,16 0 0 1 16,16 v30 h-1460 v-30 a16,16 0 0 1 16,-16 z" fill="#7c4ddb"></path>
+<text class="band" x="62" y="827" fill="#ffffff">Hüftgelenk</text>
+<rect x="1299" y="808" width="179" height="24" rx="12" fill="#ffffff" fill-opacity="0.92"></rect>
+<text class="count" x="1388" y="824" fill="#7c4ddb" text-anchor="middle">8 Tests / Zeichen</text>
+<g role="group" aria-label="Tests &amp; Zeichen">
+<rect x="62.0" y="861" width="700.0" height="315" rx="11" fill="#ffffff" stroke="#7c4ddb" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="62.0" y="861" width="4" height="315" rx="2" fill="#7c4ddb"></rect>
+<text class="eyebrow" x="78.0" y="883" fill="#7c4ddb">Untersuchung des Hüftgelenks</text>
+<text class="boxtitle" x="78.0" y="903" fill="#08222c">Tests &amp; Zeichen</text>
+<circle cx="82.0" cy="927" r="3.4" fill="#7c4ddb"></circle>
+<text class="item" x="94.0" y="931" fill="#08222c">Vierer-Zeichen</text>
+<text class="desc" x="94.0" y="948" fill="#6b7280">Unspezifisch – Schmerzen sprechen für eine Hüftpathologie (z. B. Koxitis, Morbus Perthes).</text>
+<circle cx="82.0" cy="976" r="3.4" fill="#7c4ddb"></circle>
+<text class="item" x="94.0" y="980" fill="#08222c">Trendelenburg-Zeichen &amp; Duchenne-Zeichen</text>
+<text class="desc" x="94.0" y="997" fill="#6b7280">Abduktionsschwäche im Hüftgelenk – Insuffizienz der Mm. glutei medius et minimus.</text>
+<circle cx="82.0" cy="1025" r="3.4" fill="#7c4ddb"></circle>
+<text class="item" x="94.0" y="1029" fill="#08222c">Thomas-Handgriff</text>
+<text class="desc" x="94.0" y="1046" fill="#6b7280">Testung auf eine Hüftbeugekontraktur (Patient in Rückenlage, Gegenseite max. gebeugt).</text>
+<circle cx="82.0" cy="1074" r="3.4" fill="#7c4ddb"></circle>
+<text class="item" x="94.0" y="1078" fill="#08222c">Drehmann-Zeichen</text>
+<text class="desc" x="94.0" y="1095" fill="#6b7280">Hinweis auf eine Epiphyseolysis capitis femoris.</text>
+<circle cx="82.0" cy="1123" r="3.4" fill="#7c4ddb"></circle>
+<text class="item" x="94.0" y="1127" fill="#08222c">Hinge abduction</text>
+<rect x="586.8" y="1115" width="161.2" height="16" rx="8" fill="#fdf3e0"></rect>
+<text class="warn" x="667.4" y="1126" fill="#c87f12" text-anchor="middle">PROGNOSTISCH UNGÜNSTIG</text>
+<text class="desc" x="94.0" y="1144" fill="#6b7280">Prognostisch ungünstiges Zeichen beim Morbus Perthes.</text>
+</g>
+<g role="group" aria-label="Hüftdysplasie des Neugeborenen">
+<rect x="778.0" y="861" width="700.0" height="157" rx="11" fill="#ffffff" stroke="#7c4ddb" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="778.0" y="861" width="4" height="157" rx="2" fill="#7c4ddb"></rect>
+<text class="eyebrow" x="794.0" y="883" fill="#7c4ddb">Zeichen bei</text>
+<text class="boxtitle" x="794.0" y="903" fill="#08222c">Hüftdysplasie des Neugeborenen</text>
+<circle cx="798.0" cy="928" r="3.4" fill="#7c4ddb"></circle>
+<text class="item" x="810.0" y="932" fill="#08222c">Faltenasymmetrie</text>
+<circle cx="798.0" cy="957" r="3.4" fill="#7c4ddb"></circle>
+<text class="item" x="810.0" y="961" fill="#08222c">Barlow-Zeichen</text>
+<circle cx="798.0" cy="986" r="3.4" fill="#7c4ddb"></circle>
+<text class="item" x="810.0" y="990" fill="#08222c">Ortolani-Zeichen</text>
+</g>
+</g>
+<g role="group" aria-label="Schulter">
+<rect x="40" y="1220" width="1460" height="214" rx="16" fill="#eef3fd"></rect>
+<path d="M56,1220 h1428 a16,16 0 0 1 16,16 v30 h-1460 v-30 a16,16 0 0 1 16,-16 z" fill="#2563c9"></path>
+<text class="band" x="62" y="1250" fill="#ffffff">Schulter</text>
+<rect x="1299" y="1231" width="179" height="24" rx="12" fill="#ffffff" fill-opacity="0.92"></rect>
+<text class="count" x="1388" y="1247" fill="#2563c9" text-anchor="middle">5 Tests / Zeichen</text>
+<g role="group" aria-label="Impingement-Zeichen">
+<rect x="62.0" y="1284" width="461.3" height="128" rx="11" fill="#ffffff" stroke="#2563c9" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="62.0" y="1284" width="4" height="128" rx="2" fill="#2563c9"></rect>
+<text class="eyebrow" x="78.0" y="1306" fill="#2563c9">subakromiale Enge</text>
+<text class="boxtitle" x="78.0" y="1326" fill="#08222c">Impingement-Zeichen</text>
+<circle cx="82.0" cy="1351" r="3.4" fill="#2563c9"></circle>
+<text class="item" x="94.0" y="1355" fill="#08222c">Painful arc</text>
+<circle cx="82.0" cy="1380" r="3.4" fill="#2563c9"></circle>
+<text class="item" x="94.0" y="1384" fill="#08222c">Neer-Zeichen</text>
+</g>
+<g role="group" aria-label="M. supraspinatus">
+<rect x="539.3" y="1284" width="461.3" height="99" rx="11" fill="#ffffff" stroke="#2563c9" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="539.3" y="1284" width="4" height="99" rx="2" fill="#2563c9"></rect>
+<text class="eyebrow" x="555.3" y="1306" fill="#2563c9">Prüfung des</text>
+<text class="boxtitle" x="555.3" y="1326" fill="#08222c">M. supraspinatus</text>
+<circle cx="559.3" cy="1351" r="3.4" fill="#2563c9"></circle>
+<text class="item" x="571.3" y="1355" fill="#08222c">Jobe-Test</text>
+</g>
+<g role="group" aria-label="Schulterinstabilität">
+<rect x="1016.7" y="1284" width="461.3" height="128" rx="11" fill="#ffffff" stroke="#2563c9" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="1016.7" y="1284" width="4" height="128" rx="2" fill="#2563c9"></rect>
+<text class="eyebrow" x="1032.7" y="1306" fill="#2563c9">Hyperlaxizität Kapsel-Band-Apparat</text>
+<text class="boxtitle" x="1032.7" y="1326" fill="#08222c">Schulterinstabilität</text>
+<circle cx="1036.7" cy="1351" r="3.4" fill="#2563c9"></circle>
+<text class="item" x="1048.7" y="1355" fill="#08222c">Sulcus-Zeichen</text>
+<circle cx="1036.7" cy="1380" r="3.4" fill="#2563c9"></circle>
+<text class="item" x="1048.7" y="1384" fill="#08222c">Apprehension-Tests der Schulter</text>
+</g>
+</g>
+<g role="group" aria-label="Wirbelsäule">
+<rect x="40" y="1456" width="1460" height="330" rx="16" fill="#fdf1ee"></rect>
+<path d="M56,1456 h1428 a16,16 0 0 1 16,16 v30 h-1460 v-30 a16,16 0 0 1 16,-16 z" fill="#d9614c"></path>
+<text class="band" x="62" y="1486" fill="#ffffff">Wirbelsäule</text>
+<rect x="1290" y="1467" width="188" height="24" rx="12" fill="#ffffff" fill-opacity="0.92"></rect>
+<text class="count" x="1384" y="1483" fill="#d9614c" text-anchor="middle">12 Tests / Zeichen</text>
+<g role="group" aria-label="Morbus Bechterew">
+<rect x="62.0" y="1520" width="270.4" height="244" rx="11" fill="#ffffff" stroke="#d9614c" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="62.0" y="1520" width="4" height="244" rx="2" fill="#d9614c"></rect>
+<text class="eyebrow" x="78.0" y="1542" fill="#d9614c">Hinweise auf</text>
+<text class="boxtitle" x="78.0" y="1562" fill="#08222c">Morbus Bechterew</text>
+<circle cx="82.0" cy="1587" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="94.0" y="1591" fill="#08222c">Mennell-Zeichen</text>
+<circle cx="82.0" cy="1616" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="94.0" y="1620" fill="#08222c">Schober-Zeichen</text>
+<circle cx="82.0" cy="1645" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="94.0" y="1649" fill="#08222c">Ott-Zeichen</text>
+<circle cx="82.0" cy="1674" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="94.0" y="1678" fill="#08222c">Flèche-Maß</text>
+<circle cx="82.0" cy="1703" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="94.0" y="1707" fill="#08222c">Kinn-Sternum-Abstand</text>
+<circle cx="82.0" cy="1732" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="94.0" y="1736" fill="#08222c">Thoraxumfangsdifferenz</text>
+</g>
+<g role="group" aria-label="Osteoporose">
+<rect x="348.4" y="1520" width="270.4" height="99" rx="11" fill="#ffffff" stroke="#d9614c" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="348.4" y="1520" width="4" height="99" rx="2" fill="#d9614c"></rect>
+<text class="eyebrow" x="364.4" y="1542" fill="#d9614c">Hinweise auf</text>
+<text class="boxtitle" x="364.4" y="1562" fill="#08222c">Osteoporose</text>
+<circle cx="368.4" cy="1587" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="380.4" y="1591" fill="#08222c">Tannenbaumphänomen</text>
+</g>
+<g role="group" aria-label="Wirbelgleiten">
+<rect x="634.8" y="1520" width="270.4" height="128" rx="11" fill="#ffffff" stroke="#d9614c" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="634.8" y="1520" width="4" height="128" rx="2" fill="#d9614c"></rect>
+<text class="eyebrow" x="650.8" y="1542" fill="#d9614c">Hinweise auf</text>
+<text class="boxtitle" x="650.8" y="1562" fill="#08222c">Wirbelgleiten</text>
+<circle cx="654.8" cy="1587" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="666.8" y="1591" fill="#08222c">Sprungschanzenphänomen</text>
+<circle cx="654.8" cy="1616" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="666.8" y="1620" fill="#08222c">Hüftlendenstrecksteife</text>
+</g>
+<g role="group" aria-label="Hyperlordose">
+<rect x="921.2" y="1520" width="270.4" height="99" rx="11" fill="#ffffff" stroke="#d9614c" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="921.2" y="1520" width="4" height="99" rx="2" fill="#d9614c"></rect>
+<text class="eyebrow" x="937.2" y="1542" fill="#d9614c">Hinweise auf</text>
+<text class="boxtitle" x="937.2" y="1562" fill="#08222c">Hyperlordose</text>
+<circle cx="941.2" cy="1587" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="953.2" y="1591" fill="#08222c">Baastrup-Phänomen</text>
+</g>
+<g role="group" aria-label="Wurzeldehnungsschmerz">
+<rect x="1207.6" y="1520" width="270.4" height="128" rx="11" fill="#ffffff" stroke="#d9614c" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="1207.6" y="1520" width="4" height="128" rx="2" fill="#d9614c"></rect>
+<text class="eyebrow" x="1223.6" y="1542" fill="#d9614c">Hinweise auf</text>
+<text class="boxtitle" x="1223.6" y="1562" fill="#08222c">Wurzeldehnungsschmerz</text>
+<circle cx="1227.6" cy="1587" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="1239.6" y="1591" fill="#08222c">Bragard-Test</text>
+<circle cx="1227.6" cy="1616" r="3.4" fill="#d9614c"></circle>
+<text class="item" x="1239.6" y="1620" fill="#08222c">3-Stufen-Hyperextensionstest</text>
+</g>
+</g>
+<g role="group" aria-label="Hand">
+<rect x="40" y="1808" width="1460" height="243" rx="16" fill="#ebfaf2"></rect>
+<path d="M56,1808 h1428 a16,16 0 0 1 16,16 v30 h-1460 v-30 a16,16 0 0 1 16,-16 z" fill="#0f9d6b"></path>
+<text class="band" x="62" y="1838" fill="#ffffff">Hand</text>
+<rect x="1299" y="1819" width="179" height="24" rx="12" fill="#ffffff" fill-opacity="0.92"></rect>
+<text class="count" x="1388" y="1835" fill="#0f9d6b" text-anchor="middle">8 Tests / Zeichen</text>
+<g role="group" aria-label="Karpaltunnel-Syndrom">
+<rect x="62.0" y="1872" width="342.0" height="157" rx="11" fill="#ffffff" stroke="#0f9d6b" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="62.0" y="1872" width="4" height="157" rx="2" fill="#0f9d6b"></rect>
+<text class="eyebrow" x="78.0" y="1894" fill="#0f9d6b">Hinweise auf</text>
+<text class="boxtitle" x="78.0" y="1914" fill="#08222c">Karpaltunnel-Syndrom</text>
+<circle cx="82.0" cy="1939" r="3.4" fill="#0f9d6b"></circle>
+<text class="item" x="94.0" y="1943" fill="#08222c">Hoffmann-Tinel-Zeichen</text>
+<circle cx="82.0" cy="1968" r="3.4" fill="#0f9d6b"></circle>
+<text class="item" x="94.0" y="1972" fill="#08222c">Phalen-Zeichen</text>
+<circle cx="82.0" cy="1997" r="3.4" fill="#0f9d6b"></circle>
+<text class="item" x="94.0" y="2001" fill="#08222c">Flaschenzeichen</text>
+</g>
+<g role="group" aria-label="Rheumatoide Arthritis">
+<rect x="420.0" y="1872" width="342.0" height="157" rx="11" fill="#ffffff" stroke="#0f9d6b" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="420.0" y="1872" width="4" height="157" rx="2" fill="#0f9d6b"></rect>
+<text class="eyebrow" x="436.0" y="1894" fill="#0f9d6b">Hinweise auf</text>
+<text class="boxtitle" x="436.0" y="1914" fill="#08222c">Rheumatoide Arthritis</text>
+<circle cx="440.0" cy="1939" r="3.4" fill="#0f9d6b"></circle>
+<text class="item" x="452.0" y="1943" fill="#08222c">Gaenslen-Zeichen</text>
+<circle cx="440.0" cy="1968" r="3.4" fill="#0f9d6b"></circle>
+<text class="item" x="452.0" y="1972" fill="#08222c">Schwanenhalsdeformität</text>
+<circle cx="440.0" cy="1997" r="3.4" fill="#0f9d6b"></circle>
+<text class="item" x="452.0" y="2001" fill="#08222c">Knopflochdeformität</text>
+</g>
+<g role="group" aria-label="Tendovaginitis stenosans">
+<rect x="778.0" y="1872" width="342.0" height="99" rx="11" fill="#ffffff" stroke="#0f9d6b" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="778.0" y="1872" width="4" height="99" rx="2" fill="#0f9d6b"></rect>
+<text class="eyebrow" x="794.0" y="1894" fill="#0f9d6b">Hinweis auf</text>
+<text class="boxtitle" x="794.0" y="1914" fill="#08222c">Tendovaginitis stenosans</text>
+<circle cx="798.0" cy="1939" r="3.4" fill="#0f9d6b"></circle>
+<text class="item" x="810.0" y="1943" fill="#08222c">Schnellender Finger</text>
+</g>
+<g role="group" aria-label="Tendovaginitis stenosans de Quervain">
+<rect x="1136.0" y="1872" width="342.0" height="99" rx="11" fill="#ffffff" stroke="#0f9d6b" stroke-opacity="0.28" filter="url(#cardShadow)"></rect>
+<rect x="1136.0" y="1872" width="4" height="99" rx="2" fill="#0f9d6b"></rect>
+<text class="eyebrow" x="1152.0" y="1894" fill="#0f9d6b">Hinweis auf</text>
+<text class="boxtitle" x="1152.0" y="1914" fill="#08222c">Tendovaginitis stenosans de Quervain</text>
+<circle cx="1156.0" cy="1939" r="3.4" fill="#0f9d6b"></circle>
+<text class="item" x="1168.0" y="1943" fill="#08222c">Finkelstein-Zeichen</text>
+</g>
+</g>
+<rect x="40" y="2071" width="1460" height="2" rx="1" fill="#dbe4e7"></rect>
+<rect x="40" y="2087" width="11" height="11" rx="2" fill="#fdf3e0" stroke="#c87f12" stroke-opacity="0.5"></rect>
+<text class="foot" x="60" y="2096" fill="#6b7280">Bernsteinfarbe kennzeichnet ausschließlich Warn- bzw. prognostische Hinweise. — Jede Region ist farblich codiert; die Box-Titel nennen die untersuchte Struktur oder die vermutete Pathologie.</text>
+<text class="foot" x="40" y="2115" fill="#6b7280">Lernhilfe · Erklärungen der einzelnen Zeichen finden sich in den Kapiteln der jeweils zugeordneten Erkrankungen.</text>
+</svg>

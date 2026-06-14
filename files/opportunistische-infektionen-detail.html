@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opportunistische Infektionen — Filterbar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-background-primary:#ffffff; --color-background-secondary:#e4eef1;
+  --color-text-primary:#08222c; --color-text-secondary:#45697a;
+  --color-text-danger:#b02020; --color-text-success:#0f6e56; --color-text-warning:#854f0b;
+  --color-border-tertiary:#cddbe0; --color-border-secondary:#b9cdd4;
+  --color-background-info:#dcf0f6; --color-text-info:#0a6b86; --color-border-info:#7fcfe2;
+  --border-radius-md:10px; --border-radius-lg:14px; --page-bg:#eef5f8;
+}
+@media(prefers-color-scheme:dark){:root{
+  --color-background-primary:#0f3848; --color-background-secondary:#0c2f3d;
+  --color-text-primary:#e3eef2; --color-text-secondary:#9fc0cc;
+  --color-text-danger:#f08a82; --color-text-success:#3fbf9f; --color-text-warning:#d6a23e;
+  --color-border-tertiary:#1c4253; --color-border-secondary:#25515f;
+  --color-background-info:#0e3c4a; --color-text-info:#7fdcef; --color-border-info:#1f6f86;
+  --page-bg:#0a2733;
+}}
+html{background:var(--page-bg)}
+body{margin:0;background:var(--page-bg);color:var(--color-text-primary);font-family:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;padding:26px 20px 42px}
+.kp-wrap{max-width:940px;margin:0 auto}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1.kp-title{text-align:center;font-size:1.4rem;font-weight:700;letter-spacing:-.3px;color:var(--color-text-primary);border-bottom:2px solid var(--color-text-primary);padding-bottom:16px;margin:0 0 20px}
+</style>
+</head>
+<body><div class="kp-wrap">
+<h1 class="kp-title">Opportunistische Infektionen — Filterbar</h1>
+<h2 class="sr-only">Common opportunistic infections organized by CD4 count thresholds and body system</h2>
+
+<style>
+:root { --gap: 10px; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+.header { padding: 1.5rem 0 0.5rem; }
+.subtitle { font-size: 13px; color: var(--color-text-secondary); margin: 4px 0 0; }
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin: 1rem 0 1.25rem; }
+.pill { font-size: 12px; padding: 5px 14px; border-radius: 99px; border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: background .15s, color .15s; }
+.pill.active { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--gap); }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px 12px; transition: opacity .2s; }
+.card.hidden { display: none; }
+.card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+.card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; margin: 0; }
+.card-org { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 8px; font-style: italic; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { font-size: 11px; padding: 2px 8px; border-radius: 99px; }
+.cd4-bar { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary); }
+.cd4-track { flex: 1; height: 4px; border-radius: 2px; background: var(--color-border-tertiary); position: relative; overflow: hidden; }
+.cd4-fill { height: 100%; border-radius: 2px; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 1.25rem; font-size: 12px; color: var(--color-text-secondary); }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+.section-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: .03em; margin: 1rem 0 6px; text-transform: uppercase; }
+</style>
+
+<div class="header">
+  <p class="subtitle">Filter by body system or CD4 threshold</p>
+</div>
+
+<div class="filter-row" id="filters">
+  <button class="pill active" data-filter="all">All</button>
+  <button class="pill" data-filter="pulmonary">Pulmonary</button>
+  <button class="pill" data-filter="cns">CNS</button>
+  <button class="pill" data-filter="gi">GI tract</button>
+  <button class="pill" data-filter="disseminated">Disseminated</button>
+  <button class="pill" data-filter="ocular">Ocular</button>
+  <button class="pill" data-filter="mucocutaneous">Mucocutaneous</button>
+</div>
+
+<div class="legend">
+  <span class="legend-item"><span class="legend-dot" style="background:#3B8BD4"></span>Bacterial</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#D4537E"></span>Viral</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#1D9E75"></span>Fungal</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#BA7517"></span>Parasitic</span>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const infections = [
+  {
+    name: "PCP",
+    org: "Pneumocystis jirovecii",
+    type: "fungal",
+    systems: ["pulmonary"],
+    cd4: 200,
+    cd4label: "<200",
+    icon: "🫁",
+    tags: ["subacute SOB", "dry cough", "LDH ↑"],
+    note: "Most common AIDS-defining OI"
+  },
+  {
+    name: "TB reactivation",
+    org: "Mycobacterium tuberculosis",
+    type: "bacterial",
+    systems: ["pulmonary", "disseminated"],
+    cd4: 350,
+    cd4label: "Any CD4",
+    icon: "🫁",
+    tags: ["cough", "night sweats", "weight loss"],
+    note: "Can occur at any CD4 count"
+  },
+  {
+    name: "MAC",
+    org: "M. avium complex",
+    type: "bacterial",
+    systems: ["disseminated"],
+    cd4: 50,
+    cd4label: "<50",
+    icon: "🦠",
+    tags: ["fever", "night sweats", "hepatosplenomegaly"],
+    note: "Disseminated; fever + wasting"
+  },
+  {
+    name: "Cryptococcal meningitis",
+    org: "Cryptococcus neoformans",
+    type: "fungal",
+    systems: ["cns"],
+    cd4: 100,
+    cd4label: "<100",
+    icon: "🧠",
+    tags: ["headache", "fever", "raised ICP"],
+    note: "Latex agglutinin antigen test"
+  },
+  {
+    name: "Toxoplasma encephalitis",
+    org: "Toxoplasma gondii",
+    type: "parasitic",
+    systems: ["cns"],
+    cd4: 100,
+    cd4label: "<100",
+    icon: "🧠",
+    tags: ["ring lesions", "focal neuro", "seizures"],
+    note: "Multiple ring-enhancing lesions on MRI"
+  },
+  {
+    name: "CMV retinitis",
+    org: "Cytomegalovirus",
+    type: "viral",
+    systems: ["ocular", "disseminated"],
+    cd4: 50,
+    cd4label: "<50",
+    icon: "👁",
+    tags: ["visual loss", "floaters", "pizza fundus"],
+    note: "Haemorrhagic retinal necrosis"
+  },
+  {
+    name: "CMV colitis / oesophagitis",
+    org: "Cytomegalovirus",
+    type: "viral",
+    systems: ["gi"],
+    cd4: 50,
+    cd4label: "<50",
+    icon: "🫅",
+    tags: ["diarrhoea", "odynophagia", "ulcers"],
+    note: "Owlʼs-eye inclusions on biopsy"
+  },
+  {
+    name: "Oesophageal candidiasis",
+    org: "Candida albicans",
+    type: "fungal",
+    systems: ["gi", "mucocutaneous"],
+    cd4: 200,
+    cd4label: "<200",
+    icon: "🦷",
+    tags: ["odynophagia", "dysphagia", "thrush"],
+    note: "AIDS-defining; oral candidiasis alone is not"
+  },
+  {
+    name: "Cryptosporidiosis",
+    org: "Cryptosporidium parvum",
+    type: "parasitic",
+    systems: ["gi"],
+    cd4: 100,
+    cd4label: "<100",
+    icon: "💧",
+    tags: ["profuse watery diarrhoea", "wasting"],
+    note: "Chronic & severe when <100"
+  },
+  {
+    name: "Kaposi sarcoma",
+    org: "HHV-8 (KSHV)",
+    type: "viral",
+    systems: ["mucocutaneous", "disseminated"],
+    cd4: 200,
+    cd4label: "<200",
+    icon: "🔴",
+    tags: ["violaceous plaques", "GI", "pulmonary"],
+    note: "AIDS-defining neoplasm"
+  },
+  {
+    name: "Progressive multifocal leukoencephalopathy",
+    org: "JC virus",
+    type: "viral",
+    systems: ["cns"],
+    cd4: 200,
+    cd4label: "<200",
+    icon: "🧠",
+    tags: ["demyelination", "focal deficit", "no fever"],
+    note: "No effective antiviral; ART is key"
+  },
+  {
+    name: "Histoplasmosis",
+    org: "Histoplasma capsulatum",
+    type: "fungal",
+    systems: ["disseminated", "pulmonary"],
+    cd4: 150,
+    cd4label: "<150",
+    icon: "🌫",
+    tags: ["fever", "hepatosplenomegaly", "rash"],
+    note: "Endemic (Ohio/Mississippi valleys)"
+  },
+  {
+    name: "Herpes zoster",
+    org: "VZV (reactivation)",
+    type: "viral",
+    systems: ["mucocutaneous", "disseminated"],
+    cd4: 500,
+    cd4label: "Any CD4",
+    icon: "⚡",
+    tags: ["dermatomal rash", "neuralgia", "disseminated"],
+    note: "Multidermatomal → severe immunosuppression"
+  },
+  {
+    name: "Aspergillosis",
+    org: "Aspergillus fumigatus",
+    type: "fungal",
+    systems: ["pulmonary", "disseminated"],
+    cd4: 50,
+    cd4label: "<50",
+    icon: "🫁",
+    tags: ["angio-invasion", "haemoptysis", "halo sign CT"],
+    note: "More common in neutropenia / prolonged steroids"
+  },
+  {
+    name: "Oropharyngeal candidiasis",
+    org: "Candida spp.",
+    type: "fungal",
+    systems: ["mucocutaneous"],
+    cd4: 400,
+    cd4label: "<400",
+    icon: "💬",
+    tags: ["white plaques", "erythema", "angular cheilitis"],
+    note: "Not AIDS-defining, but marker of progression"
+  },
+];
+
+const typeColors = {
+  bacterial: { bg: "#E6F1FB", fill: "#3B8BD4", text: "#0C447C" },
+  viral:     { bg: "#FBEAF0", fill: "#D4537E", text: "#72243E" },
+  fungal:    { bg: "#E1F5EE", fill: "#1D9E75", text: "#085041" },
+  parasitic: { bg: "#FAEEDA", fill: "#BA7517", text: "#633806" },
+};
+
+function cd4Pct(val) {
+  if (val >= 500) return 100;
+  return Math.round((val / 500) * 100);
+}
+
+function renderCards(filter) {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  const filtered = filter === "all" ? infections : infections.filter(i => i.systems.includes(filter));
+  filtered.forEach(inf => {
+    const c = typeColors[inf.type];
+    const pct = cd4Pct(inf.cd4);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="icon" style="background:${c.bg}">${inf.icon}</div>
+        <p class="card-title">${inf.name}</p>
+      </div>
+      <p class="card-org">${inf.org}</p>
+      <div class="tags">
+        ${inf.tags.map(t => `<span class="tag" style="background:${c.bg};color:${c.text}">${t}</span>`).join("")}
+      </div>
+      <div class="cd4-bar">
+        <span>CD4 ${inf.cd4label}</span>
+        <div class="cd4-track"><div class="cd4-fill" style="width:${pct}%;background:${c.fill}"></div></div>
+      </div>
+      <p style="font-size:11px;color:var(--color-text-secondary);margin:6px 0 0;line-height:1.4">${inf.note}</p>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById("filters").addEventListener("click", e => {
+  if (!e.target.classList.contains("pill")) return;
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  e.target.classList.add("active");
+  renderCards(e.target.dataset.filter);
+});
+
+renderCards("all");
+</script>
+
+</div></body></html>

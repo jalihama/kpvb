@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lungenkarzinom – Staging</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #f0ece3;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #1a1814;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 { font-weight: 700; font-size: 1.5rem; color: #1a1814; letter-spacing: -0.4px; }
+  header p { color: #5a5650; font-size: 11px; font-weight: 500; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px; }
+
+  .main { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── TNM DEFINITIONS ── */
+  .tnm-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  .tnm-card { background: #fff; border-radius: 5px; overflow: hidden; }
+  .tnm-card.T-card { border: 2px solid #2a4a7f; }
+  .tnm-card.N-card { border: 2px solid #1a8a40; }
+  .tnm-card.M-card { border: 2px solid #b02020; }
+
+  .tnm-header {
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .T-card .tnm-header { background: #2a4a7f; }
+  .N-card .tnm-header { background: #1a8a40; }
+  .M-card .tnm-header { background: #b02020; }
+
+  .tnm-letter { font-size: 28px; font-weight: 700; color: rgba(255,255,255,0.95); line-height: 1; }
+  .tnm-full   { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.75); }
+
+  .tnm-body { padding: 0; }
+  .tnm-row-def {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    border-bottom: 1px solid #f0ece3;
+    min-height: 30px;
+  }
+  .tnm-row-def:last-child { border-bottom: none; }
+  .tnm-code {
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #f0ece3;
+  }
+  .T-card .tnm-code { color: #2a4a7f; }
+  .N-card .tnm-code { color: #1a6b3a; }
+  .M-card .tnm-code { color: #b02020; }
+  .tnm-def { padding: 6px 10px; font-size: 10.5px; color: #2a2820; line-height: 1.4; display: flex; align-items: center; }
+
+  /* shading for context */
+  .row-shade { background: #fafaf8; }
+
+  /* ── UICC STAGING TABLE ── */
+  .stage-table { background: #fff; border-radius: 5px; border: 1px solid #c8c2b5; overflow: hidden; }
+  .stage-table-header { padding: 8px 14px; background: #1a1814; display: flex; justify-content: space-between; align-items: center; }
+  .stage-table-header span { color: #fff; font-size: 12px; font-weight: 600; }
+  .stage-table-header small { color: rgba(255,255,255,0.6); font-size: 9.5px; }
+
+  table.st { width: 100%; border-collapse: collapse; }
+  table.st th {
+    padding: 7px 10px;
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #666;
+    background: #f5f0e8; border-bottom: 2px solid #c8c2b5; text-align: left;
+  }
+  table.st td {
+    padding: 6px 10px;
+    font-size: 10.5px;
+    border-bottom: 1px solid #f0ece3;
+    vertical-align: middle;
+  }
+  table.st tr:last-child td { border-bottom: none; }
+
+  .sn { font-weight: 700; font-size: 13px; }
+
+  /* Stage color coding — applied per row via class on <tr> */
+  .s-ia   td { background: #f3fbf5; }  .s-ia   .sn { color: #1a6b3a; }
+  .s-ib   td { background: #eef9f1; }  .s-ib   .sn { color: #1a6b3a; }
+  .s-iia  td { background: #f5fbea; }  .s-iia  .sn { color: #4a7a00; }
+  .s-iib  td { background: #f2f8e8; }  .s-iib  .sn { color: #5a8000; }
+  .s-iiia td { background: #fffaec; }  .s-iiia .sn { color: #8a5500; }
+  .s-iiib td { background: #fff7e8; }  .s-iiib .sn { color: #9a4500; }
+  .s-iiic td { background: #fff4e4; }  .s-iiic .sn { color: #a03500; }
+  .s-iva  td { background: #fff4f4; }  .s-iva  .sn { color: #b02020; }
+  .s-ivb  td { background: #fff0f0; }  .s-ivb  .sn { color: #900000; }
+
+  .surv-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .surv-bar { height: 14px; border-radius: 2px; min-width: 4px; flex-shrink: 0; }
+  .surv-val { font-size: 10px; font-weight: 600; white-space: nowrap; }
+
+  /* ── SCLC VALG TABLE ── */
+  .sclc-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 0; }
+
+  .sclc-stage {
+    border-radius: 5px;
+    overflow: hidden;
+    border: 2px solid;
+  }
+  .sclc-stage.vld { border-color: #1a8a40; }
+  .sclc-stage.ld  { border-color: #cc8800; }
+  .sclc-stage.ed  { border-color: #b02020; }
+
+  .sclc-head { padding: 8px 12px; }
+  .sclc-stage.vld .sclc-head { background: #1a8a40; }
+  .sclc-stage.ld  .sclc-head { background: #cc8800; }
+  .sclc-stage.ed  .sclc-head { background: #b02020; }
+
+  .sclc-title { font-size: 13px; font-weight: 700; color: #fff; }
+  .sclc-sub   { font-size: 9.5px; color: rgba(255,255,255,0.75); margin-top: 1px; }
+
+  .sclc-body { background: #fff; padding: 10px 12px; }
+  ul.clist { list-style: none; }
+  ul.clist li { padding-left: 14px; position: relative; font-size: 10.5px; line-height: 1.55; margin-bottom: 3px; color: #2a2820; }
+  ul.clist li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  .surv-big { font-size: 22px; font-weight: 700; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0ece3; }
+  .surv-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.2px; color: #888; }
+
+  /* ── THERAPY LINK ROW ── */
+  .link-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .link-cell {
+    border-radius: 4px;
+    padding: 8px 10px;
+    text-align: center;
+    border: 1.5px solid;
+  }
+  .link-cell .lc-stage { font-size: 12px; font-weight: 700; }
+  .link-cell .lc-tx    { font-size: 9.5px; margin-top: 3px; line-height: 1.4; }
+  .lc-ia   { border-color: #1a8a40; background: #f3fbf5; }
+  .lc-ia   .lc-stage { color: #1a6b3a; }
+  .lc-ii   { border-color: #4a7a00; background: #f5fbea; }
+  .lc-ii   .lc-stage { color: #4a7a00; }
+  .lc-iii  { border-color: #cc8800; background: #fffaec; }
+  .lc-iii  .lc-stage { color: #8a5500; }
+  .lc-iiib { border-color: #a03500; background: #fff7e8; }
+  .lc-iiib .lc-stage { color: #a03500; }
+  .lc-iv   { border-color: #b02020; background: #fff4f4; }
+  .lc-iv   .lc-stage { color: #b02020; }
+
+  .card-wrap { background: #fff; border-radius: 5px; border: 1px solid #c8c2b5; overflow: hidden; }
+  .card-header { padding: 8px 14px; background: #f5f0e8; border-bottom: 1px solid #e0dbd0; display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 12.5px; font-weight: 600; color: #1a1814; }
+  .card-sub { font-size: 9.5px; color: #888; }
+
+  footer { max-width: 1200px; margin: 14px auto 0; padding-top: 10px; border-top: 1px solid #c8c2b5; color: #7a7468; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; }
+
+  .section-label {
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px;
+    color: #888; margin-bottom: 6px; padding-left: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lungenkarzinom – Staging</h1>
+  <p>TNM · UICC 9/IASLC (NSCLC) · VALG (SCLC) · Selbst erstellt — Fehler möglich</p>
+</header>
+
+<div class="main">
+
+  <!-- ══════════════════════
+       TNM DEFINITIONEN
+  ════════════════════════ -->
+  <div class="section-label">TNM-Klassifikation — Definitionen</div>
+  <div class="tnm-row">
+
+    <!-- T -->
+    <div class="tnm-card T-card">
+      <div class="tnm-header">
+        <div class="tnm-letter">T</div>
+        <div class="tnm-full">Primärtumor<br><span style="font-size:9px;opacity:0.65;">Größe + lokale Ausbreitung</span></div>
+      </div>
+      <div class="tnm-body">
+        <div class="tnm-row-def row-shade">
+          <div class="tnm-code">Tis</div>
+          <div class="tnm-def">Carcinoma in situ</div>
+        </div>
+        <div class="tnm-row-def">
+          <div class="tnm-code">T1a</div>
+          <div class="tnm-def">≤1 cm, von Lungenparenchym / Pleura visceralis umgeben</div>
+        </div>
+        <div class="tnm-row-def row-shade">
+          <div class="tnm-code">T1b</div>
+          <div class="tnm-def">&gt;1 – ≤2 cm</div>
+        </div>
+        <div class="tnm-row-def">
+          <div class="tnm-code">T1c</div>
+          <div class="tnm-def">&gt;2 – ≤3 cm</div>
+        </div>
+        <div class="tnm-row-def row-shade">
+          <div class="tnm-code">T2a</div>
+          <div class="tnm-def">&gt;3 – ≤4 cm <em>oder</em> Hauptbronchus ≥2 cm von Karina, Pleura visceralis involviert, Atelektase</div>
+        </div>
+        <div class="tnm-row-def">
+          <div class="tnm-code">T2b</div>
+          <div class="tnm-def">&gt;4 – ≤5 cm (sonst wie T2a)</div>
+        </div>
+        <div class="tnm-row-def row-shade">
+          <div class="tnm-code">T3</div>
+          <div class="tnm-def">&gt;5 – ≤7 cm <em>oder</em> Brustwand / Perikard / N. phrenicus involviert <em>oder</em> separater Herd im gleichen Lappen</div>
+        </div>
+        <div class="tnm-row-def">
+          <div class="tnm-code">T4</div>
+          <div class="tnm-def">&gt;7 cm <em>oder</em> Mediastinum / Karina / Wirbelsäule / V. cava / Ösophagus involviert <em>oder</em> Herd in anderem ipsilat. Lappen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- N -->
+    <div class="tnm-card N-card">
+      <div class="tnm-header">
+        <div class="tnm-letter">N</div>
+        <div class="tnm-full">Lymphknoten<br><span style="font-size:9px;opacity:0.65;">Regionärer Befall</span></div>
+      </div>
+      <div class="tnm-body">
+        <div class="tnm-row-def row-shade">
+          <div class="tnm-code">N0</div>
+          <div class="tnm-def">Keine regionären LK-Metastasen</div>
+        </div>
+        <div class="tnm-row-def">
+          <div class="tnm-code">N1</div>
+          <div class="tnm-def">Ipsilaterale peribronchiale und/oder ipsilaterale hiläre LK + intrapulmonale LK</div>
+        </div>
+        <div class="tnm-row-def row-shade">
+          <div class="tnm-code">N2</div>
+          <div class="tnm-def">Ipsilaterale mediastinale und/oder subkarinale LK</div>
+        </div>
+        <div class="tnm-row-def">
+          <div class="tnm-code">N3</div>
+          <div class="tnm-def">Kontralaterale mediastinale / hiläre LK <em>oder</em> Skalenuslymphknoten / supraklavikuläre LK (ipsi- oder kontralateral)</div>
+        </div>
+        <div style="padding:10px 10px 6px; background:#f5fbf5;">
+          <div style="font-size:9px;font-weight:600;color:#1a6b3a;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Klinische Bedeutung</div>
+          <div style="font-size:10px;color:#2a2820;line-height:1.5;">
+            <strong>N0:</strong> Resektabel, günstigste Prognose<br>
+            <strong>N1:</strong> Noch lokal, adjuvante CTx indiziert<br>
+            <strong>N2:</strong> Lokal fortgeschritten → RCT ± OP<br>
+            <strong>N3:</strong> Inoperabel, definitive RCT
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M -->
+    <div class="tnm-card M-card">
+      <div class="tnm-header">
+        <div class="tnm-letter">M</div>
+        <div class="tnm-full">Fernmetastasen<br><span style="font-size:9px;opacity:0.65;">Hämatogen / extrathorakal</span></div>
+      </div>
+      <div class="tnm-body">
+        <div class="tnm-row-def row-shade">
+          <div class="tnm-code">M0</div>
+          <div class="tnm-def">Keine Fernmetastasen</div>
+        </div>
+        <div class="tnm-row-def">
+          <div class="tnm-code">M1a</div>
+          <div class="tnm-def">Separater Tumorherd im kontralateralen Lappen <em>oder</em> Pleura-/Perikardmetastasen <em>oder</em> maligner Pleura-/Perikarderguss</div>
+        </div>
+        <div class="tnm-row-def row-shade">
+          <div class="tnm-code">M1b</div>
+          <div class="tnm-def">Solitäre extrathorakale Fernmetastase<br><span style="font-size:9.5px;color:#888;font-style:italic;">(Oligometastatisch — Stadium IVA)</span></div>
+        </div>
+        <div class="tnm-row-def">
+          <div class="tnm-code">M1c</div>
+          <div class="tnm-def">Multiple extrathorakale Fernmetastasen in einem oder mehreren Organen<br><span style="font-size:9.5px;color:#888;font-style:italic;">(Multimetastatisch — Stadium IVB)</span></div>
+        </div>
+        <div style="padding:10px 10px 6px; background:#fff8f8;">
+          <div style="font-size:9px;font-weight:600;color:#b02020;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Häufige Metastasierungsorte — GeLeNK</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+            <div style="font-size:10px;padding:3px 5px;background:#fdeaea;border-radius:2px;"><strong>Ge</strong>hirn</div>
+            <div style="font-size:10px;padding:3px 5px;background:#fdeaea;border-radius:2px;"><strong>Le</strong>ber</div>
+            <div style="font-size:10px;padding:3px 5px;background:#fdeaea;border-radius:2px;"><strong>N</strong>ebennieren</div>
+            <div style="font-size:10px;padding:3px 5px;background:#fdeaea;border-radius:2px;"><strong>K</strong>nochen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       UICC STAGING TABLE — NSCLC
+  ════════════════════════ -->
+  <div class="section-label">NSCLC-Stadien nach UICC 9 / IASLC</div>
+  <div class="stage-table">
+    <div class="stage-table-header">
+      <span>Stadieneinteilung NSCLC — UICC 9 / IASLC</span>
+      <small>5-JÜR = 5-Jahres-Überlebensrate (geschätzt, variiert je nach Studie)</small>
+    </div>
+    <table class="st">
+      <thead>
+        <tr>
+          <th style="width:90px;">Stadium</th>
+          <th style="width:85px;">T</th>
+          <th style="width:70px;">N</th>
+          <th style="width:60px;">M</th>
+          <th>Klinische Bedeutung</th>
+          <th style="width:140px;">5-JÜR (approx.)</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- IA1 -->
+        <tr class="s-ia">
+          <td class="sn">IA₁</td>
+          <td>T1a</td><td>N0</td><td>M0</td>
+          <td>Primärtumor ≤1 cm, keine LK, keine Metastasen</td>
+          <td><div class="surv-bar-wrap"><div class="surv-bar" style="width:84px;background:#1a8a40;opacity:0.75;"></div><span class="surv-val" style="color:#1a6b3a;">~80–92%</span></div></td>
+        </tr>
+
+        <!-- IA2 -->
+        <tr class="s-ia">
+          <td class="sn">IA₂</td>
+          <td>T1b</td><td>N0</td><td>M0</td>
+          <td>&gt;1–2 cm, keine LK</td>
+          <td><div class="surv-bar-wrap"><div class="surv-bar" style="width:74px;background:#1a8a40;opacity:0.7;"></div><span class="surv-val" style="color:#1a6b3a;">~75–83%</span></div></td>
+        </tr>
+
+        <!-- IA3 -->
+        <tr class="s-ia">
+          <td class="sn">IA₃</td>
+          <td>T1c</td><td>N0</td><td>M0</td>
+          <td>&gt;2–3 cm, keine LK</td>
+          <td><div class="surv-bar-wrap"><div class="surv-bar" style="width:66px;background:#1a8a40;opacity:0.65;"></div><span class="surv-val" style="color:#1a6b3a;">~68–75%</span></div></td>
+        </tr>
+
+        <!-- IB -->
+        <tr class="s-ib">
+          <td class="sn">IB</td>
+          <td>T2a</td><td>N0</td><td>M0</td>
+          <td>&gt;3–4 cm <em>oder</em> Hauptbronchus / Pleura visceralis / Atelektase</td>
+          <td><div class="surv-bar-wrap"><div class="surv-bar" style="width:58px;background:#6a9a00;opacity:0.7;"></div><span class="surv-val" style="color:#4a7a00;">~60–70%</span></div></td>
+        </tr>
+
+        <!-- IIA -->
+        <tr class="s-iia">
+          <td class="sn">IIA</td>
+          <td>T2b</td><td>N0</td><td>M0</td>
+          <td>&gt;4–5 cm, keine LK</td>
+          <td><div class="surv-bar-wrap"><div class="surv-bar" style="width:52px;background:#7a9a00;opacity:0.7;"></div><span class="surv-val" style="color:#5a8000;">~53–60%</span></div></td>
+        </tr>
+
+        <!-- IIB — rowspan 2 for Stadium + 5-JÜR -->
+        <tr class="s-iib">
+          <td class="sn" rowspan="2">IIB</td>
+          <td>T1a–T2b</td><td>N1</td><td>M0</td>
+          <td>Ipsilaterale hiläre / peribronchiale LK</td>
+          <td rowspan="2"><div class="surv-bar-wrap"><div class="surv-bar" style="width:44px;background:#8a8800;opacity:0.7;"></div><span class="surv-val" style="color:#5a8000;">~40–53%</span></div></td>
+        </tr>
+        <tr class="s-iib">
+          <td>T3</td><td>N0</td><td>M0</td>
+          <td>&gt;5–7 cm <em>oder</em> Brustwand / Perikard / N. phrenicus</td>
+        </tr>
+
+        <!-- IIIA — rowspan 3 -->
+        <tr class="s-iiia">
+          <td class="sn" rowspan="3">IIIA</td>
+          <td>T1a–T2b</td><td>N2</td><td>M0</td>
+          <td>Ipsilaterale mediastinale / subkarinale LK</td>
+          <td rowspan="3"><div class="surv-bar-wrap"><div class="surv-bar" style="width:34px;background:#cc8800;opacity:0.75;"></div><span class="surv-val" style="color:#8a5500;">~20–36%</span></div></td>
+        </tr>
+        <tr class="s-iiia">
+          <td>T3</td><td>N1</td><td>M0</td>
+          <td>Brustwand / Perikard + ipsilat. hiläre LK</td>
+        </tr>
+        <tr class="s-iiia">
+          <td>T4</td><td>N0–N1</td><td>M0</td>
+          <td>&gt;7 cm <em>oder</em> Mediastinum / Karina — keine oder nur hiläre LK</td>
+        </tr>
+
+        <!-- IIIB — rowspan 2 -->
+        <tr class="s-iiib">
+          <td class="sn" rowspan="2">IIIB</td>
+          <td>T1a–T2b</td><td>N3</td><td>M0</td>
+          <td>Kontralaterale / supraklavikuläre LK — i.d.R. inoperabel</td>
+          <td rowspan="2"><div class="surv-bar-wrap"><div class="surv-bar" style="width:24px;background:#c05500;opacity:0.75;"></div><span class="surv-val" style="color:#a03500;">~12–20%</span></div></td>
+        </tr>
+        <tr class="s-iiib">
+          <td>T3–T4</td><td>N2</td><td>M0</td>
+          <td>Großer / invasiver Tumor + ipsilat. mediastinale LK</td>
+        </tr>
+
+        <!-- IIIC -->
+        <tr class="s-iiic">
+          <td class="sn">IIIC</td>
+          <td>T3–T4</td><td>N3</td><td>M0</td>
+          <td>Ausgedehnt lokal + kontralat. LK — inoperabel</td>
+          <td><div class="surv-bar-wrap"><div class="surv-bar" style="width:16px;background:#b03000;opacity:0.75;"></div><span class="surv-val" style="color:#a03500;">~8–12%</span></div></td>
+        </tr>
+
+        <!-- IVA -->
+        <tr class="s-iva">
+          <td class="sn">IVA</td>
+          <td>Jedes T</td><td>Jedes N</td><td>M1a–b</td>
+          <td>Pleura-/Perikardmetastasen <em>oder</em> solitäre Fernmetastase (oligometastatisch) → ggf. lokalablative Therapie</td>
+          <td><div class="surv-bar-wrap"><div class="surv-bar" style="width:10px;background:#b02020;opacity:0.75;"></div><span class="surv-val" style="color:#b02020;">~6–10%</span></div></td>
+        </tr>
+
+        <!-- IVB -->
+        <tr class="s-ivb">
+          <td class="sn">IVB</td>
+          <td>Jedes T</td><td>Jedes N</td><td>M1c</td>
+          <td>Multiple Fernmetastasen — palliative Systemtherapie</td>
+          <td><div class="surv-bar-wrap"><div class="surv-bar" style="width:5px;background:#900000;opacity:0.75;"></div><span class="surv-val" style="color:#900000;">&lt;5%</span></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div><!-- /stage-table -->
+
+  <!-- ══════════════════════
+       SCLC — VALG
+  ════════════════════════ -->
+  <div class="section-label">SCLC-Stadien nach VALG (Veterans Administration Lung Cancer Study Group)</div>
+  <div class="sclc-row">
+
+    <div class="sclc-stage vld">
+      <div class="sclc-head">
+        <div class="sclc-title">Very Limited Disease</div>
+        <div class="sclc-sub">T1–2, N0, M0 · Sehr seltenes Stadium bei Diagnose</div>
+      </div>
+      <div class="sclc-body">
+        <ul class="clist">
+          <li>Tumor ≤5 cm, auf einen Lappen begrenzt</li>
+          <li>Keine Lymphknotenmetastasen</li>
+          <li>Keine Fernmetastasen</li>
+          <li>Entspricht etwa NSCLC-Stadium I</li>
+        </ul>
+        <div class="surv-big" style="color:#1a6b3a;">~25–30%
+          <div class="surv-label">5-Jahres-Überleben</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sclc-stage ld">
+      <div class="sclc-head">
+        <div class="sclc-title">Limited Disease</div>
+        <div class="sclc-sub">Auf einen Hemithorax begrenzt — ca. 30–40% bei Diagnose</div>
+      </div>
+      <div class="sclc-body">
+        <ul class="clist">
+          <li>Tumor + LK in einem Hemithorax inkl. ipsilat. supraklavikuläre LK</li>
+          <li>Ipsilaterale mediastinale LK eingeschlossen</li>
+          <li>Kann in einem Strahlenfeld erfasst werden</li>
+          <li>Noch keine Fernmetastasen</li>
+        </ul>
+        <div class="surv-big" style="color:#8a5500;">~15–25%
+          <div class="surv-label">5-Jahres-Überleben</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sclc-stage ed">
+      <div class="sclc-head">
+        <div class="sclc-title">Extensive Disease</div>
+        <div class="sclc-sub">Über Hemithorax hinaus — ca. 60–70% bei Diagnose</div>
+      </div>
+      <div class="sclc-body">
+        <ul class="clist">
+          <li>Fernmetastasen vorhanden (hämatogen)</li>
+          <li>Kontralaterale LK befallen</li>
+          <li>Maligner Pleura- oder Perikarderguss</li>
+          <li>Häufig: Hirn · Leber · Nebennieren · Knochen (GeLeNK)</li>
+        </ul>
+        <div class="surv-big" style="color:#b02020;">&lt;5%
+          <div class="surv-label">5-Jahres-Überleben</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════
+       STAGING → THERAPIE BRÜCKE
+  ════════════════════════ -->
+  <div class="card-wrap">
+    <div class="card-header">
+      <span class="card-title">Stadium → Therapie (NSCLC Übersicht)</span>
+      <span class="card-sub">Vereinfacht · Detailtherapie siehe Therapiealgorithmus</span>
+    </div>
+    <div style="padding:10px 12px;">
+      <div class="link-row">
+        <div class="link-cell lc-ia">
+          <div class="lc-stage">I A/B</div>
+          <div class="lc-tx">OP: Lobektomie + Lymphadenektomie<br>Stereotakt. Radiatio bei Inoperabilität</div>
+        </div>
+        <div class="link-cell lc-ii">
+          <div class="lc-stage">II A/B</div>
+          <div class="lc-tx">OP + adjuvante CTx (Cisplatin)<br>± Targeted/Immuntherapie (ab St. II)</div>
+        </div>
+        <div class="link-cell lc-iii" style="border-color:#cc8800;">
+          <div class="lc-stage" style="color:#8a5500;">III A</div>
+          <div class="lc-tx">OP ± RCT (IIIA₁/₂)<br>Definit. simultane RCT (IIIA₃/₄)</div>
+        </div>
+        <div class="link-cell lc-iiib">
+          <div class="lc-stage">III B/C</div>
+          <div class="lc-tx">Definit. simultane RCT<br>+ Durvalumab (PD-L1 ≥1%)</div>
+        </div>
+        <div class="link-cell lc-iv">
+          <div class="lc-stage">IV</div>
+          <div class="lc-tx">Targeted (EGFR/ALK/BRAF)<br>Chemoimmuntherapie · Palliativ</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;padding:6px 10px;background:#fdeaea;border-radius:3px;border-left:3px solid #b02020;">
+        <span style="font-size:10px;font-weight:600;color:#b02020;">Cave: </span>
+        <span style="font-size:10px;color:#333;">Molekulare Diagnostik (EGFR · ALK · BRAF V600 · PD-L1) vor jeder Therapieentscheidung im NSCLC — bestimmt das Regime im Stadium IVB!</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span>Quellen: AMBOSS Lungenkarzinom · UICC 9 / IASLC · VALG · Selbst erstellt — Fehler möglich</span>
+  <span>Lungenkarzinom · Staging-Übersicht</span>
+</footer>
+
+</body>
+</html>

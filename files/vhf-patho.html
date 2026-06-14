@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VHF – Pathophysiologie</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #eef5f8;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #08222c;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #08222c;
+    letter-spacing: -0.4px;
+  }
+  header p {
+    color: #45697a;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  .notes {
+    max-width: 1100px;
+    margin: 20px auto 0;
+    border-top: 2px solid #08222c;
+    padding-top: 14px;
+  }
+  .notes-title {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #08222c;
+    margin-bottom: 2px;
+    letter-spacing: -0.1px;
+  }
+  .notes-subtitle {
+    font-size: 9px;
+    font-weight: 500;
+    color: #45697a;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+  }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .note-card {
+    background: #fff;
+    border: 1px solid #cddbe0;
+    border-radius: 3px;
+    padding: 7px 10px 7px 14px;
+    position: relative;
+  }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .note-card .bar.blue   { background: #2a4a7f; }
+  .note-card .bar.amber  { background: #7a4a00; }
+  .note-card .bar.red    { background: #b02020; }
+  .note-card .bar.purple { background: #5a2a7a; }
+
+  .note-card-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #5e7e8a;
+    margin-bottom: 1px;
+  }
+  .note-card-title {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #08222c;
+    margin-bottom: 4px;
+    letter-spacing: -0.1px;
+  }
+  .note-card-body {
+    font-size: 10.5px;
+    font-weight: 400;
+    color: #13323d;
+    line-height: 1.6;
+  }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  .cave  { color: #b02020; font-weight: 600; }
+  .key   { color: #1a6b3a; font-weight: 600; }
+
+  footer {
+    max-width: 1100px;
+    margin: 14px auto 0;
+    padding-top: 12px;
+    border-top: 1px solid #cddbe0;
+    color: #5e7e8a;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Vorhofflimmern – Pathophysiologie</h1>
+  <p>AMBOSS · Von Trigger bis Komplikation · Kausale Kette</p>
+</header>
+
+<div class="wrap">
+<svg width="1100" height="990" viewBox="0 0 1100 990" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#555"/>
+  </marker>
+  <marker id="arr-red" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#b02020"/>
+  </marker>
+  <marker id="arr-blue" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#2a4a7f"/>
+  </marker>
+  <marker id="arr-purple" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#5a2a7a"/>
+  </marker>
+  <marker id="arr-dash" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#aaa"/>
+  </marker>
+  <style>
+    text {
+      font-family: 'Roboto Flex', system-ui, sans-serif;
+      font-size: 11.5px;
+      font-weight: 400;
+    }
+    .tag  { font-size: 9px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    .lbl  { font-size: 10px; font-weight: 500; fill: #555; }
+    .title { font-size: 13px; font-weight: 600; }
+    .big  { font-size: 15px; font-weight: 700; }
+    .cave { fill: #b02020; font-weight: 700; }
+    .key  { fill: #1a6b3a; font-weight: 700; }
+    .muted { fill: #777; }
+    .small { font-size: 10px; fill: #555; }
+    .rf-label { font-size: 10px; font-weight: 600; fill: #08222c; }
+    .rf-item  { font-size: 10px; font-weight: 400; fill: #333; }
+  </style>
+
+  <!-- subtle diagonal hatch for the core mechanism box -->
+  <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="8" stroke="#d8d0c4" stroke-width="0.8"/>
+  </pattern>
+</defs>
+
+<!-- ===========================================================
+     CONNECTORS (drawn first)
+     =========================================================== -->
+
+<!-- RF boxes → Remodeling -->
+<!-- Alter: route right to Remodeling left edge -->
+<polyline points="100,160 100,213 190,213 190,233" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- Kardial -->
+<polyline points="297,160 297,200 370,200 370,233" fill="none" stroke="#2a4a7f" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+<!-- Extrakardial: routes left to Remodeling center -->
+<polyline points="603,160 603,200 550,200 550,233" fill="none" stroke="#7a4a00" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- Weitere Faktoren: solid arrow (contributes to remodeling equally) -->
+<polyline points="873,160 873,200 820,200 820,233" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<!-- Remodeling → LEFT (Re-Entry-Substrat) -->
+<polyline points="340,297 340,318 275,318 275,340" fill="none" stroke="#555" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="230" y="314" class="lbl" text-anchor="middle" fill="#555">Substrat</text>
+
+<!-- Remodeling → RIGHT (Ektope Foci) — dashed: remodeling begünstigt, but foci exist independently -->
+<polyline points="760,297 760,318 820,318 820,340" fill="none" stroke="#5a2a7a" stroke-width="1.8" stroke-dasharray="6 3" marker-end="url(#arr-purple)"/>
+<text x="875" y="314" class="lbl" text-anchor="middle" fill="#5a2a7a">begünstigt</text>
+
+<!-- Substrat box → convergence junction -->
+<polyline points="275,418 275,458 548,458" fill="none" stroke="#555" stroke-width="1.8"/>
+<!-- Ektope box → convergence junction -->
+<polyline points="820,418 820,458 552,458" fill="none" stroke="#5a2a7a" stroke-width="1.8"/>
+<!-- Junction → Chaotische box -->
+<line x1="550" y1="458" x2="550" y2="470" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Junction dot -->
+<circle cx="550" cy="458" r="4.5" fill="#555"/>
+
+<!-- Chaotische → split -->
+<polyline points="550,556 550,575 310,575 310,611" fill="none" stroke="#2a4a7f" stroke-width="2" marker-end="url(#arr-blue)"/>
+<text x="420" y="568" class="lbl" text-anchor="middle" fill="#2a4a7f">Elektrische Folge</text>
+<polyline points="550,556 550,575 780,575 780,611" fill="none" stroke="#b02020" stroke-width="2" marker-end="url(#arr-red)"/>
+<text x="670" y="568" class="lbl" text-anchor="middle" fill="#b02020">Thrombogene Folge</text>
+<circle cx="550" cy="575" r="4.5" fill="#555"/>
+
+<!-- AV-Knoten → Absolute Arrhythmie -->
+<line x1="310" y1="681" x2="310" y2="721" stroke="#2a4a7f" stroke-width="2" marker-end="url(#arr-blue)"/>
+<!-- Absolute Arrhythmie → Symptome -->
+<line x1="310" y1="791" x2="310" y2="831" stroke="#2a4a7f" stroke-width="2" marker-end="url(#arr-blue)"/>
+<!-- Blutstase → Thrombus -->
+<line x1="780" y1="681" x2="780" y2="721" stroke="#b02020" stroke-width="2" marker-end="url(#arr-red)"/>
+<!-- Thrombus → Embolie -->
+<line x1="780" y1="791" x2="780" y2="831" stroke="#b02020" stroke-width="2" marker-end="url(#arr-red)"/>
+
+<!-- ===========================================================
+     BOXES WITH TEXT
+     =========================================================== -->
+
+<!-- ── ROW 0: TITLE PILL ── -->
+<rect x="295" y="14" width="510" height="36" rx="18" fill="#08222c"/>
+<text x="550" y="37" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">Vorhofflimmern — Kausale Kette</text>
+
+<!-- ======================================================
+     ROW 1: RISIKOFAKTOREN (4 boxes)
+     ====================================================== -->
+
+<!-- Alter -->
+<rect x="20" y="64" width="160" height="96" rx="5" fill="#08222c"/>
+<text x="100" y="83" class="tag" fill="#e8e0d0" text-anchor="middle">Wichtigster RF</text>
+<text x="100" y="103" font-size="16" font-weight="700" fill="#fff" text-anchor="middle">Alter</text>
+<line x1="40" y1="111" x2="160" y2="111" stroke="#3a3428" stroke-width="1"/>
+<text x="100" y="126" font-size="10" fill="#b8b0a0" text-anchor="middle">Prävalenz steigt</text>
+<text x="100" y="140" font-size="10" fill="#b8b0a0" text-anchor="middle">deutlich ab 65 J.</text>
+
+<!-- Kardial -->
+<rect x="196" y="64" width="200" height="96" rx="5" fill="#edf3ff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="216" y="83" class="tag" fill="#2a4a7f">Kardiale Ursachen</text>
+<text x="216" y="101" class="rf-label">art. Hypertonie</text>
+<text x="216" y="116" class="rf-label">Herzinsuffizienz</text>
+<text x="216" y="131" class="rf-label">KHK · Klappenfehler</text>
+<text x="216" y="146" class="rf-label">Kardiomyopathie</text>
+
+<!-- Extrakardial -->
+<rect x="412" y="64" width="382" height="96" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="432" y="83" class="tag" fill="#8a5500">Extrakardiale Ursachen</text>
+<text x="432" y="101" class="rf-label">Diabetes mellitus</text>
+<text x="432" y="116" class="rf-label">COPD / Lungenerkr.</text>
+<text x="432" y="131" class="rf-label">Hyperthyreose</text>
+<text x="432" y="146" class="rf-label">chron. Niereninsuff.</text>
+<text x="610" y="101" class="rf-label">Schlafapnoe</text>
+<text x="610" y="116" class="rf-label">Adipositas</text>
+<text x="610" y="131" class="rf-label">Alkohol (akut/chron.)</text>
+<text x="610" y="146" class="rf-label">idiopathisch</text>
+
+<!-- Weitere Faktoren -->
+<rect x="810" y="64" width="270" height="96" rx="5" fill="#eaf1f3" stroke="#aaa9a5" stroke-width="1.5"/>
+<text x="830" y="83" class="tag" fill="#666">Weitere Faktoren</text>
+<text x="830" y="101" class="rf-label">Genetische Prädisposition</text>
+<text x="830" y="116" class="rf-label">Operationen / Entzündung</text>
+<text x="830" y="131" class="rf-label">Elektrolytentgleisungen</text>
+<text x="830" y="146" class="rf-label">Medikamente / Drogen</text>
+
+<!-- ======================================================
+     ROW 2: REMODELING (full width, shared substrate source)
+     ====================================================== -->
+<rect x="190" y="233" width="720" height="64" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<text x="550" y="252" class="tag" fill="#555" text-anchor="middle">Pathologischer Umbau · über Monate bis Jahre</text>
+<text x="550" y="274" class="title" text-anchor="middle" fill="#08222c">Strukturelles &amp; elektrisches Remodeling des Vorhofs</text>
+<text x="550" y="290" font-size="10.5" text-anchor="middle" fill="#555">Fibrose · Dilatation · veränderte Ionenkanäle · verkürzte Refraktärzeit → Substrat für AFib</text>
+
+<!-- ======================================================
+     ROW 3: TWO PARALLEL PRECONDITIONS (substrate + trigger)
+     FIX: these are independent — remodeling does NOT cause
+     ektopic foci; both are necessary for sustained AF.
+     ====================================================== -->
+
+<!-- LEFT: Re-Entry-Substrat (= result of remodeling) -->
+<rect x="20" y="340" width="510" height="78" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="1.5"/>
+<text x="40" y="358" class="tag" fill="#555">Substrat · Aufrechterhaltung</text>
+<text x="40" y="378" class="title" fill="#08222c">Re-Entry-Substrat</text>
+<text x="40" y="395" font-size="10.5" fill="#555">Verkürzte Refraktärzeit · atriale Fibrose · Leitungsheterogenität</text>
+<text x="40" y="410" font-size="10.5" fill="#555">→ Micro-Re-Entry-Kreise können sich etablieren und AF aufrechterhalten</text>
+
+<!-- RIGHT: Ektope Erregungszentren (trigger — independent of remodeling) -->
+<rect x="560" y="340" width="520" height="78" rx="5" fill="#fff" stroke="#5a2a7a" stroke-width="2"/>
+<text x="580" y="358" class="tag" fill="#5a2a7a">Trigger · Initiierung · unabhängig möglich</text>
+<text x="580" y="378" class="title" fill="#08222c">Ektope Erregungszentren</text>
+<text x="580" y="395" font-size="10.5" fill="#555">Unabhängig vom Sinusknoten — v.a. an den</text>
+<text x="580" y="410" font-size="10.5" fill="#555"><tspan font-weight="600">Pulmonalvenenmündungen</tspan> (myokardiale Ausläufer, li. Vorhof)</text>
+
+<!-- ======================================================
+     ROW 4: CHAOTISCHE ERREGUNG — Core Mechanism
+     ====================================================== -->
+<rect x="140" y="470" width="820" height="86" rx="5" fill="#fff" stroke="#08222c" stroke-width="2.5"/>
+<rect x="140" y="470" width="8" height="86" rx="5" fill="#08222c"/>
+<text x="176" y="490" class="tag" fill="#555">Kernmechanismus · Trigger + Substrat erforderlich</text>
+<text x="550" y="513" class="big" text-anchor="middle" fill="#08222c">Chaotische Vorhofaktivierung</text>
+<line x1="160" y1="521" x2="940" y2="521" stroke="#e0dbd2" stroke-width="1"/>
+<text x="550" y="537" font-size="11.5" text-anchor="middle" fill="#333">Unkoordinierte, schnelle Vorhofkontraktionen — Vorhoffrequenz <tspan font-weight="700">350–600/min</tspan></text>
+<text x="550" y="552" font-size="10.5" text-anchor="middle" fill="#777">Fehlende effektive Vorhofkontraktion · P-Wellen im EKG nicht mehr abgrenzbar</text>
+
+<!-- ======================================================
+     LEFT BRANCH: AV-KNOTEN → ABSOLUTE ARRHYTHMIE → SYMPTOME
+     ====================================================== -->
+
+<!-- AV-Knoten box -->
+<rect x="100" y="611" width="420" height="70" rx="5" fill="#edf3ff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="120" y="630" class="tag" fill="#2a4a7f">Elektrische Folge · Überleitung</text>
+<text x="120" y="649" class="title" fill="#08222c">AV-Knoten: Frequenzfilterung</text>
+<text x="120" y="665" font-size="10.5" fill="#333">Unregelmäßige, gefilterte Überleitung auf die Ventrikel → wechselnde HF</text>
+
+<!-- Absolute Arrhythmie box -->
+<rect x="100" y="721" width="420" height="70" rx="5" fill="#edf3ff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="120" y="740" class="tag" fill="#2a4a7f">EKG-Befund</text>
+<text x="120" y="759" class="title" fill="#08222c">Absolute Arrhythmie</text>
+<!-- FIX: added "i.d.R." — QRS can be wide with WPW or BBB -->
+<text x="120" y="775" font-size="10.5" fill="#333">Fehlende P-Wellen · irreguläre RR-Abstände · i.d.R. schmale QRS (&lt;120 ms)</text>
+<text x="120" y="786" font-size="9.5" fill="#999" font-style="italic">Flimmerwellen in V1 · Ausnahme: Schenkelbock / WPW → breite QRS</text>
+
+<!-- Symptome & Hämodynamik box -->
+<!-- FIX: renamed from "Reduziertes HZV" — Palpitationen arise from irregular rhythm, not ↓HZV -->
+<rect x="100" y="831" width="420" height="130" rx="5" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="120" y="850" class="tag" fill="#2a4a7f">Symptome &amp; Hämodynamische Konsequenzen</text>
+<text x="120" y="870" class="title" fill="#08222c">Symptome der Rhythmusstörung</text>
+<line x1="120" y1="877" x2="508" y2="877" stroke="#c0ccf0" stroke-width="1"/>
+<text x="120" y="892" font-size="10.5" fill="#333">· <tspan font-weight="600">Palpitationen</tspan> (Wahrnehmung der Arrhythmie)</text>
+<text x="120" y="907" font-size="10.5" fill="#333">· Dyspnoe · Erschöpfung / Fatigue  <tspan font-size="9" fill="#888">(↓ HZV)</tspan></text>
+<text x="120" y="922" font-size="10.5" fill="#333">· Schwindel · (Prä-)Synkope · Angina pectoris</text>
+<text x="120" y="937" font-size="10.5"><tspan font-weight="600" fill="#b02020">Schwer: </tspan><tspan fill="#555">Lungenödem · Kardiogener Schock · Tachymyopathie</tspan></text>
+
+<!-- ======================================================
+     RIGHT BRANCH: BLUTSTASE → THROMBUS → EMBOLIE
+     ====================================================== -->
+
+<!-- Blutstase box -->
+<rect x="578" y="611" width="422" height="70" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="598" y="630" class="tag" fill="#b02020">Thrombogene Folge · Stase</text>
+<text x="598" y="649" class="title" fill="#08222c">Ineffektive Vorhofkontraktion</text>
+<text x="598" y="665" font-size="10.5" fill="#333">Blutstase im <tspan font-weight="600">linken Vorhof</tspan> — insb. im linken <tspan font-weight="600">Vorhofohr (LAA)</tspan></text>
+
+<!-- Thrombus im LAA -->
+<rect x="578" y="721" width="422" height="70" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="598" y="740" class="tag" fill="#b02020">Thrombusbildung</text>
+<text x="598" y="759" class="title" fill="#08222c">Thrombus im linken Vorhofohr</text>
+<text x="598" y="775" font-size="10.5" fill="#333">Stase + endotheliale Dysfunktion + Hyperkoagulabilität</text>
+<text x="598" y="786" font-size="9.5" fill="#999" font-style="italic">(Virchow-Trias vollständig erfüllt)</text>
+
+<!-- Embolisation + Organmanifestationen -->
+<rect x="578" y="831" width="422" height="130" rx="5" fill="#fdeaea" stroke="#b02020" stroke-width="2"/>
+<text x="598" y="850" class="tag" fill="#b02020">Embolisation → Organmanifestationen</text>
+<text x="598" y="870" class="title" fill="#08222c">Arterielle Thromboembolie</text>
+<line x1="598" y1="877" x2="988" y2="877" stroke="#f0c0c0" stroke-width="1"/>
+<text x="598" y="893" font-size="10.5"><tspan font-weight="700" fill="#b02020">Schlaganfall / TIA</tspan><tspan fill="#555"> — ~5× häufiger als ohne AFib</tspan></text>
+<text x="598" y="908" font-size="10.5" fill="#555">· Niereninfarkt · Milzinfarkt</text>
+<text x="598" y="923" font-size="10.5" fill="#555">· Mesenterialinfarkt · Extremitätenembolie</text>
+<!-- Risk score note -->
+<rect x="578" y="946" width="422" height="29" rx="0" fill="#f5d0d0"/>
+<line x1="578" y1="946" x2="1000" y2="946" stroke="#b02020" stroke-width="1.5"/>
+<text x="598" y="961" font-size="10" fill="#333">Risikostratifizierung mittels <tspan font-weight="700">CHA₂DS₂-VASc-Score</tspan> → Indikation zur Antikoagulation</text>
+
+</svg>
+</div>
+
+<!-- ===========================================================
+     NOTES SECTION
+     =========================================================== -->
+<div class="notes">
+  <div class="notes-title">Ergänzende Hinweise</div>
+  <div class="notes-subtitle">Klinisch relevante Hintergrundinformation zur Pathophysiologie</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar purple"></div>
+      <div class="note-card-label">Initiierungsmechanismus</div>
+      <div class="note-card-title">Pulmonalvenenmündungen als Trigger</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Myokardiale Ausläufer der Pulmonalvenen besitzen automatische Eigenschaften und können als ektope Foci wirken</li>
+          <li>Diese sind das Ziel der <strong>Pulmonalvenenisolation (PVI)</strong> bei Katheterablation</li>
+          <li>Ohne strukturelles Substrat ist bei paroxysmalem AFib die PVI am erfolgversprechendsten (~70–80% rezidivfrei nach 1 Jahr); keine Garantie auf dauerhafte Beschwerdefreiheit</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Elektrisches Remodeling</div>
+      <div class="note-card-title">„AFib begets AFib"</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Tachykardiebedingtes Remodeling verkürzt die Refraktärzeit → erleichtert Aufrechterhaltung</li>
+          <li>Strukturelles Remodeling (Fibrose, Dilatation) schafft ein dauerhaftes Substrat</li>
+          <li><span class="cave">Cave:</span> Fortgeschrittenes Remodeling vermindert den Erfolg der Rhythmuskontrolle erheblich</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Thromboembolierisiko</div>
+      <div class="note-card-title">Virchow-Trias im linken Vorhofohr</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Stase:</strong> fehlende Vorhofkontraktion → verlangsamter Fluss im LAA</li>
+          <li><strong>Endothelschaden:</strong> durch Wandspannung und Entzündung</li>
+          <li><strong>Hyperkoagulabilität:</strong> systemische Aktivierung der Gerinnung</li>
+          <li><span class="cave">~30% aller ischämischen Schlaganfälle</span> sind durch Vorhofflimmern verursacht</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Hämodynamik</div>
+      <div class="note-card-title">Verlust des „atrialen Kicks"</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Vorhofkontraktion trägt normalerweise ~20–30% zum enddiastolischen Füllungsvolumen bei</li>
+          <li>Beim AFib entfällt dieser Beitrag → reduziertes HZV, insb. bei bestehender HI</li>
+          <li>Tachymyopathie: anhaltende Tachykardie kann reversible Herzinsuffizienz verursachen</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Risikofaktoren · Kausalität</div>
+      <div class="note-card-title">Upstream-Therapie</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Behandlung der Grunderkrankungen kann das Remodeling verlangsamen / umkehren</li>
+          <li><strong>RR-Kontrolle</strong> (Ziel &lt;130/80 mmHg) ist eine der effektivsten AFib-Prophylaxen</li>
+          <li>Gewichtsreduktion, Alkoholabstinenz und Schlafapnoe-Therapie reduzieren AFib-Rezidive nachweislich</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Klinische Implikation</div>
+      <div class="note-card-title">Zwei parallele Therapieziele</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Thromboembolieprophylaxe</strong> (meist DOAK) adressiert den rechten Ast — unabhängig von Rhythmus/Frequenz</li>
+          <li><strong>Frequenz- / Rhythmuskontrolle</strong> adressiert den linken Ast — verbessert Symptome und HZV</li>
+          <li><span class="cave">Cave:</span> Auch bei Sinusrhythmus nach Kardioversion bleibt TE-Risiko bestehen → AK nicht absetzen!</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>AMBOSS · Vorhofflimmern · Pathophysiologie (2024)</span>
+  <span>VHF · Kausale Kette · Modul 1/8</span>
+</footer>
+
+</body>
+</html>

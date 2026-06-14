@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insulin — Kitteltaschenkarte (stationär)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#eef5f8}</style>
+</head>
+<body>
+<!--
+  Stationäre Behandlung bei Diabetes mellitus — Insulin-Kitteltaschenkarte
+  Lernhilfe / Kitteltaschen-Referenz. Print-optimiert (A4).
+-->
+<style>
+  /* ---- Tokens ---------------------------------------------------------- */
+  .kk {
+    --ink: #16201d;          /* near-black, slightly green-shifted clinical ink */
+    --paper: #ffffff;
+    --line: #d4dad6;         /* hairline */
+    --teal: #0f6b63;         /* clinical accent */
+    --teal-soft: #e7f1ef;
+    --slate: #64726d;        /* muted captions */
+    --hypo: #c2362f;         /* red zone */
+    --hypo-bg: #fbeae8;
+    --target: #1f7a4d;       /* green zone */
+    --target-bg: #e6f3eb;
+    --warn1: #c8821a;        /* amber */
+    --warn1-bg: #fbf0dd;
+    --warn2: #b85c1a;        /* orange */
+    --warn2-bg: #f9e6d6;
+    --crit: #9e2a22;         /* deep red */
+    --crit-bg: #f6dcd9;
+
+    --mono: "SF Mono", "DejaVu Sans Mono", "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+    --sans: 'Roboto Flex', -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 11px;
+    line-height: 1.34;
+    background: var(--paper);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 18px 20px 26px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .kk * { box-sizing: border-box; }
+
+  /* ---- Masthead -------------------------------------------------------- */
+  .kk-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 16px; border-bottom: 2.5px solid var(--ink);
+    padding-bottom: 9px; margin-bottom: 12px;
+  }
+  .kk-title { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.04; }
+  .kk-title .sub { display: block; font-size: 11px; font-weight: 600; color: var(--teal); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 3px; }
+  .kk-tag { text-align: right; font-size: 9.5px; color: var(--slate); max-width: 260px; line-height: 1.3; }
+  .kk-tag b { color: var(--ink); }
+
+  /* ---- Top facts strip ------------------------------------------------- */
+  .kk-strip {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
+    border: 1px solid var(--line); border-radius: 7px; overflow: hidden;
+    margin-bottom: 13px;
+  }
+  .kk-fact { padding: 7px 10px; border-right: 1px solid var(--line); }
+  .kk-fact:last-child { border-right: none; }
+  .kk-fact .lab { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate); font-weight: 700; margin-bottom: 2px; }
+  .kk-fact .val { font-size: 11px; font-weight: 600; }
+  .kk-fact .val .mono { font-family: var(--mono); font-weight: 700; }
+
+  /* ---- Column layout --------------------------------------------------- */
+  .kk-grid { column-count: 3; column-gap: 16px; column-fill: balance; }
+  @media (max-width: 980px) { .kk-grid { column-count: 2; } }
+  @media (max-width: 660px) { .kk-grid { column-count: 1; } }
+
+  .card {
+    break-inside: avoid; -webkit-column-break-inside: avoid;
+    border: 1px solid var(--line); border-radius: 7px;
+    padding: 9px 11px 10px; margin: 0 0 12px;
+    background: var(--paper);
+  }
+  .card.accent { border-color: var(--teal); border-width: 1.5px; }
+  .card.accent .h { color: var(--teal); }
+
+  .h {
+    font-size: 11.5px; font-weight: 800; letter-spacing: 0.01em;
+    margin: 0 0 6px; display: flex; align-items: center; gap: 7px;
+  }
+  .h .n {
+    font-family: var(--mono); font-size: 9px; font-weight: 700;
+    background: var(--ink); color: #fff; border-radius: 4px;
+    padding: 1px 5px; letter-spacing: 0.02em;
+  }
+  .card.accent .h .n { background: var(--teal); }
+
+  .kk p { margin: 0 0 5px; }
+  .kk ul { margin: 0 0 5px; padding-left: 15px; }
+  .kk li { margin-bottom: 2.5px; }
+  .kk b, .kk strong { font-weight: 700; }
+  .mono { font-family: var(--mono); }
+  .pill {
+    font-family: var(--mono); font-size: 9.5px; font-weight: 700;
+    background: var(--teal-soft); color: var(--teal);
+    padding: 0.5px 4px; border-radius: 3px; white-space: nowrap;
+  }
+  .formula {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    background: var(--ink); color: #eafff6; border-radius: 5px;
+    padding: 6px 9px; margin: 4px 0 6px; line-height: 1.5;
+  }
+  .formula .em { color: #7fe9cf; font-weight: 700; }
+  .note { font-size: 9.5px; color: var(--slate); font-style: italic; margin-top: 4px; }
+  .danger { color: var(--hypo); font-weight: 700; }
+
+  /* ---- Signature: BZ → Dose readout band ------------------------------ */
+  .readout { display: flex; flex-direction: column; gap: 3px; margin: 2px 0 6px; }
+  .ro-row {
+    display: grid; grid-template-columns: 78px 1fr; align-items: stretch;
+    border-radius: 5px; overflow: hidden;
+  }
+  .ro-bz {
+    font-family: var(--mono); font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; letter-spacing: 0.01em; padding: 4px 4px;
+  }
+  .ro-act {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 8px; font-size: 10px; font-weight: 600; background: var(--paper);
+    border: 1px solid var(--line); border-left: none;
+    border-radius: 0 5px 5px 0;
+  }
+  .ro-dose { font-family: var(--mono); font-weight: 800; font-size: 12px; }
+  .ro-mmol { font-family: var(--mono); font-size: 8.5px; color: var(--slate); margin-left: auto; }
+
+  .z-hypo   .ro-bz { background: var(--hypo); }
+  .z-target .ro-bz { background: var(--target); }
+  .z-w1     .ro-bz { background: var(--warn1); }
+  .z-w2     .ro-bz { background: var(--warn2); }
+  .z-crit   .ro-bz { background: var(--crit); }
+  .z-hypo   .ro-dose { color: var(--hypo); }
+  .z-target .ro-dose { color: var(--target); }
+  .z-w1     .ro-dose { color: var(--warn1); }
+  .z-w2     .ro-dose { color: var(--warn2); }
+  .z-crit   .ro-dose { color: var(--crit); }
+
+  /* ---- Mini tables ----------------------------------------------------- */
+  table.kt { width: 100%; border-collapse: collapse; font-size: 9.5px; margin: 2px 0 5px; }
+  table.kt th { text-align: left; font-weight: 700; color: var(--slate); border-bottom: 1px solid var(--line); padding: 2px 4px; font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  table.kt td { padding: 2.5px 4px; border-bottom: 1px solid #eef1f0; vertical-align: top; }
+  table.kt tr:last-child td { border-bottom: none; }
+  table.kt td .mono { font-weight: 700; }
+
+  /* ---- Drill box ------------------------------------------------------- */
+  .drill {
+    background: var(--teal-soft); border: 1px dashed var(--teal);
+    border-radius: 6px; padding: 7px 9px; margin-top: 5px;
+  }
+  .drill .dh { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--teal); margin-bottom: 4px; }
+  .drill table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 10px; }
+  .drill td { padding: 1.5px 3px; }
+  .drill td:first-child { font-weight: 700; }
+  .drill td:nth-child(2) { color: var(--slate); }
+  .drill td:last-child { text-align: right; font-weight: 800; color: var(--teal); }
+
+  /* ---- Footer ---------------------------------------------------------- */
+  .kk-foot {
+    margin-top: 4px; border-top: 1px solid var(--line); padding-top: 8px;
+    font-size: 8.5px; color: var(--slate); line-height: 1.4;
+  }
+  .kk-foot b { color: var(--ink); }
+
+  @media print {
+    .kk { max-width: none; padding: 6mm 7mm; font-size: 8.4px; }
+    .kk-grid { column-count: 3; column-gap: 9px; }
+    .card { margin-bottom: 7px; padding: 6px 8px 7px; }
+    @page { size: A4 landscape; margin: 6mm; }
+  }
+</style>
+
+<div class="kk">
+
+  <div class="kk-head">
+    <h1 class="kk-title">Diabetes mellitus — stationär
+      <span class="sub">Insulin · Korrekturschema · Perioperativ · Sick-Day</span>
+    </h1>
+    <div class="kk-tag"><b>Kitteltaschen-Lernkarte.</b> Orientierungswerte nach gängigen Leitlinien — Dosierung individualisieren, Hausstandard &amp; ärztliche Supervision beachten.</div>
+  </div>
+
+  <!-- TOP FACTS -->
+  <div class="kk-strip">
+    <div class="kk-fact">
+      <div class="lab">BZ-Ziel stationär</div>
+      <div class="val"><span class="mono">140–180</span> mg/dl <span style="color:var(--slate)">(7,8–10,0 mmol/l)</span></div>
+    </div>
+    <div class="kk-fact">
+      <div class="lab">Hypoglykämie</div>
+      <div class="val"><span class="mono">&lt; 70</span> mg/dl · schwer &lt; 54 / Fremdhilfe</div>
+    </div>
+    <div class="kk-fact">
+      <div class="lab">Faustregel Korrektur</div>
+      <div class="val">1 IE senkt BZ um <span class="mono">~30–40</span> mg/dl</div>
+    </div>
+    <div class="kk-fact">
+      <div class="lab">Typ 1 — Eiserne Regel</div>
+      <div class="val">Basalinsulin <b class="danger">NIE</b> weglassen → DKA</div>
+    </div>
+    <div class="kk-fact">
+      <div class="lab">Niereninsuffizienz</div>
+      <div class="val">Insulinbedarf <b>↓</b> (Kumulation, Hypo)</div>
+    </div>
+  </div>
+
+  <!-- ============ COLUMNS ============ -->
+  <div class="kk-grid">
+
+    <!-- 1 — BASAL-BOLUS -->
+    <div class="card">
+      <div class="h"><span class="n">1</span>Basal-Bolus (ICT)</div>
+      <p><b>Tagesgesamtdosis (TDD), insulin-naiv:</b> <span class="pill">0,3–0,5 IE/kg/d</span><br>
+      Vorsichtig (alt · Niere · kachektisch): <span class="pill">0,2–0,3 IE/kg/d</span></p>
+      <p><b>Aufteilung:</b> ≈ 50 % <u>Basal</u> + ≈ 50 % <u>Bolus</u> (auf 3 Mahlzeiten).</p>
+      <ul>
+        <li><b>Basal:</b> Langwirksam (Glargin / Detemir / Degludec) 1×/d, oder NPH 1–2×/d.</li>
+        <li><b>Prandial-Bolus:</b> Schnell-Analog (Aspart / Lispro / Glulisin) 0–15 min vor Essen; oder Normalinsulin mit Spritz-Ess-Abstand 15–30 min.</li>
+      </ul>
+      <p><b>BE/KE-Faktor</b> (IE pro KH-Einheit) — Dawn-Effekt:</p>
+      <table class="kt">
+        <tr><th>Morgens</th><th>Mittags</th><th>Abends</th></tr>
+        <tr><td><span class="mono">1,5–2,0</span></td><td><span class="mono">~1,0</span></td><td><span class="mono">1,0–1,5</span></td></tr>
+      </table>
+      <p class="note">BE = 12 g KH · KE = 10 g KH. Prandialdosis = KH-Einheiten × Faktor + Korrektur.</p>
+    </div>
+
+    <!-- 2 — KORREKTURSCHEMA (signature) -->
+    <div class="card accent">
+      <div class="h"><span class="n">2</span>Korrekturschema — BZ ablesen → Dosis nennen</div>
+
+      <p style="font-weight:700; margin-bottom:3px;">A · Rechnen (Korrekturfaktor KF)</p>
+      <div class="formula">
+        KF = <span class="em">1800 ÷ TDD</span>&nbsp; (Schnell-Analog)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;= 1500 ÷ TDD (Normalinsulin)&nbsp;|&nbsp;100÷TDD (mmol/l)<br>
+        Dosis = <span class="em">(akt. BZ − Ziel) ÷ KF</span> &nbsp;·&nbsp; Ziel 100–120
+      </div>
+
+      <p style="font-weight:700; margin:6px 0 3px;">B · Festes Schema <span style="font-weight:500;color:var(--slate)">(Beispiel · Schnell-Analog, Ziel ~120)</span></p>
+      <div class="readout">
+        <div class="ro-row z-hypo">
+          <div class="ro-bz">&lt; 70</div>
+          <div class="ro-act"><span class="ro-dose">HYPO</span> 15 g KH, <b>kein Insulin</b><span class="ro-mmol">&lt;3,9</span></div>
+        </div>
+        <div class="ro-row z-target">
+          <div class="ro-bz">70–150</div>
+          <div class="ro-act"><span class="ro-dose">0 IE</span> nur Mahlzeiten-Bolus<span class="ro-mmol">3,9–8,3</span></div>
+        </div>
+        <div class="ro-row z-w1">
+          <div class="ro-bz">151–200</div>
+          <div class="ro-act"><span class="ro-dose">+2 IE</span><span class="ro-mmol">8,4–11,1</span></div>
+        </div>
+        <div class="ro-row z-w1">
+          <div class="ro-bz">201–250</div>
+          <div class="ro-act"><span class="ro-dose">+4 IE</span><span class="ro-mmol">11,2–13,9</span></div>
+        </div>
+        <div class="ro-row z-w2">
+          <div class="ro-bz">251–300</div>
+          <div class="ro-act"><span class="ro-dose">+6 IE</span><span class="ro-mmol">14,0–16,6</span></div>
+        </div>
+        <div class="ro-row z-w2">
+          <div class="ro-bz">301–350</div>
+          <div class="ro-act"><span class="ro-dose">+8 IE</span><span class="ro-mmol">16,7–19,4</span></div>
+        </div>
+        <div class="ro-row z-crit">
+          <div class="ro-bz">&gt; 350</div>
+          <div class="ro-act"><span class="ro-dose">+10 IE</span> Ketone! ggf. Perfusor<span class="ro-mmol">&gt;19,4</span></div>
+        </div>
+      </div>
+      <p class="note">Schritte an Insulinsensitivität anpassen: schlank/sensitiv → kleiner, adipös/resistent → größer. <b style="color:var(--hypo)">Sliding Scale NIE als Monotherapie</b> (reaktiv) — stets mit Basis-Bolus.</p>
+
+      <div class="drill">
+        <div class="dh">Drill · TDD 50 → KF = 1800/50 = 36 · Ziel 120</div>
+        <table>
+          <tr><td>BZ 180</td><td>(180−120)/36 = 1,7</td><td>2 IE</td></tr>
+          <tr><td>BZ 240</td><td>120/36 = 3,3</td><td>3 IE</td></tr>
+          <tr><td>BZ 300</td><td>180/36 = 5,0</td><td>5 IE</td></tr>
+          <tr><td>BZ 360</td><td>240/36 = 6,7</td><td>7 IE +Ketone</td></tr>
+          <tr><td>BZ 60</td><td>Hypo → 15 g KH</td><td>0 IE</td></tr>
+        </table>
+        <p style="margin:5px 0 0; font-size:9px; color:var(--ink);"><b>Kombiniert:</b> Mittag 5 KE × 1,0 = 5 IE + Korrektur BZ 220 → (220−120)/36 = 3 IE = <b>8 IE</b> schnell vor Mahlzeit.</p>
+      </div>
+    </div>
+
+    <!-- 3 — PERFUSOR -->
+    <div class="card">
+      <div class="h"><span class="n">3</span>Insulin-Perfusor (i.v.)</div>
+      <p><b>Indikation:</b> DKA · HHS · Intensivpatient · große OP · schwere Hyperglykämie trotz s.c. · kritisch krank &amp; nüchtern.</p>
+      <div class="formula">
+        Ansatz: <span class="em">50 IE Normalinsulin / 50 ml NaCl 0,9 %</span><br>
+        → 1 IE/ml &nbsp;·&nbsp; 1 ml/h = 1 IE/h. Steuerung n. stdl. BZ.
+      </div>
+      <p><b>DKA-Schema:</b></p>
+      <ul>
+        <li>Start <span class="pill">0,1 IE/kg/h</span> i.v. · BZ-Senkung max. ~50–75 mg/dl/h.</li>
+        <li>BZ &lt; 250 → Glukose (G5/G10) dazu, Insulin <u>weiterlaufen</u> bis Azidose weg (Anionenlücke geschlossen).</li>
+        <li><b>Kalium:</b> Insulin treibt K⁺ in Zelle. K⁺ &lt; 3,3 → erst Kalium, dann Insulin.</li>
+      </ul>
+      <p><b class="danger">STOPP-Regel:</b> Basal/Schnell-Insulin s.c. <b>1–2 h VOR</b> Perfusorstopp geben — i.v.-Insulin HWZ nur Minuten, sonst Rebound &amp; Ketoazidose.</p>
+    </div>
+
+    <!-- 4 — PERIOPERATIV -->
+    <div class="card">
+      <div class="h"><span class="n">4</span>Perioperativ</div>
+      <p>Patient möglichst <b>morgens / erste OP-Position</b>. Ziel <span class="mono">140–180</span> mg/dl.</p>
+      <p><b>Orale/Nicht-Insulin am OP-Tag:</b></p>
+      <table class="kt">
+        <tr><th>Wirkstoff</th><th>Vorgehen</th></tr>
+        <tr><td>Metformin</td><td>OP-Tag pausieren (Laktatazidose, KM/Niere); große OP/KM bis 48 h</td></tr>
+        <tr><td>Sulfonylharnstoffe</td><td>Morgen des OP-Tags pausieren (Hypo bei NPO)</td></tr>
+        <tr><td><b style="color:var(--hypo)">SGLT2-Hemmer</b><br>(Gliflozine)</td><td><b style="color:var(--hypo)">3 (–4) Tage vorher absetzen</b> — euglykäme Ketoazidose!</td></tr>
+        <tr><td>GLP-1-RA</td><td>Verzögerte Magenentleerung → Aspiration. Tägl. Präp. OP-Tag, wöchentl. ~1 Wo vorher¹</td></tr>
+        <tr><td>DPP-4-Hemmer</td><td>Meist fortführen</td></tr>
+      </table>
+      <p><b>Insulin:</b></p>
+      <ul>
+        <li><b>Typ 1:</b> Basal NIE weg — ~80–100 % der Basaldosis. Prandial bei NPO weg, Korrektur n. BZ.</li>
+        <li><b>Typ 2</b> auf Basal: ~50–75 % der Basaldosis.</li>
+        <li>Große OP · lange NPO · schlecht eingestellt → <b>Insulin-Perfusor + Glukose</b>, BZ 1–2 stdl.</li>
+      </ul>
+    </div>
+
+    <!-- 5 — SICK DAY -->
+    <div class="card">
+      <div class="h"><span class="n">5</span>Sick-Day-Regeln (Krankheitstage)</div>
+      <ul>
+        <li><b class="danger">Insulin NIE absetzen</b> — Bedarf ↑ durch Stresshormone. Typ 1: Basal niemals stoppen → DKA.</li>
+        <li>BZ alle 2–4 h. <b>Ketone</b> messen bei BZ &gt; 250 / Erbrechen / Unwohlsein.</li>
+        <li>Bei Ketonen <b>Extra-Insulin:</b> ~10–20 % der TDD als Schnell-Insulin alle 2–4 h.</li>
+        <li>Hydration sichern; KH als Flüssigkeit wenn Essen nicht geht (Saft/Cola bei niedrigem BZ).</li>
+      </ul>
+      <table class="kt">
+        <tr><th>β-OH-Butyrat</th><th>Bedeutung</th></tr>
+        <tr><td><span class="mono">&lt; 0,6</span></td><td>Normal</td></tr>
+        <tr><td><span class="mono">0,6–1,5</span></td><td>Erhöht — engmaschig</td></tr>
+        <tr><td><span class="mono">1,5–3,0</span></td><td>Hohes Risiko</td></tr>
+        <tr><td><span class="mono">&gt; 3,0</span></td><td class="danger">DKA — Hilfe holen</td></tr>
+      </table>
+      <p class="note"><b>SADMANS</b> — bei akuter Krankheit/Exsikkose pausieren: <u>S</u>ulfonylharnstoffe, <u>A</u>CE-Hemmer, <u>D</u>iuretika, <u>M</u>etformin, <u>A</u>RB/Sartane, <u>N</u>SAR, <u>S</u>GLT2-Hemmer.</p>
+      <p style="margin-top:4px;"><b class="danger">Hilfe holen:</b> anhaltendes Erbrechen · BZ unkontrolliert · Ketone hoch · DKA-Zeichen (Kussmaul-Atmung, Bauchschmerz, Somnolenz).</p>
+    </div>
+
+    <!-- 6 — HYPOGLYKÄMIE -->
+    <div class="card">
+      <div class="h"><span class="n">6</span>Hypoglykämie (&lt; 70 mg/dl)</div>
+      <ul>
+        <li><b>Wach &amp; schluckfähig — 15-15-Regel:</b> 15 g schnelle KH (150 ml Saft / 3–4 Traubenzucker) → nach 15 min BZ-Kontrolle → ggf. wdh. → danach komplexe KH.</li>
+        <li><b>Bewusstlos / nicht schluckfähig:</b> i.v. Glukose bevorzugt (z. B. 20–40 ml G40); alternativ Glukagon 1 mg i.m./s.c. oder nasal.</li>
+        <li>Auslösendes Insulin reduzieren, Ursache klären (Mahlzeit ausgelassen? Niere? Dosisfehler?).</li>
+      </ul>
+    </div>
+
+    <!-- 7 — INSULIN TYPES -->
+    <div class="card">
+      <div class="h"><span class="n">7</span>Insulin-Typen (Beginn · Max · Dauer)</div>
+      <table class="kt">
+        <tr><th>Typ</th><th>Beginn</th><th>Max</th><th>Dauer</th></tr>
+        <tr><td>Schnell-Analog<br><span style="color:var(--slate)">Aspart/Lispro/Glulisin</span></td><td>10–20′</td><td>1–2 h</td><td>3–5 h</td></tr>
+        <tr><td>Normalinsulin</td><td>~30′</td><td>2–3 h</td><td>6–8 h</td></tr>
+        <tr><td>NPH</td><td>1–2 h</td><td>4–8 h</td><td>12–18 h</td></tr>
+        <tr><td>Glargin U100</td><td>~1–2 h</td><td>peaklos</td><td>~24 h</td></tr>
+        <tr><td>Degludec</td><td>~1 h</td><td>peaklos</td><td>&gt; 42 h</td></tr>
+      </table>
+      <p class="note">Schnell-Analog: 0–15 min vor Essen. Normalinsulin: Spritz-Ess-Abstand 15–30 min.</p>
+    </div>
+
+    <!-- 8 — PITFALLS -->
+    <div class="card">
+      <div class="h"><span class="n">8</span>Fallstricke</div>
+      <ul>
+        <li>Sliding Scale <b>allein</b> vermeiden → BZ-Achterbahn; immer Basis-Bolus.</li>
+        <li>Insulin an Ernährung koppeln: NPO · Sondenkost · parenterale Ernährung jeweils eigenes Schema.</li>
+        <li><b>Niereninsuffizienz:</b> Dosis ↓ (renale Clearance).</li>
+        <li><b>Steroide</b> (z. B. Prednisolon morgens) → v. a. mittags/nachmittags Hyperglykämie → prandial/NPH anpassen.</li>
+        <li>Hausmedikation abgleichen; Injektionsstellen prüfen (Lipohypertrophie).</li>
+      </ul>
+    </div>
+
+  </div><!-- /grid -->
+
+  <div class="kk-foot">
+    <b>Lernhilfe — keine verbindliche Dosierungsanweisung.</b> Werte orientieren sich an gängigen Leitlinien (u. a. inpatient glycemic targets, DDG/ADA-Prinzipien) und stellen <b>Beispielschemata</b> dar; konkrete Insulindosis stets individualisieren, lokalen Hausstandard und ärztliche Supervision beachten. Niereninsuffizienz, Alter, Ernährungsstatus &amp; Komedikation berücksichtigen. ¹Perioperative GLP-1-RA-Empfehlungen entwickeln sich — aktuelle Fachgesellschafts-/Hauleitlinie prüfen. Bei DKA/HHS strukturiertes Protokoll (Volumen, Kalium, Azidose-Monitoring) verwenden.
+  </div>
+
+</div>
+
+</body>
+</html>

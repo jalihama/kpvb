@@ -1,0 +1,469 @@
+<!-- ============================================================
+     CHEMOTHERAPIE-ÜBERSICHT — embeddable fragment
+     All styles scoped under .chemo-doc to avoid collisions.
+     Drop this whole block into your page where you want it.
+     ============================================================ -->
+<section class="chemo-doc" lang="de">
+  <style>
+    /* ---- scoped reset & tokens ---- */
+    .chemo-doc{
+      --teal:#1a7a6e;
+      --teal-deep:#0f5048;
+      --teal-light:#e8f5f3;
+      --teal-mid:#b2deda;
+      --ink:#1c2b2a;
+      --ink-soft:#42514f;
+      --line:#d3e3e0;
+      --grey:#f5f7f6;
+      --warn-bg:#fdf3ec;
+      --warn-br:#e67e22;
+      --white:#ffffff;
+      --maxw:880px;
+
+      color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      font-size:16px;
+      line-height:1.62;
+      -webkit-font-smoothing:antialiased;
+      box-sizing:border-box;
+    }
+    .chemo-doc *,.chemo-doc *::before,.chemo-doc *::after{box-sizing:inherit;}
+    .chemo-doc .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px;}
+
+    /* ---- hero ---- */
+    .chemo-doc .hero{
+      background:linear-gradient(135deg,var(--teal-deep),var(--teal));
+      color:#fff;border-radius:18px;padding:44px 38px;margin:8px 0 40px;
+    }
+    .chemo-doc .hero .eyebrow{
+      text-transform:uppercase;letter-spacing:.22em;font-size:.72rem;
+      font-weight:700;opacity:.85;margin:0 0 14px;
+    }
+    .chemo-doc .hero h1{
+      font-size:clamp(2rem,5vw,3rem);line-height:1.05;margin:0 0 12px;
+      font-weight:800;letter-spacing:-.01em;
+    }
+    .chemo-doc .hero p{font-size:1.05rem;margin:0;max-width:46ch;opacity:.95;}
+    .chemo-doc .hero .tags{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;}
+    .chemo-doc .hero .tags span{
+      border:1px solid rgba(255,255,255,.4);border-radius:999px;
+      padding:5px 13px;font-size:.78rem;font-weight:600;
+    }
+
+    /* ---- section headings ---- */
+    .chemo-doc h2{
+      font-size:1.55rem;font-weight:800;color:var(--teal);
+      margin:54px 0 8px;padding-bottom:10px;border-bottom:2px solid var(--teal);
+      letter-spacing:-.01em;display:flex;align-items:baseline;gap:12px;
+    }
+    .chemo-doc h2 .num{
+      font-size:.95rem;font-weight:700;color:#fff;background:var(--teal);
+      border-radius:7px;padding:2px 9px;flex:none;
+    }
+    .chemo-doc h3{font-size:1.18rem;font-weight:700;color:var(--ink);margin:30px 0 6px;}
+    .chemo-doc h4{font-size:1rem;font-weight:700;color:var(--teal-deep);margin:20px 0 4px;}
+    .chemo-doc p{margin:8px 0;}
+    .chemo-doc strong{font-weight:700;}
+
+    /* ---- callout boxes ---- */
+    .chemo-doc .note{
+      background:var(--teal-light);border-left:4px solid var(--teal);
+      border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;
+    }
+    .chemo-doc .note .lbl{
+      font-weight:700;color:var(--teal-deep);text-transform:uppercase;
+      letter-spacing:.06em;font-size:.74rem;display:block;margin-bottom:4px;
+    }
+    .chemo-doc .warn{
+      background:var(--warn-bg);border-left:4px solid var(--warn-br);
+      border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;
+    }
+    .chemo-doc .warn .lbl{
+      font-weight:700;color:#b85c12;text-transform:uppercase;
+      letter-spacing:.06em;font-size:.74rem;display:block;margin-bottom:4px;
+    }
+
+    /* ---- decoder signature element ---- */
+    .chemo-doc .decoder{
+      display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;
+      margin:18px 0;
+    }
+    .chemo-doc .chip{
+      display:flex;flex-direction:column;border-radius:10px;overflow:hidden;
+      border:1px solid var(--line);min-width:0;
+    }
+    .chemo-doc .chip .key{
+      background:var(--teal);color:#fff;font-weight:800;font-size:1.1rem;
+      padding:7px 14px;text-align:center;letter-spacing:.02em;
+    }
+    .chemo-doc .chip .val{
+      background:#fff;padding:6px 14px;font-size:.84rem;color:var(--ink-soft);
+      text-align:center;font-weight:600;
+    }
+    .chemo-doc .decoder .plus{
+      align-self:center;font-weight:800;color:var(--teal);font-size:1.2rem;padding:0 2px;
+    }
+    .chemo-doc .decoder-out{
+      margin-top:2px;font-size:.92rem;color:var(--ink-soft);font-style:italic;
+    }
+
+    /* ---- tables ---- */
+    .chemo-doc .tbl-scroll{overflow-x:auto;margin:18px 0;-webkit-overflow-scrolling:touch;}
+    .chemo-doc table{
+      width:100%;border-collapse:collapse;font-size:.9rem;min-width:540px;
+      border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    }
+    .chemo-doc thead th{
+      background:var(--teal);color:#fff;text-align:left;font-weight:700;
+      padding:11px 14px;font-size:.82rem;letter-spacing:.01em;vertical-align:top;
+    }
+    .chemo-doc tbody td{padding:10px 14px;border-top:1px solid var(--line);vertical-align:top;}
+    .chemo-doc tbody tr:nth-child(even){background:var(--grey);}
+    .chemo-doc td code, .chemo-doc th code{
+      background:var(--teal-light);color:var(--teal-deep);font-weight:700;
+      padding:1px 6px;border-radius:5px;font-size:.85em;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    }
+    /* two-col verdict tables: green / muted heads */
+    .chemo-doc table.verdict thead th:first-child{background:var(--teal);}
+    .chemo-doc table.verdict thead th:last-child{background:#8a6240;}
+
+    /* ---- bullets ---- */
+    .chemo-doc ul{margin:8px 0;padding-left:22px;}
+    .chemo-doc li{margin:5px 0;}
+    .chemo-doc li::marker{color:var(--teal);}
+
+    /* ---- class quick-facts inline list ---- */
+    .chemo-doc .facts{
+      list-style:none;padding:0;margin:10px 0;display:grid;gap:6px;
+    }
+    .chemo-doc .facts li{display:flex;gap:10px;margin:0;}
+    .chemo-doc .facts .ft{
+      flex:none;min-width:130px;font-weight:700;color:var(--teal-deep);font-size:.86rem;
+    }
+    .chemo-doc .facts .fb{font-size:.92rem;}
+
+    /* ---- summary card ---- */
+    .chemo-doc .summary{
+      background:var(--teal-deep);color:#fff;border-radius:16px;
+      padding:32px 34px;margin:30px 0 10px;
+    }
+    .chemo-doc .summary h2{
+      color:#fff;border-bottom-color:rgba(255,255,255,.35);margin-top:0;
+    }
+    .chemo-doc .summary h2 .num{background:#fff;color:var(--teal-deep);}
+    .chemo-doc .summary ol{counter-reset:s;list-style:none;padding:0;margin:18px 0 0;}
+    .chemo-doc .summary ol li{
+      counter-increment:s;position:relative;padding-left:42px;margin:14px 0;line-height:1.5;
+    }
+    .chemo-doc .summary ol li::before{
+      content:counter(s);position:absolute;left:0;top:0;
+      width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.16);
+      display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;
+    }
+    .chemo-doc .summary strong{color:#bdeee7;}
+
+    .chemo-doc .foot{
+      font-size:.8rem;color:#8a9794;margin:30px 0 8px;font-style:italic;text-align:center;
+    }
+
+    /* ---- responsive ---- */
+    @media (max-width:560px){
+      .chemo-doc .hero{padding:32px 24px;}
+      .chemo-doc h2{font-size:1.3rem;}
+      .chemo-doc .facts li{flex-direction:column;gap:0;}
+      .chemo-doc .facts .ft{min-width:0;}
+    }
+    @media (prefers-reduced-motion:no-preference){
+      .chemo-doc .chip{transition:transform .15s ease;}
+      .chemo-doc .chip:hover{transform:translateY(-2px);}
+    }
+  </style>
+
+  <div class="wrap">
+
+    <!-- HERO -->
+    <header class="hero">
+      <p class="eyebrow">Klinische Übersicht · Deutschland</p>
+      <h1>Chemotherapie entschlüsselt</h1>
+      <p>Protokolle, Nomenklatur und Pharmakologie — der Code hinter den Namen, nicht die Auswendiglernerei.</p>
+      <div class="tags">
+        <span>Protokolle</span><span>Nomenklatur</span><span>Pharmakologie</span><span>Resistenz</span>
+      </div>
+    </header>
+
+    <!-- 1 -->
+    <h2><span class="num">1</span>Was ist Chemotherapie?</h2>
+    <p>Chemotherapie bezeichnet den Einsatz von <strong>Zytostatika</strong> — zellgiftige Substanzen, die das Zellwachstum hemmen oder Zellen direkt abtöten. Sie wirken auf schnell teilende Zellen: Tumorzellen, aber auch Schleimhaut, Knochenmark und Haarfollikel. In Deutschland werden Protokolle nach den Leitlinien der <strong>DGHO</strong> (Deutsche Gesellschaft für Hämatologie und Medizinische Onkologie) und weiterer Fachgesellschaften standardisiert.</p>
+    <div class="note">
+      <span class="lbl">Grundprinzip</span>
+      Tumorzellen teilen sich unkontrolliert — Zytostatika nutzen genau das gegen sie. Je schneller eine Zelle proliferiert, desto anfälliger ist sie für die meisten Chemotherapeutika.
+    </div>
+
+    <!-- 2 -->
+    <h2><span class="num">2</span>Der Code hinter den Protokollnamen</h2>
+    <p>Namen wie <code>FOLFOX</code>, <code>CHOP</code> oder <code>BEP</code> sind keine Zufallsabkürzungen — sie folgen einer Logik. Wer das System einmal versteht, dekodiert die meisten Protokolle spontan.</p>
+
+    <h3>Das Grundprinzip: Buchstaben = Wirkstoffe</h3>
+    <p>Jeder Buchstabe (oder jede Silbe) steht für einen Wirkstoff oder eine Substanzgruppe — mal für den INN-Freinamen, mal für den Handelsnamen, mal für die Substanzklasse.</p>
+
+    <!-- signature decoder -->
+    <div class="decoder" aria-label="FOLFIRINOX dekodiert">
+      <div class="chip"><span class="key">FOL</span><span class="val">Folinsäure</span></div>
+      <span class="plus">+</span>
+      <div class="chip"><span class="key">F</span><span class="val">5-FU</span></div>
+      <span class="plus">+</span>
+      <div class="chip"><span class="key">IRIN</span><span class="val">Irinotecan</span></div>
+      <span class="plus">+</span>
+      <div class="chip"><span class="key">OX</span><span class="val">Oxaliplatin</span></div>
+    </div>
+    <p class="decoder-out">&rarr; <strong>FOLFIRINOX</strong> liest sich wie ein Satz: ein Antimetabolit, sein Modulator, ein Topoisomerase-I-Hemmer und ein Platin.</p>
+
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Kürzel</th><th>Steht für</th><th>Wirkstoff</th><th>Hinweis</th></tr></thead>
+        <tbody>
+          <tr><td><code>F</code></td><td>Folinic acid</td><td>Leucovorin (Folinsäure)</td><td>Kein Zytostatikum — Modulator!</td></tr>
+          <tr><td><code>FOL</code></td><td>Folinic acid</td><td>Leucovorin</td><td>FOLFOX, FOLFIRI, FOLFIRINOX</td></tr>
+          <tr><td><code>OX</code></td><td>Oxaliplatin</td><td>Oxaliplatin</td><td>Platin-Derivat</td></tr>
+          <tr><td><code>IRI</code></td><td>Irinotecan</td><td>Irinotecan</td><td>Topoisomerase-I-Hemmer</td></tr>
+          <tr><td><code>C / CY</code></td><td>Cyclophosphamide</td><td>Cyclophosphamid</td><td>Alkylans</td></tr>
+          <tr><td><code>H</code></td><td>Hydroxydaunorubicin</td><td>Doxorubicin</td><td>Handelsname Adriamycin &rarr; „A" anderswo</td></tr>
+          <tr><td><code>O</code></td><td>Oncovin</td><td>Vincristin</td><td>Handelsname! Vinca-Alkaloid</td></tr>
+          <tr><td><code>P</code></td><td>Prednison/-olon</td><td>Prednison</td><td>Steroid, kein Zytostatikum</td></tr>
+          <tr><td><code>R</code></td><td>Rituximab</td><td>Rituximab</td><td>Monoklonaler Antikörper (anti-CD20)</td></tr>
+          <tr><td><code>B</code></td><td>Bleomycin</td><td>Bleomycin</td><td>Antibiotikum mit Zytostatika-Wirkung</td></tr>
+          <tr><td><code>E</code></td><td>Etoposid</td><td>Etoposid</td><td>Topoisomerase-II-Hemmer</td></tr>
+          <tr><td><code>P (BEP)</code></td><td>cis-Platin</td><td>Cisplatin</td><td>Kontext entscheidet die P-Bedeutung!</td></tr>
+          <tr><td><code>M</code></td><td>Methotrexat</td><td>Methotrexat</td><td>Antimetabolit / Folsäureantagonist</td></tr>
+          <tr><td><code>T</code></td><td>Taxol / Taxotere</td><td>Paclitaxel / Docetaxel</td><td>Handelsnamen</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="warn">
+      <span class="lbl">Kniff: Handelsname statt INN</span>
+      Viele Kürzel stammen vom Handelsnamen, nicht vom Freinamen. „H" in CHOP = Hydroxydaunorubicin (= Doxorubicin, Handelsname Adriamycin); „O" = Oncovin (= Vincristin). Und „P" ist mehrdeutig: Prednison in CHOP, Cisplatin in BEP. Historisch gewachsen — nicht einheitlich.
+    </div>
+
+    <h3>Live-Dekodierung gängiger Protokolle</h3>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Protokoll</th><th>Dekodiert</th><th>Indikation</th></tr></thead>
+        <tbody>
+          <tr><td><code>FOLFOX</code></td><td>FOL(insäure) + F(5-FU) + OX(aliplatin)</td><td>Kolorektales Karzinom</td></tr>
+          <tr><td><code>FOLFIRI</code></td><td>FOL + F(5-FU) + IRI(notecan)</td><td>Kolorektales Karzinom</td></tr>
+          <tr><td><code>FOLFIRINOX</code></td><td>FOL + F + IRI + (O)X(aliplatin)</td><td>Pankreaskarzinom</td></tr>
+          <tr><td><code>CHOP</code></td><td>C(ycloph.) + H(ydroxydauno) + O(ncovin) + P(rednison)</td><td>NHL (B-Zell)</td></tr>
+          <tr><td><code>R-CHOP</code></td><td>R(ituximab) + CHOP</td><td>DLBCL, CD20+ NHL</td></tr>
+          <tr><td><code>BEP</code></td><td>B(leomycin) + E(toposid) + P(latin)</td><td>Hodentumor / Keimzell-Ca</td></tr>
+          <tr><td><code>ABVD</code></td><td>A(driamycin) + B(leomycin) + V(inblastin) + D(acarbazin)</td><td>Hodgkin-Lymphom</td></tr>
+          <tr><td><code>AC&#8202;&rarr;&#8202;T</code></td><td>A(driamycin) + C(ycloph.) &rarr; T(axan)</td><td>Mammakarzinom</td></tr>
+          <tr><td><code>CMF</code></td><td>C(ycloph.) + M(ethotrexat) + F(luorouracil)</td><td>Mammakarzinom (älter)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3 -->
+    <h2><span class="num">3</span>Pharmakologische Klassifikation</h2>
+
+    <h3>3.1 Alkylantien</h3>
+    <ul class="facts">
+      <li><span class="ft">Mechanismus</span><span class="fb">DNA-Alkylierung &rarr; Quervernetzung (Crosslinks) &rarr; Replikationsblock &rarr; Apoptose</span></li>
+      <li><span class="ft">Zellzyklus</span><span class="fb">Phasenunspezifisch — wirken in allen Phasen</span></li>
+      <li><span class="ft">Wirkstoffe</span><span class="fb">Cyclophosphamid, Ifosfamid, Melphalan, Chlorambucil, Busulfan, Bendamustin, Temozolomid</span></li>
+      <li><span class="ft">In Protokollen</span><span class="fb">CHOP, R-CHOP, CVP, BEAM (Hochdosis)</span></li>
+    </ul>
+    <div class="tbl-scroll">
+      <table class="verdict">
+        <thead><tr><th>Wirken gegen …</th><th>Wirken NICHT gut gegen …</th></tr></thead>
+        <tbody>
+          <tr><td>Schnell proliferierende Tumoren (NHL, Mamma-Ca)</td><td>Langsam wachsende, quieszente Tumoren (G0-Phase)</td></tr>
+          <tr><td>Multiples Myelom (Melphalan)</td><td>Tumoren mit aktivem DNA-Reparatursystem (z.&nbsp;B. MGMT+)</td></tr>
+          <tr><td>Alkylierungsempfindliche hämatologische Tumoren</td><td>Resistenz durch Glutathion-Überproduktion möglich</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3.2 Antimetaboliten</h3>
+    <ul class="facts">
+      <li><span class="ft">Mechanismus</span><span class="fb">Strukturanaloga von Nukleotiden/Folsäure &rarr; blockieren Enzyme der DNA/RNA-Synthese</span></li>
+      <li><span class="ft">Zellzyklus</span><span class="fb">S-Phase-spezifisch; Dauerinfusion erhöht die Wirkung</span></li>
+      <li><span class="ft">Untergruppen</span><span class="fb">Folsäureantagonisten (MTX, Pemetrexed) · Pyrimidinanaloga (5-FU, Capecitabin, Gemcitabin, Cytarabin) · Purinanaloga (Fludarabin, Cladribin)</span></li>
+      <li><span class="ft">In Protokollen</span><span class="fb">FOLFOX, FOLFIRI, FOLFIRINOX (5-FU); Gemcitabin-Kombis; ALL-Protokolle (MTX)</span></li>
+    </ul>
+    <div class="tbl-scroll">
+      <table class="verdict">
+        <thead><tr><th>Wirken gegen …</th><th>Wirken NICHT gut gegen …</th></tr></thead>
+        <tbody>
+          <tr><td>Kolorektales Karzinom (5-FU)</td><td>Ruhende Zellen (G0) — kein Synthese-Angriffspunkt</td></tr>
+          <tr><td>Pankreaskarzinom (Gemcitabin)</td><td>Hohe Thymidylatsynthase-Expression (5-FU-Resistenz)</td></tr>
+          <tr><td>Hämatologische Neoplasien (Fludarabin, Cytarabin)</td><td>DPD-Mangel: Toxizitätsrisiko mit 5-FU</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3.3 Topoisomerase-Hemmer</h3>
+    <ul class="facts">
+      <li><span class="ft">Mechanismus</span><span class="fb">Stabilisieren DNA-Enzym-Komplexe &rarr; permanente Strangbrüche &rarr; Zelltod</span></li>
+      <li><span class="ft">Typ I</span><span class="fb">Irinotecan, Topotecan (Camptothecine) — S-Phase</span></li>
+      <li><span class="ft">Typ II</span><span class="fb">Etoposid; Anthrazykline (Doxorubicin, Epirubicin, Daunorubicin) — S/G2</span></li>
+      <li><span class="ft">In Protokollen</span><span class="fb">FOLFIRI, FOLFIRINOX (Irinotecan); BEP, BEACOPP (Etoposid); CHOP (Doxorubicin)</span></li>
+    </ul>
+    <div class="tbl-scroll">
+      <table class="verdict">
+        <thead><tr><th>Wirken gegen …</th><th>Wirken NICHT gut gegen …</th></tr></thead>
+        <tbody>
+          <tr><td>Kolorektales Ca (Irinotecan)</td><td>UGT1A1*28-Homozygote &rarr; erhöhte Irinotecan-Toxizität</td></tr>
+          <tr><td>Solide Tumoren, Lymphome (Anthrazykline)</td><td>Kumulative Kardiotoxizität limitiert Doxorubicin (~&nbsp;550&nbsp;mg/m²)</td></tr>
+          <tr><td>Keimzelltumoren (Etoposid)</td><td>Resistenz durch Pgp-Überexpression (MDR1)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3.4 Spindelgifte (Mitosehemmer)</h3>
+    <ul class="facts">
+      <li><span class="ft">Mechanismus</span><span class="fb">Greifen in den Mikrotubuli-Spindelapparat ein — M-Phase-spezifisch</span></li>
+      <li><span class="ft">Taxane</span><span class="fb">Tubulin-Stabilisierung &rarr; Mitosearrest: Paclitaxel, Docetaxel, Cabazitaxel</span></li>
+      <li><span class="ft">Vinca-Alkaloide</span><span class="fb">Tubulin-Depolymerisation: Vincristin (Oncovin), Vinblastin, Vinorelbin</span></li>
+      <li><span class="ft">In Protokollen</span><span class="fb">AC&rarr;T (Mamma); CHOP/Vincristin (NHL); ABVD/Vinblastin (Hodgkin)</span></li>
+    </ul>
+    <div class="tbl-scroll">
+      <table class="verdict">
+        <thead><tr><th>Wirken gegen …</th><th>Wirken NICHT gut gegen …</th></tr></thead>
+        <tbody>
+          <tr><td>Mamma-Ca, NSCLC (Taxane)</td><td>β-III-Tubulin-Überexpression (Taxan-Resistenz)</td></tr>
+          <tr><td>Lymphome, ALL (Vincristin)</td><td>Periphere Neuropathie limitiert Vincristin</td></tr>
+          <tr><td>Ovarial-Ca (Paclitaxel + Carboplatin: Standard)</td><td>Resistenz durch Pgp / Tubulin-Mutation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3.5 Platinderivate</h3>
+    <ul class="facts">
+      <li><span class="ft">Mechanismus</span><span class="fb">Intra- und interstrand-Crosslinks der DNA &rarr; Replikationsblock (alkylanzienartig)</span></li>
+      <li><span class="ft">Cisplatin</span><span class="fb">Stärkste Nephro- & Emetogenität; Goldstandard Hoden-, Zervix-, Blasen-Ca</span></li>
+      <li><span class="ft">Carboplatin</span><span class="fb">Besser verträglich; AUC-Dosierung (Calvert); Mamma, Lunge, Ovar</span></li>
+      <li><span class="ft">Oxaliplatin</span><span class="fb">Kälteinduzierte Neurotoxizität; Standard bei KRK (FOLFOX)</span></li>
+    </ul>
+    <div class="tbl-scroll">
+      <table class="verdict">
+        <thead><tr><th>Wirken gegen …</th><th>Wirken NICHT gut gegen …</th></tr></thead>
+        <tbody>
+          <tr><td>Hodentumore (Cisplatin — sehr sensitiv)</td><td>Cisplatin-Resistenz bei kompetenter HR-Reparatur</td></tr>
+          <tr><td>KRK (Oxaliplatin)</td><td>Renale Insuffizienz &rarr; Cisplatin kontraindiziert</td></tr>
+          <tr><td>Lungen-, Ovarial-, Blasen-Ca</td><td>Thymom, Melanom: geringere Platin-Sensitivität</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3.6 Weitere wichtige Substanzen</h3>
+    <h4>Anthrazykline</h4>
+    <p>Doxorubicin, Epirubicin, Daunorubicin, Idarubicin. Interkalation + Topoisomerase-II-Hemmung + Radikalbildung. Die <strong>Kardiotoxizität</strong> (kumulative Dosislimitierung, Doxorubicin ~&nbsp;550&nbsp;mg/m²) ist klinisch zentral. Einsatz: CHOP, AC, FLOT, AML-Induktion.</p>
+    <h4>Bleomycin</h4>
+    <p>Antibiotikum mit Zytostatika-Wirkung; induziert DNA-Strangbrüche über Radikale. <strong>Pulmonale Toxizität</strong> (Pneumonitis/Fibrose) ist dosislimitierend — BEP, ABVD. Wirkt gegen Keimzelltumoren und Hodgkin-Lymphom.</p>
+    <h4>L-Asparaginase</h4>
+    <p>Entzieht Tumorzellen Asparagin, das Lymphoblasten nicht selbst bilden können. Spezifisch für die <strong>ALL</strong> — nur gegen Zellen mit Asparagin-Auxotrophie wirksam.</p>
+
+    <!-- 4 -->
+    <h2><span class="num">4</span>Die wichtigsten Protokolle in Deutschland</h2>
+
+    <h3>4.1 Solide Tumoren</h3>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Protokoll</th><th>Wirkstoffe</th><th>Indikation</th><th>Besonderheit</th></tr></thead>
+        <tbody>
+          <tr><td><code>FOLFOX</code></td><td>5-FU + Leucovorin + Oxaliplatin</td><td>KRK (adjuvant + palliativ)</td><td>Kälteinduzierte Neuropathie</td></tr>
+          <tr><td><code>FOLFIRI</code></td><td>5-FU + Leucovorin + Irinotecan</td><td>KRK (2. Linie / alternativ)</td><td>UGT1A1-Polymorphismus beachten</td></tr>
+          <tr><td><code>FOLFIRINOX</code></td><td>5-FU + LV + Irinotecan + Oxaliplatin</td><td>Pankreaskarzinom (fit)</td><td>Sehr toxisch, nur PS 0–1</td></tr>
+          <tr><td><code>FLOT</code></td><td>5-FU + LV + Oxaliplatin + Docetaxel</td><td>Magen-/Ösophagus-Ca (periop.)</td><td>Perioperativer Standard (FLOT4, 2019)</td></tr>
+          <tr><td><code>Carbo/Pacli</code></td><td>Carboplatin (AUC 5–6) + Paclitaxel</td><td>NSCLC, Ovarial-Ca</td><td>Calvert-Formel für Carbo</td></tr>
+          <tr><td><code>BEP</code></td><td>Bleomycin + Etoposid + Cisplatin</td><td>Hodentumor / Keimzell-Ca</td><td>Pulmonale Toxizität (Bleomycin)</td></tr>
+          <tr><td><code>AC&#8202;&rarr;&#8202;T</code></td><td>Doxorubicin + Cycloph. &rarr; Taxan</td><td>Mammakarzinom</td><td>Sequenzielle Therapie</td></tr>
+          <tr><td><code>EC</code></td><td>Epirubicin + Cyclophosphamid</td><td>Mammakarzinom (neoadjuvant)</td><td>—</td></tr>
+          <tr><td><code>GC</code></td><td>Gemcitabin + Cisplatin</td><td>NSCLC, Blasen-, Cholangio-Ca</td><td>—</td></tr>
+          <tr><td><code>MVAC</code></td><td>MTX + Vinblastin + Doxorubicin + Cisplatin</td><td>Harnblasenkarzinom</td><td>Intensives Schema</td></tr>
+          <tr><td><code>GnP</code></td><td>Gemcitabin + nab-Paclitaxel</td><td>Pankreaskarzinom</td><td>Alternativ zu FOLFIRINOX</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>4.2 Hämatologische Neoplasien</h3>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Protokoll</th><th>Wirkstoffe</th><th>Indikation</th><th>Besonderheit</th></tr></thead>
+        <tbody>
+          <tr><td><code>R-CHOP</code></td><td>Rituximab + Cycloph. + Doxorubicin + Vincristin + Prednison</td><td>DLBCL, NHL (B-Zell, CD20+)</td><td>Goldstandard</td></tr>
+          <tr><td><code>CHOP</code></td><td>Cycloph. + Doxorubicin + Vincristin + Prednison</td><td>NHL ohne CD20-Positivität</td><td>—</td></tr>
+          <tr><td><code>ABVD</code></td><td>Adriamycin + Bleomycin + Vinblastin + Dacarbazin</td><td>Hodgkin-Lymphom (1. Linie)</td><td>Weniger Sterilität als BEACOPP</td></tr>
+          <tr><td><code>BEACOPP</code></td><td>Bleo + Etoposid + Adriamycin + Cyclo + Oncovin + Procarbazin + Prednison</td><td>Hodgkin (Hochrisiko)</td><td>Höhere Remission, mehr Toxizität</td></tr>
+          <tr><td><code>R-DHAP</code></td><td>Rituximab + Dexamethason + Cytarabin + Cisplatin</td><td>Rezidiv-DLBCL (Salvage)</td><td>Vor autologer SZT</td></tr>
+          <tr><td><code>R-ICE</code></td><td>Rituximab + Ifosfamid + Carboplatin + Etoposid</td><td>Rezidiv-DLBCL (Salvage)</td><td>Alternativ zu R-DHAP</td></tr>
+          <tr><td><code>7+3</code></td><td>Cytarabin (7 Tage) + Daunorubicin (3 Tage)</td><td>AML-Induktion</td><td>Klassisches Schema</td></tr>
+          <tr><td><code>Hyper-CVAD</code></td><td>Hyperfrakt. Cyclo + Vincristin + Doxorubicin + Dexa</td><td>ALL, aggressives NHL</td><td>Alterniert mit MTX/AraC</td></tr>
+          <tr><td><code>FCR</code></td><td>Fludarabin + Cyclophosphamid + Rituximab</td><td>CLL (fitte Patienten)</td><td>Längste Remission bei IGHV-mutiert</td></tr>
+          <tr><td><code>VCD</code></td><td>Bortezomib + Cyclophosphamid + Dexamethason</td><td>Multiples Myelom</td><td>Induktion</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 5 -->
+    <h2><span class="num">5</span>Wogegen Chemotherapie nicht wirkt — Resistenz</h2>
+    <p>Chemoresistenz ist ein zentrales Problem der Onkologie — <strong>primär</strong> (von Anfang an) oder <strong>erworben</strong> (im Verlauf).</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Mechanismus</th><th>Betroffene Klassen</th><th>Klinisches Beispiel</th></tr></thead>
+        <tbody>
+          <tr><td>MDR1 / P-Glykoprotein — aktiver Drug-Efflux</td><td>Anthrazykline, Taxane, Vinca-Alkaloide</td><td>Mamma-Ca, KRK</td></tr>
+          <tr><td>Hochregulierte DNA-Reparatur (NER, HR)</td><td>Platinderivate, Alkylantien</td><td>Hodentumor-Rezidiv</td></tr>
+          <tr><td>MGMT-Status</td><td>Alkylantien (Temozolomid)</td><td>Glioblastom</td></tr>
+          <tr><td>DPD-Überexpression</td><td>5-FU, Capecitabin</td><td>KRK, Mamma</td></tr>
+          <tr><td>Topoisomerase-Mutation / -Downregulation</td><td>Anthrazykline, Etoposid</td><td>AML-Rezidiv</td></tr>
+          <tr><td>Bcl-2-Überexpression (anti-apoptotisch)</td><td>Viele Klassen</td><td>Follikuläres Lymphom</td></tr>
+          <tr><td>β-III-Tubulin-Mutation</td><td>Taxane, Vinca-Alkaloide</td><td>NSCLC</td></tr>
+          <tr><td>Quieszenz (G0-Arrest)</td><td>Fast alle phasenspezifischen Zytostatika</td><td>Hypoxischer Tumorkern</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="warn">
+      <span class="lbl">Klinisch wichtig</span>
+      Quieszente Zellen (G0) sind für S- und M-Phase-spezifische Zytostatika praktisch unangreifbar. Das ist ein Hauptgrund, warum Chemotherapie allein bei soliden Tumoren selten kurativ ist — der „schlafende" Stammzellpool überlebt.
+    </div>
+
+    <!-- 6 -->
+    <h2><span class="num">6</span>Wichtige Nebenwirkungen</h2>
+    <p>Schnell teilende Normalgewebe (Schleimhaut, Knochenmark, Gonaden, Haarfollikel) sind die Hauptziele unerwünschter Wirkungen. Substanzspezifische Toxizitäten:</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Substanz / Klasse</th><th>Spezifische Toxizität</th><th>Konsequenz</th></tr></thead>
+        <tbody>
+          <tr><td>Cisplatin</td><td>Nephro-, Ototoxizität, hohe Emetogenität</td><td>Hyperhydratation, Audiogramm, Antiemese</td></tr>
+          <tr><td>Doxorubicin</td><td>Kardiotoxizität (kumulativ)</td><td>Echokardiographie vor/während Therapie</td></tr>
+          <tr><td>Bleomycin</td><td>Pulmonale Fibrose / Pneumonitis</td><td>Kein Hochdosis-O₂, Lungenfunktion</td></tr>
+          <tr><td>Oxaliplatin</td><td>Kälteinduzierte Neuropathie</td><td>Kältekarenz, kein Eis</td></tr>
+          <tr><td>Irinotecan</td><td>Diarrhö (früh + spät), Myelotoxizität</td><td>Loperamid; UGT1A1-Test bei schwerer Reaktion</td></tr>
+          <tr><td>Cyclophosphamid</td><td>Hämorrhagische Zystitis (Acrolein)</td><td>Mesna-Prophylaxe, Hyperhydratation</td></tr>
+          <tr><td>Vincristin</td><td>Periphere Neuropathie</td><td>Dosisreduktion bei schwerer Toxizität</td></tr>
+          <tr><td>Methotrexat</td><td>Mukositis, Nephro-, Hepatotoxizität</td><td>Leucovorin-Rescue (High-dose MTX)</td></tr>
+          <tr><td>Taxane</td><td>Hypersensitivität, Neutropenie, Neuropathie</td><td>Prämedikation (Steroid, Antihistaminikum)</td></tr>
+          <tr><td>Alle Zytostatika</td><td>Febrile Neutropenie</td><td>G-CSF-Prophylaxe, Notfall-Protokoll</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 7 -->
+    <div class="summary">
+      <h2><span class="num">7</span>Das Gedächtnis-Framework</h2>
+      <ol>
+        <li><strong>Protokollname = Buchstaben der Wirkstoffe</strong> (INN oder Handelsname) — Kontext entscheidet, ob „P" Prednison oder Cisplatin ist.</li>
+        <li><strong>Klasse &rarr; Zellzyklusphase &rarr; Toxizität</strong> hängen untrennbar zusammen — wer eines kennt, leitet die anderen ab.</li>
+        <li><strong>Resistenz mitdenken:</strong> Wenn ein Protokoll versagt — MDR1? DNA-Reparatur? Quieszenz?</li>
+        <li><strong>Toxizität = therapeutisches Fenster:</strong> Cisplatin (Niere), Doxorubicin (Herz), Bleomycin (Lunge), Oxaliplatin (Nerven).</li>
+        <li><strong>Chemo allein ≠ Heilung</strong> bei den meisten soliden Tumoren — multimodal: Operation, Bestrahlung, Immun- und zielgerichtete Therapie.</li>
+      </ol>
+    </div>
+
+    <p class="foot">Klinische Vorbereitung Deutschland · Leitliniengrundlage: DGHO, ESMO, S3-Leitlinien · Stand 2025/2026. Keine Dosierungsempfehlung — im Einzelfall stets die aktuelle Leitlinie und Fachinformation prüfen.</p>
+
+  </div>
+</section>

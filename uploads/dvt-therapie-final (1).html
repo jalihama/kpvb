@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVT – Therapiealgorithmus</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f0ece3; font-family: 'Inter', system-ui, sans-serif; font-weight: 400; padding: 24px 20px 30px; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  header { text-align: center; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 2px solid #1a1814; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  header h1 { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 1.5rem; color: #1a1814; letter-spacing: -0.4px; }
+  header p { color: #5a5650; font-size: 11px; font-weight: 500; margin-top: 6px; text-transform: uppercase; letter-spacing: 2px; }
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+  .notes { max-width: 1060px; margin: 20px auto 0; border-top: 2px solid #1a1814; padding-top: 14px; }
+  .notes-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 0.85rem; color: #1a1814; margin-bottom: 2px; }
+  .notes-subtitle { font-size: 9px; font-weight: 500; color: #5a5650; text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 10px; }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .note-card { background: #fff; border: 1px solid #c8c2b5; border-radius: 3px; padding: 7px 10px 7px 14px; position: relative; }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .note-card .bar.blue  { background: #2a4a7f; }
+  .note-card .bar.amber { background: #7a4a00; }
+  .note-card .bar.red   { background: #b02020; }
+  .note-card .bar.muted { background: #5a5650; }
+  .note-card-label { font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #7a7468; margin-bottom: 1px; }
+  .note-card-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 0.78rem; color: #1a1814; margin-bottom: 4px; }
+  .note-card-body { font-size: 10.5px; font-weight: 400; color: #2a2820; line-height: 1.6; }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+  .cave  { color: #b02020; font-weight: 600; }
+  .ki    { color: #b02020; font-weight: 600; }
+  .neg   { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+  footer { max-width: 1100px; margin: 14px auto 0; padding-top: 10px; border-top: 1px solid #c8c2b5; color: #7a7468; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Phlebothrombose – Therapiealgorithmus</h1>
+  <p>AWMF S2k-Leitlinie 2023 · DGA</p>
+</header>
+<div class="wrap">
+<svg width="1100" height="1024" viewBox="0 0 1100 1024" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#555"/></marker>
+  <marker id="arr-dash" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#aaa"/></marker>
+  <style>
+    text { font-family: 'Inter', system-ui, sans-serif; font-size: 11.5px; font-weight: 400; fill: #1a1814; }
+    .tag   { font-size: 9.5px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    .lbl   { font-size: 10.5px; font-weight: 500; fill: #444; }
+    .title { font-size: 13px; font-weight: 600; }
+    .cave  { fill: #b02020; font-weight: 700; }
+    .first { fill: #1a6b3a; font-weight: 700; }
+    .ki    { fill: #b02020; font-weight: 700; }
+  </style>
+</defs>
+
+<!-- CONNECTORS (drawn first) -->
+<line x1="510" y1="57" x2="510" y2="107" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="510" y1="185" x2="510" y2="212" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<polyline points="510,287 510,318 292,318 292,355" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="400" y="311" class="lbl" text-anchor="middle">Apixaban / Rivaroxaban</text>
+<polyline points="510,287 510,318 688,318 688,355" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="600" y="311" class="lbl" text-anchor="middle">Dabigatran / Edoxaban</text>
+<polyline points="770,249 905,249 905,355" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#arr-dash)"/>
+<text x="840" y="243" text-anchor="middle" font-size="9.5" font-weight="500" fill="#999">Spezialindikation</text>
+<text x="840" y="257" text-anchor="middle" font-size="9.5" font-weight="500" fill="#999">(parallel)</text>
+<!-- Box4a bottom=455, Box4b bottom=495, reconverge y=500 -->
+<polyline points="292,455 292,500 504,500" fill="none" stroke="#555" stroke-width="2"/>
+<polyline points="688,495 688,500 516,500" fill="none" stroke="#555" stroke-width="2"/>
+<line x1="510" y1="500" x2="510" y2="538" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Box5 bottom=637 -->
+<line x1="510" y1="637" x2="510" y2="692" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Verlaufskontrolle: VK right edge → Box5 left edge -->
+<line x1="238" y1="580" x2="248" y2="580" stroke="#2a4a7f" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr)"/>
+<text x="124" y="573" font-size="8.5" font-weight="500" fill="#2a4a7f" text-anchor="middle">parallel</text>
+<!-- Box6 bottom=764, junction at y=778 -->
+<polyline points="510,764 510,778 205,778 205,822" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="355" y="785" class="lbl" text-anchor="middle">Geringes Risiko</text>
+<polyline points="510,764 510,778 820,778 820,822" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="668" y="785" class="lbl" text-anchor="middle">Hohes / persistierendes Risiko</text>
+
+<!-- JUNCTION DOTS -->
+<circle cx="510" cy="500" r="4.5" fill="#555"/>
+<circle cx="510" cy="778" r="4.5" fill="#555"/>
+
+<!-- BOX 1: START -->
+<rect x="310" y="18" width="400" height="39" rx="20" fill="#1a1814"/>
+<text x="510" y="43" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">Diagnose gesichert: Phlebothrombose</text>
+
+<!-- BOX 2: Allgemeinmaßnahmen. y=107 h=78 bottom=185 -->
+<rect x="250" y="107" width="520" height="78" rx="5" fill="#fff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="270" y="125" class="tag" fill="#2a4a7f">Schritt 1 · Allgemeinmaßnahmen — sofort</text>
+<text x="270" y="147" class="title" fill="#1a1814">Kompression + Vollmobilisation</text>
+<text x="270" y="163" font-size="11" fill="#333">Wickelverband → Klasse-II-Strumpf (mind. 3 Mon.) · Keine Bettruhe!</text>
+<text x="270" y="179" font-size="11"><tspan class="cave">Cave:</tspan><tspan fill="#555"> Bettruhe nur bei starken Schmerzen ausnahmsweise erlaubt</tspan></text>
+
+<!-- BOX 3: DOAK Entscheidung. y=212 h=75 bottom=287 -->
+<rect x="250" y="212" width="520" height="75" rx="5" fill="#f5f0e8" stroke="#1a1814" stroke-width="2"/>
+<circle cx="760" cy="210" r="12" fill="#1a1814"/>
+<text x="760" y="215" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="270" y="231" class="tag" fill="#555">Schritt 2 · Initialtherapie · sofort · therapeutische Dosis</text>
+<text x="510" y="255" class="title" text-anchor="middle" fill="#1a1814">Welches DOAK?</text>
+<text x="510" y="275" font-size="11" text-anchor="middle"><tspan class="cave">Cave:</tspan><tspan fill="#444"> Dabigatran / Edoxaban benötigen parenterale Vorlaufphase!</tspan></text>
+
+<!-- BOX 4a: Apixaban/Rivaroxaban. y=355 h=100 bottom=455 -->
+<rect x="152" y="355" width="280" height="100" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="172" y="374" class="tag" fill="#1a6b3a">Direkt oral starten</text>
+<text x="172" y="393" class="title" fill="#1a1814">Apixaban · Rivaroxaban</text>
+<line x1="172" y1="401" x2="420" y2="401" stroke="#cde8d5" stroke-width="1"/>
+<text x="172" y="413" font-size="9" font-weight="600" fill="#888" letter-spacing="0.5">INITIALPHASE → ERHALTUNG</text>
+<text x="172" y="428" font-size="10.5" fill="#1a4a2a">Apixaban:    7 d: 10 mg 2×/d → 5 mg 2×/d</text>
+<text x="172" y="443" font-size="10.5" fill="#1a4a2a">Rivaroxaban: 21 d: 15 mg 2×/d → 20 mg/d</text>
+
+<!-- BOX 4b: Dabigatran/Edoxaban. y=355 h=140 bottom=495
+     FACT-CORRECTED: Edoxaban ↓ bei GFR ≤50 od. KG ≤60 kg -->
+<rect x="548" y="355" width="280" height="140" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="568" y="374" class="tag" fill="#8a5500">⚠  Vorlaufphase erforderlich</text>
+<text x="568" y="393" class="title" fill="#1a1814">Dabigatran · Edoxaban</text>
+<line x1="568" y1="401" x2="816" y2="401" stroke="#f0ddb0" stroke-width="1"/>
+<text x="568" y="413" font-size="9" font-weight="600" fill="#888" letter-spacing="0.5">VORLAUFPHASE (MIN. 5 TAGE)</text>
+<text x="568" y="428" font-size="10.5" fill="#6a4000">NMH / UFH / Fondaparinux parenteral</text>
+<text x="568" y="442" font-size="10" fill="#999" font-style="italic">z.B. Enoxaparin 1 mg/kg 2×/d s.c.</text>
+<line x1="568" y1="451" x2="816" y2="451" stroke="#f0ddb0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="568" y="463" font-size="9" font-weight="600" fill="#888" letter-spacing="0.5">DANN ORALISIEREN</text>
+<text x="568" y="476" font-size="10.5" fill="#6a4000">Dabigatran: 150 mg 2×/d</text>
+<text x="568" y="490" font-size="10" fill="#6a4000">Edoxaban: 60 mg/d (30 mg/d: GFR ≤50 od. KG ≤60 kg)</text>
+
+<!-- BOX 4c: Rekanalisierung. y=355 h=155 bottom=510 -->
+<rect x="848" y="355" width="232" height="155" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="1.5" stroke-dasharray="6 3"/>
+<text x="866" y="374" class="tag" fill="#b02020">Sonderfall · parallel</text>
+<text x="866" y="393" class="title" fill="#1a1814">Rekanalisierung</text>
+<line x1="866" y1="401" x2="1068" y2="401" stroke="#f0c0c0" stroke-width="1"/>
+<text x="866" y="418" font-size="11" fill="#333">Mech. Thrombektomie</text>
+<text x="866" y="433" font-size="10" fill="#888">(bevorzugt ggü. Lyse, ESVM 2023)</text>
+<text x="866" y="449" font-size="11" fill="#333">Katheterthrombolyse</text>
+<text x="866" y="464" font-size="11" fill="#333">Pharmakomech. Thrombektomie</text>
+<line x1="866" y1="473" x2="1068" y2="473" stroke="#f0c0c0" stroke-width="1"/>
+<text x="866" y="488" font-size="10" fill="#777" font-style="italic">Becken-VT + schwere Symptome</text>
+<text x="866" y="502" font-size="10" fill="#777" font-style="italic">Phlegmasia coerulea dolens</text>
+
+<!-- BOX VK: Verlaufskontrolle. x=10 w=228 y=538 h=82 -->
+<rect x="10" y="538" width="228" height="82" rx="5" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text x="28" y="556" class="tag" fill="#2a4a7f">Verlaufskontrolle · laufend</text>
+<text x="28" y="574" class="title" fill="#1a1814">Monitoring</text>
+<line x1="28" y1="580" x2="226" y2="580" stroke="#b8c8f0" stroke-width="1"/>
+<text x="28" y="594" font-size="10.5" fill="#333">Klinisch: Symptome · Blutungszeichen</text>
+<text x="28" y="608" font-size="10.5" fill="#333">Labor: BB · Krea · INR (VKA: Ziel 2–3)</text>
+
+<!-- BOX 5: Erhaltungstherapie. y=538 h=99 bottom=637
+     FACT-CORRECTED: Schwangerschaft → NMH (VKA teratogen!)
+     APS/Niereninsuff. → VKA (separate from Schwangerschaft) -->
+<rect x="250" y="538" width="520" height="99" rx="5" fill="#fff" stroke="#1a8a40" stroke-width="2"/>
+<text x="270" y="557" class="tag" fill="#1a6b3a">Schritt 3 · Erhaltungstherapie · im Anschluss</text>
+<text x="270" y="575" class="title" fill="#1a1814">Orale Antikoagulation</text>
+<text x="270" y="593" font-size="11"><tspan class="first">1. Wahl: </tspan><tspan fill="#1a4a2a">DOAK (Apixaban, Rivaroxaban, Dabigatran, Edoxaban)</tspan></text>
+<text x="270" y="609" font-size="11"><tspan class="ki">KI → VKA (INR 2–3): </tspan><tspan fill="#555">APS · schwere Niereninsuff. (GFR &lt;15)</tspan></text>
+<text x="270" y="626" font-size="11"><tspan class="cave">Schwangerschaft: weder DOAK noch VKA → NMH! </tspan><tspan fill="#888" font-size="9.5">(VKA teratogen)</tspan></text>
+
+<!-- BOX 6: Dauer. y=692 h=72 bottom=764 -->
+<rect x="230" y="692" width="560" height="72" rx="5" fill="#f5f0e8" stroke="#1a1814" stroke-width="2"/>
+<circle cx="782" cy="690" r="12" fill="#1a1814"/>
+<text x="782" y="695" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="250" y="711" class="tag" fill="#555">Schritt 4 · Wie lange antikoagulieren?</text>
+<text x="510" y="732" font-size="11" text-anchor="middle" fill="#333">Genese · Lokalisation · Risikofaktoren · Komorbiditäten · Patientenpräferenz</text>
+<text x="510" y="750" font-size="10.5" text-anchor="middle" fill="#777" font-style="italic">D-Dimer ~4 Wo. nach Absetzen erhöht → additiver Hinweis auf Rezidivrisiko</text>
+
+<!-- BOX 7a: 3 Monate. y=822 h=128 bottom=950 -->
+<rect x="44" y="822" width="322" height="128" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="64" y="841" class="tag" fill="#1a6b3a">3 Monate — i.d.R. ausreichend</text>
+<text x="64" y="862" class="title" fill="#1a1814">Geringes Rezidivrisiko</text>
+<line x1="64" y1="870" x2="354" y2="870" stroke="#cde8d5" stroke-width="1"/>
+<text x="64" y="886" font-size="11" fill="#1a4a2a">· Transienter RF (OP, Immobilität, Trauma)</text>
+<text x="64" y="902" font-size="11" fill="#1a4a2a">· Distale / idiopathische Unterschenkelthrombose</text>
+<text x="64" y="918" font-size="11" fill="#1a4a2a">· Armvenenthrombose</text>
+<text x="64" y="934" font-size="11" fill="#1a4a2a">· V. jugularis interna</text>
+
+<!-- BOX 7b: 6 Monate. y=822 h=188 bottom=1010 -->
+<rect x="618" y="822" width="450" height="188" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="638" y="841" class="tag" fill="#b02020">6 Monate · ggf. verlängert</text>
+<text x="638" y="862" class="title" fill="#1a1814">Hohes / persistierendes Risiko</text>
+<line x1="638" y1="870" x2="1056" y2="870" stroke="#f0c0c0" stroke-width="1"/>
+<text x="638" y="886" font-size="11" fill="#333">· Proximale Bein- / Beckenvenenthrombose</text>
+<text x="638" y="902" font-size="11" fill="#333">· Lungenembolie (insb. unklare Ätiologie)</text>
+<text x="638" y="918" font-size="11" fill="#333">· Schwere Thrombophilie (z.B. APS)</text>
+<text x="638" y="934" font-size="11" fill="#333">· Aktives Malignom · Rezidiv-VTE</text>
+<text x="638" y="950" font-size="11" fill="#333">· Männliches Geschlecht (erhöhtes Rezidivrisiko)</text>
+<rect x="618" y="961" width="450" height="49" fill="#fdeaea"/>
+<line x1="618" y1="961" x2="1068" y2="961" stroke="#b02020" stroke-width="1.5"/>
+<text x="638" y="978" font-size="11"><tspan class="cave">Cave: </tspan><tspan fill="#333">Faktor-V-Leiden heterozygot / Prothrombin-Polymorphismus</tspan></text>
+<text x="638" y="994" font-size="11" fill="#333">allein → <tspan class="cave">keine</tspan> Dauerantikoagulation indiziert</text>
+<text x="638" y="1006" font-size="9.5" fill="#888" font-style="italic">(auch wenn subjektiv erhöhtes Rezidivrisiko vermutet wird)</text>
+
+</svg>
+</div>
+
+<div class="notes">
+  <div class="notes-title">Ergänzende Hinweise</div>
+  <div class="notes-subtitle">Aus dem Originaltext · nicht direkt im Algorithmus abgebildet</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Kompressionstherapie</div>
+      <div class="note-card-title">Indikation &amp; Dauer</div>
+      <div class="note-card-body"><ul>
+        <li>Klasse-II-Strumpf <strong>tagsüber</strong> tragen — nicht 24 h</li>
+        <li>Mindestdauer 3 Mon.; bei PTS-Risiko eher 6 Mon.</li>
+        <li>PTS bei ~30% proximaler TVT; 2–3% Ulcus cruris venosum</li>
+      </ul></div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Sekundärprävention</div>
+      <div class="note-card-title">Jährliche Neubewertung</div>
+      <div class="note-card-body"><ul>
+        <li>Sekundärprophylaxe-Dauer <strong>jährlich</strong> neu abwägen: Rezidivrisiko vs. Blutungsrisiko</li>
+        <li>Bei Absetzen: Sono-Dokumentation der Residualthromben empfohlen</li>
+        <li>Verlängerte Prophylaxe: Apixaban reduziert zugelassen; Rivaroxaban getestet</li>
+      </ul></div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Thrombophilie-Screening</div>
+      <div class="note-card-title">Wann sinnvoll?</div>
+      <div class="note-card-body"><ul>
+        <li>Nur wenn therapeutische Konsequenz zu erwarten ist</li>
+        <li>Bei: jungen Pat., Spontanthrombose, Rezidiv, pos. Familienanamnese</li>
+        <li><span class="cave">Nicht</span> bei Erstereignis mit starkem reversiblem RF</li>
+        <li><span class="cave">Cave:</span> Nur durch hämostaseologisch erfahrene Ärzte</li>
+      </ul></div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">UFH · Sonderfälle</div>
+      <div class="note-card-title">Wann UFH statt NMH?</div>
+      <div class="note-card-body"><ul>
+        <li><span class="ki">KI NMH/Fondaparinux:</span> GFR &lt;15–30 / Dialyse → UFH (aPTT-Steuerung)</li>
+        <li>Perioperative Situationen (schnell steuerbar, i.v.)</li>
+        <li>Peripartale Phase (NMH bei stabiler Nierenfunktion bevorzugt)</li>
+      </ul></div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Rezidivrisiko · Zahlen</div>
+      <div class="note-card-title">Kumulativ nach VTE-Erstereignis</div>
+      <div class="note-card-body"><ul>
+        <li>8% / 6 Mon. · 13% / 1 J. · 23% / 5 J. · <strong>30% / 10 J.</strong></li>
+        <li><span class="cave">~4% der Rezidive verlaufen fatal</span></li>
+        <li>Prox. TVT / LE: ~30% in 10 J. · Distale TVT: ~10% in 10 J.</li>
+        <li>Männer: ~2× höheres Rezidivrisiko als Frauen</li>
+      </ul></div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Verlaufskontrolle</div>
+      <div class="note-card-title">Monitoring unter Antikoagulation</div>
+      <div class="note-card-body"><ul>
+        <li><strong>Klinisch:</strong> Symptomverlauf · Blutungszeichen bei jeder Vorstellung</li>
+        <li><strong>Labor:</strong> BB (Hb, Thrombo.) · Krea (DOAK-Dosierung) · INR bei VKA (Ziel 2–3)</li>
+        <li><strong>Sono:</strong> Kontroll-Sono bei Therapieende — Residualthrombus dokumentieren</li>
+        <li><strong>D-Dimer:</strong> ~4 Wo. nach Absetzen — erhöht = additiver Hinweis auf Rezidivrisiko</li>
+      </ul></div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">DGIM · Klug entscheiden</div>
+      <div class="note-card-title">Verbindliche Leitlinienaussagen</div>
+      <div class="note-card-body"><ul>
+        <li>Pat. mit VT sollen <span class="neg">nicht</span> immobilisiert werden — außer Schmerzlinderung</li>
+        <li><span class="cave">Cave:</span> Faktor-V-Leiden heterozygot / Prothrombin allein → <span class="neg">keine</span> Dauerantikoagulation</li>
+        <li>Sekundärprophylaxe-Dauer jährlich neu abwägen</li>
+      </ul></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>AWMF S2k-Leitlinie: Diagnostik und Therapie der Venenthrombose und Lungenembolie (2023) · DGA</span>
+  <span>Phlebothrombose · Therapiealgorithmus</span>
+</footer>
+</body>
+</html>

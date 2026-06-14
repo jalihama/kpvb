@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KP Infektiologie — Antibiotische Therapie & Resistenzen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F8F8;
+    --card:#FFFFFF;
+    --ink:#13313A;
+    --ink-soft:#4A636B;
+    --line:#D6E1E2;
+    --petrol:#0E7C86;
+    --petrol-deep:#0A565E;
+    --magenta:#C71F7E;
+    --s-green:#1B7A52;
+    --s-bg:#E4F3EB;
+    --r-red:#B23A2E;
+    --r-bg:#F8E5E2;
+    --warn-bg:#FBF1DC;
+    --warn-ink:#8A5A12;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(19,49,58,.06),0 4px 16px rgba(19,49,58,.05);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Roboto Flex',system-ui,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px 80px;}
+
+  /* ---- Header ---- */
+  header.hero{
+    background:linear-gradient(135deg,var(--petrol-deep),var(--petrol));
+    color:#fff;
+    padding:38px 24px 30px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";position:absolute;right:-60px;top:-60px;
+    width:240px;height:240px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,rgba(199,31,126,.55),rgba(199,31,126,0) 62%);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:920px;margin:0 auto;position:relative;z-index:1;}
+  .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:#9FE3E0;margin:0 0 10px;
+  }
+  header.hero h1{
+    font-family:'Roboto Flex',serif;
+    font-weight:600;font-size:clamp(26px,5vw,38px);
+    margin:0 0 8px;line-height:1.12;letter-spacing:-.01em;
+  }
+  header.hero p{margin:0;color:#D4EEEC;max-width:560px;font-size:15px;}
+
+  /* ---- Sticky nav ---- */
+  nav{
+    position:sticky;top:0;z-index:20;
+    background:rgba(245,248,248,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:920px;margin:0 auto;padding:10px 14px;
+    display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+  }
+  .nav-inner::-webkit-scrollbar{display:none;}
+  nav a{
+    flex:0 0 auto;text-decoration:none;color:var(--ink-soft);
+    font-size:13px;font-weight:500;padding:7px 13px;border-radius:99px;
+    white-space:nowrap;transition:background .15s,color .15s;
+  }
+  nav a:hover{background:#E3EEEE;color:var(--ink);}
+
+  /* ---- Sections ---- */
+  section{padding-top:42px;}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;}
+  .sec-num{
+    font-family:'Roboto Mono',monospace;font-size:13px;font-weight:600;
+    color:var(--magenta);background:#fbe6f1;border-radius:6px;
+    padding:3px 8px;flex:0 0 auto;
+  }
+  .sec-head h2{
+    font-family:'Roboto Flex',serif;font-weight:600;
+    font-size:clamp(20px,3.4vw,26px);margin:0;letter-spacing:-.01em;
+  }
+  .lede{color:var(--ink-soft);margin:-6px 0 20px;font-size:15px;}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:20px 22px;margin-bottom:16px;
+    box-shadow:var(--shadow);
+  }
+  .card h3{
+    font-size:15px;font-weight:600;margin:0 0 12px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card h3 .tag{
+    font-family:'Roboto Mono',monospace;font-size:11px;font-weight:500;
+    color:var(--petrol-deep);background:#E0F0EF;padding:2px 7px;border-radius:5px;
+  }
+  .card p{margin:0 0 10px;font-size:14.5px;color:var(--ink);}
+  .card p:last-child{margin-bottom:0;}
+  ul.clean{margin:0;padding-left:18px;font-size:14.5px;}
+  ul.clean li{margin-bottom:6px;}
+  ul.clean li::marker{color:var(--petrol);}
+
+  /* ---- Tables ---- */
+  .tbl-scroll{overflow-x:auto;border-radius:var(--radius);}
+  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{
+    font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--ink-soft);font-weight:600;background:#EFF5F5;
+  }
+  tr:last-child td{border-bottom:none;}
+  table.framed{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  code,.mono{font-family:'Roboto Mono',monospace;}
+
+  /* ---- S/R chips ---- */
+  .sr{
+    font-family:'Roboto Mono',monospace;font-weight:600;font-size:12px;
+    padding:2px 9px;border-radius:5px;display:inline-block;min-width:24px;text-align:center;
+  }
+  .S{color:var(--s-green);background:var(--s-bg);}
+  .R{color:var(--r-red);background:var(--r-bg);}
+
+  /* ---- Antibiogram signature ---- */
+  .abg{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .abg-head{
+    background:#13313A;color:#cfe6e5;padding:12px 18px;
+    font-family:'Roboto Mono',monospace;font-size:12.5px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+  .abg-head b{color:#fff;}
+  .abg-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+    gap:0;
+  }
+  .abg-row{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:9px 16px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);
+    font-size:13.5px;
+  }
+  .abg-row span.name{color:var(--ink);}
+  .abg-legend{padding:12px 18px;font-size:12.5px;color:var(--ink-soft);display:flex;gap:18px;flex-wrap:wrap;align-items:center;}
+
+  /* ---- Callout ---- */
+  .callout{
+    border-left:3px solid var(--magenta);
+    background:#fdf2f8;border-radius:0 var(--radius) var(--radius) 0;
+    padding:14px 18px;margin-bottom:16px;font-size:14.5px;
+  }
+  .callout.warn{border-left-color:var(--warn-ink);background:var(--warn-bg);}
+  .callout strong{color:var(--magenta);}
+  .callout.warn strong{color:var(--warn-ink);}
+  .callout p{margin:0 0 8px;}
+  .callout p:last-child{margin:0;}
+
+  /* ---- MRGN meter ---- */
+  .mrgn-result{
+    display:flex;align-items:center;gap:14px;margin-top:16px;
+    background:#EFF5F5;border-radius:var(--radius);padding:14px 18px;
+  }
+  .mrgn-badge{
+    font-family:'Roboto Mono',monospace;font-weight:600;font-size:20px;
+    color:#fff;background:var(--petrol);border-radius:8px;padding:8px 14px;flex:0 0 auto;
+  }
+  .mrgn-result p{margin:0;font-size:14px;}
+
+  footer{
+    margin-top:48px;padding-top:24px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--ink-soft);text-align:center;
+  }
+  footer .mono{display:block;margin-top:6px;color:var(--petrol);}
+
+  @media (max-width:560px){
+    .card{padding:16px;}
+    th,td{padding:8px 10px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none!important;}
+  }
+</style>
+</head>
+<style id="kp-brand">
+:root{--paper:#eef5f8!important;--card:#ffffff!important;--ink:#08222c!important;}
+body,h1,h2,h3,h4,h5,h6,p,li,td,th,span,div,a,button,input,select,nav{font-family:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif !important}
+code,.mono,pre,kbd,.sr{font-family:'Roboto Mono',ui-monospace,Menlo,Consolas,monospace !important}
+</style>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">KP-Vorbereitung · Infektiologie</p>
+    <h1>Antibiotische Therapie & Resistenzen</h1>
+    <p>Vollständige Übersicht: HIV-Therapie, ESBL-Fall mit Antibiogramm, MRGN-Klassifikation, Resistenzmechanismen und klinische Merksätze.</p>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#hiv">HIV-Therapie</a>
+    <a href="#fall">ESBL-Fall</a>
+    <a href="#antibiogramm">Antibiogramm</a>
+    <a href="#mrgn">MRGN</a>
+    <a href="#mechanismen">Mechanismen</a>
+    <a href="#erreger">MRE-Übersicht</a>
+    <a href="#merksaetze">Merksätze</a>
+    <a href="#icd">ICD-10</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ===== HIV ===== -->
+  <section id="hiv">
+    <div class="sec-head"><span class="sec-num">01</span><h2>HIV-Therapie</h2></div>
+    <p class="lede">ART-Grundprinzip: <strong>2 NRTI + 1 dritter Wirkstoff</strong>. Therapiebeginn sofort nach Diagnose, unabhängig von der CD4-Zellzahl. Ziel: Viruslast &lt; 50 Kopien/ml → <em>U = U</em>.</p>
+
+    <div class="card">
+      <h3>Substanzklassen</h3>
+      <div class="tbl-scroll">
+      <table>
+        <tr><th>Klasse</th><th>Wirkmechanismus</th><th>Beispiele</th></tr>
+        <tr><td><strong>NRTI</strong></td><td>Falscher Nukleosideinbau hemmt reverse Transkriptase — Backbone jeder ART</td><td>Tenofovir (TDF/TAF), Emtricitabin, Lamivudin, Abacavir</td></tr>
+        <tr><td><strong>NNRTI</strong></td><td>Nicht-kompetitive Hemmung der RT, nur HIV-1</td><td>Rilpivirin, Efavirenz, Doravirin</td></tr>
+        <tr><td><strong>PI</strong></td><td>Hemmt HIV-Protease, verhindert Virusreifung — immer geboostert</td><td>Darunavir/r, Atazanavir/r</td></tr>
+        <tr><td><strong>INSTI</strong></td><td>Hemmt Integration der viralen DNA — heute erste Wahl</td><td>Bictegravir, Dolutegravir, Cabotegravir</td></tr>
+        <tr><td><strong>Entry-Inhib.</strong></td><td>CCR5-Antagonist / Fusionsinhibitor / Attachment-Inhibitor</td><td>Maraviroc, Enfuvirtid, Fostemsavir</td></tr>
+        <tr><td><strong>Kapsid-Inhib.</strong></td><td>Neu, 2×/Jahr s.c. bei multiresistentem HIV</td><td>Lenacapavir</td></tr>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Therapieregime</h3>
+      <div class="tbl-scroll">
+      <table>
+        <tr><th>Regime</th><th>Kombination</th><th>Besonderheit</th></tr>
+        <tr><td>Bictegravir/TAF/FTC (Biktarvy)</td><td>INSTI + 2 NRTI</td><td>Erste Wahl, 1 Tbl./Tag</td></tr>
+        <tr><td>DTG + ABC/3TC (Triumeq)</td><td>INSTI + 2 NRTI</td><td>Erste Wahl — vorher HLA-B*57:01 testen</td></tr>
+        <tr><td>DTG/RPV (Juluca)</td><td>INSTI + NNRTI</td><td>NRTI-freies 2er-Regime</td></tr>
+        <tr><td>CAB + RPV i.m. (Cabenuva)</td><td>INSTI + NNRTI</td><td>Monatlich/2-monatlich i.m.</td></tr>
+        <tr><td>CAB s.c. (Apretude)</td><td>INSTI</td><td>PrEP, 2×/Jahr</td></tr>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Obsolete Substanzen <span class="tag">Prüfungs-Kontext</span></h3>
+      <p><strong>AZT (Zidovudin)</strong> — erstes ARV überhaupt (1987). Verdrängt wegen Myelosuppression, Anämie, Myopathie, mitochondrialer Toxizität. Restindikation: PEP-Schemata, Mutter-Kind-Transmission in Niedrigeinkommensländern.</p>
+      <div class="tbl-scroll">
+      <table>
+        <tr><th>Substanz</th><th>Klasse</th><th>Warum obsolet</th></tr>
+        <tr><td>Stavudin (d4T)</td><td>NRTI</td><td>Lipodystrophie, Neuropathie</td></tr>
+        <tr><td>Didanosin (ddI)</td><td>NRTI</td><td>Pankreatitis, Neuropathie</td></tr>
+        <tr><td>Zalcitabin (ddC)</td><td>NRTI</td><td>Hohe Toxizität, vom Markt</td></tr>
+        <tr><td>Indinavir / Saquinavir</td><td>PI</td><td>Nephrolithiasis, QT, schlechte Bioverfügbarkeit</td></tr>
+        <tr><td>Efavirenz / Nevirapin</td><td>NNRTI</td><td>ZNS-NW bzw. Hepatotoxizität</td></tr>
+        <tr><td>Enfuvirtid (T-20)</td><td>Fusionsinhib.</td><td>2× tgl. s.c., nur Reserve</td></tr>
+      </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ESBL-FALL ===== -->
+  <section id="fall">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Der Fall: E. coli ESBL im Urin</h2></div>
+    <p class="lede">Mittelstrahlurin, Keimzahl 1×10⁴ KBE/ml. Patient hatte <strong>eigenmächtig Cefuroxim</strong> eingenommen — ohne Erfolg.</p>
+
+    <div class="card">
+      <h3>Besonderheit des Erregers <span class="tag">ESBL</span></h3>
+      <ul class="clean">
+        <li><strong>Extended Spectrum Beta-Lactamase</strong> — hydrolysiert den Beta-Laktam-Ring.</li>
+        <li>Resistenz gegen praktisch alle Penicilline und Cephalosporine.</li>
+        <li>Plasmidkodiert → horizontale Übertragung auf andere Keime möglich.</li>
+        <li>Erfassungspflichtig nach §23 IfSG (nosokomiale Bedeutung).</li>
+      </ul>
+    </div>
+
+    <div class="callout warn">
+      <p><strong>Warum hat das Cefuroxim nicht gewirkt?</strong></p>
+      <p>Cefuroxim ist ein Cephalosporin der 2. Generation — genau das, was die ESBL zerstört. Das Antibiogramm zeigt es zudem als <span class="sr R">R</span>. Die Selbstmedikation war von Anfang an zum Scheitern verurteilt, unabhängig von Dosis und Compliance. Folgen: Selektionsdruck, Diagnoseverzögerung, partielle Keimsuppression mit verschleiertem Bild.</p>
+    </div>
+
+    <div class="card">
+      <h3>Wie werden Bakterien eingeteilt?</h3>
+      <ul class="clean">
+        <li><strong>Gram-Färbung:</strong> grampositiv vs. gramnegativ</li>
+        <li><strong>Morphologie:</strong> Kokken / Stäbchen / Spiralen</li>
+        <li><strong>Sauerstoffbedarf:</strong> aerob / anaerob / fakultativ</li>
+        <li><strong>Sporenbildung</strong> (z. B. Clostridien) und Pathogenität/Virulenz</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== ANTIBIOGRAMM ===== -->
+  <section id="antibiogramm">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Antibiogramm</h2></div>
+    <p class="lede">Originalbefund des Falls — funktional kodiert: <span class="sr S">S</span> sensibel, <span class="sr R">R</span> resistent.</p>
+
+    <div class="abg">
+      <div class="abg-head">
+        <span><b>Escherichia coli</b> (ESBL) · ECOL+</span>
+        <span>Mittelstrahlurin · 1×10⁴ KBE/ml</span>
+      </div>
+      <div class="abg-grid">
+        <div class="abg-row"><span class="name">Ampicillin/Amoxicillin</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Piperacillin</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Mezlocillin</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Ampicillin/Sulbactam</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Piperacillin/Tazobactam</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Cefazolin</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Cefuroxim</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Cefpodoxim</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Cefotaxim</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Ceftazidim</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Cefepim</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Imipenem</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Meropenem</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Gentamicin</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Tobramycin</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Amikacin</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Doxycyclin / Tetracyclin</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Ciprofloxacin</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Levofloxacin</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Fosfomycin</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Cotrimoxazol</span><span class="sr S">S</span></div>
+        <div class="abg-row"><span class="name">Trimethoprim</span><span class="sr R">R</span></div>
+        <div class="abg-row"><span class="name">Nitrofurantoin</span><span class="sr S">S</span></div>
+      </div>
+      <div class="abg-legend">
+        <span><span class="sr S">S</span> sensibel</span>
+        <span><span class="sr R">R</span> resistent</span>
+        <span class="mono" style="color:var(--ink-soft)">** Grenzwerte orientierend (DIN/CLSI)</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Therapie: worauf umstellen?</h3>
+      <div class="tbl-scroll">
+      <table>
+        <tr><th>Situation</th><th>Mittel der Wahl</th><th>Begründung</th></tr>
+        <tr><td>Unkomplizierte Zystitis</td><td>Fosfomycin oral <span class="sr S">S</span> oder Nitrofurantoin oral <span class="sr S">S</span></td><td>Hohe Urinkonzentration, geringer Selektionsdruck</td></tr>
+        <tr><td>Pyelonephritis / kompliziert</td><td>Carbapenem i.v. (Imipenem/Meropenem) <span class="sr S">S</span></td><td>Zuverlässigste Wirksamkeit bei ESBL, kein Inokulumeffekt</td></tr>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Warum manche „S"-Antibiotika trotzdem nicht?</h3>
+      <div class="tbl-scroll">
+      <table>
+        <tr><th>Substanz</th><th>Befund</th><th>Problem</th></tr>
+        <tr><td>Piperacillin/Tazobactam</td><td><span class="sr S">S</span></td><td><strong>Inokulumeffekt:</strong> hohe Keimzahl überwältigt das Tazobactam → klinisches Versagen trotz „S"</td></tr>
+        <tr><td>Fluorchinolone</td><td><span class="sr S">S</span></td><td>Häufig Ko-Resistenz auf demselben Plasmid → empirisch unzuverlässig</td></tr>
+        <tr><td>Nitrofurantoin</td><td><span class="sr S">S</span></td><td>Nur untere HWI — keine Gewebespiegel für Pyelonephritis</td></tr>
+        <tr><td>Aminoglykoside (Amikacin)</td><td><span class="sr S">S</span></td><td>Nephro-/Ototoxizität, nur i.v., TDM nötig → nur Reserve</td></tr>
+      </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MRGN ===== -->
+  <section id="mrgn">
+    <div class="sec-head"><span class="sec-num">04</span><h2>MRGN-Klassifikation</h2></div>
+    <p class="lede"><strong>M</strong>ulti<strong>r</strong>esistente <strong>g</strong>ram<strong>n</strong>egative Stäbchen. Das RKI-System bewertet 4 Leitantibiotika-Gruppen — die Zahl gibt an, gegen wie viele resistent.</p>
+
+    <div class="card">
+      <h3>Die 4 Leitgruppen — angewandt auf den Fall</h3>
+      <div class="tbl-scroll">
+      <table>
+        <tr><th>Gruppe</th><th>Vertreter</th><th>Befund</th></tr>
+        <tr><td>Acylaminopenicilline</td><td>Piperacillin</td><td><span class="sr R">R</span></td></tr>
+        <tr><td>Cephalosporine 3./4. Gen.</td><td>Cefotaxim, Ceftazidim, Cefepim</td><td><span class="sr R">R</span></td></tr>
+        <tr><td>Fluorchinolone</td><td>Ciprofloxacin, Levofloxacin</td><td><span class="sr S">S</span></td></tr>
+        <tr><td>Carbapeneme</td><td>Imipenem, Meropenem</td><td><span class="sr S">S</span></td></tr>
+      </table>
+      </div>
+      <div class="mrgn-result">
+        <span class="mrgn-badge">2MRGN</span>
+        <p>Resistent in <strong>2 von 4</strong> Leitgruppen. Die Cefuroxim-Vorbehandlung ändert die Klassifikation <em>nicht</em>.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Was bedeuten die Stufen?</h3>
+      <ul class="clean">
+        <li><strong>2MRGN</strong> — resistent gegen 2 Gruppen (unser Fall)</li>
+        <li><strong>3MRGN</strong> — resistent gegen 3 Gruppen</li>
+        <li><strong>4MRGN</strong> — resistent gegen alle 4 → Therapienotfall, kaum Optionen</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== MECHANISMEN ===== -->
+  <section id="mechanismen">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Resistenzmechanismen</h2></div>
+    <p class="lede">Grundprinzip: evolutionärer Selektionsdruck. Antibiotika töten sensible Keime, resistente überleben und vermehren sich — beschleunigt durch Übertherapie, Selbstmedikation, Tiermast und schlechte Compliance.</p>
+
+    <div class="card">
+      <h3>Molekulare Mechanismen</h3>
+      <div class="tbl-scroll">
+      <table>
+        <tr><th>Mechanismus</th><th>Beispiel</th><th>Betroffene AB</th></tr>
+        <tr><td>Enzymatische Inaktivierung</td><td>Beta-Laktamasen (ESBL, KPC)</td><td>Penicilline, Cephalosporine, Carbapeneme</td></tr>
+        <tr><td>Veränderte Zielstruktur</td><td>PBP2a bei MRSA (mecA-Gen)</td><td>Alle Beta-Laktame</td></tr>
+        <tr><td>Effluxpumpen</td><td>Aktiver Auswärtstransport</td><td>Fluorchinolone, Tetracycline, Makrolide</td></tr>
+        <tr><td>Veränderte Permeabilität</td><td>Porinverlust (Pseudomonas)</td><td>Carbapeneme</td></tr>
+        <tr><td>Zielmutation</td><td>Gyrase-Mutation</td><td>Fluorchinolone</td></tr>
+        <tr><td>Bypass</td><td>D-Ala-D-Lac bei VRE</td><td>Vancomycin</td></tr>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Übertragung von Resistenzgenen</h3>
+      <p><strong>Vertikal:</strong> Weitergabe an Tochterzellen bei der Zellteilung.</p>
+      <p><strong>Horizontal</strong> (der gefährlichere Weg):</p>
+      <ul class="clean">
+        <li><strong>Konjugation</strong> — Plasmidübertragung durch direkten Kontakt (häufigste)</li>
+        <li><strong>Transformation</strong> — Aufnahme freier DNA aus der Umgebung</li>
+        <li><strong>Transduktion</strong> — Übertragung durch Bakteriophagen</li>
+      </ul>
+      <p style="margin-top:10px;color:var(--ink-soft)">So breitet sich ESBL aus: ein resistentes E. coli gibt sein Plasmid an Klebsiella weiter, die es an Pseudomonas weitergibt.</p>
+    </div>
+  </section>
+
+  <!-- ===== ERREGER ===== -->
+  <section id="erreger">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Multiresistente Erreger im Überblick</h2></div>
+
+    <div class="tbl-scroll">
+    <table class="framed">
+      <tr><th>Erreger</th><th>Mechanismus</th><th>Therapie / Reserve</th></tr>
+      <tr><td><strong>MRSA</strong></td><td>mecA → PBP2a, alle Beta-Laktame unwirksam (grampositive Kokken in Traubenform)</td><td>Vancomycin i.v. (Goldstandard), Linezolid, Daptomycin</td></tr>
+      <tr><td><strong>VRE</strong></td><td>vanA/vanB → Vancomycin-Resistenz</td><td>Linezolid, Daptomycin</td></tr>
+      <tr><td><strong>ESBL</strong> (E. coli, Klebsiella)</td><td>Beta-Laktamase mit erweitertem Spektrum</td><td>Carbapenem; bei Zystitis Fosfomycin/Nitrofurantoin</td></tr>
+      <tr><td><strong>3MRGN / 4MRGN</strong></td><td>Pseudomonas, Acinetobacter baumannii, Klebsiella</td><td>je nach Stufe; 4MRGN → Reserve</td></tr>
+      <tr><td><strong>KPC / NDM-1</strong></td><td>Carbapenemase-Bildner → 4MRGN</td><td>Ceftazidim/Avibactam, Colistin (Notfall)</td></tr>
+      <tr><td><strong>C. difficile</strong></td><td>Kein MRGN, aber Problemkeim unter AB-Therapie</td><td>Vancomycin oral, Fidaxomicin</td></tr>
+    </table>
+    </div>
+
+    <div class="callout">
+      <p><strong>MRSA — HA vs. CA.</strong> HA-MRSA (hospital-acquired) vs. CA-MRSA (community-acquired). Screening per Nasen-Rachen-Abstrich bei stationärer Aufnahme von Risikopatienten.</p>
+    </div>
+  </section>
+
+  <!-- ===== MERKSÄTZE ===== -->
+  <section id="merksaetze">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Klinische Merksätze</h2></div>
+
+    <div class="card">
+      <h3>Pip/Taz bei ESBL — die Kontroverse</h3>
+      <p>Das <strong>MERINO-Trial (2018)</strong> zeigte bei ESBL-<em>Bakteriämie</em> eine höhere Mortalität unter Pip/Taz vs. Meropenem. Bei <em>Harnwegsinfekt</em> ist die Lage anders: hohe Urinkonzentration, kein systemischer Inokulumeffekt — und Carbapenem-Schonung (Stewardship) ist ein valides Argument.</p>
+      <div class="tbl-scroll">
+      <table>
+        <tr><th>Situation</th><th>Pip/Taz akzeptabel?</th></tr>
+        <tr><td>Unkomplizierte Zystitis (S)</td><td>Diskutabel — manche Guidelines erlauben es</td></tr>
+        <tr><td>Pyelonephritis</td><td>Eher nicht — Carbapenem sicherer</td></tr>
+        <tr><td>Bakteriämie / Urosepsis</td><td><span class="sr R">Nein</span> — MERINO klar dagegen</td></tr>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Warum keine Aminoglykoside beim HWI?</h3>
+      <p>Amikacin wäre laut Antibiogramm <span class="sr S">S</span>, bleibt aber Reserveoption:</p>
+      <ul class="clean">
+        <li><strong>Nephrotoxizität</strong> — direkte Schädigung proximaler Tubuluszellen (heikel bei HWI)</li>
+        <li><strong>Ototoxizität</strong> — cochleär & vestibulär, teils irreversibel</li>
+        <li>Kein orales Präparat → nur stationär (i.v./i.m.)</li>
+        <li>Enges therapeutisches Fenster → TDM (Tal-/Spitzenspiegel) nötig</li>
+        <li>Bessere orale Alternativen vorhanden: Fosfomycin, Nitrofurantoin</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== ICD ===== -->
+  <section id="icd">
+    <div class="sec-head"><span class="sec-num">08</span><h2>ICD-10-Codierung</h2></div>
+    <p class="lede">Tubulointerstitielle Nephritis = <strong>N10–N12</strong>. Der Mikrobiologiebefund allein kann nicht zwischen akut/chronisch unterscheiden — das entscheidet die Klinik.</p>
+
+    <div class="tbl-scroll">
+    <table class="framed">
+      <tr><th>Code</th><th>Bedeutung</th></tr>
+      <tr><td class="mono">N10</td><td>Akute tubulointerstitielle Nephritis = akute Pyelonephritis</td></tr>
+      <tr><td class="mono">N11</td><td>Chronische tubulointerstitielle Nephritis = chronische Pyelonephritis</td></tr>
+      <tr><td class="mono">N12</td><td>Nicht als akut/chronisch bezeichnet (wenn unklar)</td></tr>
+      <tr><td class="mono">N30.0</td><td>Akute Zystitis</td></tr>
+      <tr><td class="mono">N20.9</td><td>Nierenstein</td></tr>
+      <tr><td class="mono">N21.0</td><td>Harnblasenstein</td></tr>
+      <tr><td class="mono">N39.0</td><td>Harnwegsinfekt, Lokalisation nicht näher bezeichnet</td></tr>
+      <tr><td class="mono">Z29.0</td><td>Isolierung wegen ESBL</td></tr>
+      <tr><td class="mono">U80.4!</td><td>E. coli/Klebsiella/Proteus mit ESBL-Resistenz</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <footer>
+    Übersicht zur KP-Vorbereitung · Infektiologie & antibiotische Therapie
+    <span class="mono">Lingoda × AMBOSS · zusammengefasst aus dem Breakout-Material</span>
+  </footer>
+
+</div>
+</body>
+</html>

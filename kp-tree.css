@@ -19,6 +19,8 @@
   transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1), border-color .3s ease, box-shadow .35s ease;
 }
 .sys.in{opacity:1; transform:none}
+.sys.hl{outline:2px solid color-mix(in oklab,var(--sys-accent,var(--accent)) 55%,transparent); outline-offset:2px}
+.kp-noanim .sys-body, .kp-noanim .topic-body{transition:none !important}
 @media (max-width:760px){.sys{backdrop-filter:none; -webkit-backdrop-filter:none; background:var(--panel2)}}
 .sys[hidden]{display:none}
 .sys:hover{border-color:var(--line-hi)}

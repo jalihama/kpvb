@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hämostase & Koagulation — KP Übersicht</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #f7f6f2;
+    --ink: #1a1a1a;
+    --ink-muted: #555;
+    --red: #c0392b;
+    --orange: #d35400;
+    --yellow: #b7860b;
+    --rule: #d0cfc8;
+    --card-bg: #ffffff;
+    --tag-red: #fdecea;
+    --tag-orange: #fef3e8;
+    --tag-yellow: #fefbe8;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 11.5px;
+    line-height: 1.55;
+    padding: 28px 32px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+
+  .header-title {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--ink-muted);
+    align-items: center;
+  }
+
+  .legend-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+  }
+
+  .dot-red    { background: var(--red); }
+  .dot-orange { background: var(--orange); }
+  .dot-yellow { background: var(--yellow); }
+
+  .subline {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--ink-muted);
+    letter-spacing: 0.3px;
+    margin-bottom: 18px;
+    padding-top: 4px;
+  }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  /* card spanning full width at bottom */
+  .card-wide {
+    grid-column: 1 / -1;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--rule);
+    padding: 13px 14px 12px;
+    position: relative;
+  }
+
+  .card.priority-red    { border-top-color: var(--red); }
+  .card.priority-orange { border-top-color: var(--orange); }
+  .card.priority-yellow { border-top-color: var(--yellow); }
+
+  .card-tag {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+
+  .card.priority-red    .card-tag { background: var(--tag-red);    color: var(--red); }
+  .card.priority-orange .card-tag { background: var(--tag-orange);  color: var(--orange); }
+  .card.priority-yellow .card-tag { background: var(--tag-yellow);  color: var(--yellow); }
+
+  .card-title {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 9px;
+    color: var(--ink);
+  }
+
+  /* ── SECTION LABEL ── */
+  .label {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 3px;
+    margin-top: 8px;
+  }
+
+  .label:first-of-type { margin-top: 0; }
+
+  /* ── CONTENT ── */
+  p, li { font-size: 11px; line-height: 1.5; }
+
+  ul {
+    padding-left: 13px;
+    margin-top: 2px;
+  }
+
+  ul li { margin-bottom: 1px; }
+
+  /* ── ALERT BOX ── */
+  .alert {
+    background: #fff5f5;
+    border-left: 3px solid var(--red);
+    padding: 5px 8px;
+    margin-top: 7px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--red);
+  }
+
+  .warn {
+    background: #fffbf0;
+    border-left: 3px solid var(--orange);
+    padding: 5px 8px;
+    margin-top: 7px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--orange);
+  }
+
+  /* ── INLINE TAG ── */
+  .badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    background: #eee;
+    color: #333;
+    padding: 1px 5px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .badge.danger { background: var(--tag-red); color: var(--red); }
+  .badge.warn   { background: var(--tag-orange); color: var(--orange); }
+  .badge.info   { background: #eaf3fb; color: #1a5f8a; }
+
+  /* ── MINI TABLE ── */
+  .mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+    font-size: 10.5px;
+  }
+
+  .mini-table th {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-align: left;
+    padding: 3px 6px;
+    border-bottom: 1px solid var(--rule);
+    font-weight: 600;
+  }
+
+  .mini-table td {
+    padding: 3px 6px;
+    border-bottom: 1px solid #f0efe9;
+    vertical-align: top;
+  }
+
+  .mini-table tr:last-child td { border-bottom: none; }
+
+  /* ── COMPARATOR STRIP ── */
+  .compare-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .compare-col {
+    background: #fafaf8;
+    border: 1px solid var(--rule);
+    padding: 7px 9px;
+    font-size: 10.5px;
+  }
+
+  .compare-col .compare-head {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 4px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 8px 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 20px;
+    border-top: 1px solid var(--rule);
+    padding-top: 7px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer span {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--ink-muted);
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-title">Hämostase &amp; Koagulationsstörungen</div>
+  </div>
+  <div style="text-align:right">
+    <div class="legend">
+      <span><span class="legend-dot dot-red"></span>KP-kritisch</span>
+      <span><span class="legend-dot dot-orange"></span>KP-relevant</span>
+      <span><span class="legend-dot dot-yellow"></span>Diagnostisch wichtig</span>
+    </div>
+  </div>
+</header>
+<div class="subline">Kenntnisprüfung Vorbereitung · Interne Medizin · Hämostaseologie</div>
+
+<div class="grid">
+
+  <!-- VON WILLEBRAND -->
+  <div class="card priority-red">
+    <div class="card-tag">KP-kritisch</div>
+    <div class="card-title">Von-Willebrand-Jürgens-Syndrom</div>
+
+    <div class="label">Pathophysiologie</div>
+    <p>Häufigste angeborene Blutungserkrankung. vWF-Defekt → gestörte Thrombozytenadhäsion + ↓ Faktor-VIII-Transport.</p>
+
+    <div class="label">Typen</div>
+    <table class="mini-table">
+      <tr><th>Typ</th><th>Defekt</th><th>Vererbung</th></tr>
+      <tr><td><span class="badge">Typ 1</span></td><td>Quantitativ ↓ (häufigst)</td><td>AD</td></tr>
+      <tr><td><span class="badge">Typ 2</span></td><td>Qualitativ gestört</td><td>variabel</td></tr>
+      <tr><td><span class="badge danger">Typ 3</span></td><td>Komplett fehlend</td><td>AR (schwer)</td></tr>
+    </table>
+
+    <div class="label">Labor</div>
+    <ul>
+      <li>aPTT ↑ · Blutungszeit ↑ · vWF-Ag ↓</li>
+      <li>Thrombozyten <strong>normal</strong> · PT/INR <strong>normal</strong></li>
+    </ul>
+
+    <div class="label">Klinik</div>
+    <ul>
+      <li>Epistaxis, Menorrhagie, Zahnfleischbluten</li>
+      <li>Petechien <strong>untypisch</strong></li>
+    </ul>
+
+    <div class="label">Therapie</div>
+    <ul>
+      <li><strong>Desmopressin (DDAVP)</strong> — Typ 1 (setzt vWF frei)</li>
+      <li><strong>vWF-Konzentrat</strong> — Typ 2/3 oder schwere Blutung</li>
+    </ul>
+  </div>
+
+  <!-- APS -->
+  <div class="card priority-red">
+    <div class="card-tag">KP-kritisch</div>
+    <div class="card-title">Antiphospholipidsyndrom (APS)</div>
+
+    <div class="label">Pathophysiologie</div>
+    <p>Autoimmune Thrombophilie. IgG/IgM-AK gegen Phospholipid-bindende Proteine → Thrombosen + Fehlgeburten.</p>
+
+    <div class="label">Diagnostikkriterien (mind. 1, 2× im Abstand ≥12 Wo.)</div>
+    <ul>
+      <li>Lupusantikoagulans</li>
+      <li>Anticardiolipin-AK (IgG/IgM)</li>
+      <li>Anti-β2-Glykoprotein-I-AK</li>
+    </ul>
+
+    <div class="alert">⚠ KP-Falle: aPTT ↑ in vitro — aber Thrombosen in vivo! Kein Blutungsrisiko.</div>
+
+    <div class="label">Klinik</div>
+    <ul>
+      <li>TVT, LE, Schlaganfall (jung!)</li>
+      <li>Rezidivierende Fehlgeburten (v.a. 2. Trimenon)</li>
+      <li>Livedo reticularis</li>
+    </ul>
+
+    <div class="label">Therapie</div>
+    <ul>
+      <li>Thrombose → Heparin akut → VKA langfristig</li>
+      <li>Schwangerschaft → Heparin + ASS</li>
+      <li><strong>Kein DOAK</strong> bei APS (laut Leitlinie)</li>
+    </ul>
+  </div>
+
+  <!-- HIT I + II -->
+  <div class="card priority-red" style="grid-row: span 1;">
+    <div class="card-tag">KP-kritisch</div>
+    <div class="card-title">HIT I vs. HIT II</div>
+
+    <div class="compare-strip">
+      <div class="compare-col">
+        <div class="compare-head">HIT I <span class="badge info">benigne</span></div>
+        <ul>
+          <li>Tag 1–2 nach Heparin</li>
+          <li>Thrombozyten ↓ (>100.000)</li>
+          <li>Nicht immunologisch</li>
+          <li>Kein Thromboserisiko</li>
+          <li>Selbstlimitierend</li>
+          <li>Heparin <strong>weiterführen</strong></li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <div class="compare-head">HIT II <span class="badge danger">gefährlich</span></div>
+        <ul>
+          <li>Tag 5–14 nach Heparin</li>
+          <li>Thrombozyten ↓ >50% vom Ausgangswert</li>
+          <li>IgG gegen Heparin-PF4-Komplex</li>
+          <li>Paradoxe Thrombosen!</li>
+          <li>„White clot syndrome"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert" style="margin-top:8px">
+      HIT II Sofortmaßnahmen: (1) Heparin sofort stoppen (auch NMH) · (2) Argatroban oder Fondaparinux · (3) Kein Marcumar bei Thrombozyten &lt;150.000 · (4) Keine Thrombozytentransfusion
+    </div>
+
+    <div class="label" style="margin-top:8px">4T-Score (je 0–2 Punkte)</div>
+    <p style="font-size:10.5px">Thrombozytopenie · Timing · Thrombose · Andere Ursachen ausgeschlossen<br>
+    <strong>≥6 Punkte</strong> → hohe Wahrscheinlichkeit → HIPA-Test oder ELISA</p>
+  </div>
+
+  <!-- APC RESISTENZ -->
+  <div class="card priority-orange">
+    <div class="card-tag">KP-relevant</div>
+    <div class="card-title">APC-Resistenz (Faktor-V-Leiden)</div>
+
+    <div class="label">Pathophysiologie</div>
+    <p>Häufigste hereditäre Thrombophilie in Europa (~5%). Punktmutation im Faktor V → Faktor V nicht mehr durch APC spaltbar → Hyperkoagulabilität.</p>
+
+    <div class="label">Vererbung</div>
+    <p>Autosomal dominant</p>
+
+    <div class="label">Klinik</div>
+    <ul>
+      <li>Venöse Thrombosen (TVT, LE)</li>
+      <li>Oft bei zusätzlichem Trigger (Pille, Schwangerschaft, Immobilisation)</li>
+      <li>Arterielle Thrombosen selten</li>
+    </ul>
+
+    <div class="label">Diagnostik</div>
+    <ul>
+      <li>APC-Resistenztest: aPTT verlängert sich nach APC-Zugabe <strong>nicht</strong> ausreichend</li>
+      <li>Genetische Bestätigung: Faktor-V-Leiden-Mutation (PCR)</li>
+    </ul>
+
+    <div class="label">Therapie</div>
+    <ul>
+      <li>1. TVT unprovoziert → Antikoagulation 3–6 Monate</li>
+      <li>Rezidiv / Homozygotie → ggf. lebenslang</li>
+      <li>Asymptomatische Träger → keine Prophylaxe (außer Hochrisiko)</li>
+    </ul>
+  </div>
+
+  <!-- EDTA THROMBOZYTOPENIE -->
+  <div class="card priority-yellow">
+    <div class="card-tag">Diagnostisch wichtig</div>
+    <div class="card-title">EDTA-induzierte Thrombozytopenie</div>
+
+    <div class="label">Was ist es?</div>
+    <p><strong>In-vitro-Artefakt.</strong> EDTA im Blutröhrchen → Thrombozytenagglutination → Automat zählt falsch niedrig.</p>
+
+    <div class="warn">⚠ KP-Falle: Wird als echte Thrombozytopenie fehlgedeutet — Patient hat keine Blutungssymptome!</div>
+
+    <div class="label">Wie erkennen?</div>
+    <ul>
+      <li>Keine Blutungssymptome klinisch</li>
+      <li>Blutausstrich → Thrombozytenaggregate sichtbar</li>
+      <li>Kontrolle im <strong>Citrat-Röhrchen</strong> → Thrombozytenzahl normal</li>
+    </ul>
+
+    <div class="label">Therapie</div>
+    <p>Keine. Klinisch vollkommen irrelevant — nur korrekte Diagnostik entscheidend.</p>
+  </div>
+
+  <!-- PETECHIEN -->
+  <div class="card priority-orange">
+    <div class="card-tag">KP-relevant</div>
+    <div class="card-title">Petechien</div>
+
+    <div class="label">Definition</div>
+    <p>Stecknadelkopfgroße (&lt;3 mm), <strong>nicht wegdrückbare</strong> Hautblutungen. Entstehen bei Thrombozytenmangel oder -funktionsstörung.</p>
+
+    <div class="label">KP-Schlüsselregel</div>
+    <table class="mini-table">
+      <tr><th>Befund</th><th>→ Deutung</th></tr>
+      <tr><td>Petechien</td><td>Thrombozytär (Anzahl ↓ oder Funktion ↓)</td></tr>
+      <tr><td>Hämatome, Gelenkblutungen</td><td>Koagulationsfaktor-Defekt (z.B. Hämophilie)</td></tr>
+    </table>
+
+    <div class="label">Ursachen</div>
+    <ul>
+      <li><strong>Quantitativ:</strong> ITP, TTP, HUS, HIT II, Aplasie</li>
+      <li><strong>Qualitativ:</strong> vWS Typ 1, Thrombozytopathien, ASS</li>
+      <li><strong>Nicht hämatologisch:</strong> Vaskulitis, erhöhter Venendruck</li>
+    </ul>
+
+    <div class="label">Grenzwerte</div>
+    <ul>
+      <li>Thrombozyten <strong>&lt;20.000/µl</strong> → spontane Blutungsgefahr</li>
+      <li>Thrombozyten <strong>&lt;10.000/µl</strong> → Transfusionsindikation</li>
+    </ul>
+  </div>
+
+</div><!-- /grid -->
+
+<footer>
+  <span>KP Vorbereitung · Hämostaseologie · Interne Medizin</span>
+  <span>Von-Willebrand · APS · HIT I/II · APC-Resistenz · EDTA-Pseudothrombozytopenie · Petechien</span>
+</footer>
+
+</body>
+</html>

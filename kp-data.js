@@ -15,21 +15,87 @@
 const EXAM_DATE = "";
 
 const ITEMS = [
+  // — Kardiologie & Angiologie —
+  { title:"EKG-Kurs für die Kenntnisprüfung", system:"Kardiologie & Angiologie", topic:"EKG", type:"html", file:"files/ekg-kurs.html", size:"Kurs" },
+  { title:"Vorhofflimmern — Klinische Referenz & Therapie", system:"Kardiologie & Angiologie", topic:"Vorhofflimmern", type:"html", file:"files/vorhofflimmern.html", size:"1 S." },
+  { title:"VHF — Pathophysiologie", system:"Kardiologie & Angiologie", topic:"Vorhofflimmern", type:"html", file:"files/vhf-patho.html", size:"1 S." },
+  { title:"TVT — Diagnostikalgorithmus", system:"Kardiologie & Angiologie", topic:"Phlebothrombose", type:"html", file:"files/tvt-diagnostik.html", size:"1 S." },
+  { title:"TVT — Therapiealgorithmus", system:"Kardiologie & Angiologie", topic:"Phlebothrombose", type:"html", file:"files/tvt-therapie.html", size:"1 S." },
+  { title:"Kardiale Pharmakologie — KP-Referenz", system:"Kardiologie & Angiologie", topic:"Kardiale Pharmakologie", type:"html", file:"files/kardio-pharma.html", size:"interaktiv" },
+  { title:"Kardiale Pharmakologie — Inotropie/Chronotropie", system:"Kardiologie & Angiologie", topic:"Kardiale Pharmakologie", type:"html", file:"files/cardiac-pharma-table.html", size:"Tabelle" },
+  { title:"SVT — AVNRT vs AVRT", system:"Kardiologie & Angiologie", topic:"Supraventrikuläre Tachykardien", type:"html", file:"files/svt-avrt-avnrt.html", size:"interaktiv" },
+  { title:"Antikoagulation bei Kardioversion", system:"Kardiologie & Angiologie", topic:"Orale Antikoagulanzien", type:"html", file:"files/antikoagulation-kardioversion.html", size:"1 S." },
+
+  // — Pneumologie —
+  { title:"Asthma bronchiale — Klassifikation", system:"Pneumologie", topic:"Asthma bronchiale", type:"image", file:"files/asthma-klassifikation.svg", size:"1 S." },
+  { title:"Lungenembolie — Therapie", system:"Pneumologie", topic:"Lungenembolie", type:"image", file:"files/lungenembolie-therapie.svg", size:"1 S." },
+
+  // — Gastroenterologie —
+  { title:"Akute Pankreatitis — Diagnose & Klinik", system:"Gastroenterologie", topic:"Akute Pankreatitis", type:"html", file:"files/pankreatitis-1-diagnose.html", size:"1 S." },
+  { title:"Akute Pankreatitis — Therapiealgorithmus", system:"Gastroenterologie", topic:"Akute Pankreatitis", type:"html", file:"files/pankreatitis-2-therapie.html", size:"1 S." },
+  { title:"Akute Pankreatitis — Komplikationen & Prognose", system:"Gastroenterologie", topic:"Akute Pankreatitis", type:"html", file:"files/pankreatitis-3-komplikationen.html", size:"1 S." },
+  { title:"Aszites — Diagnostikalgorithmus", system:"Gastroenterologie", topic:"Aszites", type:"html", file:"files/aszites-diagnostik.html", size:"1 S." },
+  { title:"Leberenzyme — Interpretation", system:"Gastroenterologie", topic:"Leberenzyme", type:"html", file:"files/leberenzyme.html", size:"1 S." },
+  { title:"Alkoholische Leberzirrhose — Diagnostik", system:"Gastroenterologie", topic:"Leberzirrhose", type:"image", file:"files/alkohol-leberzirrhose-diagnostik.svg", size:"1 S." },
+  { title:"Portokavale Anastomosen", system:"Gastroenterologie", topic:"Portale Hypertension", type:"html", file:"files/portocaval-anastomosen.html", size:"Schema" },
+
+  // — Hämatologie & Onkologie —
+  { title:"Akute Leukämien — Symptomatik (Mindmap)", system:"Hämatologie & Onkologie", topic:"Akute Leukämie", type:"html", file:"files/al-symptomatik.html", size:"1 S." },
+  { title:"Lungenkarzinom — Klinische Übersicht", system:"Hämatologie & Onkologie", topic:"Lungenkarzinom", type:"html", file:"files/lungenkarzinom.html", size:"1 S." },
+  { title:"Lungenkarzinom — Staging (TNM/UICC)", system:"Hämatologie & Onkologie", topic:"Lungenkarzinom", type:"html", file:"files/lungenkarzinom-staging.html", size:"1 S." },
+  { title:"Chemotherapie — Übersicht", system:"Hämatologie & Onkologie", topic:"Chemotherapie", type:"html", file:"files/chemotherapie-uebersicht.html", size:"1 S." },
+  { title:"Kolorektales Karzinom — Therapiealgorithmus", system:"Hämatologie & Onkologie", topic:"Kolorektales Karzinom", type:"html", file:"files/krk-therapie.html", size:"1 S." },
+  { title:"Mammakarzinom — Therapiealgorithmus", system:"Hämatologie & Onkologie", topic:"Mammakarzinom", type:"html", file:"files/mammakarzinom-therapie.html", size:"1 S." },
+  { title:"Hämatologische Neoplasien — DGHO-Browser", system:"Hämatologie & Onkologie", topic:"Hämatologische Neoplasien (DGHO)", type:"html", file:"files/haemat-neoplasien.html", size:"interaktiv" },
+  { title:"Organomegalie bei Leukämie", system:"Hämatologie & Onkologie", topic:"Akute Leukämie", type:"pdf", file:"files/leukemia-organomegaly.pdf", size:"PDF" },
+
   // — Nephrologie —
-  { title:"Hyponatriämie Untersuchungen", system:"Nephrologie", topic:"Elektrolytstörungen Natrium", type:"image", file:"files/hyponatriaemie logik.svg", size:"1 S." },
+  { title:"Hyponatriämie Untersuchungen", system:"Nephrologie", topic:"Elektrolytstörungen Natrium", type:"image", file:"files/hyponatriaemie-logik.svg", size:"1 S." },
   { title:"Hypernatriämie Untersuchungen", system:"Nephrologie", topic:"Elektrolytstörungen Natrium", type:"image", file:"files/urinuntersuchung_hypernatriaemie.svg", size:"1 S." },
   { title:"BGA-Interpreter", system:"Nephrologie", topic:"Säure-Basen-Haushalt", type:"html", file:"files/bga-tool.html" },
+  { title:"ANV — Ätiologie-Mindmap", system:"Nephrologie", topic:"Akute Nierenfunktionseinschränkung", type:"html", file:"files/anv-mindmap.html", size:"interaktiv" },
+  { title:"Akutes Nierenversagen — Lernzusammenfassung", system:"Nephrologie", topic:"Akute Nierenfunktionseinschränkung", type:"html", file:"files/aki-zusammenfassung.html", size:"Zusammenf." },
+
+  // — Endokrinologie —
+  { title:"Orale Antidiabetika & GLP-1-RA", system:"Endokrinologie", topic:"Diabetes mellitus", type:"html", file:"files/antidiabetika.html", size:"1 S." },
+  { title:"Insulintherapie — Übersicht", system:"Endokrinologie", topic:"Diabetes mellitus", type:"html", file:"files/insuline.html", size:"1 S." },
+  { title:"Antidiabetika nach Wirkort — Master", system:"Endokrinologie", topic:"Diabetes mellitus", type:"html", file:"files/antidiabetika-organ.html", size:"1 S." },
+  { title:"Osteoporose — Übersicht", system:"Endokrinologie", topic:"Osteoporose", type:"html", file:"files/osteoporose.html", size:"1 S." },
+  { title:"Hyperparathyreoidismus — Übersicht", system:"Endokrinologie", topic:"Hyperparathyreoidismus", type:"html", file:"files/hyperparathyreoidismus.html", size:"1 S." },
+  { title:"APS & MEN — One-Pager", system:"Endokrinologie", topic:"Allgemeine Endokrinologie", type:"html", file:"files/aps-men.html", size:"1 S." },
+  { title:"Metabolisches Syndrom — Lernzettel", system:"Endokrinologie", topic:"Metabolisches Syndrom", type:"pdf", file:"files/metabolisches-syndrom.pdf", size:"PDF" },
+
+  // — Infektiologie —
+  { title:"Infektiologie — KP-Übersicht", system:"Infektiologie", topic:"Allgemeine Infektiologie", type:"html", file:"files/infektiologie-uebersicht.html", size:"Übersicht" },
+  { title:"Antibiotika — Übersicht für die KP", system:"Infektiologie", topic:"Antibiotika", type:"html", file:"files/antibiotika-uebersicht.html", size:"interaktiv" },
+  { title:"Opportunistische Infektionen nach CD4", system:"Infektiologie", topic:"HIV-Infektion", type:"html", file:"files/opportunistische-infektionen.html", size:"1 S." },
+  { title:"Opportunistische Infektionen — Filterbar", system:"Infektiologie", topic:"HIV-Infektion", type:"html", file:"files/opportunistische-infektionen-detail.html", size:"interaktiv" },
 
   // — Notfallmedizin —
+  { title:"DKA — Therapieverlauf & Details", system:"Notfallmedizin", topic:"Hyperglykämisches Koma", type:"html", file:"files/dka-timeline.html", size:"Timeline + Details" },
+  { title:"HHS — Therapieverlauf & Details", system:"Notfallmedizin", topic:"Hyperglykämisches Koma", type:"html", file:"files/hhs-timeline.html", size:"Timeline + Details" },
+  { title:"DKA vs. HHS — Vergleich", system:"Notfallmedizin", topic:"Hyperglykämisches Koma", type:"html", file:"files/dka-hhs-vergleich.html", size:"1 S." },
   { title:"Akute Intoxikation Artikel", system:"Notfallmedizin", topic:"Akute Intoxikationen", type:"html", file:"files/akuttoxikologie-kp.html", size:"1 S." },
 
   // — Untersuchung —
+  { title:"Gerinnungsdiagnostik — Kaskade & Laborparameter", system:"Untersuchung", topic:"Labor", type:"html", file:"files/gerinnungsdiagnostik.html", size:"1 S." },
   { title:"Gerrinung: Trainer", system:"Untersuchung", topic:"Labor", type:"html", file:"files/gerinnung-trainer.html", size:"1 S." },
   { title:"Blutbild: Trainer", system:"Untersuchung", topic:"Labor", type:"html", file:"files/blutbild-trainer.html", size:"1 S." },
   { title:"BGA: Trainer", system:"Untersuchung", topic:"Labor", type:"html", file:"files/bga-trainer.html", size:"1 S." },
+  { title:"Hämostase & Koagulation — Übersicht", system:"Untersuchung", topic:"Labor", type:"html", file:"files/haemostase-onepager.html", size:"1 S." },
+
+  // — Chirurgie —
+  { title:"Stoma — KP-Kompaktzusammenfassung", system:"Chirurgie", topic:"Darmchirurgie", type:"html", file:"files/stoma-kp.html", size:"1 S." },
+
+  // — Orthopädie & Unfallchirurgie —
+  { title:"Klinische Zeichen & Tests in der Orthopädie", system:"Orthopädie & Unfallchirurgie", topic:"Orthopädische Untersuchungszeichen", type:"image", file:"files/ortho-tests.svg", size:"Poster" },
+
+  // — Pharmakologie & Basismedikation —
+  { title:"Insulin stationär — Kitteltaschenkarte", system:"Pharmakologie & Basismedikation", topic:"Stationäre Behandlung bei Diabetes mellitus", type:"html", file:"files/insulin-kitteltaschenkarte.html", size:"Lernkarte" },
+  { title:"Thromboseprophylaxe — Algorithmus", system:"Pharmakologie & Basismedikation", topic:"Thromboseprophylaxe (Ärztliches Wissen und Medikation)", type:"html", file:"files/thromboseprophylaxe.html", size:"1 S." },
 
   // — Klinische Übungen, Skills, Sonstiges —
-  { title:"Lernkarten Suchengin", system:"Klinische Übungen, Skills, Sonstiges", topic:"Labor", type:"html", file:"files/bga-trainer.html", size:"1 S." },
+  { title:"Lernkarten-Index — Innere & Chirurgie", system:"Klinische Übungen, Skills, Sonstiges", topic:"Lernkarten", type:"html", file:"files/lernkarten-index.html", size:"interaktiv" },
   // …add your lines here…
 ];
 

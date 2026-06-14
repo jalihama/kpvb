@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DKA &amp; HHS – Lernkarte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6F8; --card:#FFFFFF; --ink:#1E2A33; --ink-soft:#566571;
+    --line:#E1E7EC; --line-strong:#CDD6DD;
+    --dka:#0F756B; --dka-bg:#E2F1EF; --dka-d:#0c5e56;   /* DKA · Typ 1 (Teal)    */
+    --hhs:#7A4A9E; --hhs-bg:#F0E9F6; --hhs-d:#623c80;   /* HHS · Typ 2 (Violett) */
+    --shared:#566571; --shared-bg:#EEF1F4;
+    --ok:#3C8E59; --ok-bg:#E5F2E8;
+    --mid:#B26A00; --mid-bg:#FBEEDB;
+    --bad:#C2453C; --bad-bg:#FBEAE6;
+    --merke:#2B6CB0; --merke-bg:#EAF2FB;
+    --cave:#C2453C;  --cave-bg:#FBEAE6;
+    --esel:#B68309;  --esel-bg:#FCF5DC;
+    --up:#C2453C; --down:#2B6CB0; --norm:#6B7884;
+    --sub:#0F756B;
+    --radius:14px; --maxw:900px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size:17px; line-height:1.52; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:28px 20px 80px;}
+
+  header.masthead{margin-bottom:6px;}
+  .eyebrow{font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:700;}
+  h1{font-size:2.0rem; line-height:1.14; margin:.12em 0 .08em; letter-spacing:-.01em;}
+  .subtitle{font-size:1.0rem; color:var(--ink-soft); margin:0;}
+
+  nav.toc{position:sticky; top:0; z-index:5; background:rgba(244,246,248,.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line); margin:14px -20px 26px; padding:10px 20px;
+    display:flex; flex-wrap:wrap; gap:7px; align-items:center;}
+  nav.toc a{text-decoration:none; color:var(--ink); font-size:.82rem; font-weight:700;
+    padding:5px 11px; border:1px solid var(--line-strong); border-radius:999px; background:var(--card); white-space:nowrap;}
+  nav.toc a.dka{border-color:var(--dka); color:var(--dka-d);}
+  nav.toc a.hhs{border-color:var(--hhs); color:var(--hhs-d);}
+  nav.toc a:hover,nav.toc a:focus-visible{border-color:var(--ink);}
+
+  section{scroll-margin-top:64px; margin-bottom:26px;}
+  h2{font-size:1.3rem; margin:0 0 14px; padding-bottom:7px; border-bottom:2px solid var(--line-strong);
+    display:flex; align-items:baseline; gap:10px;}
+  h2 .num{font-size:.8rem; color:var(--ink-soft); font-weight:700; letter-spacing:.05em;}
+
+  /* Block-Banner zur klaren Trennung */
+  .blockhead{border-radius:12px; padding:12px 18px; margin:0 0 14px; font-weight:700; font-size:1.2rem;
+    color:#fff; display:flex; align-items:baseline; gap:11px; flex-wrap:wrap; scroll-margin-top:64px;}
+  .blockhead.dka{background:var(--dka);}
+  .blockhead.hhs{background:var(--hhs);}
+  .blockhead.shared{background:var(--shared);}
+  .blockhead small{font-size:.8rem; font-weight:700; opacity:.92;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:17px 19px; margin-bottom:13px;}
+  .card.dka{border-left:5px solid var(--dka);}
+  .card.hhs{border-left:5px solid var(--hhs);}
+  .card h3{margin:0 0 9px; font-size:1.04rem;}
+  .card h3:not(:first-child){margin-top:15px;}
+  .sub{font-size:.83rem; font-weight:700; color:var(--sub); text-transform:uppercase; letter-spacing:.05em; margin:15px 0 5px;}
+  .sub::before{content:""; display:inline-block; width:14px; height:3px; border-radius:2px; background:var(--sub); vertical-align:middle; margin-right:8px; position:relative; top:-1px;}
+  .sub:first-child{margin-top:2px;}
+  .sub.hhs{--sub:var(--hhs);}
+
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.04em; padding:3px 9px;
+    border-radius:999px; text-transform:uppercase; margin:0 4px 0 0;}
+  .tag.dka{background:var(--dka-bg); color:var(--dka-d);}
+  .tag.hhs{background:var(--hhs-bg); color:var(--hhs-d);}
+
+  ul{margin:6px 0; padding-left:20px;} li{margin:4px 0;} li::marker{color:var(--ink-soft);} ul ul{margin:3px 0;}
+  b,strong{font-weight:700;}
+  .muted{font-size:.85rem; color:var(--ink-soft);}
+  .u{font-size:.86em; color:var(--ink-soft);}
+
+  .define{border-radius:10px; padding:12px 15px; margin-bottom:13px;}
+  .define.dka{background:var(--dka-bg);} .define.dka .k{color:var(--dka-d);}
+  .define.hhs{background:var(--hhs-bg);} .define.hhs .k{color:var(--hhs-d);}
+  .define .k{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700;}
+
+  .chain{background:#F8FAFB; border:1px solid var(--line); border-radius:9px; padding:9px 12px; font-size:.89rem; margin:5px 0; line-height:1.5;}
+
+  .box{border-radius:11px; padding:11px 14px 11px 15px; margin:12px 0; border-left:5px solid; font-size:.95rem;}
+  .box .lbl{font-size:.71rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:3px;}
+  .box.merke{background:var(--merke-bg); border-left-color:var(--merke);} .box.merke .lbl{color:var(--merke);}
+  .box.cave{background:var(--cave-bg); border-left-color:var(--cave);} .box.cave .lbl{color:var(--cave);}
+  .box.esel{background:var(--esel-bg); border-left-color:var(--esel);} .box.esel .lbl{color:var(--esel);}
+
+  .tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); margin:6px 0 13px;}
+  table{border-collapse:collapse; width:100%; min-width:520px; font-size:.9rem;}
+  caption{text-align:left; font-weight:700; padding:13px 16px 4px; font-size:1.0rem;}
+  th,td{padding:8px 11px; text-align:center; border-bottom:1px solid var(--line); vertical-align:middle;}
+  thead th{font-size:.8rem; color:var(--ink-soft); background:#F8FAFB; border-bottom:2px solid var(--line-strong);}
+  thead th.dka{color:var(--dka-d); background:var(--dka-bg);}
+  thead th.hhs{color:var(--hhs-d); background:var(--hhs-bg);}
+  tbody th{text-align:left; font-weight:700; white-space:nowrap;}
+  tbody tr:last-child td,tbody tr:last-child th{border-bottom:none;}
+  .col-dka{background:rgba(15,117,107,.05);}
+  .col-hhs{background:rgba(122,74,158,.05);}
+  .sev{display:inline-block; font-size:.62rem; font-weight:700; padding:1px 6px; border-radius:999px; text-transform:uppercase; letter-spacing:.03em;}
+  .sev.ok{background:var(--ok-bg); color:var(--ok);}
+  .sev.mid{background:var(--mid-bg); color:var(--mid);}
+  .sev.bad{background:var(--bad-bg); color:var(--bad);}
+  .up-i{color:var(--up); font-weight:700;} .down-i{color:var(--down); font-weight:700;} .flat-i{color:var(--norm); font-weight:700;}
+
+  .plan{display:flex; flex-direction:column; gap:5px; margin:4px 0;}
+  .pstep{display:flex; align-items:center; gap:12px; padding:8px 13px; border-radius:9px; background:var(--shared-bg); border:1px solid var(--line-strong);}
+  .pstep .vol{font-weight:700; min-width:78px; color:var(--ink);}
+  .pstep .rate{font-size:.82rem; color:var(--ink-soft);}
+
+  footer{margin-top:30px; padding-top:14px; border-top:1px solid var(--line); font-size:.8rem; color:var(--ink-soft);}
+
+  @media (max-width:640px){ body{font-size:16px;} h1{font-size:1.62rem;} }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} }
+  @media print{
+    :root{--bg:#fff;} body{font-size:11.5pt;} nav.toc{display:none;}
+    .card,.tablewrap,.box,section,.plan,.chain,.blockhead{break-inside:avoid;}
+    .blockhead{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+<style id="kp-brand">
+:root{--bg:#eef5f8!important;--card:#ffffff!important;--ink:#08222c!important;--ink-soft:#45697a!important;--line:#d8e6ea!important;--line-strong:#c2d4da!important;}
+body,h1,h2,h3,h4,h5,h6,p,li,td,th,span,div,a,button,input,select,caption,.nav-link,.brand-title,.eyebrow,.lesson-eyebrow{font-family:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif !important}
+code,.mono,pre,kbd{font-family:'Roboto Mono',ui-monospace,Menlo,Consolas,monospace !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Examenswissen · Lernzusammenfassung</div>
+    <h1>Hyperglykämisches Koma</h1>
+    <p class="subtitle">DKA und HHS — getrennt dargestellt</p>
+  </header>
+
+  <nav class="toc" aria-label="Inhalt">
+    <a href="#grundlagen">Grundlagen</a>
+    <a href="#vergleich">DKA vs HHS</a>
+    <a href="#dka" class="dka">DKA</a>
+    <a href="#hhs" class="hhs">HHS</a>
+    <a href="#akut">Akuttherapie</a>
+    <a href="#komplik">Komplikationen</a>
+  </nav>
+
+  <!-- GRUNDLAGEN (gemeinsam) -->
+  <section id="grundlagen">
+    <h2><span class="num">01</span> Grundlagen <span class="muted" style="font-size:.8rem; font-weight:400">· gilt für beide</span></h2>
+    <div class="card">
+      <p style="margin-top:0"><b>Hyperglykämisches (diabetisches) Koma</b> = schwere, potenziell lebensbedrohliche Stoffwechselentgleisung bei Diabetes mellitus durch <b>absoluten oder relativen Insulinmangel</b>. Zwei Formen: <b>DKA</b> (mit Ketose) und <b>HHS</b> (ohne Ketose). Der Begriff „Koma" ist irreführend — eine echte Bewusstlosigkeit liegt nur in <b>ca. 10 %</b> vor. Diagnose: <b>Labor + Klinik</b>.</p>
+
+      <p class="sub">Auslöser (für beide Formen)</p>
+      <ul>
+        <li><b>Insulinmangel:</b> Erstmanifestation; fehlerhafte oder unterlassene Insulinanwendung</li>
+        <li><b>Erhöhter Insulinbedarf:</b> Infektionen, insb. <b>Sepsis</b> (häufigster situativer Auslöser!), Myokardinfarkt, Schlaganfall, akute Pankreatitis, Schock, OP/Trauma, Exsikkose, Medikamente (Glucocorticoide, Thiaziddiuretika), schwere körperliche Anstrengung, Schwangerschaft</li>
+        <li><b>Ketogenes Ernährungsverhalten</b> <span class="tag dka">v.a. Typ 1 → DKA</span>: Essstörungen (Anorexie, Bulimie), extremes Fasten, Nahrungsverweigerung (Depression/Psychose)</li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Ein Diabetes mellitus manifestiert sich häufig <b>zuerst</b> als hyperglykämisches Koma (ca. <b>25 %</b>) – meist durch eine <b>Infektion</b> ausgelöst.
+      </div>
+    </div>
+  </section>
+
+  <!-- VERGLEICH -->
+  <section id="vergleich">
+    <h2><span class="num">02</span> DKA vs HHS — Schnellvergleich</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th style="text-align:left">Merkmal</th><th class="dka">DKA · ketoazidotisch</th><th class="hhs">HHS · hyperosmolar</th></tr>
+        </thead>
+        <tbody>
+          <tr><th>Diabetes-Typ</th><td class="col-dka">Typ 1</td><td class="col-hhs">Typ 2</td></tr>
+          <tr><th>Insulinmangel</th><td class="col-dka"><b>absolut</b></td><td class="col-hhs"><b>relativ</b> (Restinsulin)</td></tr>
+          <tr><th>Ketose / Azidose</th><td class="col-dka"><span class="up-i">ja</span></td><td class="col-hhs"><span class="flat-i">nein</span></td></tr>
+          <tr><th>Pathophysiol. Kern</th><td class="col-dka">Lipolyse → Ketone → Azidose</td><td class="col-hhs">extreme Dehydratation</td></tr>
+          <tr><th>Beginn</th><td class="col-dka">zügig (&lt; 24 h)</td><td class="col-hhs">schleichend</td></tr>
+          <tr><th>Blutzucker</th><td class="col-dka">400–700 mg/dL <span class="u">(bis normal)</span></td><td class="col-hhs"><b>600–1200 mg/dL</b> <span class="u">(sehr hoch)</span></td></tr>
+          <tr><th>pH (arteriell)</th><td class="col-dka">erniedrigt (&lt; 7,3)</td><td class="col-hhs">&gt; 7,3</td></tr>
+          <tr><th>Bicarbonat</th><td class="col-dka">erniedrigt</td><td class="col-hhs">&gt; 18 mmol/L</td></tr>
+          <tr><th>Ketonnachweis</th><td class="col-dka"><span class="up-i">positiv</span></td><td class="col-hhs"><span class="flat-i">neg. / minimal</span></td></tr>
+          <tr><th>Leitbild</th><td class="col-dka">Kußmaul, Azetongeruch, Bauchschmerz</td><td class="col-hhs">Vigilanzminderung, Exsikkose</td></tr>
+          <tr><th>Insulin initial</th><td class="col-dka">Bolus + Perfusor <b>ab Start</b></td><td class="col-hhs"><b>zunächst keins</b> (Flüssigkeit zuerst)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ DKA ============ -->
+  <div class="blockhead dka" id="dka">DKA · Diabetische Ketoazidose <small>ketoazidotisch · Typ-1-Diabetes</small></div>
+  <section style="scroll-margin-top:64px">
+
+    <div class="card dka">
+      <div class="define dka">
+        <span class="k">Steckbrief</span>
+        <div><b>Typ-1-Diabetes · absoluter Insulinmangel</b> → Hyperglykämie + Ketose + metabolische Azidose. Im Vordergrund stehen die <b>Azidose</b> und der Volumenverlust.</div>
+      </div>
+
+      <h3>Pathophysiologie</h3>
+      <p style="margin:0 0 7px">Insulinmangel führt parallel zu <b>Hyperglykämie</b> und gesteigerter <b>Lipolyse</b> – beide enden in Hypovolämie:</p>
+      <div class="chain">Insulinmangel → Hyperglykämie → Hyperosmolarität → osmotische Diurese &amp; Polyurie → Flüssigkeits-/Elektrolytverlust → Dehydratation → <b>Hypovolämie</b></div>
+      <div class="chain">Insulinmangel → Lipolyse↑ → hepatische Ketonkörperbildung → Ketose → <b>metabolische Azidose</b> (→ Erbrechen → Flüssigkeitsverlust → <b>Hypovolämie</b>)</div>
+      <div class="box cave">
+        <span class="lbl">Cave</span>
+        Die Hypovolämie kann über eine glomeruläre Minderperfusion zur <b>akuten Nierenfunktionseinschränkung</b> führen; auch ein <b>Volumenmangelschock</b> ist möglich.
+      </div>
+
+      <h3>Klinik</h3>
+      <p class="muted" style="margin:0 0 5px">Zusätzlich zu den gemeinsamen Symptomen (Polyurie, Polydipsie, Übelkeit/Erbrechen, Exsikkose, Hypotonie, Bewusstseinstrübung):</p>
+      <ul>
+        <li><b>Zügiger Beginn &lt; 24 h</b></li>
+        <li><b>Bauchschmerzen</b> (Pseudoperitonitis / Pseudoappendizitis diabetica)</li>
+        <li><b>Nach Azeton riechender Atem</b></li>
+        <li><b>Kußmaul-Atmung:</b> tiefe Atemzüge bei normaler Frequenz → respiratorische Kompensation der Azidose</li>
+      </ul>
+
+      <h3>Diagnostik &amp; typische Werte</h3>
+      <ul>
+        <li><b>Blutzucker:</b> meist <b>400–700 mg/dL</b> <span class="u">(22,2–38,9 mmol/L)</span> — tiefere/normale Werte möglich</li>
+      </ul>
+      <div class="box cave">
+        <span class="lbl">Cave</span>
+        Unter <b>SGLT2-Inhibitoren</b> ist auch eine <b>normoglykäme</b> DKA möglich!
+      </div>
+      <div class="box esel">
+        <span class="lbl">Trias der Ketoazidose</span>
+        <b>Hyperglykämie + Ketonnachweis + metabolische Azidose mit positiver Anionenlücke.</b>
+      </div>
+      <p class="sub">Schweregrade (anhand BGA)</p>
+      <div class="tablewrap" style="margin-top:4px">
+        <table>
+          <thead><tr><th style="text-align:left">Kriterium</th><th>leicht <span class="sev ok">I</span></th><th>mittel <span class="sev mid">II</span></th><th>schwer <span class="sev bad">III</span></th></tr></thead>
+          <tbody>
+            <tr><th>pH (arteriell)</th><td>7,25–7,3</td><td>7–7,24</td><td>&lt; 7</td></tr>
+            <tr><th>Serumbicarbonat</th><td>15–18 mmol/L</td><td>10–15 mmol/L</td><td>&lt; 10 mmol/L</td></tr>
+            <tr><th>Anionenlücke</th><td>&gt; 10</td><td>&gt; 12</td><td>&gt; 12</td></tr>
+            <tr><th>Vigilanz</th><td>wach</td><td>wach–somnolent</td><td>somnolent–komatös</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin:2px 0 0">Blutzucker liegt in allen Schweregraden &gt; 250 mg/dL (&gt; 13,9 mmol/L); Ketonnachweis stets positiv.</p>
+
+      <h3>DD: metabolische Azidose mit Anionenlücke</h3>
+      <ul>
+        <li>Dekompensierte chronische Nierenkrankheit / akute Nierenfunktionseinschränkung</li>
+        <li>Lactatazidose (Serumlaktat bestimmen)</li>
+        <li>Medikamentös: Salicylate (ASS), Isoniazid</li>
+        <li>Vergiftungen: Ethylenglykol/Methanol, Formaldehyd/Paraldehyd, Cyanid</li>
+      </ul>
+
+      <h3>Therapie-Besonderheiten <span class="muted" style="font-size:.82rem; font-weight:400">(Flüssigkeit &amp; Elektrolyte → Akuttherapie unten)</span></h3>
+      <p class="sub">Insulin — von Anfang an</p>
+      <ul>
+        <li>Beginn innerhalb einer <b>½ Stunde</b>; i.v. über Perfusor (Intensivstation)</li>
+        <li><b>Bolus:</b> 0,1 IE/kg KG → dann <b>Perfusor niedrig dosiert</b> (Low-Dose)</li>
+        <li>BZ <b>nicht zu schnell</b> (max. 50 mg/dL/h ≈ 2,8 mmol/L/h) und <b>nicht zu tief</b> — Ziel <b>250–300 mg/dL</b> <span class="u">(13,9–16,7 mmol/L)</span> in den ersten 24 h</li>
+        <li>Anpassung (BZ stündlich): zu geringer Abfall (&lt; 40 mg/dL/h) → Laufrate 1,5× alle 2 h · zu schneller Abfall → 10 % Glucose</li>
+      </ul>
+      <p class="sub">Perfusor beenden bei (alle drei)</p>
+      <ul>
+        <li>BZ &lt; 200 mg/dL <span class="u">(11,1 mmol/L)</span> <b>und</b> Bicarbonat ≥ 18 mmol/L <b>und</b> venöser pH &gt; 7,3</li>
+        <li>danach s.c.: 0,1 IE/kg alle 2 h, über 24 h max. bis 150–200 mg/dL, dann Basis-Bolus (0,5–0,8 IE/kg/Tag)</li>
+      </ul>
+      <p class="sub">Bicarbonat</p>
+      <ul><li>Nur in Ausnahmefällen bei <b>pH &lt; 7</b> (Details → Akuttherapie)</li></ul>
+      <div class="box merke">
+        <span class="lbl">Merke</span>
+        Die Insulintherapie dient kurzfristig <b>nicht</b> der Normalisierung des Blutzuckers! Lieber eine schleppende Senkung schrittweise steigern als zu schnell senken.
+      </div>
+      <div class="box cave" style="margin-bottom:0">
+        <span class="lbl">Cave · Übertherapie</span>
+        <b>Hirnödem</b> und schwere <b>Hypokaliämie</b>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HHS ============ -->
+  <div class="blockhead hhs" id="hhs">HHS · Hyperosmolares Koma <small>hyperosmolar · Typ-2-Diabetes</small></div>
+  <section style="scroll-margin-top:64px">
+
+    <div class="card hhs">
+      <div class="define hhs">
+        <span class="k">Steckbrief</span>
+        <div><b>Typ-2-Diabetes · relativer Insulinmangel</b> (Restinsulin) → <b>keine Ketose</b>. Das Bild wird von einer <b>ausgeprägten Dehydratation</b> bestimmt.</div>
+      </div>
+
+      <h3>Pathophysiologie</h3>
+      <ul style="margin-top:2px">
+        <li>Pathogenese ähnlich wie bei der DKA, <b>aber</b> das Restinsulin reicht aus, um die <b>Lipolyse zu hemmen</b> → keine Ketonkörperbildung → <b>keine Azidose</b>.</li>
+        <li>Im Vordergrund: <b>extreme Dehydratation</b> + Elektrolytverlust (durch ausgeprägte Hyperglykämie/Polyurie).</li>
+      </ul>
+
+      <h3>Klinik</h3>
+      <p class="muted" style="margin:0 0 5px">Gemeinsame Symptome wie bei DKA; charakteristisch für das HHS:</p>
+      <ul>
+        <li><b>Schleichender Beginn</b> (lange Latenz bis zur Manifestation)</li>
+        <li><b>Ausgeprägte Exsikkose</b>, Hypotonie, Kollapsneigung</li>
+        <li>Häufiger <b>Vigilanzminderung</b> (somnolent bis komatös)</li>
+        <li><b>Keine</b> Kußmaul-Atmung, <b>kein</b> Azetongeruch (da keine Ketose)</li>
+      </ul>
+
+      <h3>Diagnostik &amp; typische Werte</h3>
+      <ul>
+        <li><b>Blutzucker:</b> sehr hoch, <b>600–1200 mg/dL</b> <span class="u">(33,3–66,6 mmol/L)</span></li>
+        <li><b>pH (arteriell):</b> &gt; 7,3 · <b>Bicarbonat:</b> &gt; 18 mmol/L</li>
+        <li><b>Ketone:</b> negativ / minimal · <b>Anionenlücke:</b> variabel</li>
+        <li><b>Vigilanz:</b> somnolent bis komatös</li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Durch das Restinsulin besteht eine <b>längere Latenz</b> bis zur Manifestation → deutlich <b>höhere Blutzuckerwerte</b> (&gt; 600 mg/dL) als beim Typ-1 / der DKA (&gt; 350 mg/dL).
+      </div>
+
+      <h3>Therapie-Besonderheiten <span class="muted" style="font-size:.82rem; font-weight:400">(Flüssigkeit &amp; Elektrolyte → Akuttherapie unten)</span></h3>
+      <div class="box cave">
+        <span class="lbl">Kernunterschied zur DKA</span>
+        <b>Zunächst keine Insulingabe</b> — die <b>Flüssigkeitstherapie</b> steht ganz im Vordergrund und senkt den Blutzucker oft schon allein erheblich.
+      </div>
+      <ul>
+        <li>Insulin erst nach initialer Rehydratation, niedrig dosiert</li>
+        <li>BZ-Ziel: max. bis <b>250–300 mg/dL</b> in den ersten 24 h (höher als bei der DKA), dann s.c.-Umstellung</li>
+        <li>Keine Azidose → i.d.R. <b>keine Bicarbonatgabe</b> nötig</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ GEMEINSAME AKUTTHERAPIE ============ -->
+  <div class="blockhead shared" id="akut">Gemeinsame Akuttherapie &amp; Monitoring <small>gilt für DKA und HHS</small></div>
+  <section style="scroll-margin-top:64px">
+
+    <div class="box cave">
+      <span class="lbl">Notfall</span>
+      Vital bedrohlich → <b>intensivmedizinische Behandlung</b>. Flüssigkeitsbilanz, Blutzucker, Elektrolyte und Säure-Basen-Status werden in <b>festen Zeitintervallen</b> kontrolliert.
+    </div>
+
+    <div class="card">
+      <h3>Die vier Therapiesäulen</h3>
+      <ul>
+        <li><b>1 · Flüssigkeit:</b> initial 1.000 mL Vollelektrolytlösung in der 1. Stunde, dann anpassen</li>
+        <li><b>2 · Blutzuckersenkung:</b> Normalinsulin, Low-Dose <span class="muted">(Insulin-Schema je Form → siehe oben; HHS: zunächst keins)</span></li>
+        <li><b>3 · Elektrolyte:</b> engmaschig kontrollieren &amp; ausgleichen, insb. <b>Kalium</b></li>
+        <li><b>4 · Bicarbonat:</b> nur in Ausnahmefällen bei <b>pH &lt; 7</b></li>
+      </ul>
+      <div class="box cave" style="margin-bottom:0">
+        <span class="lbl">Cave</span>
+        Bei Insulingabe und Azidoseausgleich stets auf die <b>Kaliumwerte</b> achten!
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Flüssigkeitssubstitution <span class="tag dka" style="background:var(--shared-bg); color:var(--shared)">wichtigste initiale Maßnahme</span></h3>
+      <p class="sub">Ziele &amp; Zugänge</p>
+      <ul>
+        <li>Dilution von Azidose/Hyperglykämie · Kreislaufstabilisierung · Organperfusion (insb. <b>Niere</b>!)</li>
+        <li>Großlumiger PVK oder ZVK, ggf. arterieller Katheter; ggf. Blasenkatheter zur Bilanzierung</li>
+        <li>Lösung: <b>balancierte Vollelektrolytlösung</b> (z.B. Ringer-Acetat)</li>
+      </ul>
+      <p class="sub">Steuerung</p>
+      <ul>
+        <li><b>1.000(–2.000) mL in der 1. Stunde</b>, dann i.d.R. 250–500 mL/h; über <b>24–36 h</b></li>
+        <li>Gesamtbedarf i.d.R. <b>5–10 L</b> bzw. ≥ 15 % des Körpergewichts</li>
+        <li>Steuerung nach Urinproduktion, MAP (&gt; 65 mmHg) und/oder ZVD (8–12 mmHg); im Verlauf meist 100–200 mL/h</li>
+      </ul>
+      <p class="sub">Beispielplan <span class="muted">(± Kaliumchlorid)</span></p>
+      <div class="plan">
+        <div class="pstep"><span class="vol">1.000 mL</span><span class="rate">über 1 h</span></div>
+        <div class="pstep"><span class="vol">1.000 mL</span><span class="rate">über 2 h · 500 mL/h</span></div>
+        <div class="pstep"><span class="vol">1.000 mL</span><span class="rate">über 2 h · 500 mL/h</span></div>
+        <div class="pstep"><span class="vol">1.000 mL</span><span class="rate">über 4 h · 250 mL/h</span></div>
+        <div class="pstep"><span class="vol">1.000 mL</span><span class="rate">über 4 h · 250 mL/h</span></div>
+        <div class="pstep"><span class="vol">1.000 mL</span><span class="rate">über 6 h · 167 mL/h</span></div>
+      </div>
+      <div class="box cave" style="margin-bottom:0">
+        <span class="lbl">Cave · Übertherapie</span>
+        Gefahr eines <b>Hirnödems</b>. Zeichen der Volumenüberladung: Ödeme, Gewichtszunahme, pulmonale Rasselgeräusche, Halsvenenstauung/ZVD↑. Erhöhtes Risiko bei chronischer Nierenkrankheit und Herzinsuffizienz.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Elektrolytmanagement</h3>
+      <p class="sub">Kalium</p>
+      <ul>
+        <li>Auch bei initialer Hyperkaliämie demaskiert sich im Verlauf <b>nahezu immer ein Kaliummangel</b></li>
+        <li><b>Zu Beginn:</b> keine Substitution, wenn Serumkalium &gt; 5,5 mmol/L</li>
+        <li><b>Mit Therapie</b> (2-stündliche Kontrolle, über ZVK): K 3,5–5,5 → 40 mval KCl/1.000 mL · K &lt; 3,5 → ggf. zusätzlich oral</li>
+        <li><b>Zielbereich:</b> hochnormal (4–5 mmol/L)</li>
+      </ul>
+      <p class="sub">Phosphat <span class="muted">(zurückhaltender)</span></p>
+      <ul>
+        <li>Risiko v.a. bei ausgeprägter Azidose</li>
+        <li>Indikation: Rhabdomyolyse (CK↑)/Muskelschwäche; &lt; 0,3 mmol/L erwägen, &lt; 0,1 mmol/L sicher. Max. 10 mmol/h (als Kaliumphosphat)</li>
+      </ul>
+      <div class="box cave">
+        <span class="lbl">Cave · Phosphat</span>
+        Zu schnelle/überschießende Gabe → <b>Hypokalzämie</b>. <b>Keine</b> Phosphatgabe bei bestehender Hypokalzämie!
+      </div>
+      <p class="sub">Bicarbonat</p>
+      <ul>
+        <li>Strenge Indikation: <b>nur bei pH &lt; 7</b>; immer mit Kalium, langsame Infusion</li>
+        <li>Formel: <b>NaHCO₃ = –BE × KG(kg) × 0,3</b></li>
+      </ul>
+      <div class="box cave" style="margin-bottom:0">
+        <span class="lbl">Cave · Bicarbonat</span>
+        Schneller Azidoseausgleich → Kaliumeinstrom nach intrazellulär → akute <b>Hypokaliämie</b>. Weitere Risiken: Hirnödem/zerebrale Azidose, verminderte Sauerstoffabgabe im Gewebe.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Labordiagnostik &amp; Messwert-Korrektur</h3>
+      <p class="sub">Programm</p>
+      <ul>
+        <li>BZ + Ketone (kapillär akut, venös im Verlauf) · <b>BGA</b> (pH, Base Excess, Bicarbonat, Anionenlücke)</li>
+        <li>Venös: Ketonkörper (β-Hydroxybutyrat), Elektrolyte (Na, K, Mg, Cl, Phosphat), Retention (Harnstoff, Kreatinin), Entzündung (Blutbild, CRP, ggf. Procalcitonin), HbA1c; Troponin/Lipase nach Verdacht</li>
+        <li>Urin: Ketone (±), Glucose (+)</li>
+      </ul>
+      <div class="box merke">
+        <span class="lbl">Merke · verfälschte Werte</span>
+        Azidose &amp; Hyperglykämie verfälschen die Messwerte: <b>Kalium falsch-hoch</b> (Mangel maskiert) · <b>Natrium falsch-niedrig</b> (korrigiertes Na: + 1,6 mmol/L pro 100 mg/dL BZ über 100) · <b>Phosphat falsch-hoch</b>.
+      </div>
+      <p class="sub">Kontrollen unter Therapie</p>
+      <ul>
+        <li><b>Stündlich</b> (Std 1–4): BZ, Na, K, BGA</li>
+        <li><b>2–4-stündlich:</b> Std 1–24 → Kreatinin, Harnstoff, Phosphat · ab Std 5 → BZ, Na, K, BGA</li>
+        <li><b>Täglich:</b> Ca, Albumin, Cl, CK, Blutbild, ggf. Transaminasen + Urin-Ketonkörper</li>
+      </ul>
+    </div>
+
+    <div class="card" style="padding:14px 19px; margin-bottom:0">
+      <p style="margin:0"><b>Diabetologische Anbindung:</b> nach erfolgreicher Therapie in jedem Fall diabetologische Betreuung anbieten (Prävention weiterer Episoden).</p>
+    </div>
+  </section>
+
+  <!-- KOMPLIKATIONEN -->
+  <section id="komplik">
+    <h2><span class="num">03</span> Komplikationen <span class="muted" style="font-size:.8rem; font-weight:400">· gilt für beide</span></h2>
+    <div class="card">
+      <p class="muted" style="margin:0 0 6px">Treten meist infolge einer <b>unzureichenden oder überschießenden Behandlung</b> auf.</p>
+      <ul>
+        <li><b>Hypoglykämie:</b> durch übermäßige, nicht angepasste Insulintherapie oder Überwässerung</li>
+        <li><b>Hypokaliämie:</b> durch zu schnelle Korrektur von Azidose und Hyperglykämie</li>
+        <li><b>Hyperchlorämische Azidose:</b> Chloridakkumulation (Anionenlücke wird mit Chlorid aus Infusionslösungen aufgefüllt)</li>
+        <li><b>Hirnödem:</b> bei Erwachsenen eine Rarität — Klinik: Kopfschmerzen, Vigilanzminderung, epileptischer Anfall, Inkontinenz, Bradykardie + Hypertension</li>
+        <li><b>Lungenödem:</b> Folge einer Überwässerung</li>
+        <li><b>Seltener:</b> Mesenterialischämie, Verbrauchskoagulopathie</li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Viele Komplikationen sind <b>therapieinduziert</b> – sorgfältige Beachtung der Therapieempfehlungen ist die beste Prophylaxe.
+      </div>
+    </div>
+    <p class="muted" style="margin:10px 2px 0"><b>ICD-10-GM:</b> 4. Stelle bei Diabetes mellitus (E10–E14): <b>.0</b> = mit Koma (hyperosmolar, mit/ohne Ketoazidose) · <b>.1</b> = mit Ketoazidose (ohne Koma).</p>
+  </section>
+
+  <footer>
+    Lernzusammenfassung zum hyperglykämischen Koma (DKA &amp; HHS). Inhaltlich entspricht sie der Vorlage; sie ersetzt keine Leitlinie und keine ärztliche Entscheidung. Pädiatrische Inhalte (u.a. azetonämisches Erbrechen) und die vollständige ICD-10-Codeliste sind ausgespart. Dosis- und Grenzwerte sind Richtwerte.
+  </footer>
+
+</div>
+</body>
+</html>

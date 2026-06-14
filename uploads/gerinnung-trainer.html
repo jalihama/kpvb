@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gerinnungs-Trainer · Vorlage</title>
+<!--
+  ============================================================================
+  GERINNUNGS-TRAINER · ENGINE-SKELETON  (Schwester-Tool zum Blutbild-Trainer)
+  ============================================================================
+  This is a WORKING SKELETON. Same engine/UX as the BGA trainer:
+    · dark "device" chrome, black-and-white lab printout, two-column panel
+    · Tier / Deck(bank) / Kategorie / High-Yield filters; Prüfungsmodus (Blind-Modus)
+    · per-sitting session memory (status pill + clickable progress dots)
+    · reveal mechanism, keyboard (Space / ← → / R / F), schema modal
+
+  TO ADAPT, EDIT ONLY THESE FOUR ZONES (search for "EDIT ZONE"):
+    1) REF         – reference ranges + units per coagulation parameter (VERIFY!)
+    2) PANEL_ORDER – row order of the main panel
+    3) STEPS       – the systematic reading schema (data-driven; any N steps)
+    4) KATS        – the category list for the dropdown + DDX keys
+    5) ANALYZERS   – the single coagulation printout layout (one profile)
+    6) DATA        – the cards (vignette + values + per-step answers)
+    7) DDX         – per-category differential lists (modal)
+
+  NO auto-compute: buildPanel() just renders the parameters a card supplies
+  (card.v) in PANEL_ORDER, flagged vs REF at render time. Put SCREENING values
+  in card.v (Quick, INR, aPTT, TZ, Fibrinogen, DDimer, Thrombo); put SPECIAL
+  tests (single factors, Mischversuch, anti-Xa, Protein C/S, AT, FV-Leiden,
+  Lupus-AK …) in card.ex[]. Numbers use DOT decimals; panel prints comma.
+
+  MEDICAL VALIDATION (before shipping — see the build-spec .md):
+    · every card has all 6 STEPS keys + dx/ac/fa/nx/nxa/zfw/zfy/zfm
+    · kat in KATS ; buildPanel never NaN ; flags fire (val<lo low / val>hi high)
+    · no ASCII apostrophe inside single-quoted strings (use German quotes)
+    · DDX keys in KATS ; the full script parses
+  ============================================================================
+-->
+<style>
+  :root{
+    --ink:#0c1219; --ink-2:#111a24; --ink-3:#18242f; --line:#243341;
+    --teal:#37c6ae; --teal-dim:#1f8576; --teal-deep:#0f2d2a;
+    --high:#e0554c; --low:#3e92d8; --amber:#e6a542; --amber-deep:#2c2415;
+    --text:#e9eef3; --text-dim:#93a2b1; --text-faint:#5c6b79;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0; background:var(--ink); color:var(--text); font-family:var(--sans); -webkit-text-size-adjust:100%}
+  .wrap{max-width:760px; margin:0 auto; padding:20px 16px 64px}
+
+  .masthead{display:flex; align-items:baseline; gap:10px; margin:4px 2px 16px; flex-wrap:wrap}
+  .logo{font-family:var(--mono); font-weight:700; font-size:18px; letter-spacing:.04em; color:var(--text)}
+  .logo b{color:var(--teal)}
+  .tagline{font-size:12px; color:var(--text-faint); letter-spacing:.02em}
+
+  .controls{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--ink-2)}
+  .seg button{font-family:var(--sans); font-size:12.5px; color:var(--text-dim); background:transparent; border:0; padding:7px 11px; cursor:pointer}
+  .seg button.on{background:var(--teal-deep); color:var(--teal)}
+  select{font-family:var(--sans); font-size:12.5px; color:var(--text); background:var(--ink); border:1px solid var(--line); border-radius:9px; padding:7px 9px; cursor:pointer; max-width:230px}
+  .switch{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:var(--text-dim); cursor:pointer; user-select:none}
+  .switch.mode{color:var(--teal); font-weight:600}
+  .ghost{font-family:var(--sans); font-size:12.5px; color:var(--text-dim); background:transparent; border:1px solid var(--line); border-radius:9px; padding:7px 11px; cursor:pointer}
+  .ghost:hover{border-color:var(--teal-dim); color:var(--teal)}
+  .score{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12px; color:var(--text-dim)}
+  .score b{color:var(--teal)} .score .wr{color:var(--high)}
+  .reset{background:transparent; border:1px solid var(--line); color:var(--text-faint); border-radius:8px; padding:4px 8px; cursor:pointer; font-size:13px}
+
+  /* progress dots (session memory) */
+  .dots{display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-bottom:16px; padding:11px 12px; background:var(--ink-2); border:1px solid var(--line); border-radius:12px}
+  .dots:empty{display:none}
+  .dots-lab{font-family:var(--mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.05em; margin-right:3px}
+  .dot{width:11px; height:11px; border-radius:50%; border:1.5px solid var(--text-faint); background:transparent; padding:0; cursor:pointer; transition:transform .1s}
+  .dot:hover{transform:scale(1.35)}
+  .dot.d-seen{background:var(--text-faint); border-color:var(--text-faint)}
+  .dot.d-right{background:var(--teal); border-color:var(--teal)}
+  .dot.d-wrong{background:var(--high); border-color:var(--high)}
+  .dot.cur{box-shadow:0 0 0 2px var(--ink-2),0 0 0 4px var(--text); transform:scale(1.15)}
+  .dots-rest{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--text-dim); letter-spacing:.04em}
+
+  .card{background:var(--ink-2); border:1px solid var(--line); border-radius:16px; padding:18px 18px 20px}
+  .card-head{display:flex; align-items:center; gap:10px; margin-bottom:14px}
+  .idtag-l{font-family:var(--mono); font-size:11px; color:var(--text-faint); letter-spacing:.06em}
+  .status-pill{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.04em; padding:2px 8px; border-radius:999px; text-transform:uppercase; white-space:nowrap}
+  .st-right{color:var(--teal); background:var(--teal-deep); border:1px solid var(--teal-dim)}
+  .st-wrong{color:var(--high); background:#2c1714; border:1px solid #5e2a25}
+  .masked{margin-left:auto; font-size:11.5px; color:var(--text-faint); font-style:italic}
+
+  /* ---- black-and-white lab printout sitting on the dark chrome ---- */
+  .printout{background:#f5f5f3; color:#15181c; border-radius:10px; padding:14px 16px; box-shadow:0 1px 0 #cfcfca inset}
+  .po-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; border-bottom:2px solid #20232a; padding-bottom:5px; margin-bottom:4px}
+  .po-title{font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.14em; color:#15181c}
+  .po-meta{font-family:var(--mono); font-size:10px; color:#6b7178; letter-spacing:.02em}
+  .vignette{font-family:var(--sans); font-size:12.5px; line-height:1.5; color:#2a2e33; margin:8px 0 6px; font-style:italic}
+  .po-cols{display:grid; grid-template-columns:1fr 1fr; gap:0 26px}
+  table.bga{width:100%; border-collapse:collapse; font-family:var(--mono)}
+  td{padding:2px 0; vertical-align:baseline}
+  td.lab{font-size:11px; color:#23272c}
+  td.val{font-size:11px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; padding-left:8px; color:#15181c}
+  td.val.ab{font-weight:700}
+  td.val .u{color:#6b7178; font-weight:400; font-size:9.5px}
+  td.val .flag{font-weight:700}
+  td.ref{font-size:9px; text-align:right; white-space:nowrap; color:#9298a0; padding-left:8px}
+  tr.sec td{font-size:8px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#111; border-bottom:1.5px solid #20232a; padding:8px 0 2px}
+  tr.sec:first-child td{padding-top:1px}
+  .zusatz{margin-top:8px; border-top:1px dashed #b9b9b3; padding-top:6px}
+  .zusatz .zt{font-family:var(--mono); font-size:8px; letter-spacing:.14em; text-transform:uppercase; color:#6b7178; margin-bottom:3px}
+  .zusatz table{width:100%; border-collapse:collapse; font-family:var(--mono)}
+
+  .prompt{font-size:12px; color:var(--text-dim); line-height:1.5; margin:14px 2px 12px}
+  .reveal-btn{width:100%; background:var(--teal-deep); color:var(--teal); border:1px solid var(--teal-dim); border-radius:10px; padding:11px; font-size:13.5px; font-weight:600; cursor:pointer}
+  .reveal-btn:hover{background:#123733}
+
+  .answer{margin-top:4px}
+  .ans-head{display:flex; align-items:center; gap:8px; margin:6px 2px 12px}
+  .tier-pill{font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--ink-3); color:var(--text-dim); border:1px solid var(--line)}
+  .kat-pill{font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--teal-deep); color:var(--teal); border:1px solid var(--teal-dim)}
+  .hy-pill{font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(214,164,58,.15); color:#e3b24a; border:1px solid rgba(214,164,58,.42)}
+  .hy-mark{color:#c98f1f; font-weight:700; white-space:nowrap}
+  .step{display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--line)}
+  .step-n{flex:0 0 auto; width:22px; height:22px; border-radius:50%; background:var(--ink-3); color:var(--teal); font-family:var(--mono); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center}
+  .step-b{flex:1}
+  .step-k{font-size:11px; color:var(--text-faint); letter-spacing:.04em; text-transform:uppercase; margin-bottom:2px}
+  .step-v{font-size:13px; color:var(--text); line-height:1.5}
+  .block{margin:12px 0; padding:11px 13px; border-radius:10px; background:var(--ink-3); border:1px solid var(--line)}
+  .block .bk{display:block; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px}
+  .block .bv{font-size:13.5px; line-height:1.55; color:var(--text)}
+  .block.dx{background:var(--teal-deep); border-color:var(--teal-dim)} .block.dx .bk{color:var(--teal)}
+  .block.fa{background:var(--amber-deep); border-color:#5a4a1e} .block.fa .bk{color:var(--amber)}
+  .zf{margin:12px 0; padding:11px 13px; border-radius:10px; background:var(--ink-3); border:1px solid var(--line)}
+  .zf-row{display:flex; gap:8px; padding:3px 0; font-size:12.5px; line-height:1.5}
+  .zf-k{flex:0 0 96px; color:var(--teal); font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; padding-top:2px}
+  .nx .bv{color:var(--text)}
+  .nxa{margin-top:7px; padding-top:7px; border-top:1px dashed var(--line); font-size:12.5px; line-height:1.55; color:var(--text-dim)}
+  .nxa-k{color:var(--teal); font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; margin-right:4px}
+  .grade{display:flex; gap:10px; margin-top:14px}
+  .grade button{flex:1; border-radius:10px; padding:10px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid}
+  .g-right{background:var(--teal-deep); color:var(--teal); border-color:var(--teal-dim)}
+  .g-wrong{background:#2c1714; color:var(--high); border-color:#5e2a25}
+  .empty{padding:30px; text-align:center; color:var(--text-faint); font-size:13px}
+
+  .navbar{display:flex; align-items:center; gap:10px; margin-top:16px}
+  .navbar button{background:var(--ink-2); border:1px solid var(--line); color:var(--text-dim); border-radius:10px; padding:9px 14px; font-size:13px; cursor:pointer}
+  .navbar button:disabled{opacity:.35; cursor:default}
+  .counter{margin:0 auto; font-family:var(--mono); font-size:12px; color:var(--text-faint)}
+
+  .modal{position:fixed; inset:0; background:rgba(4,8,12,.74); display:none; align-items:center; justify-content:center; padding:18px; z-index:50}
+  .modal.open{display:flex}
+  .modal-box{background:var(--ink-2); border:1px solid var(--line); border-radius:16px; max-width:560px; width:100%; max-height:84vh; overflow:auto; padding:20px}
+  .modal-box h3{margin:0 0 10px; font-family:var(--mono); font-size:14px; letter-spacing:.04em; color:var(--teal)}
+  .modal-box p, .modal-box li{font-size:13px; line-height:1.55; color:var(--text-dim)}
+  .modal-close{float:right; background:transparent; border:1px solid var(--line); color:var(--text-faint); border-radius:8px; padding:3px 9px; cursor:pointer}
+  .ddx-cat{padding:12px 0; border-top:1px solid var(--line)}
+  .ddx-cat:first-of-type{border-top:0}
+  .ddx-cat.here{background:var(--teal-deep); border-radius:12px; padding:12px 12px; margin:0 -12px}
+  .ddx-h{margin:0 0 6px; font-family:var(--mono); font-size:13px; letter-spacing:.03em; color:var(--teal)}
+  .ddx-intro{margin:0 0 12px; font-size:12.5px; line-height:1.5; color:var(--text-dim)}
+  .ddx-item{margin:0 0 11px; padding-left:11px; border-left:2px solid var(--line)}
+  .ddx-dz{font-size:12.5px; font-weight:700; color:var(--text); margin-bottom:2px}
+  .ddx-line{font-size:12px; line-height:1.5; color:var(--text-dim)}
+  .ddx-k{display:inline-block; min-width:48px; font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.04em; color:var(--text-faint); text-transform:uppercase}
+
+  @media (max-width:680px){
+    .po-cols{grid-template-columns:1fr; gap:0}
+    .score{order:9; width:100%; margin-left:0; justify-content:flex-start}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <span class="logo">Gerinnung<b>·</b>Trainer</span>
+    <span class="tagline">Kenntnisprüfung · systematische Befundung in Schritten</span>
+  </div>
+
+  <div class="controls">
+    <div class="seg" id="tierSeg">
+      <button data-tier="all" class="on">Alle</button>
+      <button data-tier="1">Tier&nbsp;1</button>
+      <button data-tier="2">Tier&nbsp;2</button>
+      <button data-tier="3">Tier&nbsp;3</button>
+    </div>
+    <div class="seg" id="bankSeg">
+      <button data-bank="all" class="on">Beide&nbsp;Decks</button>
+      <button data-bank="kern">Kern</button>
+      <button data-bank="ext">Erweiterung</button>
+    </div>
+    <div class="seg" id="hySeg">
+      <button data-hy="all" class="on">Alle&nbsp;Karten</button>
+      <button data-hy="1">★&nbsp;High-Yield</button>
+    </div>
+    <select id="katSel"></select>
+    <label class="switch mode"><input type="checkbox" id="examChk" checked> Prüfungsmodus</label>
+    <label class="switch"><input type="checkbox" id="klinikChk"> Klinik anzeigen</label>
+    <label class="switch"><input type="checkbox" id="flagsChk"> Flags anzeigen</label>
+    <label class="switch"><input type="checkbox" id="morphChk"> Morphologie anzeigen</label>
+    <label class="switch"><input type="checkbox" id="refChk"> Referenz anzeigen</label>
+    <button class="ghost" id="schemaBtn">Schema &amp; Normwerte</button>
+    <button class="ghost" id="ddxBtn">Differenzialdiagnosen</button>
+    <button class="ghost" id="shuffleBtn">Mischen</button>
+    <div class="score">
+      Richtig&nbsp;<b id="rCount">0</b> · Falsch&nbsp;<span class="wr" id="fCount">0</span> · Bearbeitet&nbsp;<b id="doneCount">0&nbsp;/&nbsp;0</b>
+      <button class="reset" id="resetBtn" title="Sitzung zurücksetzen">↺</button>
+    </div>
+  </div>
+
+  <div class="dots" id="dots"></div>
+
+  <main id="cardHost"></main>
+
+  <div class="navbar">
+    <button id="prevBtn">← Zurück</button>
+    <div class="counter" id="counter">– / –</div>
+    <button id="nextBtn">Weiter →</button>
+  </div>
+</div>
+
+<div class="modal" id="schemaModal">
+  <div class="modal-box">
+    <button class="modal-close" id="schemaClose">✕</button>
+    <h3>Systematische Befundung</h3>
+    <ol id="schemaList"></ol>
+    <h3 style="margin-top:16px">Normwerte (Erwachsene, orientierend)</h3>
+    <p id="schemaRef" style="font-family:var(--mono); font-size:11.5px; white-space:pre-line"></p>
+    <p style="margin-top:10px; color:var(--text-faint)">Normbereiche sind labor- und geschlechtsabhängig. An die Werte der jeweiligen KP/Klinik anpassen.</p>
+  </div>
+</div>
+
+<div class="modal" id="ddxModal">
+  <div class="modal-box">
+    <button class="modal-close" id="ddxClose">✕</button>
+    <h3>Differenzialdiagnosen nach Befundmuster</h3>
+    <p style="font-size:12px; color:var(--text-faint); margin:0 0 4px">Häufige Ursachen je Kategorie und die Tests zur Abgrenzung. Die Kategorie der aktuellen Karte ist hervorgehoben.</p>
+    <div id="ddxBody"></div>
+  </div>
+</div>
+
+<script>
+/* ===== small helpers ===== */
+function fmt(n,dec,sign){
+  if(n===null||n===undefined||(typeof n==='number'&&isNaN(n))) return '–';
+  if(typeof n!=='number') return n;
+  let s=n.toFixed(dec).replace('.',',');
+  if(sign && n>0) s='+'+s;
+  return s;
+}
+
+/* ============================================================
+   EDIT ZONE 1 — REFERENCE RANGES  (label, unit, [lo, hi], decimals)
+   buildPanel reads these. Adjust to your lab / KP conventions.
+   ============================================================ */
+const REF = {
+  Quick:     {lab:'Quick (TPZ)',  u:'%',    lo:70,  hi:130, dec:0, ref:'70–130'},
+  INR:       {lab:'INR',          u:'',     lo:0.8, hi:1.2, dec:1, ref:'0,8–1,2'},
+  aPTT:      {lab:'aPTT',         u:'s',    lo:26,  hi:36,  dec:0, ref:'26–36'},
+  TZ:        {lab:'Thrombinzeit', u:'s',    lo:14,  hi:21,  dec:0, ref:'14–21'},
+  Fibrinogen:{lab:'Fibrinogen',   u:'g/l',  lo:1.8, hi:4.0, dec:1, ref:'1,8–4,0'},
+  DDimer:    {lab:'D-Dimere',     u:'mg/l', lo:0,   hi:0.5, dec:2, ref:'< 0,5'},
+  Thrombo:   {lab:'Thrombozyten', u:'/nl',  lo:150, hi:400, dec:0, ref:'150–400'}
+  // VERIFY ranges per your lab / KP convention. Put SPECIAL tests in card.ex[] (not here)
+  // unless you want them flagged as a main-panel row.
+};
+
+// row order of the main coagulation panel
+const PANEL_ORDER = ['Quick','INR','aPTT','TZ','Fibrinogen','DDimer','Thrombo'];
+
+/* ============================================================
+   buildPanel(card): renders card.v in PANEL_ORDER -> flagged rows.
+   No auto-compute (coagulation has no CBC-style indices).
+   Each row: {id, sec, label, unit, ref, val, lo, hi, dec, fixedNorm}
+   ============================================================ */
+function buildPanel(card){
+  const v = card.v || {};
+  const P = [];
+  PANEL_ORDER.forEach(id=>{
+    if(v[id]==null) return;
+    const m = REF[id]; if(!m) return;
+    P.push({id, sec:'Gerinnungsstatus', label:m.lab, unit:m.u, ref:(m.ref||''),
+            val:v[id], lo:m.lo, hi:m.hi, dec:m.dec, fixedNorm:false});
+  });
+  return P;
+}
+
+/* ============================================================
+   EDIT ZONE 4 — ANALYZER PROFILES (same values, different layout/labels)
+   Add/adjust to mirror the analyzer used in your KP/clinic.
+   `labels` overrides the panel label per id; `cols` sets grouping/order.
+   ============================================================ */
+const ANALYZERS = {
+  gen: {
+    name:'Gerinnungslabor', title:'GERINNUNGSSTATUS', meta:'Citratplasma · Globaltests + Spezialanalytik',
+    cols:[
+      [ {h:'Globaltests (plasmatisch)', ids:['Quick','INR','aPTT','TZ']} ],
+      [ {h:'Fibrinogen / Fibrinolyse', ids:['Fibrinogen','DDimer']},
+        {h:'Thrombozyten', ids:['Thrombo']} ]
+    ]
+  }
+};
+
+/* ============================================================
+   EDIT ZONE 2 — READING SCHEMA (data-driven; any number of steps)
+   Each card must carry a string for every `key` below.
+   ============================================================ */
+const STEPS = [
+  {key:'anam',       n:'1', label:'Anamnese — Blutungstyp / Thromboseneigung'},
+  {key:'thrombo',    n:'2', label:'Thrombozyten — Zahl / Funktion'},
+  {key:'quick',      n:'3', label:'Quick / INR — exogenes (extrinsisches) System'},
+  {key:'aptt',       n:'4', label:'aPTT — endogenes (intrinsisches) System'},
+  {key:'endstrecke', n:'5', label:'Fibrinogen / TZ / D-Dimere — Endstrecke & Fibrinolyse'},
+  {key:'synth',      n:'6', label:'Synthese / Mischversuch / Verdachtsdiagnose'}
+];
+
+/* ============================================================
+   EDIT ZONE 3 — CATEGORIES (first entry is the "all" sentinel)
+   ============================================================ */
+const KATS = ['Alle Kategorien',
+  'Verlängerte aPTT (isoliert)','Verlängerter Quick / INR (isoliert)','Quick ↓ und aPTT ↑',
+  'Thrombozytär bedingte Blutung','Verbrauchskoagulopathie (DIC)','Hyperfibrinolyse',
+  'Thrombophilie','Medikamenten-Monitoring / -effekte','Normalbefund'];
+
+/* ============================================================
+   EDIT ZONE 5 — CARDS  (replace the single placeholder with your set)
+   Card fields:
+     id, tier(1/2/3), kat(must be in KATS), bank('ext' for Erweiterung; omit for Kern),
+     hy(1 = High-Yield; omit otherwise),
+     vig,                                      // German vignette
+     v:{ Quick, INR, aPTT, TZ, Fibrinogen, DDimer, Thrombo }   // only the relevant ones; DOT decimals
+     ex:[{label,value,unit,flag}]              // special tests: FVIII/FIX/vWF/FXIII, Mischversuch,
+                                               // anti-Xa, Protein C/S, AT, FV-Leiden, Lupus-AK …
+     anam, thrombo, quick, aptt, endstrecke, synth   // the STEPS answers (keys MUST match STEPS)
+     dx, ac, fa, nx, nxa,                      // Diagnose / Erster Schritt / ⚠ Falle / Frage / Antwort
+     zfw, zfy, zfm                             // Kurz erklärt: Was / Warum / Management
+   STRINGS: use German quotes „ "  (never an ASCII apostrophe inside '…').
+   ============================================================ */
+const DATA = [
+{id:1, tier:1, kat:'Normalbefund',
+ vig:'62-jähriger Patient zur präoperativen Vorbereitung (elektive Hernien-OP). Keine spontanen Blutungen, keine auffällige Blutung bei früheren Eingriffen oder Zahnextraktionen, keine Antikoagulation. Familienanamnese leer.',
+ v:{Quick:100, INR:1.0, aPTT:30, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Blutungsanamnese', value:'unauffällig', unit:'', flag:'norm'}],
+ anam:'Die gezielte Blutungsanamnese ist wichtiger als das Routine-Screening: Frage nach Hämatomen, Nasen-, Zahnfleisch- und Schleimhautblutungen, Blutung nach OP/Zahnextraktion/Geburt, Menstruationsstärke, Medikamenten (ASS, Antikoagulanzien) und Familienanamnese. Hier komplett unauffällig.',
+ thrombo:'Thrombozytenzahl normal (250/nl). Eine normale Zahl schließt eine Funktionsstörung jedoch nicht aus.',
+ quick:'Quick 100 % / INR 1,0 — extrinsisches System (Faktor VII und gemeinsame Endstrecke) unauffällig.',
+ aptt:'aPTT 30 s — intrinsisches System (Faktoren VIII, IX, XI, XII) unauffällig.',
+ endstrecke:'Fibrinogen, Thrombinzeit und D-Dimere im Normbereich — gemeinsame Endstrecke und Fibrinolyse unauffällig.',
+ synth:'Alle Globaltests normal und leere Blutungsanamnese → unauffälliger Gerinnungsstatus. Wichtig: normale Globaltests schließen ein von-Willebrand-Syndrom, eine Thrombozytenfunktionsstörung und einen Faktor-XIII-Mangel NICHT aus.',
+ dx:'Unauffälliger Gerinnungsstatus (Normalbefund).',
+ ac:'Bei leerer Blutungsanamnese ist vor Standardeingriffen keine weitere Gerinnungsdiagnostik nötig. Bei anamnestischer Blutungsneigung trotz normaler Globaltests gezielt vWF, Thrombozytenfunktion und Faktor XIII prüfen.',
+ fa:'Ein normaler Quick und eine normale aPTT „beweisen" keine intakte Hämostase: von-Willebrand-Syndrom, Thrombozytenfunktionsstörungen und Faktor-XIII-Mangel können bei normalen Globaltests vorliegen. Die Anamnese steuert die Diagnostik.',
+ nx:'Welche Normwerte nennen Sie für Quick, INR, aPTT, Thrombinzeit, Fibrinogen, D-Dimere und Thrombozyten?',
+ nxa:'Quick 70–130 %, INR 0,8–1,2, aPTT 26–36 s, Thrombinzeit 14–21 s, Fibrinogen 1,8–4,0 g/l, D-Dimere unter 0,5 mg/l, Thrombozyten 150–400/nl (labor- und altersabhängig).',
+ zfw:'Regelrechter Gerinnungsstatus ohne Hinweis auf eine plasmatische oder thrombozytäre Störung.',
+ zfy:'Alle Komponenten (Thrombozyten, extrinsisches und intrinsisches System, Endstrecke) liegen im Normbereich.',
+ zfm:'Keine Therapie; Diagnostik nur anamnesegesteuert.'},
+
+{id:2, tier:1, kat:'Verlängerte aPTT (isoliert)', hy:1,
+ vig:'19-jähriger Mann mit erneutem schmerzhaftem Kniegelenkserguss nach Bagatelltrauma. Seit der Kindheit rezidivierende Gelenk- und Muskelblutungen. Ein Onkel mütterlicherseits sei „Bluter". Petechien fehlen.',
+ v:{Quick:100, INR:1.0, aPTT:62, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Faktor VIII', value:'2', unit:'%', flag:'low'},
+     {label:'Faktor IX', value:'normal', unit:'', flag:'norm'},
+     {label:'vWF:Ag / vWF:Akt', value:'normal', unit:'', flag:'norm'},
+     {label:'Mischversuch (1:1)', value:'Korrektur', unit:'', flag:'norm'}],
+ anam:'Plasmatischer Blutungstyp: tiefe Einblutungen, Muskelhämatome und vor allem Hämarthros, typischerweise verzögert. X-chromosomal-rezessiv → Männer erkranken, Mütter sind Konduktorinnen (hier Onkel mütterlicherseits).',
+ thrombo:'Thrombozytenzahl normal → spricht gegen eine thrombozytäre Ursache; passend zum plasmatischen Blutungstyp.',
+ quick:'Quick/INR normal → extrinsisches System intakt (Faktoren VII, X, V, II, Fibrinogen).',
+ aptt:'aPTT isoliert verlängert (62 s) → Defekt im intrinsischen System (VIII, IX, XI, XII).',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal → Endstrecke und Fibrinolyse unauffällig.',
+ synth:'Mischversuch korrigiert → Faktormangel (kein Inhibitor). Einzelfaktoren: Faktor VIII stark erniedrigt bei normalem IX und normalem vWF → Hämophilie A.',
+ dx:'Hämophilie A (Faktor-VIII-Mangel), X-chromosomal-rezessiv.',
+ ac:'Einzelfaktorenbestimmung (FVIII, zusätzlich FIX und vWF zur Abgrenzung), Schweregradeinteilung nach Restaktivität; einen Hemmkörper (FVIII-Inhibitor, Bethesda-Test) ausschließen.',
+ fa:'Hämophilie B (FIX-Mangel) zeigt dasselbe Globalmuster — nur die Einzelfaktoren unterscheiden. Und ein vWS kann über den FVIII-Carrier ebenfalls einen FVIII-Abfall und damit eine aPTT-Verlängerung verursachen → vWF immer mitbestimmen.',
+ nx:'Wie behandeln Sie eine akute Gelenkblutung bei Hämophilie A?',
+ nxa:'Faktor-VIII-Substitution; bei milder Form Desmopressin (DDAVP) zur Freisetzung von endogenem FVIII/vWF. Gelenk ruhigstellen und kühlen, keine i.m.-Injektionen, kein ASS/NSAR.',
+ zfw:'Angeborener Mangel an Gerinnungsfaktor VIII.',
+ zfy:'FVIII gehört zum intrinsischen System → isolierte aPTT-Verlängerung; der Quick bleibt normal, weil das extrinsische System ohne FVIII auskommt.',
+ zfm:'FVIII-Substitution (bei milder Form Desmopressin); Plättchenhemmer meiden; Anbindung an ein Hämophiliezentrum.'},
+
+{id:3, tier:2, kat:'Verlängerte aPTT (isoliert)',
+ vig:'24-jähriger Mann mit wiederholten Gelenk- und Muskelblutungen seit dem Kleinkindalter, klinisch nicht von einer Hämophilie A zu unterscheiden. Positive Familienanamnese auf der mütterlichen Seite.',
+ v:{Quick:100, INR:1.0, aPTT:58, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Faktor IX', value:'3', unit:'%', flag:'low'},
+     {label:'Faktor VIII', value:'normal', unit:'', flag:'norm'},
+     {label:'vWF:Ag / vWF:Akt', value:'normal', unit:'', flag:'norm'},
+     {label:'Mischversuch (1:1)', value:'Korrektur', unit:'', flag:'norm'}],
+ anam:'Plasmatischer Blutungstyp wie bei Hämophilie A (Hämarthros, Muskelblutungen, verzögert); ebenfalls X-chromosomal-rezessiv.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick/INR normal → extrinsisches System intakt.',
+ aptt:'aPTT isoliert verlängert → intrinsischer Defekt.',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal.',
+ synth:'Mischversuch korrigiert → Faktormangel. Einzelfaktoren: Faktor IX stark erniedrigt bei normalem VIII → Hämophilie B.',
+ dx:'Hämophilie B (Faktor-IX-Mangel), X-chromosomal-rezessiv.',
+ ac:'Einzelfaktorenbestimmung (FIX, plus FVIII/vWF zur Abgrenzung); Schweregrad nach Restaktivität; Inhibitor ausschließen.',
+ fa:'Klinisch und im Globaltest nicht von Hämophilie A unterscheidbar — die Einzelfaktoren (IX statt VIII) trennen. Desmopressin wirkt NICHT bei Hämophilie B, weil es FVIII/vWF freisetzt, nicht aber FIX.',
+ nx:'Womit substituieren Sie bei Hämophilie B, und warum hilft Desmopressin nicht?',
+ nxa:'Faktor-IX-Konzentrat. Desmopressin setzt FVIII und vWF frei, nicht aber FIX — daher bei Hämophilie B unwirksam.',
+ zfw:'Angeborener Mangel an Gerinnungsfaktor IX.',
+ zfy:'Auch FIX ist Teil des intrinsischen Systems → isolierte aPTT-Verlängerung bei normalem Quick.',
+ zfm:'FIX-Substitution; Plättchenhemmer meiden; Hämophiliezentrum.'},
+
+{id:4, tier:2, kat:'Verlängerte aPTT (isoliert)', bank:'ext', hy:1,
+ vig:'48-jährige Patientin, völlig beschwerdefrei. Im präoperativen Routinelabor fällt eine deutlich verlängerte aPTT auf. Frühere Operationen und Zahnextraktionen verliefen ohne verstärkte Blutung; keine Hämatomneigung.',
+ v:{Quick:100, INR:1.0, aPTT:70, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Faktor XII', value:'4', unit:'%', flag:'low'},
+     {label:'Faktor VIII / IX', value:'normal', unit:'', flag:'norm'},
+     {label:'vWF:Ag / vWF:Akt', value:'normal', unit:'', flag:'norm'},
+     {label:'Mischversuch (1:1)', value:'Korrektur', unit:'', flag:'norm'}],
+ anam:'Trotz deutlich verlängerter aPTT KEINE Blutungsanamnese — das ist der entscheidende Hinweis. Kein Hämarthros, keine OP-Blutungen.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick/INR normal → extrinsisches System intakt.',
+ aptt:'aPTT deutlich verlängert (70 s) → intrinsischer „Defekt" im Labor.',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal.',
+ synth:'Mischversuch korrigiert (Faktormangel). Faktor XII stark erniedrigt bei normalem VIII/IX → Faktor-XII-Mangel. Faktor XII verlängert zwar die aPTT, ist aber für die Hämostase in vivo entbehrlich → kein Blutungsrisiko.',
+ dx:'Faktor-XII-Mangel (Hageman-Faktor-Mangel).',
+ ac:'Blutungsanamnese erheben und Einzelfaktoren bestimmen; bei isoliertem FXII-Mangel ist keine Therapie und keine Verschiebung einer OP nötig.',
+ fa:'Klassische Prüfungsfalle: lange aPTT, aber KEIN Blutungsrisiko (FXII wird in vivo nicht benötigt). Nicht substituieren, OP nicht verschieben — im Gegensatz zur Hämophilie, die bei gleicher Globalkonstellation blutet.',
+ nx:'Bei einer Patientin fällt präoperativ eine isoliert verlängerte aPTT auf — wie gehen Sie vor?',
+ nxa:'Zuerst Blutungsanamnese. Dann Einzelfaktoren und Mischversuch: ein Faktormangel (Hämophilie, FXII) korrigiert, ein Inhibitor nicht. Bei isoliertem FXII-Mangel mit leerer Anamnese kann operiert werden — keine Substitution.',
+ zfw:'Mangel an Faktor XII (Kontaktphase) — verlängert die aPTT ohne klinische Blutungsneigung.',
+ zfy:'Faktor XII startet die intrinsische Gerinnung nur in vitro; in vivo läuft die Hämostase ohne ihn → aPTT verlängert, aber keine Blutung.',
+ zfm:'Keine Therapie, keine OP-Verschiebung; Aufklärung des Patienten und Vermerk im Befund.'},
+
+{id:5, tier:2, kat:'Verlängerte aPTT (isoliert)', bank:'ext', hy:1,
+ vig:'37-jährige Frau, bei der nach einer tiefen Beinvenenthrombose eine isoliert verlängerte aPTT auffällt. Keine Blutungsneigung. Anamnestisch zwei Frühaborte.',
+ v:{Quick:100, INR:1.0, aPTT:48, TZ:17, Fibrinogen:3.0, DDimer:0.4, Thrombo:220},
+ ex:[{label:'Mischversuch (1:1)', value:'keine Korrektur', unit:'', flag:'norm'},
+     {label:'Lupusantikoagulans', value:'positiv', unit:'', flag:'norm'},
+     {label:'Anti-Cardiolipin-AK', value:'positiv', unit:'', flag:'norm'},
+     {label:'Faktor VIII', value:'normal', unit:'', flag:'norm'}],
+ anam:'Keine Blutung, sondern Thrombose und Aborte → das Muster passt nicht zu einem Faktormangel. Hinweis auf einen erworbenen Inhibitor.',
+ thrombo:'Thrombozytenzahl im Normbereich (eine milde Thrombopenie ist beim Antiphospholipidsyndrom aber möglich).',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT verlängert (48 s).',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere unauffällig.',
+ synth:'Entscheidend ist der Mischversuch: KEINE Korrektur mit Normalplasma → Inhibitor, nicht Faktormangel. Zusammen mit positivem Lupusantikoagulans und Anti-Cardiolipin-AK → Lupusantikoagulans/Antiphospholipid-Antikörper.',
+ dx:'Lupusantikoagulans (Antiphospholipid-Antikörper) mit paradoxer Thromboseneigung.',
+ ac:'Bestätigung der persistierenden Antikörper nach ≥ 12 Wochen (Lupusantikoagulans, Anti-Cardiolipin, Anti-Beta-2-Glykoprotein-I); an ein Antiphospholipidsyndrom denken (Thrombose, habituelle Aborte).',
+ fa:'Paradox: die aPTT ist verlängert (in vitro), klinisch besteht aber THROMBOSE-Neigung, nicht Blutung. Der Mischversuch (keine Korrektur) trennt den Inhibitor von Faktormängeln wie Hämophilie und FXII-Mangel (beide korrigieren).',
+ nx:'Eine verlängerte aPTT korrigiert sich im Mischversuch nicht — was bedeutet das?',
+ nxa:'Es liegt ein Inhibitor vor (kein Faktormangel). Beim Lupusantikoagulans besteht trotz verlängerter aPTT eine Thromboseneigung; bei der erworbenen Hemmkörperhämophilie dagegen eine Blutungsneigung (FVIII-Inhibitor).',
+ zfw:'Erworbener Antiphospholipid-Antikörper, der phospholipidabhängige Gerinnungstests (aPTT) in vitro verlängert.',
+ zfy:'Der Antikörper stört den Test (verlängerte aPTT), aktiviert in vivo aber Gerinnung und Endothel → Thrombose statt Blutung; daher keine Korrektur im Mischversuch.',
+ zfm:'Antikoagulation je nach Klinik; Diagnosesicherung mit Persistenznachweis; bei APS in der Schwangerschaft Heparin + ASS.'},
+
+{id:6, tier:2, kat:'Verlängerter Quick / INR (isoliert)',
+ vig:'71-jähriger Patient, vor 3 Tagen wegen neu diagnostiziertem Vorhofflimmern auf Phenprocoumon (Marcumar) eingestellt. Routine-Kontrolle. Keine Blutung.',
+ v:{Quick:55, INR:1.6, aPTT:32, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Faktor VII', value:'stark erniedrigt', unit:'', flag:'low'},
+     {label:'Faktor II / X', value:'leicht erniedrigt', unit:'', flag:'low'},
+     {label:'Faktor V', value:'normal', unit:'', flag:'norm'},
+     {label:'Mischversuch (1:1)', value:'Korrektur', unit:'', flag:'norm'}],
+ anam:'Kein spontaner Blutungstyp; entscheidend ist die Medikamentenanamnese (frisch begonnener Vitamin-K-Antagonist).',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick erniedrigt / INR erhöht → das extrinsische System ist zuerst betroffen, weil Faktor VII die kürzeste Halbwertszeit hat (etwa 6 Stunden).',
+ aptt:'aPTT noch normal → die intrinsisch wirksamen Faktoren II, IX, X sind noch ausreichend; bei fortgesetzter Cumarinwirkung steigt später auch die aPTT.',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal.',
+ synth:'Isolierter Quick-Abfall/INR-Anstieg bei frisch begonnenem VKA → frühe Cumarinwirkung (Faktor VII zuerst). Mischversuch korrigiert (Faktormangel, kein Inhibitor).',
+ dx:'Frühe Vitamin-K-Antagonisten-Wirkung (Faktor-VII-Abfall).',
+ ac:'Medikamentenanamnese, INR-Verlauf und Zielbereich festlegen (bei Vorhofflimmern meist INR 2,0–3,0). Cave initiale Hyperkoagulabilität, da Protein C ebenfalls rasch abfällt.',
+ fa:'Differenzialdiagnose des isolierten Quick-Abfalls: angeborener Faktor-VII-Mangel, früher VKA oder beginnende Lebersynthesestörung — Medikamentenanamnese, Verlauf und Lebersynthese (Albumin, Faktor V) trennen. Zu VKA-Beginn besteht zunächst eine prothrombotische Phase (Protein C/S fallen schnell) → mit Heparin überlappen.',
+ nx:'Warum ist zu Beginn der VKA-Therapie zuerst der Quick/INR verändert und nicht die aPTT?',
+ nxa:'Faktor VII hat die kürzeste Halbwertszeit der Vitamin-K-abhängigen Faktoren; das extrinsische System (Quick) reagiert daher zuerst, die aPTT folgt erst beim Abfall von II, IX und X.',
+ zfw:'Beginnende Hemmung der Vitamin-K-abhängigen Faktoren II, VII, IX, X durch Cumarine.',
+ zfy:'Faktor VII fällt zuerst (kurze Halbwertszeit) → Quick-Abfall/INR-Anstieg vor der aPTT-Verlängerung.',
+ zfm:'INR-gesteuerte Dosierung; bei Einleitung Heparin-Überlappung; Antidot bei Blutung PPSB + Vitamin K.'},
+
+{id:7, tier:3, kat:'Verlängerter Quick / INR (isoliert)', bank:'ext',
+ vig:'29-jährige Patientin ohne Antikoagulation und ohne Lebererkrankung, mit gelegentlich verstärkter Blutung nach Eingriffen. Im Labor isoliert erniedrigter Quick bei normaler aPTT; Befund über die Zeit konstant.',
+ v:{Quick:60, INR:1.5, aPTT:31, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Faktor VII', value:'stark erniedrigt', unit:'', flag:'low'},
+     {label:'Faktor II / V / X', value:'normal', unit:'', flag:'norm'},
+     {label:'Mischversuch (1:1)', value:'Korrektur', unit:'', flag:'norm'}],
+ anam:'Variable, meist milde Blutungsneigung; keine Medikamenten- oder Leberursache → angeborener Faktorenmangel wahrscheinlich.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick erniedrigt / INR erhöht → extrinsisches System betroffen.',
+ aptt:'aPTT normal → intrinsisches System intakt. Faktor VII ist der einzige Faktor, der ausschließlich das extrinsische System (Quick) betrifft.',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal.',
+ synth:'Isolierter Quick-Abfall mit isoliert erniedrigtem Faktor VII bei normalem II/V/X → angeborener Faktor-VII-Mangel. Mischversuch korrigiert.',
+ dx:'Angeborener Faktor-VII-Mangel.',
+ ac:'Einzelfaktorenbestimmung (FVII niedrig, II/V/X normal); bei Blutung oder Eingriffen FVII-Substitution (rekombinanter FVIIa bzw. PPSB nach Verfügbarkeit).',
+ fa:'Faktor VII ist der einzige isoliert „Quick-wirksame" Faktor. Abgrenzung zu Vitamin-K-Mangel und Leberschaden: dort sind MEHRERE Faktoren betroffen (auch die aPTT sowie II und X), nicht nur VII.',
+ nx:'Welcher einzelne Faktormangel führt zu einem isoliert erniedrigten Quick bei normaler aPTT?',
+ nxa:'Faktor-VII-Mangel — VII gehört nur zum extrinsischen System; alle anderen relevanten Faktoren betreffen auch die aPTT oder die Endstrecke.',
+ zfw:'Angeborener Mangel an Gerinnungsfaktor VII.',
+ zfy:'VII wirkt nur im extrinsischen Weg → isolierter Quick-Abfall/INR-Anstieg bei normaler aPTT.',
+ zfm:'Substitution nur bei Blutung oder Eingriffen (rekombinanter FVIIa bzw. PPSB).'},
+
+{id:8, tier:1, kat:'Quick ↓ und aPTT ↑', hy:1,
+ vig:'78-jährige Patientin nach längerer Antibiotikatherapie bei reduziertem Allgemeinzustand und mangelhafter Ernährung. Zunehmende Hämatome. Kein bekannter Leberschaden.',
+ v:{Quick:40, INR:2.2, aPTT:44, TZ:18, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Faktoren II, VII, IX, X', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'Faktor V', value:'normal', unit:'', flag:'norm'},
+     {label:'Faktor VIII', value:'normal', unit:'', flag:'norm'},
+     {label:'Mischversuch (1:1)', value:'Korrektur', unit:'', flag:'norm'}],
+ anam:'Risikofaktoren: Malnutrition/Alkohol, Malabsorption oder Cholestase (Vitamin K ist fettlöslich), langdauernde Antibiose, VKA. Plasmatischer Blutungstyp möglich.',
+ thrombo:'Thrombozytenzahl normal → spricht gegen einen Verbrauch (DIC).',
+ quick:'Quick erniedrigt / INR erhöht → extrinsisches System betroffen (Faktor VII).',
+ aptt:'aPTT verlängert → auch das intrinsische System betroffen (Faktor IX); zusammen mit dem Quick-Abfall ein Mehrfaktorenmangel der Vitamin-K-abhängigen Faktoren II, VII, IX, X.',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal → keine Verbrauchskoagulopathie, keine Hyperfibrinolyse.',
+ synth:'Muster: beide Globaltests pathologisch, Fibrinogen/Thrombozyten/D-Dimere normal, Faktor V normal → Vitamin-K-Mangel. Faktor V normal trennt vom Leberschaden; normales Fibrinogen und normale Thrombozyten trennen von der DIC.',
+ dx:'Vitamin-K-Mangel (Faktoren II, VII, IX, X erniedrigt).',
+ ac:'Vitamin-K-Substitution (oral oder i.v.); bei akuter Blutung PPSB; Ursache klären (Ernährung, Malabsorption, Cholestase, Medikamente).',
+ fa:'Faktor V ist NICHT Vitamin-K-abhängig → beim reinen Vitamin-K-Mangel normal, beim Leberschaden erniedrigt. Das ist der entscheidende Trennparameter Leber gegen Vitamin-K. Normales Fibrinogen und normale Thrombozyten trennen zusätzlich von der DIC.',
+ nx:'Wie unterscheiden Sie einen Vitamin-K-Mangel von einer Lebersynthesestörung?',
+ nxa:'Über Faktor V: beim Vitamin-K-Mangel normal (nicht Vitamin-K-abhängig), beim Leberschaden erniedrigt. Zusätzlich Albumin und Cholinesterase (Lebersynthese) sowie Faktor VIII (bei Leber normal/erhöht).',
+ zfw:'Mangel der Vitamin-K-abhängigen Gerinnungsfaktoren II, VII, IX, X (sowie Protein C und S).',
+ zfy:'Vitamin K ist Kofaktor der Gamma-Carboxylierung dieser Faktoren; fehlt es, sind sie funktionslos → Quick-Abfall und (bei stärkerem Mangel) aPTT-Verlängerung.',
+ zfm:'Vitamin-K-Substitution; bei Blutung PPSB; Grundursache behandeln.'},
+
+{id:9, tier:1, kat:'Quick ↓ und aPTT ↑',
+ vig:'59-jähriger Patient mit bekannter äthyltoxischer Leberzirrhose, Aszites und Ikterus. Diffuse Blutungsneigung (Zahnfleisch, Hämatome).',
+ v:{Quick:45, INR:1.9, aPTT:42, TZ:23, Fibrinogen:1.6, DDimer:0.4, Thrombo:95},
+ ex:[{label:'Faktor V', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'Faktor VIII', value:'normal bis erhöht', unit:'', flag:'norm'},
+     {label:'Faktoren II / VII', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'Cholinesterase / Albumin', value:'erniedrigt', unit:'', flag:'low'}],
+ anam:'Bekannte Lebererkrankung; plasmatischer Blutungstyp. Zusätzlich oft Thrombopenie durch Hypersplenismus bei portaler Hypertension.',
+ thrombo:'Thrombozyten erniedrigt — hier durch Hypersplenismus/portale Hypertension (Sequestration), nicht durch Verbrauch.',
+ quick:'Quick erniedrigt / INR erhöht → verminderte hepatische Synthese der extrinsischen Faktoren.',
+ aptt:'aPTT verlängert → auch intrinsische Faktoren betroffen; globale Synthesestörung.',
+ endstrecke:'Fibrinogen niedrig-normal bis erniedrigt, Thrombinzeit leicht verlängert; D-Dimere nur gering erhöht (anders als bei der DIC).',
+ synth:'Globale Synthesestörung: Faktor V erniedrigt (hepatisch), aber Faktor VIII normal/erhöht (endothelial gebildet). Das trennt den Leberschaden vom Vitamin-K-Mangel (dort Faktor V normal) und von der DIC (dort Faktor VIII erniedrigt und D-Dimere stark erhöht).',
+ dx:'Schwere Lebersynthesestörung (Leberzirrhose).',
+ ac:'Lebersynthese erfassen (Albumin, Cholinesterase, Faktor V); bei Blutung gezielte Substitution (z. B. Fibrinogen, PPSB, Thrombozyten); Vitamin-K-Gabe als Versuch. Eine isolierte INR-Erhöhung bedeutet bei Zirrhose nicht automatisch Blutungsschutz (rebalancierte Hämostase).',
+ fa:'Leber gegen DIC: bei der Leber ist Faktor VIII normal/erhöht und die D-Dimere sind meist nur gering erhöht; bei der DIC ist Faktor VIII erniedrigt, D-Dimere stark erhöht und Fragmentozyten vorhanden. Leber gegen Vitamin-K-Mangel: Faktor V bei der Leber erniedrigt, beim Vitamin-K-Mangel normal.',
+ nx:'Welcher Faktor hilft, einen Leberschaden von Vitamin-K-Mangel und DIC abzugrenzen?',
+ nxa:'Faktor V: bei Leberschaden und DIC erniedrigt, beim Vitamin-K-Mangel normal. Faktor VIII trennt zusätzlich Leber (normal/erhöht) von DIC (erniedrigt).',
+ zfw:'Verminderte hepatische Synthese fast aller Gerinnungsfaktoren (Ausnahme Faktor VIII).',
+ zfy:'Die Leber bildet die meisten Faktoren; bei Zirrhose sinken sie (auch Faktor V), während der endothelial gebildete FVIII normal/erhöht bleibt → Quick-Abfall und aPTT-Verlängerung.',
+ zfm:'Ursache und Komplikationen behandeln; bei Blutung gezielte Substitution; Vitamin-K-Versuch.'},
+
+{id:10, tier:2, kat:'Thrombozytär bedingte Blutung', hy:1,
+ vig:'23-jährige Frau mit langjähriger Menorrhagie, häufigem Nasenbluten und leichter Hämatomneigung. Mehrere Familienmitglieder betroffen. Petechien fehlen.',
+ v:{Quick:100, INR:1.0, aPTT:39, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'vWF:Antigen (Ag)', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'vWF:Aktivität (Ristocetin-Kofaktor)', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'Faktor VIII', value:'mäßig erniedrigt', unit:'', flag:'low'},
+     {label:'PFA-Verschlusszeit', value:'verlängert', unit:'', flag:'high'}],
+ anam:'Mukokutaner (thrombozytärer) Blutungstyp: Schleimhautblutungen (Epistaxis, Menorrhagie, Zahnfleisch), eher sofortige Blutung. Häufigste angeborene Blutungsneigung, meist autosomal-dominant.',
+ thrombo:'Die ThrombozytenZAHL ist normal — gestört ist die Funktion/Adhäsion, weil der von-Willebrand-Faktor als „Klebstoff" zwischen Thrombozyt und Subendothel fehlt.',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT normal bis leicht verlängert — der von-Willebrand-Faktor trägt den Faktor VIII; ein vWF-Abfall → FVIII-Abfall → die aPTT kann steigen (Bindeglied!).',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal.',
+ synth:'Mukokutane Blutung + normale Thrombozytenzahl + (grenzwertige) aPTT + erniedrigtes vWF:Ag/vWF:Akt → von-Willebrand-Syndrom.',
+ dx:'Von-Willebrand-Syndrom (häufigste hereditäre Blutungsneigung).',
+ ac:'vWF:Antigen, vWF:Aktivität (Ristocetin-Kofaktor), Faktor VIII und Multimerenanalyse zur Typisierung; ergänzend PFA-Verschlusszeit.',
+ fa:'Das „Bindeglied": ein vWF-Abfall kann über den FVIII-Carrier einen FVIII-Abfall und damit eine aPTT-Verlängerung verursachen → nicht mit einer Hämophilie verwechseln. Und eine normale Thrombozytenzahl schließt eine thrombozytäre Blutung NICHT aus (Funktionsstörung).',
+ nx:'Wie behandeln Sie leichte Blutungen oder kleine Eingriffe beim von-Willebrand-Syndrom Typ 1?',
+ nxa:'Desmopressin (DDAVP) setzt vWF und FVIII aus dem Endothel frei; bei schweren Typen vWF-/FVIII-Konzentrat. Tranexamsäure bei Schleimhautblutung; ASS/NSAR meiden.',
+ zfw:'Quantitativer oder funktioneller Mangel des von-Willebrand-Faktors (Thrombozytenadhäsion und FVIII-Carrier).',
+ zfy:'Der vWF vermittelt die Thrombozytenadhäsion und stabilisiert FVIII → ein Defekt führt zu mukokutaner Blutung und ggf. aPTT-Verlängerung.',
+ zfm:'Desmopressin (Typ 1) bzw. vWF/FVIII-Konzentrat; Tranexamsäure; Plättchenhemmer meiden.'},
+
+{id:11, tier:2, kat:'Thrombozytär bedingte Blutung',
+ vig:'6-jähriger Junge, zwei Wochen nach einem viralen Infekt, mit plötzlich aufgetretenen Petechien an den Beinen und Zahnfleischbluten. Sonst gesunder Eindruck, keine Hepatosplenomegalie.',
+ v:{Quick:100, INR:1.0, aPTT:30, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:18},
+ ex:[{label:'Blutausstrich', value:'keine Fragmentozyten, vereinzelt Riesenthrombozyten', unit:'', flag:'norm'},
+     {label:'Megakaryozyten (Knochenmark)', value:'normal bis vermehrt', unit:'', flag:'norm'},
+     {label:'EDTA-Kontrolle (Citratröhrchen)', value:'Pseudothrombopenie ausgeschlossen', unit:'', flag:'norm'}],
+ anam:'Thrombozytärer Blutungstyp: Petechien (abhängige Körperpartien), Schleimhautblutung, sofort. Bei Kindern oft postinfektiös und selbstlimitierend, bei Erwachsenen häufiger chronisch.',
+ thrombo:'Isolierte Thrombozytopenie (hier 18/nl) bei sonst unauffälligem Blutbild — der zentrale Befund.',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT normal.',
+ endstrecke:'Fibrinogen und D-Dimere normal → kein Verbrauch (trennt von der DIC).',
+ synth:'Isolierte Thrombopenie + normale plasmatische Tests + keine Fragmentozyten → Immunthrombozytopenie (Autoantikörper gegen Thrombozyten, v. a. GPIIb/IIIa); Ausschlussdiagnose.',
+ dx:'Immunthrombozytopenie (ITP) — autoimmuner peripherer Thrombozytenabbau.',
+ ac:'Ausschlussdiagnose: Blutausstrich (Pseudothrombopenie bei EDTA?), Medikamente, Infektionen (HIV, HCV), Splenomegalie und sekundäre Ursachen prüfen. Bei Blutung oder sehr niedrigen Werten Glukokortikoide, ggf. IVIG.',
+ fa:'Eine Pseudothrombozytopenie (EDTA-induzierte Aggregation) ausschließen — Kontrolle im Citratröhrchen. Normale plasmatische Gerinnung und fehlende Fragmentozyten trennen die ITP von DIC und TTP.',
+ nx:'Ab welcher Thrombozytenzahl und bei welcher Klinik behandeln Sie eine ITP?',
+ nxa:'Vor allem bei relevanter Blutung oder sehr niedrigen Werten (z. B. unter 20–30/nl): Glukokortikoide, ggf. IVIG. Nicht jede erniedrigte Zahl muss behandelt werden; entscheidend ist die Blutung.',
+ zfw:'Autoimmun bedingte Thrombozytopenie durch Antikörper gegen Thrombozyten.',
+ zfy:'Peripherer Abbau → isolierte Thrombopenie; die plasmatischen Tests bleiben normal, weil nur die Thrombozyten betroffen sind.',
+ zfm:'Bei Blutung oder sehr niedrigen Werten Glukokortikoide, IVIG; bei chronischem Verlauf TPO-Rezeptor-Agonisten oder Splenektomie.'},
+
+{id:12, tier:2, kat:'Thrombozytär bedingte Blutung', bank:'ext',
+ vig:'74-jähriger Patient nach Koronarstent unter ASS und Clopidogrel. Verstärkte Hämatome und verlängerte Blutung aus kleinen Wunden. Thrombozytenzahl und Globaltests normal.',
+ v:{Quick:100, INR:1.0, aPTT:30, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Thrombozytenfunktion (Aggregometrie)', value:'pathologisch', unit:'', flag:'norm'},
+     {label:'PFA-Verschlusszeit', value:'verlängert', unit:'', flag:'high'},
+     {label:'Medikamentenanamnese', value:'ASS + Clopidogrel', unit:'', flag:'norm'}],
+ anam:'Mukokutaner Blutungstyp unter Plättchenhemmern; entscheidend ist die Medikamentenanamnese.',
+ thrombo:'Thrombozytenzahl normal — gestört ist allein die Funktion (medikamentös).',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT normal.',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal.',
+ synth:'Normale Globaltests und normale Thrombozytenzahl bei mukokutaner Blutung unter ASS/Clopidogrel → medikamentöse Thrombozytenfunktionsstörung. Der Nachweis gelingt nur über Funktionstests.',
+ dx:'Erworbene Thrombozytopathie durch Thrombozytenaggregationshemmer (ASS: irreversible COX-1-Hemmung; Clopidogrel: P2Y12-Hemmung).',
+ ac:'Medikamentenanamnese und Thrombozytenfunktionstest; perioperatives Vorgehen nach Blutungs- gegen Thromboserisiko abwägen.',
+ fa:'Globale Gerinnungstests (Quick, aPTT, Thrombinzeit) erfassen Thrombozytenfunktionsstörungen NICHT. Der ASS-Effekt hält etwa 7–10 Tage an (irreversible Hemmung für die Lebensdauer der Thrombozyten).',
+ nx:'Ein Patient unter ASS soll operiert werden — worauf achten Sie?',
+ nxa:'ASS hemmt die Thrombozyten-COX-1 irreversibel für deren Lebensdauer (etwa 7–10 Tage). Perioperativ Blutungs- gegen Thromboserisiko abwägen; bei zwingender kardialer Indikation wird ASS oft fortgeführt.',
+ zfw:'Medikamentös bedingte Funktionsstörung der Thrombozyten.',
+ zfy:'ASS und Clopidogrel hemmen die Thrombozytenaktivierung; die Zahl bleibt normal, daher sind die Globaltests unauffällig.',
+ zfm:'Bei Blutung oder Eingriffen Risiko abwägen; bei Bedarf Thrombozytenkonzentrate; Indikation der Hemmer prüfen.'},
+
+{id:13, tier:3, kat:'Thrombozytär bedingte Blutung', bank:'ext',
+ vig:'67-jähriger Dialysepatient mit Schleimhaut- und gastrointestinaler Blutung sowie Ekchymosen. Globaltests normal, Thrombozytenzahl niedrig-normal.',
+ v:{Quick:100, INR:1.0, aPTT:31, TZ:17, Fibrinogen:3.0, DDimer:0.4, Thrombo:160},
+ ex:[{label:'Thrombozytenfunktion', value:'gestört (urämisch)', unit:'', flag:'norm'},
+     {label:'Retentionswerte (Harnstoff/Kreatinin)', value:'erhöht', unit:'', flag:'high'},
+     {label:'PFA-Verschlusszeit', value:'verlängert', unit:'', flag:'high'}],
+ anam:'Blutungsneigung bei fortgeschrittener Niereninsuffizienz; mukokutaner Typ.',
+ thrombo:'Thrombozytenzahl normal bis leicht erniedrigt — entscheidend ist die urämische Funktionsstörung.',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT normal.',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere unauffällig.',
+ synth:'Normale Globaltests bei Niereninsuffizienz mit Blutung → urämische Thrombozytopathie (Urämietoxine stören die Thrombozyten-Gefäßwand-Interaktion).',
+ dx:'Urämische Thrombozytopathie.',
+ ac:'Dialyse optimieren (Toxinelimination); bei Blutung Desmopressin (DDAVP); Hämatokrit anheben (verbessert die Plättchen-Gefäßwand-Interaktion); ggf. konjugierte Östrogene.',
+ fa:'Auch hier sind die Globaltests normal — die Blutung ist thrombozytär-funktionell durch Urämietoxine, nicht durch eine plasmatische Störung.',
+ nx:'Wie verbessern Sie die Blutungsneigung bei Urämie?',
+ nxa:'Dialyse (Toxinelimination), Desmopressin, Anhebung des Hämatokrits; bei Bedarf konjugierte Östrogene.',
+ zfw:'Funktionsstörung der Thrombozyten durch Urämietoxine.',
+ zfy:'Retinierte Toxine stören Adhäsion und Aggregation → mukokutane Blutung bei normalen Globaltests.',
+ zfm:'Dialyse, Desmopressin, Hämatokrit anheben.'},
+
+{id:14, tier:1, kat:'Verbrauchskoagulopathie (DIC)', hy:1,
+ vig:'64-jährige Patientin mit gramnegativer Sepsis, jetzt diffuse Sickerblutung aus Einstichstellen und Schleimhäuten bei gleichzeitigen Hinweisen auf eine Mikrozirkulationsstörung (Organdysfunktion).',
+ v:{Quick:38, INR:2.3, aPTT:50, TZ:28, Fibrinogen:1.2, DDimer:8.0, Thrombo:60},
+ ex:[{label:'D-Dimere', value:'stark erhöht', unit:'', flag:'high'},
+     {label:'Faktor V', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'Antithrombin', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'Fragmentozyten im Ausstrich', value:'vorhanden', unit:'', flag:'norm'}],
+ anam:'Kritisch kranker Patient (Sepsis, Trauma, geburtshilfliche Komplikation, Malignom) mit diffuser Blutung (Sickerblutung, Einstichstellen) und/oder Mikrothrombosen/Organversagen.',
+ thrombo:'Thrombozyten erniedrigt (Verbrauch).',
+ quick:'Quick erniedrigt (Faktorenverbrauch).',
+ aptt:'aPTT verlängert (Faktorenverbrauch) → beide Globaltests pathologisch.',
+ endstrecke:'Fibrinogen erniedrigt (verbraucht) + D-Dimere stark erhöht (Fibrinolyse der Mikrothromben) + Fragmentozyten → das Kernmuster der DIC.',
+ synth:'Trigger (z. B. Sepsis) + Thrombopenie + Quick-Abfall/aPTT-Verlängerung + Fibrinogen-Abfall + D-Dimere stark erhöht + Fragmentozyten → disseminierte intravasale Gerinnung.',
+ dx:'Disseminierte intravasale Gerinnung (DIC) / Verbrauchskoagulopathie.',
+ ac:'Auslöser behandeln (z. B. Sepsis-/Schocktherapie) — das ist entscheidend; supportiv FFP, Fibrinogen- und Thrombozytenkonzentrate bei Blutung; Score (z. B. ISTH) und engmaschige Verlaufskontrollen.',
+ fa:'Abgrenzung zum Leberschaden (dort Faktor VIII normal/erhöht, D-Dimere nur gering erhöht) und zur Hyperfibrinolyse (dort Thrombozyten meist normal). Merksatz: D-Dimere stark erhöht + Fibrinogen erniedrigt + Thrombopenie + Fragmentozyten = DIC.',
+ nx:'Was ist der wichtigste Therapieschritt bei der DIC?',
+ nxa:'Die Behandlung der Grunderkrankung bzw. des Auslösers. Eine Gerinnungssubstitution erfolgt nur supportiv bei Blutung.',
+ zfw:'Systemische Gerinnungsaktivierung mit Verbrauch von Thrombozyten und Faktoren sowie reaktiver Fibrinolyse.',
+ zfy:'Massive Thrombinbildung verbraucht Faktoren und Thrombozyten (→ Blutung) und erzeugt Mikrothromben (→ D-Dimere stark erhöht, Fragmentozyten, Organschäden).',
+ zfm:'Auslöser behandeln; supportiv FFP/Fibrinogen/Thrombozyten bei Blutung; ggf. Antithrombin.'},
+
+{id:15, tier:2, kat:'Hyperfibrinolyse', bank:'ext',
+ vig:'70-jähriger Patient mit diffuser Blutung während einer Prostataoperation. Fibrinogen niedrig, D-Dimere stark erhöht — die Thrombozytenzahl bleibt jedoch normal.',
+ v:{Quick:50, INR:1.6, aPTT:40, TZ:30, Fibrinogen:1.0, DDimer:6.0, Thrombo:240},
+ ex:[{label:'D-Dimere / Fibrinspaltprodukte', value:'stark erhöht', unit:'', flag:'high'},
+     {label:'Thrombozyten', value:'normal', unit:'', flag:'norm'},
+     {label:'Reptilasezeit', value:'verlängert', unit:'', flag:'high'},
+     {label:'Alpha-2-Antiplasmin', value:'erniedrigt', unit:'', flag:'low'}],
+ anam:'Blutung bei Eingriffen an plasminogenaktivatorreichen Organen (Prostata, Lunge, Uterus), bei schwerer Lebererkrankung oder unter Thrombolyse.',
+ thrombo:'Thrombozytenzahl NORMAL — der entscheidende Unterschied zur DIC (dort Verbrauch und Thrombopenie).',
+ quick:'Quick erniedrigt (Fibrinogen und Faktoren durch Plasmin gespalten).',
+ aptt:'aPTT verlängert.',
+ endstrecke:'Fibrinogen stark erniedrigt + D-Dimere/Fibrinspaltprodukte stark erhöht + verlängerte Reptilasezeit → ausgeprägte Fibrin(ogen)olyse.',
+ synth:'Diffuse Blutung + Fibrinogen erniedrigt + D-Dimere stark erhöht bei NORMALER Thrombozytenzahl → (primäre) Hyperfibrinolyse.',
+ dx:'(Primäre) Hyperfibrinolyse.',
+ ac:'Antifibrinolytikum (Tranexamsäure); Auslöser behandeln; bei Blutung Fibrinogen substituieren.',
+ fa:'Abgrenzung DIC gegen Hyperfibrinolyse: bei der DIC sind die Thrombozyten ERNIEDRIGT (Verbrauch) und Fragmentozyten vorhanden; bei der (primären) Hyperfibrinolyse sind die Thrombozyten NORMAL. Therapie mit Tranexamsäure — bei DIC dagegen nur mit Vorsicht (kann Mikrothrombosen verstärken).',
+ nx:'Wie unterscheiden Sie eine Hyperfibrinolyse von einer DIC, und wie behandeln Sie?',
+ nxa:'Über die Thrombozytenzahl (normal gegen erniedrigt) und Fragmentozyten (fehlen gegen vorhanden). Die Hyperfibrinolyse wird mit Tranexamsäure behandelt.',
+ zfw:'Überschießende Plasmin-Aktivität mit vorzeitiger Auflösung von Fibrin und Fibrinogen.',
+ zfy:'Plasmin spaltet Fibrinogen/Fibrin → D-Dimere und Fibrinspaltprodukte erhöht, Fibrinogen erniedrigt; die Thrombozyten bleiben (anders als bei der DIC) normal.',
+ zfm:'Tranexamsäure; Auslöser behandeln; Fibrinogen substituieren.'},
+
+{id:16, tier:2, kat:'Thrombophilie', hy:1,
+ vig:'34-jähriger Mann mit erster unprovozierter tiefer Beinvenenthrombose. Positive Familienanamnese für Thrombosen. Keine Blutungsneigung.',
+ v:{Quick:100, INR:1.0, aPTT:30, TZ:17, Fibrinogen:3.0, DDimer:1.5, Thrombo:250},
+ ex:[{label:'APC-Resistenz', value:'positiv (pathologisch)', unit:'', flag:'norm'},
+     {label:'Faktor-V-Leiden-Mutation', value:'nachgewiesen (heterozygot)', unit:'', flag:'norm'},
+     {label:'Protein C / Protein S / Antithrombin', value:'normal', unit:'', flag:'norm'},
+     {label:'Lupusantikoagulans', value:'negativ', unit:'', flag:'norm'}],
+ anam:'Thromboseanamnese: junges Alter, unprovoziert oder bei schwachem Trigger (Pille, Langstreckenflug, OP), positive Familienanamnese, ggf. atypische Lokalisation. KEINE Blutungsneigung.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick/INR normal — eine Thrombophilie verlängert die Globaltests NICHT.',
+ aptt:'aPTT normal (Ausnahme: das Lupusantikoagulans verlängert die aPTT — hier nicht der Fall).',
+ endstrecke:'Fibrinogen und Thrombinzeit normal; die D-Dimere sind durch die akute Thrombose erhöht (Folge des Gerinnsels, nicht der Thrombophilie selbst).',
+ synth:'Unprovozierte Thrombose + unauffällige Globaltests + pathologische APC-Resistenz → Faktor-V-Leiden (häufigste hereditäre Thrombophilie).',
+ dx:'APC-Resistenz bei Faktor-V-Leiden-Mutation (häufigste hereditäre Thrombophilie).',
+ ac:'APC-Resistenz-Test, bei Pathologie genetische Bestätigung (Faktor-V-Leiden); Antikoagulation der akuten Thrombose; das Thrombophilie-Screening zeitlich korrekt planen (siehe Falle).',
+ fa:'Timing-Falle: Protein C, Protein S und Antithrombin NICHT in der akuten Thrombose und NICHT unter Antikoagulation bestimmen — Vitamin-K-Antagonisten senken Protein C/S, Heparin senkt Antithrombin, die Akutphase verfälscht. Die Faktor-V-Leiden-Genetik ist dagegen jederzeit bestimmbar.',
+ nx:'Wann führen Sie ein Thrombophilie-Screening durch?',
+ nxa:'Nicht in der Akutphase und nicht unter VKA/Heparin (Ausnahme: genetische Tests wie Faktor-V-Leiden oder Prothrombin-Mutation). Funktionelle Tests (Protein C/S, Antithrombin) idealerweise mit Abstand nach Absetzen der Antikoagulation, sofern therapeutisch relevant.',
+ zfw:'Punktmutation im Faktor V → das aktivierte FVa wird von aktiviertem Protein C nur unzureichend gespalten (APC-Resistenz).',
+ zfy:'Die fehlende Inaktivierung von FVa führt zu anhaltender Thrombinbildung → Thromboseneigung; die Globaltests bleiben normal.',
+ zfm:'Antikoagulation je nach Risiko/Rezidiv; Trigger meiden (Östrogene); Familienberatung.'},
+
+{id:17, tier:3, kat:'Thrombophilie', bank:'ext',
+ vig:'31-jährige Frau mit venöser und arterieller Thrombose sowie wiederholten Schwangerschaftsverlusten. Im Labor verlängerte aPTT und eine milde Thrombopenie.',
+ v:{Quick:100, INR:1.0, aPTT:42, TZ:17, Fibrinogen:3.0, DDimer:1.2, Thrombo:110},
+ ex:[{label:'Lupusantikoagulans', value:'positiv', unit:'', flag:'norm'},
+     {label:'Anti-Cardiolipin-AK', value:'positiv', unit:'', flag:'norm'},
+     {label:'Anti-Beta-2-Glykoprotein-I-AK', value:'positiv', unit:'', flag:'norm'},
+     {label:'Mischversuch (1:1)', value:'keine Korrektur', unit:'', flag:'norm'}],
+ anam:'Thrombose (venös UND arteriell) plus Schwangerschaftskomplikationen → typisch für ein Antiphospholipidsyndrom; keine Blutungsneigung.',
+ thrombo:'Eine milde Thrombopenie ist beim APS häufig.',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT verlängert durch das Lupusantikoagulans (in vitro), klinisch besteht aber eine Thromboseneigung.',
+ endstrecke:'Fibrinogen und Thrombinzeit normal; D-Dimere bei akuter Thrombose erhöht.',
+ synth:'Thrombosen + Aborte + persistierend positive Antiphospholipid-Antikörper + Mischversuch ohne Korrektur (Inhibitor) → Antiphospholipidsyndrom.',
+ dx:'Antiphospholipidsyndrom (APS).',
+ ac:'Persistenznachweis der Antikörper nach ≥ 12 Wochen (Lupusantikoagulans, Anti-Cardiolipin, Anti-Beta-2-Glykoprotein-I); klinische Kriterien (Thrombose/Schwangerschaftskomplikationen) prüfen.',
+ fa:'Paradox: verlängerte aPTT (Lupusantikoagulans), aber THROMBOSE statt Blutung; der Mischversuch korrigiert NICHT (Inhibitor). Die Diagnose erfordert die PERSISTENZ der Antikörper (≥ 12 Wochen) — nicht eine Einzelmessung. Unter VKA kann die INR-Steuerung bei Lupusantikoagulans unzuverlässig sein.',
+ nx:'Welche Kriterien definieren das Antiphospholipidsyndrom?',
+ nxa:'Eine Gefäßthrombose (venös/arteriell) und/oder Schwangerschaftskomplikationen PLUS persistierend positive Antiphospholipid-Antikörper (Lupusantikoagulans, Anti-Cardiolipin, Anti-Beta-2-Glykoprotein-I).',
+ zfw:'Autoimmune Thrombophilie durch Antiphospholipid-Antikörper.',
+ zfy:'Die Antikörper aktivieren Endothel, Thrombozyten und Gerinnung → Thrombosen und Aborte; in vitro verlängern sie paradox die aPTT.',
+ zfm:'Antikoagulation (bei Thrombose meist VKA); in der Schwangerschaft Heparin + ASS; Trigger meiden.'},
+
+{id:18, tier:3, kat:'Thrombophilie', bank:'ext',
+ vig:'28-jährige Patientin mit rezidivierenden venösen Thrombosen und positiver Familienanamnese. Unter Heparintherapie steigt die aPTT trotz adäquater Dosis kaum an.',
+ v:{Quick:100, INR:1.0, aPTT:30, TZ:17, Fibrinogen:3.0, DDimer:0.4, Thrombo:250},
+ ex:[{label:'Antithrombin-Aktivität', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'Protein C / Protein S', value:'normal', unit:'', flag:'norm'},
+     {label:'Faktor-V-Leiden / Prothrombin-Mutation', value:'negativ', unit:'', flag:'norm'},
+     {label:'aPTT-Antwort auf Heparin', value:'unzureichend', unit:'', flag:'norm'}],
+ anam:'Rezidivierende venöse Thrombosen, junges Alter, positive Familienanamnese → hereditäre Thrombophilie.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT in Ruhe normal; unter Heparin steigt sie auffällig wenig — Hinweis auf eine Heparinresistenz.',
+ endstrecke:'Fibrinogen und Thrombinzeit normal.',
+ synth:'Thrombophilie + unzureichendes Ansprechen auf Heparin + erniedrigte Antithrombin-Aktivität → Antithrombinmangel.',
+ dx:'Antithrombinmangel.',
+ ac:'Antithrombin-Aktivität bestimmen (nicht unter laufender Heparintherapie); bei Heparinresistenz an einen AT-Mangel denken; ggf. AT-Substitution oder alternative Antikoagulation.',
+ fa:'Heparin wirkt ÜBER Antithrombin — bei AT-Mangel resultiert eine „Heparinresistenz" (die aPTT steigt trotz Heparin kaum). Außerdem senkt Heparin das Antithrombin → AT nicht unter Heparintherapie messen (falsch-niedrig).',
+ nx:'Warum kann Heparin bei Antithrombinmangel unwirksam sein?',
+ nxa:'Heparin entfaltet seine Wirkung über Antithrombin; fehlt Antithrombin, fehlt der Effektor → unzureichende Wirkung (Heparinresistenz). Therapeutisch ggf. AT-Substitution oder eine antithrombinunabhängige Antikoagulation.',
+ zfw:'Angeborener oder erworbener Mangel an Antithrombin, dem wichtigsten körpereigenen Gerinnungsinhibitor.',
+ zfy:'Antithrombin hemmt Thrombin und Faktor Xa; bei Mangel überwiegt die Gerinnung → Thromboseneigung und Heparinresistenz.',
+ zfm:'Antikoagulation; bei Bedarf AT-Substitution; AT-Bestimmung nicht unter Heparin.'},
+
+{id:19, tier:1, kat:'Medikamenten-Monitoring / -effekte', hy:1,
+ vig:'58-jähriger Patient unter therapeutischem unfraktioniertem Heparin (Perfusor) bei Lungenembolie. Kontrolle der aPTT zur Steuerung; gleichzeitig Verlaufskontrolle der Thrombozyten.',
+ v:{Quick:95, INR:1.1, aPTT:65, TZ:40, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Anti-Xa-Aktivität', value:'im Zielbereich', unit:'', flag:'norm'},
+     {label:'Thrombozyten-Verlauf', value:'engmaschig (HIT-Screening)', unit:'', flag:'norm'},
+     {label:'Antidot', value:'Protamin', unit:'', flag:'norm'}],
+ anam:'Medikamentenanamnese: therapeutisches UFH; gezielt nach Blutung und nach einem Thrombozytenabfall (HIT) fragen.',
+ thrombo:'Thrombozytenzahl überwachen — ein Abfall über 50 % nach Tag 5–14 spricht für eine HIT Typ II.',
+ quick:'Quick/INR bei therapeutischer Dosis weitgehend normal.',
+ aptt:'aPTT verlängert — der Monitoring-Parameter für UFH (Ziel etwa 1,5- bis 2,5-fach der Norm).',
+ endstrecke:'Thrombinzeit verlängert (Heparin hemmt Thrombin); Fibrinogen und D-Dimere unauffällig.',
+ synth:'Isolierte aPTT-Verlängerung (plus verlängerte Thrombinzeit) unter UFH-Perfusor → erwartete Heparinwirkung; Steuerung über aPTT bzw. Anti-Xa.',
+ dx:'Therapeutische UFH-Wirkung (Steuerung über aPTT/Anti-Xa).',
+ ac:'aPTT-Ziel bzw. Anti-Xa zur Dosissteuerung; Thrombozyten-Monitoring (HIT); Antidot Protamin bei Blutung.',
+ fa:'HIT Typ II — immunologischer Thrombozytenabfall mit paradoxer THROMBOSE (nicht Blutung) ab Tag 5–14: Heparin sofort stoppen, auf z. B. Argatroban umstellen, KEINE Thrombozytengabe. Merke außerdem: UFH wird über die aPTT gesteuert, NMH über Anti-Xa.',
+ nx:'Wie monitoren Sie unfraktioniertes Heparin, und was ist das Antidot?',
+ nxa:'Steuerung über die aPTT (alternativ Anti-Xa); Antidot ist Protamin(sulfat). Zusätzlich Thrombozyten kontrollieren (HIT-II-Risiko).',
+ zfw:'Unfraktioniertes Heparin verstärkt Antithrombin und hemmt dadurch vor allem Thrombin (IIa) und Faktor Xa.',
+ zfy:'Die Thrombinhemmung verlängert aPTT und Thrombinzeit; der Quick bleibt bei therapeutischer Dosis weitgehend normal.',
+ zfm:'aPTT-/Anti-Xa-gesteuerte Dosierung; Thrombozyten-Monitoring (HIT); Antidot Protamin.'},
+
+{id:20, tier:2, kat:'Medikamenten-Monitoring / -effekte', hy:1,
+ vig:'76-jähriger Patient unter Phenprocoumon (Marcumar) bei Vorhofflimmern. Vorstellung mit deutlich übertherapeutischem INR und beginnender Schleimhautblutung.',
+ v:{Quick:15, INR:4.8, aPTT:45, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Faktoren II, VII, IX, X', value:'erniedrigt', unit:'', flag:'low'},
+     {label:'Faktor V', value:'normal', unit:'', flag:'norm'},
+     {label:'Antidot', value:'PPSB (sofort) + Vitamin K (verzögert)', unit:'', flag:'norm'}],
+ anam:'Medikamentenanamnese (VKA); Frage nach Interaktionen, Diät und Blutungszeichen.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick stark erniedrigt / INR stark erhöht → ausgeprägte Hemmung der Vitamin-K-abhängigen Faktoren.',
+ aptt:'aPTT verlängert — bei stärkerer VKA-Wirkung sind auch die intrinsisch relevanten Faktoren II, IX, X betroffen.',
+ endstrecke:'Fibrinogen, Thrombinzeit, D-Dimere normal.',
+ synth:'Übertherapeutische VKA-Wirkung: Faktoren II, VII, IX, X erniedrigt, Faktor V normal (trennt vom Leberschaden) → INR-gesteuerte Korrektur nach Blutung und Wert.',
+ dx:'Übertherapeutische Vitamin-K-Antagonisten-Wirkung (Phenprocoumon).',
+ ac:'Vorgehen nach Blutung und INR: bei schwerer Blutung PPSB (Faktoren II/VII/IX/X) plus Vitamin K; bei hohem INR ohne schwere Blutung Pausieren und ggf. orales Vitamin K.',
+ fa:'Bei lebensbedrohlicher Blutung wirkt „nur Vitamin K" zu langsam — Vitamin K braucht Stunden, PPSB wirkt sofort: daher PPSB + Vitamin K. Phenprocoumon hat zudem einen verzögerten Wirkbeginn und eine sehr lange Halbwertszeit.',
+ nx:'Phenprocoumon — Wirkstoffklasse, Monitoring und Antidot?',
+ nxa:'Vitamin-K-Antagonist; Indikation z. B. Vorhofflimmern oder mechanische Herzklappe; Monitoring über den INR; Antidot Vitamin K (verzögert) plus PPSB (sofort) bei relevanter Blutung.',
+ zfw:'Vitamin-K-Antagonist → Hemmung der Synthese funktionsfähiger Faktoren II, VII, IX, X.',
+ zfy:'Weniger funktionsfähige Vitamin-K-abhängige Faktoren → Quick-Abfall/INR-Anstieg (und bei stärkerer Wirkung aPTT-Verlängerung).',
+ zfm:'INR-gesteuerte Dosierung; bei Blutung PPSB + Vitamin K; bei Einleitung mit Heparin überlappen (Protein-C-Abfall).'},
+
+{id:21, tier:2, kat:'Medikamenten-Monitoring / -effekte', bank:'ext', hy:1,
+ vig:'69-jährige Patientin unter Apixaban bei Vorhofflimmern, Vorstellung vor einer dringlichen Operation. Frage nach der „Restwirkung". Quick und aPTT sind nur grenzwertig verändert.',
+ v:{Quick:65, INR:1.3, aPTT:38, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Kalibrierte Anti-Xa-Aktivität', value:'erhöht / messbar', unit:'', flag:'high'},
+     {label:'Thrombinzeit', value:'normal', unit:'', flag:'norm'},
+     {label:'Antidot', value:'Andexanet alfa (alternativ PPSB)', unit:'', flag:'norm'}],
+ anam:'Medikamentenanamnese (DOAK); Einnahmezeitpunkt und Nierenfunktion erfragen.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick grenzwertig erniedrigt / INR grenzwertig erhöht — bei Faktor-Xa-Inhibitoren variabel und nicht zur Steuerung geeignet.',
+ aptt:'aPTT nur leicht verlängert — ebenfalls unzuverlässig.',
+ endstrecke:'Thrombinzeit normal — Faktor-Xa-Inhibitoren verlängern die Thrombinzeit NICHT (das trennt sie von Dabigatran).',
+ synth:'Variable, leichte Veränderung von Quick/aPTT bei normaler Thrombinzeit unter Apixaban → erwarteter Effekt eines Faktor-Xa-Inhibitors; quantitativ nur über die kalibrierte Anti-Xa-Aktivität.',
+ dx:'Wirkung eines direkten Faktor-Xa-Inhibitors (Apixaban/Rivaroxaban/Edoxaban).',
+ ac:'Bei Bedarf kalibrierte Anti-Xa-Spiegel (substanzspezifisch); Einnahmezeitpunkt und Nierenfunktion berücksichtigen; Antidot Andexanet alfa, alternativ PPSB.',
+ fa:'Globaltests sind bei DOAK unzuverlässig — ein normaler Quick/aPTT schließt einen relevanten Xa-Inhibitor-Spiegel NICHT sicher aus. Quantitativ nur über die kalibrierte Anti-Xa-Bestimmung. Die normale Thrombinzeit trennt den Xa-Inhibitor von Dabigatran (dort sehr empfindlich).',
+ nx:'Apixaban — Wirkmechanismus, Monitoring und Antidot?',
+ nxa:'Direkter Faktor-Xa-Inhibitor; Routinemonitoring in der Regel nicht nötig (bei Bedarf kalibrierte Anti-Xa-Spiegel); Antidot Andexanet alfa, alternativ PPSB.',
+ zfw:'Direkter Faktor-Xa-Inhibitor (orales Antikoagulans).',
+ zfy:'Die Xa-Hemmung beeinflusst Quick/aPTT nur variabel und die Thrombinzeit gar nicht; spezifisch ist die kalibrierte Anti-Xa-Aktivität.',
+ zfm:'Feste, nierenadaptierte Dosierung; Antidot Andexanet alfa (bei fehlender Verfügbarkeit PPSB).'},
+
+{id:22, tier:3, kat:'Medikamenten-Monitoring / -effekte', bank:'ext',
+ vig:'72-jähriger Patient unter Dabigatran, Vorstellung mit Blutung. Auffällig ist eine stark verlängerte Thrombinzeit bei nur mäßig verlängerter aPTT und normalem Quick.',
+ v:{Quick:80, INR:1.1, aPTT:50, TZ:65, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Thrombinzeit', value:'stark verlängert', unit:'', flag:'high'},
+     {label:'Verdünnte Thrombinzeit (dTT)', value:'zur Quantifizierung', unit:'', flag:'norm'},
+     {label:'Antidot', value:'Idarucizumab', unit:'', flag:'norm'}],
+ anam:'Medikamentenanamnese (DOAK, Dabigatran); Einnahmezeitpunkt und Nierenfunktion (renale Elimination!) erfragen.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick normal — Dabigatran beeinflusst den Quick wenig.',
+ aptt:'aPTT verlängert.',
+ endstrecke:'Thrombinzeit stark verlängert (sehr empfindlich); eine normale Thrombinzeit würde relevante Dabigatran-Spiegel praktisch ausschließen.',
+ synth:'Stark verlängerte Thrombinzeit + verlängerte aPTT + normaler Quick unter Dabigatran → Wirkung eines direkten Thrombininhibitors; Quantifizierung über die verdünnte Thrombinzeit (dTT).',
+ dx:'Wirkung eines direkten Thrombininhibitors (Dabigatran).',
+ ac:'Verdünnte Thrombinzeit (dTT) bzw. Ecarin-Test zur Quantifizierung; Nierenfunktion beachten; Antidot Idarucizumab.',
+ fa:'Eine NORMALE Thrombinzeit schließt relevante Dabigatran-Spiegel praktisch aus (sehr empfindlich), eignet sich aber nicht zur Quantifizierung (dafür dTT). Antidot ist Idarucizumab — NICHT Andexanet alfa (das ist für Faktor-Xa-Inhibitoren).',
+ nx:'Dabigatran — Wirkstoffklasse, empfindlichster Test und Antidot?',
+ nxa:'Direkter Thrombininhibitor; die Thrombinzeit ist sehr empfindlich (verdünnte Thrombinzeit zur Quantifizierung); Antidot Idarucizumab.',
+ zfw:'Direkter Thrombin-(Faktor-IIa-)Inhibitor (orales Antikoagulans).',
+ zfy:'Die Thrombinhemmung macht die Thrombinzeit extrem empfindlich, verlängert die aPTT und betrifft den Quick wenig.',
+ zfm:'Nierenadaptierte Dosierung (renale Elimination); Antidot Idarucizumab.'},
+
+{id:23, tier:2, kat:'Medikamenten-Monitoring / -effekte', bank:'ext',
+ vig:'54-jährige Patientin unter therapeutischem niedermolekularem Heparin (Enoxaparin). Die aPTT ist normal — die Frage ist, ob das Medikament „überhaupt wirkt".',
+ v:{Quick:100, INR:1.0, aPTT:32, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Anti-Xa-Aktivität (NMH-kalibriert)', value:'im Zielbereich', unit:'', flag:'norm'},
+     {label:'aPTT', value:'kaum beeinflusst', unit:'', flag:'norm'},
+     {label:'Cave Niereninsuffizienz', value:'Kumulationsgefahr', unit:'', flag:'norm'}],
+ anam:'Medikamentenanamnese (NMH); Nierenfunktion und Indikation erfragen.',
+ thrombo:'Thrombozytenzahl normal (eine HIT ist bei NMH seltener als bei UFH, aber möglich).',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT normal — NMH verlängert die aPTT kaum, weil es überwiegend Faktor Xa und weniger Thrombin hemmt.',
+ endstrecke:'Thrombinzeit, Fibrinogen, D-Dimere unauffällig.',
+ synth:'Normale Globaltests unter NMH sind ERWARTET; die Wirkung wird ggf. über die Anti-Xa-Aktivität erfasst, nicht über die aPTT.',
+ dx:'Niedermolekulares Heparin (Anti-Xa-wirksam) — die normale aPTT ist erwartet.',
+ ac:'Routinemonitoring meist nicht nötig; Anti-Xa nur in Sondersituationen (Niereninsuffizienz, Schwangerschaft, Extremgewicht); Antidot Protamin (nur teilweise wirksam).',
+ fa:'Eine normale aPTT „beweist" NICHT, dass kein NMH wirkt — NMH wirkt vor allem über Anti-Xa und verlängert die aPTT kaum. Cave: renale Elimination → Kumulation bei Niereninsuffizienz, Dosis anpassen. Protamin neutralisiert NMH nur teilweise.',
+ nx:'Enoxaparin — Wirkstoffklasse, Monitoring und Cave bei Niereninsuffizienz?',
+ nxa:'Niedermolekulares Heparin (vor allem Anti-Xa-Wirkung); meist kein Routinemonitoring (bei Bedarf Anti-Xa); renale Elimination → Kumulation bei Niereninsuffizienz, daher Dosisanpassung.',
+ zfw:'Niedermolekulares Heparin verstärkt über Antithrombin vor allem die Hemmung von Faktor Xa.',
+ zfy:'Die überwiegende Xa-Hemmung (weniger Thrombinhemmung) lässt die aPTT weitgehend unbeeinflusst → Steuerung ggf. über Anti-Xa.',
+ zfm:'Meist kein Monitoring; Anti-Xa in Sondersituationen; Dosis bei Niereninsuffizienz anpassen; Antidot Protamin (teilweise).'},
+
+{id:24, tier:3, kat:'Normalbefund', bank:'ext', hy:1,
+ vig:'Säugling mit verzögerter, nachhaltiger Nabelstumpfblutung; später flächige Hämatome und eine Wundheilungsstörung. Alle Gerinnungs-Globaltests sind normal.',
+ v:{Quick:100, INR:1.0, aPTT:31, TZ:17, Fibrinogen:3.0, DDimer:0.3, Thrombo:250},
+ ex:[{label:'Faktor XIII (Aktivität)', value:'stark erniedrigt', unit:'', flag:'low'},
+     {label:'Gerinnsel-Löslichkeitstest (5 M Harnstoff)', value:'positiv (Gerinnsel löst sich auf)', unit:'', flag:'norm'},
+     {label:'Globaltests (Quick/aPTT/TZ/Fibrinogen)', value:'normal', unit:'', flag:'norm'}],
+ anam:'Klassische Konstellation: Blutung trotz UNAUFFÄLLIGER Globaltests, typischerweise verzögert (Nachblutung), Nabelstumpfblutung beim Neugeborenen und Wundheilungsstörung.',
+ thrombo:'Thrombozytenzahl normal.',
+ quick:'Quick/INR normal.',
+ aptt:'aPTT normal.',
+ endstrecke:'Fibrinogen, Thrombinzeit und D-Dimere normal — alle Globaltests sind unauffällig, weil Faktor XIII erst NACH der Gerinnselbildung wirkt.',
+ synth:'Blutung und Wundheilungsstörung trotz normaler Globaltests → an einen Faktor-XIII-Mangel denken; Nachweis über die Faktor-XIII-Aktivität bzw. den Gerinnsel-Löslichkeitstest (das Gerinnsel löst sich in 5 M Harnstoff auf).',
+ dx:'Faktor-XIII-Mangel.',
+ ac:'Faktor-XIII-Aktivität bestimmen bzw. Gerinnsel-Löslichkeitstest; bei Nachweis Faktor-XIII-Substitution; die Globaltests reichen NICHT zum Ausschluss.',
+ fa:'Klassische Falle: alle Globaltests (Quick, aPTT, Thrombinzeit, Fibrinogen) sind normal, trotzdem besteht eine Blutungsneigung — Faktor XIII quervernetzt das Fibrin erst nach der Gerinnselbildung und wird von den Globaltests nicht erfasst. Es braucht einen spezifischen Faktor-XIII-Test.',
+ nx:'Ein Patient blutet trotz normaler Globaltests — welcher Faktormangel kommt in Frage und wie weisen Sie ihn nach?',
+ nxa:'Ein Faktor-XIII-Mangel: alle Globaltests sind normal, weil FXIII erst nach der Fibrinbildung quervernetzt. Nachweis über die Faktor-XIII-Aktivität bzw. den Gerinnsel-Löslichkeitstest (Auflösung in 5 M Harnstoff).',
+ zfw:'Mangel an Faktor XIII (fibrinstabilisierender Faktor), der das Fibrinnetz quervernetzt.',
+ zfy:'FXIII wirkt erst nach der Gerinnselbildung → die Globaltests (die nur bis zur Fibrinbildung messen) bleiben normal, das Gerinnsel ist aber instabil → verzögerte Blutung und schlechte Wundheilung.',
+ zfm:'Faktor-XIII-Substitution; die Globaltests reichen nicht zum Ausschluss.'}
+];
+/* ===== Zusatzbefunde / Morphologie (renders under the panel) ===== */
+function zusatzHTML(card){
+  if(!card.ex || !card.ex.length) return '';
+  let rows = card.ex.map(e=>{
+    const ab = (e.flag==='high'||e.flag==='low') ? 'ab' : '';
+    const arrow = e.flag==='high' ? ' <span class="flag">↑</span>' : e.flag==='low' ? ' <span class="flag">↓</span>' : '';
+    const u = e.unit ? ` <span class="u">${e.unit}</span>` : '';
+    return `<tr><td class="lab">${e.label}</td><td class="val ${ab}">${e.value}${u}${arrow}</td></tr>`;
+  }).join('');
+  return `<div class="zusatz"><div class="zt">Morphologie / Zusatzbefunde</div><table>${rows}</table></div>`;
+}
+
+/* ===== profile-driven printout (same values, layout per analyzer) ===== */
+function buildPrintout(card){
+  const prof = ANALYZERS[analyzerProfile] || ANALYZERS.gen;
+  const P = buildPanel(card); const byId={}; P.forEach(p=>byId[p.id]=p);
+  const valid = p => p && !(p.val===null||p.val===undefined||(typeof p.val==='number'&&isNaN(p.val)));
+  const cols = prof.cols.map(col=>{
+    let rows='';
+    col.forEach(group=>{
+      const ids = group.ids.filter(id=>valid(byId[id]));
+      if(!ids.length) return;
+      rows += `<tr class="sec"><td colspan="3">${group.h}</td></tr>`;
+      ids.forEach(id=>{
+        const p=byId[id];
+        const label=(prof.labels&&prof.labels[id])||p.label;
+        let fl='norm';
+        if(!p.fixedNorm && typeof p.val==='number'){ if(p.val<p.lo) fl='low'; else if(p.val>p.hi) fl='high'; }
+        const showFl = showFlags && fl!=='norm';
+        const arrow = showFl ? (fl==='high'?'↑':'↓') : '';
+        const ab = showFl ? 'ab' : '';
+        const u = p.unit ? ` <span class="u">${p.unit}</span>` : '';
+        rows += `<tr><td class="lab">${label}</td><td class="val ${ab}">${fmt(p.val,p.dec)}${u}${arrow?` <span class="flag">${arrow}</span>`:''}</td><td class="ref">${showRef?p.ref:''}</td></tr>`;
+      });
+    });
+    return `<table class="bga">${rows}</table>`;
+  }).join('');
+  return `
+        <div class="po-head">
+          <span class="po-title">${prof.title}</span>
+          <span class="po-meta">${prof.meta}${card.hy?` · <span class="hy-mark">★ High-Yield</span>`:''}</span>
+        </div>
+        ${showKlinik?`<div class="vignette">${card.vig}</div>`:''}
+        <div class="po-cols">${cols}</div>
+        ${showMorph?zusatzHTML(card):''}`;
+}
+
+/* ===== state ===== */
+const host = document.getElementById('cardHost');
+const examChk = document.getElementById('examChk');
+const klinikChk = document.getElementById('klinikChk');
+const flagsChk = document.getElementById('flagsChk');
+const morphChk = document.getElementById('morphChk');
+const refChk = document.getElementById('refChk');
+let deck = DATA.slice();
+let idx = 0;
+let revealed = false;
+let progress = {};            // card.id -> 'right' | 'wrong' | 'seen' (this sitting)
+let tierFilter = 'all';
+let katFilter = 'Alle Kategorien';
+let bankFilter = 'all';
+let hyFilter = 'all';
+let showKlinik = false;
+let showFlags = false;
+let showMorph = false;
+let showRef = false;
+let examMode = true;
+let lastRenderedId = null;
+let analyzerProfile = 'gen';
+let ddxCatIndex = {};
+
+function buildDeck(){
+  deck = DATA.filter(c =>
+    (tierFilter==='all' || c.tier===Number(tierFilter)) &&
+    (katFilter==='Alle Kategorien' || c.kat===katFilter) &&
+    (bankFilter==='all' || (c.bank||'kern')===bankFilter) &&
+    (hyFilter==='all' || c.hy)
+  );
+  if(idx>=deck.length) idx=0;
+}
+
+/* ===== render ===== */
+function render(){
+  const navHidden = examMode;
+  document.getElementById('counter').style.visibility = navHidden ? 'hidden' : 'visible';
+  document.getElementById('dots').style.display = navHidden ? 'none' : '';
+  if(deck.length===0){
+    host.innerHTML = `<div class="card"><div class="empty">Keine Karten für diese Filter.</div></div>`;
+    document.getElementById('counter').textContent = '0 / 0';
+    document.getElementById('prevBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = true;
+    updateScore();
+    return;
+  }
+  const card = deck[idx];
+  if(examMode && card.id !== lastRenderedId){
+    showKlinik = showFlags = showMorph = showRef = false;
+    klinikChk.checked = flagsChk.checked = morphChk.checked = refChk.checked = false;
+  }
+  lastRenderedId = card.id;
+  const pst = progress[card.id];
+  const pill = pst==='right' ? `<span class="status-pill st-right">✓ schon richtig</span>`
+            : pst==='wrong' ? `<span class="status-pill st-wrong">✗ schon falsch</span>` : '';
+
+  const stepsHTML = STEPS.map(s=>`
+        <div class="step">
+          <div class="step-n">${s.n}</div>
+          <div class="step-b"><div class="step-k">${s.label}</div><div class="step-v">${card[s.key]||'—'}</div></div>
+        </div>`).join('');
+
+  const ans = !revealed ? '' : `
+    <div class="answer">
+      <div class="ans-head">
+        <span class="tier-pill">Tier ${card.tier}</span>
+        <span class="kat-pill">${card.kat}</span>
+        ${card.hy?`<span class="hy-pill">★ High-Yield</span>`:''}
+      </div>
+      ${stepsHTML}
+      <div class="block dx"><span class="bk">Diagnose</span><span class="bv">${card.dx}</span></div>
+      <div class="block"><span class="bk">Erster Schritt</span><span class="bv">${card.ac}</span></div>
+      <div class="block fa"><span class="bk">⚠ Falle</span><span class="bv">${card.fa}</span></div>
+      <div class="zf">
+        <div class="zf-row"><span class="zf-k">Was</span><span>${card.zfw}</span></div>
+        <div class="zf-row"><span class="zf-k">Warum</span><span>${card.zfy}</span></div>
+        <div class="zf-row"><span class="zf-k">Management</span><span>${card.zfm}</span></div>
+      </div>
+      <div class="block nx"><span class="bk">Prüfer fragt weiter</span><span class="bv">${card.nx}</span>${card.nxa?`<div class="nxa"><span class="nxa-k">Antwort</span> ${card.nxa}</div>`:''}</div>
+      <div class="grade">
+        <button class="g-right" id="gRight">Richtig</button>
+        <button class="g-wrong" id="gWrong">Falsch</button>
+      </div>
+    </div>`;
+
+  host.innerHTML = `
+    <article class="card">
+      <div class="card-head">
+        <span class="idtag-l">${examMode?'':`Fall #${String(card.id).padStart(2,'0')}`}</span>
+        ${pill}
+        <span class="masked">Befund verdeckt — selbst bestimmen</span>
+      </div>
+      <div class="printout">
+        ${buildPrintout(card)}
+      </div>
+      <div class="prompt">Befunden Sie strukturiert: Blutungstyp (plasmatisch/thrombozytär)? Thrombozyten? Quick/INR? aPTT? Fibrinogen/D-Dimere? Mischversuch? Wahrscheinlichste Diagnose? Erster Schritt?</div>
+      ${revealed?'':`<button class="reveal-btn" id="revealBtn">Befund aufdecken</button>`}
+      ${ans}
+    </article>`;
+
+  document.getElementById('counter').textContent = `${idx+1} / ${deck.length}`;
+  document.getElementById('prevBtn').disabled = idx===0;
+  document.getElementById('nextBtn').disabled = idx===deck.length-1;
+
+  const rb=document.getElementById('revealBtn');
+  if(rb) rb.onclick = ()=>{revealed=true; markSeen(); render();};
+  const gr=document.getElementById('gRight'); const gw=document.getElementById('gWrong');
+  if(gr) gr.onclick = ()=>grade('right');
+  if(gw) gw.onclick = ()=>grade('wrong');
+  updateScore();
+}
+
+/* ===== session memory ===== */
+function updateScore(){
+  let r=0,w=0;
+  deck.forEach(c=>{ const s=progress[c.id]; if(s==='right')r++; else if(s==='wrong')w++; });
+  document.getElementById('rCount').textContent = r;
+  document.getElementById('fCount').textContent = w;
+  const dc=document.getElementById('doneCount');
+  if(dc) dc.textContent = `${r+w} / ${deck.length}`;
+  renderDots();
+}
+function grade(status){ if(deck.length===0) return; progress[deck[idx].id]=status; next(); }
+function markSeen(){ if(deck.length===0) return; const id=deck[idx].id; if(!progress[id]) progress[id]='seen'; }
+function renderDots(){
+  const el=document.getElementById('dots'); if(!el) return;
+  if(deck.length===0){ el.innerHTML=''; return; }
+  const dotsHTML = deck.map((c,i)=>{
+    const s=progress[c.id]||'none'; const cur=i===idx?' cur':'';
+    const t=s==='right'?'richtig':s==='wrong'?'falsch':s==='seen'?'gesehen':'offen';
+    return `<button class="dot d-${s}${cur}" data-i="${i}" title="#${String(c.id).padStart(2,'0')} · ${t}"></button>`;
+  }).join('');
+  const open=deck.filter(c=>!progress[c.id]).length;
+  el.innerHTML = `<span class="dots-lab">Sitzung</span>${dotsHTML}<span class="dots-rest">${open} offen</span>`;
+  el.querySelectorAll('.dot').forEach(d=>{ d.onclick=()=>{ idx=Number(d.dataset.i); revealed=false; render(); }; });
+}
+
+/* ===== navigation ===== */
+function next(){ if(idx<deck.length-1){ idx++; revealed=false; render(); } else { revealed=false; render(); } }
+function prev(){ if(idx>0){ idx--; revealed=false; render(); } }
+function toggleReveal(){ if(deck.length===0) return; revealed=!revealed; if(revealed) markSeen(); render(); }
+function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; } idx=0; revealed=false; render(); }
+
+/* ===== controls wiring ===== */
+const katSel = document.getElementById('katSel');
+KATS.forEach(k=>{const o=document.createElement('option'); o.value=k; o.textContent=k; katSel.appendChild(o);});
+katSel.onchange = ()=>{katFilter=katSel.value; buildDeck(); render();};
+
+/* single coagulation panel — no analyzer profiles */
+
+document.querySelectorAll('#tierSeg button').forEach(b=>{
+  b.onclick = ()=>{ document.querySelectorAll('#tierSeg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); tierFilter=b.dataset.tier; buildDeck(); render(); };
+});
+document.querySelectorAll('#bankSeg button').forEach(b=>{
+  b.onclick = ()=>{ document.querySelectorAll('#bankSeg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); bankFilter=b.dataset.bank; buildDeck(); render(); };
+});
+document.querySelectorAll('#hySeg button').forEach(b=>{
+  b.onclick = ()=>{ document.querySelectorAll('#hySeg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); hyFilter=b.dataset.hy; idx=0; buildDeck(); render(); };
+});
+document.getElementById('klinikChk').onchange = (e)=>{showKlinik=e.target.checked; render();};
+document.getElementById('flagsChk').onchange = (e)=>{showFlags=e.target.checked; render();};
+document.getElementById('morphChk').onchange = (e)=>{showMorph=e.target.checked; render();};
+document.getElementById('refChk').onchange = (e)=>{showRef=e.target.checked; render();};
+document.getElementById('examChk').onchange = (e)=>{
+  examMode = e.target.checked;
+  const v = !examMode;                       // exam mode on → hide; off → show all
+  showKlinik = showFlags = showMorph = showRef = v;
+  klinikChk.checked = flagsChk.checked = morphChk.checked = refChk.checked = v;
+  lastRenderedId = null;
+  render();
+};
+document.getElementById('shuffleBtn').onclick = shuffleDeck;
+document.getElementById('resetBtn').onclick = ()=>{progress={}; revealed=false; render();};
+document.getElementById('prevBtn').onclick = prev;
+document.getElementById('nextBtn').onclick = next;
+
+/* schema modal (auto-built from STEPS + REF) */
+const modal=document.getElementById('schemaModal');
+document.getElementById('schemaList').innerHTML = STEPS.map(s=>`<li><b>${s.n}. ${s.label}</b></li>`).join('');
+document.getElementById('schemaRef').textContent = Object.keys(REF).map(k=>{
+  const m=REF[k]; return `${(m.lab).padEnd(16,' ')} ${(m.ref||m.refAbs||'')} ${m.u}`;
+}).join('\n');
+document.getElementById('schemaBtn').onclick = ()=>modal.classList.add('open');
+document.getElementById('schemaClose').onclick = ()=>modal.classList.remove('open');
+modal.onclick = (e)=>{ if(e.target===modal) modal.classList.remove('open'); };
+
+/* ============================================================
+   EDIT ZONE 6 — DIFFERENZIALDIAGNOSEN pro Kategorie
+   Für jede Kategorie: häufige Ursachen + differenzierende Tests.
+   (Inhalt wird HTML-escaped gerendert: <, >, & sind erlaubt.)
+   ============================================================ */
+const DDX = {
+  'Verlängerte aPTT (isoliert)': {
+    intro:'Isoliert verlängerte aPTT (Quick normal) bedeutet einen Defekt oder eine Hemmung im intrinsischen System. Erster Schritt ist der Mischversuch (1:1 mit Normalplasma): Korrektur spricht für einen Faktormangel, keine Korrektur für einen Inhibitor.',
+    causes:[
+      {dz:'Hämophilie A (Faktor-VIII-Mangel)', befund:'plasmatischer Blutungstyp (Hämarthros, Muskelblutungen), X-chromosomal-rezessiv', test:'Faktor VIII erniedrigt; Mischversuch korrigiert'},
+      {dz:'Hämophilie B (Faktor-IX-Mangel)', befund:'klinisch wie Hämophilie A, nicht unterscheidbar', test:'Faktor IX erniedrigt; Mischversuch korrigiert'},
+      {dz:'Von-Willebrand-Syndrom', befund:'mukokutaner Blutungstyp; aPTT nur bei begleitendem FVIII-Abfall verlängert', test:'vWF:Antigen und vWF:Aktivität erniedrigt, Faktor VIII niedrig'},
+      {dz:'Faktor-XII-Mangel', befund:'KEIN Blutungsrisiko trotz deutlich verlängerter aPTT (klassische Falle)', test:'Faktor XII erniedrigt; Mischversuch korrigiert'},
+      {dz:'Lupusantikoagulans', befund:'Thromboseneigung statt Blutung (paradox), oft Aborte', test:'Mischversuch ohne Korrektur; Lupusantikoagulans und Antiphospholipid-AK positiv'},
+      {dz:'Erworbene Hemmkörperhämophilie (FVIII-Inhibitor)', befund:'neu aufgetretene, oft schwere Blutung, meist ältere Patienten', test:'Mischversuch ohne Korrektur; Faktor VIII erniedrigt; Bethesda-Titer'},
+      {dz:'Unfraktioniertes Heparin', befund:'Medikamentenanamnese (Perfusor); auch Thrombinzeit verlängert', test:'Anti-Xa im Zielbereich; Steuerung über aPTT'}
+    ]
+  },
+  'Verlängerter Quick / INR (isoliert)': {
+    intro:'Isoliert erniedrigter Quick bzw. erhöhter INR bei normaler aPTT zeigt ein Problem im extrinsischen Weg, vor allem im Faktor VII (kürzeste Halbwertszeit aller Vitamin-K-abhängigen Faktoren).',
+    causes:[
+      {dz:'Frühe Vitamin-K-Antagonisten-Wirkung', befund:'frisch begonnener VKA; Faktor VII fällt zuerst', test:'Medikamentenanamnese; Faktor VII erniedrigt, Faktor V normal'},
+      {dz:'Angeborener Faktor-VII-Mangel', befund:'variable, oft milde Blutung; Befund über die Zeit konstant', test:'Faktor VII isoliert erniedrigt; II/V/X normal'},
+      {dz:'Beginnende Lebersynthesestörung', befund:'frühe oder leichte Leberschädigung', test:'Faktor V und Lebersyntheseparameter (Albumin, Cholinesterase) beachten'},
+      {dz:'Beginnender Vitamin-K-Mangel', befund:'noch extrinsisch betont, aPTT noch normal', test:'Ansprechen auf Vitamin K; Faktor V normal'}
+    ]
+  },
+  'Quick ↓ und aPTT ↑': {
+    intro:'Sind beide Globaltests pathologisch, liegt ein Mehrfaktorenmangel oder eine globale Störung vor. Über Fibrinogen, D-Dimere, Thrombozyten, Faktor V und Faktor VIII differenzieren.',
+    causes:[
+      {dz:'Vitamin-K-Mangel / Cumarin (fortgeschritten)', befund:'Fibrinogen, Thrombozyten und D-Dimere normal', test:'Faktor V normal (Vitamin-K-unabhängig); Ansprechen auf Vitamin K'},
+      {dz:'Schwere Lebererkrankung', befund:'oft Thrombopenie (Hypersplenismus), Fibrinogen niedrig-normal', test:'Faktor V erniedrigt, Faktor VIII normal/erhöht; Albumin, Cholinesterase'},
+      {dz:'Disseminierte intravasale Gerinnung (DIC)', befund:'Trigger (Sepsis), Thrombopenie, Fibrinogen erniedrigt', test:'D-Dimere stark erhöht, Faktor VIII erniedrigt, Fragmentozyten'},
+      {dz:'Mangel der Endstreckenfaktoren (X, V, II) oder Fibrinogen', befund:'angeboren oder erworben', test:'Einzelfaktoren; Fibrinogen quantitativ'},
+      {dz:'Hohe Heparindosis oder direkte Thrombin-/Xa-Inhibitoren', befund:'Medikamentenanamnese', test:'Anti-Xa bzw. Thrombinzeit/dTT je nach Substanz'}
+    ]
+  },
+  'Thrombozytär bedingte Blutung': {
+    intro:'Mukokutaner (thrombozytärer) Blutungstyp: Petechien, Schleimhautblutung, sofortige Blutung. Zwischen Thrombozytopenie (Zahl) und Thrombozytopathie (Funktion) unterscheiden — bei Funktionsstörungen ist die Zahl normal und die Globaltests sind unauffällig.',
+    causes:[
+      {dz:'Von-Willebrand-Syndrom', befund:'häufigste hereditäre Blutungsneigung; Thrombozytenzahl normal', test:'vWF:Antigen/Aktivität erniedrigt, Faktor VIII niedrig; PFA verlängert'},
+      {dz:'Immunthrombozytopenie (ITP)', befund:'isolierte Thrombopenie, oft postinfektiös', test:'Ausschlussdiagnose; Ausstrich ohne Fragmentozyten; Pseudothrombopenie ausschließen'},
+      {dz:'Medikamentös (ASS/Clopidogrel)', befund:'Zahl normal, Funktion gestört', test:'Medikamentenanamnese; Thrombozytenfunktionstest'},
+      {dz:'Urämische Thrombozytopathie', befund:'fortgeschrittene Niereninsuffizienz', test:'Retentionswerte erhöht; Funktionsstörung trotz normaler Globaltests'},
+      {dz:'Bernard-Soulier-Syndrom', befund:'Adhäsionsdefekt (GPIb), Riesenthrombozyten, leichte Thrombopenie', test:'Thrombozytenfunktion; Durchflusszytometrie (GPIb)'},
+      {dz:'Glanzmann-Thrombasthenie', befund:'Aggregationsdefekt (GPIIb/IIIa), Zahl normal', test:'Aggregometrie; Durchflusszytometrie (GPIIb/IIIa)'}
+    ]
+  },
+  'Verbrauchskoagulopathie (DIC)': {
+    intro:'Systemische Gerinnungsaktivierung mit Verbrauch. Immer den Auslöser suchen (Sepsis, Trauma, geburtshilfliche Komplikation, Malignom). Leitbefund: D-Dimere stark erhöht + Fibrinogen erniedrigt + Thrombopenie + Fragmentozyten.',
+    causes:[
+      {dz:'Sepsis-assoziierte DIC', befund:'kritisch krank, diffuse Sickerblutung und/oder Mikrothrombosen', test:'D-Dimere stark erhöht, Fibrinogen und Thrombozyten erniedrigt, Faktor V erniedrigt'},
+      {dz:'Geburtshilfliche DIC (z. B. vorzeitige Plazentalösung)', befund:'akute, schwere Blutung', test:'gleiches Verbrauchsmuster; Klinik'},
+      {dz:'Abgrenzung Lebererkrankung', befund:'kann ähnlich aussehen', test:'Faktor VIII bei DIC erniedrigt, bei Leber normal/erhöht'},
+      {dz:'Abgrenzung Hyperfibrinolyse', befund:'ebenfalls Fibrinogen niedrig und D-Dimere hoch', test:'Thrombozyten bei DIC erniedrigt, bei Hyperfibrinolyse normal'}
+    ]
+  },
+  'Hyperfibrinolyse': {
+    intro:'Überschießende Plasminaktivität. Leitbefund: Fibrinogen erniedrigt und D-Dimere/Fibrinspaltprodukte stark erhöht bei NORMALER Thrombozytenzahl (wichtigste Abgrenzung zur DIC).',
+    causes:[
+      {dz:'Primäre Hyperfibrinolyse (OP an Prostata/Lunge/Uterus)', befund:'plasminogenaktivatorreiche Organe; diffuse Blutung', test:'Thrombozyten normal; Reptilasezeit verlängert; Alpha-2-Antiplasmin erniedrigt'},
+      {dz:'Hyperfibrinolyse bei Lebererkrankung', befund:'verminderte Synthese der Plasmin-Inhibitoren', test:'Lebersyntheseparameter; Klinik'},
+      {dz:'Therapeutische Thrombolyse', befund:'unter Fibrinolytika', test:'Medikamentenanamnese'},
+      {dz:'Abgrenzung DIC', befund:'Thrombopenie und Fragmentozyten sprechen für DIC', test:'Thrombozytenzahl; Fragmentozyten im Ausstrich'}
+    ]
+  },
+  'Thrombophilie': {
+    intro:'Abklärung bei jungen, unprovozierten, rezidivierenden oder atypisch lokalisierten Thrombosen. Wichtige Timing-Regel: Protein C, Protein S und Antithrombin NICHT in der Akutphase oder unter Antikoagulation bestimmen.',
+    causes:[
+      {dz:'Faktor-V-Leiden (APC-Resistenz)', befund:'häufigste hereditäre Thrombophilie', test:'APC-Resistenz-Test, dann genetischer Nachweis (jederzeit möglich)'},
+      {dz:'Prothrombin-G20210A-Mutation', befund:'zweithäufigste hereditäre Form', test:'genetischer Nachweis (jederzeit möglich)'},
+      {dz:'Protein-C-Mangel', befund:'venöse Thrombosen; Cumarinnekrose bei VKA-Beginn', test:'Protein-C-Aktivität (nicht unter VKA — VKA senkt Protein C)'},
+      {dz:'Protein-S-Mangel', befund:'venöse Thrombosen', test:'Protein-S-Aktivität (nicht unter VKA)'},
+      {dz:'Antithrombinmangel', befund:'oft Heparinresistenz', test:'Antithrombin-Aktivität (nicht unter Heparin — Heparin senkt AT)'},
+      {dz:'Antiphospholipidsyndrom', befund:'venöse UND arterielle Thrombosen, Aborte; aPTT verlängert', test:'Lupusantikoagulans, Anti-Cardiolipin, Anti-Beta-2-Glykoprotein-I; Persistenz nach 12 Wochen'}
+    ]
+  },
+  'Medikamenten-Monitoring / -effekte': {
+    intro:'Welcher Test wird von welchem Antikoagulans beeinflusst, und wie wird gesteuert? Antidote mitdenken — die Medikamentenliste ist ein typisches Prüfungsthema (Substanz → Klasse → Monitoring → Antidot).',
+    causes:[
+      {dz:'Unfraktioniertes Heparin (UFH)', befund:'aPTT (und Thrombinzeit) verlängert; HIT-II-Risiko', test:'Steuerung über aPTT oder Anti-Xa; Antidot Protamin'},
+      {dz:'Niedermolekulares Heparin (NMH)', befund:'aPTT kaum beeinflusst; Kumulation bei Niereninsuffizienz', test:'meist kein Monitoring; bei Bedarf Anti-Xa; Antidot Protamin (teilweise)'},
+      {dz:'Vitamin-K-Antagonist (Phenprocoumon)', befund:'Quick erniedrigt / INR erhöht, später auch aPTT', test:'Steuerung über INR; Antidot PPSB (sofort) + Vitamin K (verzögert)'},
+      {dz:'Faktor-Xa-Inhibitor (Apixaban/Rivaroxaban/Edoxaban)', befund:'Quick/aPTT variabel, Thrombinzeit normal', test:'kalibrierte Anti-Xa-Aktivität; Antidot Andexanet alfa (alternativ PPSB)'},
+      {dz:'Direkter Thrombininhibitor (Dabigatran)', befund:'Thrombinzeit sehr empfindlich, aPTT verlängert, Quick wenig betroffen', test:'verdünnte Thrombinzeit (dTT)/Ecarin; Antidot Idarucizumab'}
+    ]
+  }
+};
+/* ===== DD-Übersicht modal ===== */
+const ddxModal = document.getElementById('ddxModal');
+(function buildDdx(){
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const order = KATS.filter(k => k!=='Alle Kategorien' && DDX[k]);
+  ddxCatIndex = {};
+  const html = order.map((kat,i)=>{
+    ddxCatIndex[kat] = i;
+    const d = DDX[kat];
+    const items = d.causes.map(c=>`
+      <div class="ddx-item">
+        <div class="ddx-dz">${esc(c.dz)}</div>
+        <div class="ddx-line"><span class="ddx-k">Befund</span> ${esc(c.befund)}</div>
+        <div class="ddx-line"><span class="ddx-k">Test</span> ${esc(c.test)}</div>
+      </div>`).join('');
+    return `<section class="ddx-cat" id="ddx-${i}">
+        <h4 class="ddx-h">${esc(kat)}</h4>
+        <p class="ddx-intro">${esc(d.intro)}</p>
+        ${items}
+      </section>`;
+  }).join('');
+  document.getElementById('ddxBody').innerHTML = html;
+})();
+function openDdx(){
+  ddxModal.classList.add('open');
+  const kat = (deck.length && deck[idx]) ? deck[idx].kat : null;
+  ddxModal.querySelectorAll('.ddx-cat').forEach(s=>s.classList.remove('here'));
+  if(kat && ddxCatIndex[kat]!=null){
+    const sec = document.getElementById('ddx-'+ddxCatIndex[kat]);
+    if(sec){ sec.classList.add('here'); sec.scrollIntoView({block:'start'}); }
+  } else {
+    document.querySelector('#ddxBody').scrollTop = 0;
+  }
+}
+document.getElementById('ddxBtn').onclick = openDdx;
+document.getElementById('ddxClose').onclick = ()=>ddxModal.classList.remove('open');
+ddxModal.onclick = (e)=>{ if(e.target===ddxModal) ddxModal.classList.remove('open'); };
+
+
+/* keyboard */
+document.addEventListener('keydown', (e)=>{
+  const tag=(e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='select'||tag==='textarea') return;
+  if(modal.classList.contains('open')||ddxModal.classList.contains('open')){ if(e.key==='Escape'){ modal.classList.remove('open'); ddxModal.classList.remove('open'); } return; }
+  if(e.code==='Space'){ e.preventDefault(); toggleReveal(); }
+  else if(e.key==='ArrowRight'){ next(); }
+  else if(e.key==='ArrowLeft'){ prev(); }
+  else if(e.key==='r'||e.key==='R'){ if(revealed) grade('right'); }
+  else if(e.key==='f'||e.key==='F'){ if(revealed) grade('wrong'); }
+});
+
+/* init */
+buildDeck();
+render();
+updateScore();
+</script>
+</body>
+</html>

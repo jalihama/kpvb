@@ -1,0 +1,1845 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blutbild-Trainer · Vorlage</title>
+<!--
+  ============================================================================
+  BLUTBILD-TRAINER · ENGINE TEMPLATE  (adapt from the BGA-Trainer)
+  ============================================================================
+  This is a WORKING SKELETON. Same engine/UX as the BGA trainer:
+    · dark "device" chrome, black-and-white lab printout, two-column panel
+    · Tier / Deck(bank) / Kategorie / Gerät(analyzer) filters
+    · per-sitting session memory (status pill + clickable progress dots)
+    · reveal mechanism, keyboard (Space / ← → / R / F), schema modal
+
+  TO ADAPT, EDIT ONLY THESE FOUR ZONES (search for "EDIT ZONE"):
+    1) REF        – reference ranges + units for each CBC parameter
+    2) STEPS      – the systematic reading schema (data-driven; any N steps)
+    3) KATS       – the category list for the dropdown
+    4) ANALYZERS  – printout layouts/labels per analyzer (Sysmex/Coulter/…)
+    5) DATA       – the cards (vignette + values + per-step answers)
+
+  buildPanel() AUTO-COMPUTES MCV, MCH, MCHC and absolute differential counts,
+  so each card only supplies the PRIMARY measured values (Hb, Hkt, Ery, Leuk,
+  the differential %, Thrombo, Retik, RDW, MPV). Keep that contract.
+
+  MEDICAL VALIDATION (do this before shipping, like the BGA build):
+    · MCV = Hkt*10/Ery ; MCH = Hb*10/Ery ; MCHC = Hb*100/Hkt  (auto-checked)
+    · differential % should sum to ~100 (auto-checked, warns in console)
+    · absolute diff = (%/100) * Leuk
+    · every card has all STEPS keys + dx/ac/fa/nx/nxa/zfw/zfy/zfm
+  ============================================================================
+-->
+<style>
+  :root{
+    --ink:#0c1219; --ink-2:#111a24; --ink-3:#18242f; --line:#243341;
+    --teal:#37c6ae; --teal-dim:#1f8576; --teal-deep:#0f2d2a;
+    --high:#e0554c; --low:#3e92d8; --amber:#e6a542; --amber-deep:#2c2415;
+    --text:#e9eef3; --text-dim:#93a2b1; --text-faint:#5c6b79;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0; background:var(--ink); color:var(--text); font-family:var(--sans); -webkit-text-size-adjust:100%}
+  .wrap{max-width:760px; margin:0 auto; padding:20px 16px 64px}
+
+  .masthead{display:flex; align-items:baseline; gap:10px; margin:4px 2px 16px; flex-wrap:wrap}
+  .logo{font-family:var(--mono); font-weight:700; font-size:18px; letter-spacing:.04em; color:var(--text)}
+  .logo b{color:var(--teal)}
+  .tagline{font-size:12px; color:var(--text-faint); letter-spacing:.02em}
+
+  .controls{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--ink-2)}
+  .seg button{font-family:var(--sans); font-size:12.5px; color:var(--text-dim); background:transparent; border:0; padding:7px 11px; cursor:pointer}
+  .seg button.on{background:var(--teal-deep); color:var(--teal)}
+  select{font-family:var(--sans); font-size:12.5px; color:var(--text); background:var(--ink); border:1px solid var(--line); border-radius:9px; padding:7px 9px; cursor:pointer; max-width:230px}
+  .switch{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:var(--text-dim); cursor:pointer; user-select:none}
+  .switch.mode{color:var(--teal); font-weight:600}
+  .ghost{font-family:var(--sans); font-size:12.5px; color:var(--text-dim); background:transparent; border:1px solid var(--line); border-radius:9px; padding:7px 11px; cursor:pointer}
+  .ghost:hover{border-color:var(--teal-dim); color:var(--teal)}
+  .score{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12px; color:var(--text-dim)}
+  .score b{color:var(--teal)} .score .wr{color:var(--high)}
+  .reset{background:transparent; border:1px solid var(--line); color:var(--text-faint); border-radius:8px; padding:4px 8px; cursor:pointer; font-size:13px}
+
+  /* progress dots (session memory) */
+  .dots{display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-bottom:16px; padding:11px 12px; background:var(--ink-2); border:1px solid var(--line); border-radius:12px}
+  .dots:empty{display:none}
+  .dots-lab{font-family:var(--mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.05em; margin-right:3px}
+  .dot{width:11px; height:11px; border-radius:50%; border:1.5px solid var(--text-faint); background:transparent; padding:0; cursor:pointer; transition:transform .1s}
+  .dot:hover{transform:scale(1.35)}
+  .dot.d-seen{background:var(--text-faint); border-color:var(--text-faint)}
+  .dot.d-right{background:var(--teal); border-color:var(--teal)}
+  .dot.d-wrong{background:var(--high); border-color:var(--high)}
+  .dot.cur{box-shadow:0 0 0 2px var(--ink-2),0 0 0 4px var(--text); transform:scale(1.15)}
+  .dots-rest{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--text-dim); letter-spacing:.04em}
+
+  .card{background:var(--ink-2); border:1px solid var(--line); border-radius:16px; padding:18px 18px 20px}
+  .card-head{display:flex; align-items:center; gap:10px; margin-bottom:14px}
+  .idtag-l{font-family:var(--mono); font-size:11px; color:var(--text-faint); letter-spacing:.06em}
+  .status-pill{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.04em; padding:2px 8px; border-radius:999px; text-transform:uppercase; white-space:nowrap}
+  .st-right{color:var(--teal); background:var(--teal-deep); border:1px solid var(--teal-dim)}
+  .st-wrong{color:var(--high); background:#2c1714; border:1px solid #5e2a25}
+  .masked{margin-left:auto; font-size:11.5px; color:var(--text-faint); font-style:italic}
+
+  /* ---- black-and-white lab printout sitting on the dark chrome ---- */
+  .printout{background:#f5f5f3; color:#15181c; border-radius:10px; padding:14px 16px; box-shadow:0 1px 0 #cfcfca inset}
+  .po-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; border-bottom:2px solid #20232a; padding-bottom:5px; margin-bottom:4px}
+  .po-title{font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.14em; color:#15181c}
+  .po-meta{font-family:var(--mono); font-size:10px; color:#6b7178; letter-spacing:.02em}
+  .vignette{font-family:var(--sans); font-size:12.5px; line-height:1.5; color:#2a2e33; margin:8px 0 6px; font-style:italic}
+  .po-cols{display:grid; grid-template-columns:1fr 1fr; gap:0 26px}
+  table.bga{width:100%; border-collapse:collapse; font-family:var(--mono)}
+  td{padding:2px 0; vertical-align:baseline}
+  td.lab{font-size:11px; color:#23272c}
+  td.val{font-size:11px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; padding-left:8px; color:#15181c}
+  td.val.ab{font-weight:700}
+  td.val .u{color:#6b7178; font-weight:400; font-size:9.5px}
+  td.val .flag{font-weight:700}
+  td.ref{font-size:9px; text-align:right; white-space:nowrap; color:#9298a0; padding-left:8px}
+  tr.sec td{font-size:8px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#111; border-bottom:1.5px solid #20232a; padding:8px 0 2px}
+  tr.sec:first-child td{padding-top:1px}
+  .zusatz{margin-top:8px; border-top:1px dashed #b9b9b3; padding-top:6px}
+  .zusatz .zt{font-family:var(--mono); font-size:8px; letter-spacing:.14em; text-transform:uppercase; color:#6b7178; margin-bottom:3px}
+  .zusatz table{width:100%; border-collapse:collapse; font-family:var(--mono)}
+
+  .prompt{font-size:12px; color:var(--text-dim); line-height:1.5; margin:14px 2px 12px}
+  .reveal-btn{width:100%; background:var(--teal-deep); color:var(--teal); border:1px solid var(--teal-dim); border-radius:10px; padding:11px; font-size:13.5px; font-weight:600; cursor:pointer}
+  .reveal-btn:hover{background:#123733}
+
+  .answer{margin-top:4px}
+  .ans-head{display:flex; align-items:center; gap:8px; margin:6px 2px 12px}
+  .tier-pill{font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--ink-3); color:var(--text-dim); border:1px solid var(--line)}
+  .kat-pill{font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--teal-deep); color:var(--teal); border:1px solid var(--teal-dim)}
+  .hy-pill{font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(214,164,58,.15); color:#e3b24a; border:1px solid rgba(214,164,58,.42)}
+  .hy-mark{color:#c98f1f; font-weight:700; white-space:nowrap}
+  .step{display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--line)}
+  .step-n{flex:0 0 auto; width:22px; height:22px; border-radius:50%; background:var(--ink-3); color:var(--teal); font-family:var(--mono); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center}
+  .step-b{flex:1}
+  .step-k{font-size:11px; color:var(--text-faint); letter-spacing:.04em; text-transform:uppercase; margin-bottom:2px}
+  .step-v{font-size:13px; color:var(--text); line-height:1.5}
+  .block{margin:12px 0; padding:11px 13px; border-radius:10px; background:var(--ink-3); border:1px solid var(--line)}
+  .block .bk{display:block; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px}
+  .block .bv{font-size:13.5px; line-height:1.55; color:var(--text)}
+  .block.dx{background:var(--teal-deep); border-color:var(--teal-dim)} .block.dx .bk{color:var(--teal)}
+  .block.fa{background:var(--amber-deep); border-color:#5a4a1e} .block.fa .bk{color:var(--amber)}
+  .zf{margin:12px 0; padding:11px 13px; border-radius:10px; background:var(--ink-3); border:1px solid var(--line)}
+  .zf-row{display:flex; gap:8px; padding:3px 0; font-size:12.5px; line-height:1.5}
+  .zf-k{flex:0 0 96px; color:var(--teal); font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; padding-top:2px}
+  .nx .bv{color:var(--text)}
+  .nxa{margin-top:7px; padding-top:7px; border-top:1px dashed var(--line); font-size:12.5px; line-height:1.55; color:var(--text-dim)}
+  .nxa-k{color:var(--teal); font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; margin-right:4px}
+  .grade{display:flex; gap:10px; margin-top:14px}
+  .grade button{flex:1; border-radius:10px; padding:10px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid}
+  .g-right{background:var(--teal-deep); color:var(--teal); border-color:var(--teal-dim)}
+  .g-wrong{background:#2c1714; color:var(--high); border-color:#5e2a25}
+  .empty{padding:30px; text-align:center; color:var(--text-faint); font-size:13px}
+
+  .navbar{display:flex; align-items:center; gap:10px; margin-top:16px}
+  .navbar button{background:var(--ink-2); border:1px solid var(--line); color:var(--text-dim); border-radius:10px; padding:9px 14px; font-size:13px; cursor:pointer}
+  .navbar button:disabled{opacity:.35; cursor:default}
+  .counter{margin:0 auto; font-family:var(--mono); font-size:12px; color:var(--text-faint)}
+
+  .modal{position:fixed; inset:0; background:rgba(4,8,12,.74); display:none; align-items:center; justify-content:center; padding:18px; z-index:50}
+  .modal.open{display:flex}
+  .modal-box{background:var(--ink-2); border:1px solid var(--line); border-radius:16px; max-width:560px; width:100%; max-height:84vh; overflow:auto; padding:20px}
+  .modal-box h3{margin:0 0 10px; font-family:var(--mono); font-size:14px; letter-spacing:.04em; color:var(--teal)}
+  .modal-box p, .modal-box li{font-size:13px; line-height:1.55; color:var(--text-dim)}
+  .modal-close{float:right; background:transparent; border:1px solid var(--line); color:var(--text-faint); border-radius:8px; padding:3px 9px; cursor:pointer}
+  .ddx-cat{padding:12px 0; border-top:1px solid var(--line)}
+  .ddx-cat:first-of-type{border-top:0}
+  .ddx-cat.here{background:var(--teal-deep); border-radius:12px; padding:12px 12px; margin:0 -12px}
+  .ddx-h{margin:0 0 6px; font-family:var(--mono); font-size:13px; letter-spacing:.03em; color:var(--teal)}
+  .ddx-intro{margin:0 0 12px; font-size:12.5px; line-height:1.5; color:var(--text-dim)}
+  .ddx-item{margin:0 0 11px; padding-left:11px; border-left:2px solid var(--line)}
+  .ddx-dz{font-size:12.5px; font-weight:700; color:var(--text); margin-bottom:2px}
+  .ddx-line{font-size:12px; line-height:1.5; color:var(--text-dim)}
+  .ddx-k{display:inline-block; min-width:48px; font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.04em; color:var(--text-faint); text-transform:uppercase}
+
+  @media (max-width:680px){
+    .po-cols{grid-template-columns:1fr; gap:0}
+    .score{order:9; width:100%; margin-left:0; justify-content:flex-start}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <span class="logo">Blutbild<b>·</b>Trainer</span>
+    <span class="tagline">Kenntnisprüfung · systematische Befundung in Schritten</span>
+  </div>
+
+  <div class="controls">
+    <div class="seg" id="tierSeg">
+      <button data-tier="all" class="on">Alle</button>
+      <button data-tier="1">Tier&nbsp;1</button>
+      <button data-tier="2">Tier&nbsp;2</button>
+      <button data-tier="3">Tier&nbsp;3</button>
+    </div>
+    <div class="seg" id="bankSeg">
+      <button data-bank="all" class="on">Beide&nbsp;Decks</button>
+      <button data-bank="kern">Kern</button>
+      <button data-bank="ext">Erweiterung</button>
+    </div>
+    <div class="seg" id="hySeg">
+      <button data-hy="all" class="on">Alle&nbsp;Karten</button>
+      <button data-hy="1">★&nbsp;High-Yield</button>
+    </div>
+    <select id="katSel"></select>
+    <select id="analyzerSel" title="Analyzer / Gerätelayout">
+      <option value="gen">Gerät: Generisch</option>
+      <option value="sysmex">Gerät: Sysmex (XN)</option>
+      <option value="coulter">Gerät: Beckman Coulter</option>
+    </select>
+    <label class="switch mode"><input type="checkbox" id="examChk" checked> Prüfungsmodus</label>
+    <label class="switch"><input type="checkbox" id="klinikChk"> Klinik anzeigen</label>
+    <label class="switch"><input type="checkbox" id="flagsChk"> Flags anzeigen</label>
+    <label class="switch"><input type="checkbox" id="morphChk"> Morphologie anzeigen</label>
+    <label class="switch"><input type="checkbox" id="refChk"> Referenz anzeigen</label>
+    <button class="ghost" id="schemaBtn">Schema &amp; Normwerte</button>
+    <button class="ghost" id="ddxBtn">Differenzialdiagnosen</button>
+    <button class="ghost" id="shuffleBtn">Mischen</button>
+    <div class="score">
+      Richtig&nbsp;<b id="rCount">0</b> · Falsch&nbsp;<span class="wr" id="fCount">0</span> · Bearbeitet&nbsp;<b id="doneCount">0&nbsp;/&nbsp;0</b>
+      <button class="reset" id="resetBtn" title="Sitzung zurücksetzen">↺</button>
+    </div>
+  </div>
+
+  <div class="dots" id="dots"></div>
+
+  <main id="cardHost"></main>
+
+  <div class="navbar">
+    <button id="prevBtn">← Zurück</button>
+    <div class="counter" id="counter">– / –</div>
+    <button id="nextBtn">Weiter →</button>
+  </div>
+</div>
+
+<div class="modal" id="schemaModal">
+  <div class="modal-box">
+    <button class="modal-close" id="schemaClose">✕</button>
+    <h3>Systematische Befundung</h3>
+    <ol id="schemaList"></ol>
+    <h3 style="margin-top:16px">Normwerte (Erwachsene, orientierend)</h3>
+    <p id="schemaRef" style="font-family:var(--mono); font-size:11.5px; white-space:pre-line"></p>
+    <p style="margin-top:10px; color:var(--text-faint)">Normbereiche sind labor- und geschlechtsabhängig. An die Werte der jeweiligen KP/Klinik anpassen.</p>
+  </div>
+</div>
+
+<div class="modal" id="ddxModal">
+  <div class="modal-box">
+    <button class="modal-close" id="ddxClose">✕</button>
+    <h3>Differenzialdiagnosen nach Befundmuster</h3>
+    <p style="font-size:12px; color:var(--text-faint); margin:0 0 4px">Häufige Ursachen je Kategorie und die Tests zur Abgrenzung. Die Kategorie der aktuellen Karte ist hervorgehoben.</p>
+    <div id="ddxBody"></div>
+  </div>
+</div>
+
+<script>
+/* ===== small helpers ===== */
+function fmt(n,dec,sign){
+  if(n===null||n===undefined||(typeof n==='number'&&isNaN(n))) return '–';
+  if(typeof n!=='number') return n;
+  let s=n.toFixed(dec).replace('.',',');
+  if(sign && n>0) s='+'+s;
+  return s;
+}
+
+/* ============================================================
+   EDIT ZONE 1 — REFERENCE RANGES  (label, unit, [lo, hi], decimals)
+   buildPanel reads these. Adjust to your lab / KP conventions.
+   ============================================================ */
+const REF = {
+  Hb:   {lab:'Hämoglobin',     u:'g/dl',   lo:12.0, hi:16.0, dec:1, ref:'12,0–16,0'},
+  Hkt:  {lab:'Hämatokrit',     u:'%',      lo:37,   hi:47,   dec:0, ref:'37–47'},
+  Ery:  {lab:'Erythrozyten',   u:'Mio/µl', lo:4.0,  hi:5.5,  dec:2, ref:'4,0–5,5'},
+  MCV:  {lab:'MCV',            u:'fl',     lo:80,   hi:96,   dec:0, ref:'80–96'},
+  MCH:  {lab:'MCH',            u:'pg',     lo:27,   hi:33,   dec:1, ref:'27–33'},
+  MCHC: {lab:'MCHC',           u:'g/dl',   lo:32,   hi:36,   dec:1, ref:'32–36'},
+  RDW:  {lab:'RDW',            u:'%',      lo:11.5, hi:14.5, dec:1, ref:'11,5–14,5'},
+  Retik:{lab:'Retikulozyten',  u:'‰',      lo:5,    hi:15,   dec:0, ref:'5–15'},
+  Leuk: {lab:'Leukozyten',     u:'G/l',    lo:4.0,  hi:10.0, dec:1, ref:'4,0–10,0'},
+  Thrombo:{lab:'Thrombozyten', u:'G/l',    lo:150,  hi:400,  dec:0, ref:'150–400'},
+  MPV:  {lab:'MPV',            u:'fl',     lo:7.5,  hi:11.5, dec:1, ref:'7,5–11,5'},
+  // differential — flagged on ABSOLUTE counts (G/l); % shown in the label
+  Neut: {lab:'Neutrophile',    u:'G/l', lo:1.8, hi:7.0,  dec:2, refAbs:'1,8–7,0'},
+  Stab: {lab:'St.-kernige',    u:'G/l', lo:0,   hi:0.7,  dec:2, refAbs:'< 0,7'},     // optional
+  Lymph:{lab:'Lymphozyten',    u:'G/l', lo:1.0, hi:4.0,  dec:2, refAbs:'1,0–4,0'},
+  Mono: {lab:'Monozyten',      u:'G/l', lo:0.2, hi:0.8,  dec:2, refAbs:'0,2–0,8'},
+  Eos:  {lab:'Eosinophile',    u:'G/l', lo:0.02,hi:0.5,  dec:2, refAbs:'0,02–0,5'},
+  Baso: {lab:'Basophile',      u:'G/l', lo:0,   hi:0.1,  dec:2, refAbs:'0–0,1'},
+  Blasten:{lab:'Blasten',      u:'G/l', lo:0,   hi:0,    dec:2, refAbs:'0', critical:true}, // optional
+  atyp: {lab:'atyp. Lymph.',   u:'G/l', lo:0,   hi:0,    dec:2, refAbs:'0'}                  // optional
+};
+const DIFF_KEYS = ['Neut','Stab','Lymph','Mono','Eos','Baso','Blasten','atyp'];
+
+/* ============================================================
+   buildPanel(card): primary values in -> full ordered rows out.
+   AUTO-COMPUTES MCV/MCH/MCHC and absolute differential counts.
+   Each row: {id, sec, label, unit, ref, val, lo, hi, dec, fixedNorm}
+   ============================================================ */
+function buildPanel(card){
+  const v=card.v, o=card.o||{};
+  const g=(k)=> (o[k]!==undefined ? o[k] : v[k]);
+  const Hb=g('Hb'), Hkt=g('Hkt'), Ery=g('Ery'), Leuk=g('Leuk');
+  // red-cell indices (use card override if supplied, else compute)
+  const MCV = v.MCV!=null ? v.MCV : (Hkt!=null&&Ery ? Hkt*10/Ery : null);
+  const MCH = v.MCH!=null ? v.MCH : (Hb!=null&&Ery ? Hb*10/Ery : null);
+  const MCHC= v.MCHC!=null? v.MCHC: (Hb!=null&&Hkt ? Hb*100/Hkt : null);
+
+  const P=[]; const seen=new Set();
+  const push=(id,sec,val)=>{
+    const m=REF[id]; if(!m) return;
+    P.push({id, sec, label:m.lab, unit:m.u, ref:(m.ref||m.refAbs||''), val, lo:m.lo, hi:m.hi, dec:m.dec, fixedNorm:false});
+    seen.add(id);
+  };
+  // rote Reihe
+  push('Hb','Rote Reihe',Hb); push('Hkt','Rote Reihe',Hkt); push('Ery','Rote Reihe',Ery);
+  push('MCV','Rote Reihe',MCV); push('MCH','Rote Reihe',MCH); push('MCHC','Rote Reihe',MCHC);
+  if(v.RDW!=null) push('RDW','Rote Reihe',v.RDW);
+  if(v.Retik!=null) push('Retik','Rote Reihe',v.Retik);
+  // weiße Reihe + Differential (absolute, % folded into the label)
+  push('Leuk','Weiße Reihe / Differential',Leuk);
+  DIFF_KEYS.forEach(k=>{
+    const pct=v[k]; if(pct==null) return;          // optional cells appear only if present
+    const abs = (Leuk!=null) ? (pct/100)*Leuk : null;
+    const m=REF[k];
+    P.push({ id:k, sec:'Weiße Reihe / Differential',
+      label:`${m.lab} (${fmt(pct,0)} %)`, unit:m.u, ref:(m.refAbs||''),
+      val:abs, lo:m.lo, hi:m.hi, dec:m.dec, fixedNorm:false, critical:m.critical });
+    seen.add(k);
+  });
+  // Thrombozyten
+  push('Thrombo','Thrombozyten',g('Thrombo'));
+  if(v.MPV!=null) push('MPV','Thrombozyten',v.MPV);
+  return P;
+}
+
+/* ============================================================
+   EDIT ZONE 4 — ANALYZER PROFILES (same values, different layout/labels)
+   Add/adjust to mirror the analyzer used in your KP/clinic.
+   `labels` overrides the panel label per id; `cols` sets grouping/order.
+   ============================================================ */
+const ANALYZERS = {
+  gen: {
+    name:'Generisch', title:'DIFFERENTIALBLUTBILD', meta:'EDTA-Blut · automatisiert + mikroskopisch',
+    cols:[
+      [ {h:'Rote Reihe', ids:['Hb','Hkt','Ery','MCV','MCH','MCHC','RDW','Retik']},
+        {h:'Thrombozyten', ids:['Thrombo','MPV']} ],
+      [ {h:'Weiße Reihe / Differential', ids:['Leuk','Neut','Stab','Lymph','Mono','Eos','Baso','Blasten','atyp']} ]
+    ]
+  },
+  sysmex: {
+    name:'Sysmex (XN-Stil)', title:'Sysmex XN-1000', meta:'EDTA · CBC + DIFF',
+    labels:{ Hb:'HGB', Hkt:'HCT', Ery:'RBC', RDW:'RDW-CV', Retik:'RET#', Leuk:'WBC',
+             Neut:'NEUT', Stab:'BAND', Lymph:'LYMPH', Mono:'MONO', Eos:'EO', Baso:'BASO',
+             Blasten:'BLAST?', atyp:'ATL?', Thrombo:'PLT' },
+    cols:[
+      [ {h:'RBC', ids:['Hb','Hkt','Ery','MCV','MCH','MCHC','RDW','Retik']},
+        {h:'PLT', ids:['Thrombo','MPV']} ],
+      [ {h:'WBC / DIFF', ids:['Leuk','Neut','Stab','Lymph','Mono','Eos','Baso','Blasten','atyp']} ]
+    ]
+  },
+  coulter: {
+    name:'Beckman Coulter-Stil', title:'Beckman Coulter DxH', meta:'EDTA · CBC with Differential',
+    labels:{ Hb:'HGB', Hkt:'HCT', Ery:'RBC', RDW:'RDW', Retik:'RETIC', Leuk:'WBC',
+             Neut:'NE', Stab:'BAND', Lymph:'LY', Mono:'MO', Eos:'EO', Baso:'BA',
+             Blasten:'BLAST?', atyp:'VAR-LY?', Thrombo:'PLT' },
+    cols:[
+      [ {h:'Erythrozyten', ids:['Hb','Hkt','Ery','MCV','MCH','MCHC','RDW','Retik']},
+        {h:'Thrombozyten', ids:['Thrombo','MPV']} ],
+      [ {h:'Leukozyten / Differential', ids:['Leuk','Neut','Stab','Lymph','Mono','Eos','Baso','Blasten','atyp']} ]
+    ]
+  }
+};
+
+/* ============================================================
+   EDIT ZONE 2 — READING SCHEMA (data-driven; any number of steps)
+   Each card must carry a string for every `key` below.
+   ============================================================ */
+const STEPS = [
+  {key:'rot',     n:'1', label:'Rote Reihe — Anämie / Polyglobulie?'},
+  {key:'mcv',     n:'2', label:'MCV / MCH — Klassifikation'},
+  {key:'retik',   n:'3', label:'Retikulozyten — Regeneration'},
+  {key:'weiss',   n:'4', label:'Weiße Reihe / Differential'},
+  {key:'thrombo', n:'5', label:'Thrombozyten'},
+  {key:'synth',   n:'6', label:'Synthese / Verdachtsdiagnose'}
+];
+
+/* ============================================================
+   EDIT ZONE 3 — CATEGORIES (first entry is the "all" sentinel)
+   ============================================================ */
+const KATS = ['Alle Kategorien',
+  'Mikrozytäre Anämie','Makrozytäre Anämie','Normozytäre Anämie',
+  'Hämolyse','Polyglobulie / Erythrozytose','Leukozytose / Leukämie','Lymphozytose',
+  'Thrombozytopenie','Panzytopenie','Neutropenie / Agranulozytose','Reaktive Veränderung','Normalbefund'];
+
+/* ============================================================
+   EDIT ZONE 5 — CARDS  (replace these 3 examples with your QDA set)
+   Card fields:
+     id, tier(1/2/3), kat(must be in KATS), bank('ext' for Erweiterung; omit for Kern),
+     vig,                              // German vignette
+     v:{ Hb,Hkt,Ery,RDW,Retik,Leuk, Neut,Lymph,Mono,Eos,Baso,[Stab],[Blasten],[atyp], Thrombo,[MPV] }
+                                        // numbers use DOT decimals; panel renders comma
+     o:{}                              // optional overrides (e.g. force MCV)
+     ex:[{label,value,unit,flag}]      // morphology / Zusatzbefunde (flag: 'high'|'low'|'norm')
+     rot,mcv,retik,weiss,thrombo,synth // the STEPS answers (keys must match STEPS)
+     dx, ac, fa, nx, nxa,              // Diagnose / Erster Schritt / ⚠ Falle / Examiner-Frage / Antwort
+     zfw, zfy, zfm                     // Kurz erklärt: Was / Warum / Management
+   STRINGS: use German quotes „ "  (never an ASCII apostrophe inside '…').
+   ============================================================ */
+const DATA = [
+
+/* ===== KERN (1–9) ===== */
+
+{id:1, tier:1, kat:'Normalbefund',
+ vig:'29 J., Mann, Routine-/Vorsorgeuntersuchung, keine Beschwerden, keine Medikamente.',
+ v:{Hb:15.0,Hkt:44,Ery:4.9,RDW:13.0,Retik:12,Leuk:6.5,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:250,MPV:9.5},
+ ex:[{label:'Blutausstrich',value:'unauffällig',unit:'',flag:'norm'}],
+ rot:'Hb 15,0, Hkt 44, Ery 4,9 → alle Werte im Normbereich, keine Anämie/Polyglobulie.',
+ mcv:'MCV ~90, MCH ~31, MCHC 34 → normozytär, normochrom; RDW 13,0 normal.',
+ retik:'Retikulozyten 12 ‰ → im Normbereich.',
+ weiss:'Leukozyten 6,5 normal, Differential regelrecht (Neutrophile ~60 %, Lymphozyten ~30 %), keine Linksverschiebung, keine Blasten.',
+ thrombo:'Thrombozyten 250 normal, MPV 9,5 normal.',
+ synth:'Alle drei Zellreihen im Normbereich, unauffälliges Differential → Normalbefund.',
+ dx:'Normalbefund (unauffälliges Blutbild).',
+ ac:'Keine weitere hämatologische Abklärung nötig; Kontrolle nur bei klinischem Anlass.',
+ fa:'Nicht jeder grenzwertige Wert ist pathologisch — Referenzbereiche umfassen rund 95 % der Gesunden; einzelne leicht abweichende Werte ohne Klinik nicht überinterpretieren. Hb und Hämatokrit sind geschlechtsabhängig (Männer höher als Frauen).',
+ nx:'„Welche Werte betrachten Sie zuerst, wenn Sie ein Blutbild systematisch befunden?“',
+ nxa:'Systematisch in drei Reihen: rote Reihe (Hb/Hkt → Anämie? dann MCV/MCH zur Klassifikation und Retikulozyten zur Regeneration), weiße Reihe (Leukozytenzahl und Differential → Links-/Rechtsverschiebung, Blasten, atypische Zellen) und Thrombozyten. Erst danach Synthese mit der Klinik.',
+ zfw:'Normales Blutbild — alle Parameter der roten Reihe, weißen Reihe und Thrombozyten im alters-/geschlechtsabhängigen Referenzbereich.',
+ zfy:'Referenzbereiche sind statistisch definiert (meist Mittelwert ± 2 SD) und decken etwa 95 % Gesunder ab — leichte Abweichungen können physiologisch sein.',
+ zfm:'Kein Handlungsbedarf; Kontrolle nur bei Symptomen oder klinischem Verdacht, dann gezielt mit Anamnese und weiterführender Diagnostik.'},
+
+{id:2, hy:1, tier:1, kat:'Mikrozytäre Anämie',
+ vig:'46 J., Frau, Müdigkeit und Belastungsdyspnoe seit Wochen, brüchige Nägel. Menorrhagien bekannt.',
+ v:{Hb:9.2,Hkt:28,Ery:4.3,RDW:17.5,Retik:9,Leuk:6.8,Neut:58,Lymph:32,Mono:6,Eos:3,Baso:1,Thrombo:465,MPV:9.2},
+ ex:[{label:'Anisozytose',value:'+ +',unit:'',flag:'high'},
+     {label:'Hypochromie',value:'+ +',unit:'',flag:'high'},
+     {label:'Ferritin',value:'erniedrigt',unit:'',flag:'low'}],
+ rot:'Hb 9,2 ↓, Hkt 28 ↓ → Anämie (mittelschwer).',
+ mcv:'MCV ~65 ↓ (mikrozytär), MCH ~21 ↓ (hypochrom), RDW 17,5 ↑ → mikrozytär-hypochrome Anämie mit Anisozytose.',
+ retik:'Retikulozyten 9 ‰ → trotz Anämie nicht adäquat erhöht → aregeneratorisch (hypoproliferativ).',
+ weiss:'Leukozyten 6,8 normal, unauffälliges Differential.',
+ thrombo:'Thrombozyten 465 ↑ → reaktive Thrombozytose (typisch bei Eisenmangel/Blutung).',
+ synth:'Mikrozytär-hypochrome, aregeneratorische Anämie mit hohem RDW + reaktiver Thrombozytose → Eisenmangelanämie.',
+ dx:'Eisenmangelanämie (mikrozytär-hypochrom), a. e. durch chronischen Menstruationsblutverlust.',
+ ac:'Eisenstatus (Ferritin, Transferrinsättigung), Blutungsquelle suchen (gynäkologisch, ggf. GI); orale/i.v. Eisensubstitution.',
+ fa:'Wichtigste DD der Mikrozytose ist die Thalassämie: dort ist die Erythrozytenzahl oft normal/hoch und das RDW eher normal (Mentzer-Index < 13). Bei Eisenmangel sind Ery niedrig und RDW hoch. Cave: Ferritin ist ein Akut-Phase-Protein und kann bei Entzündung trotz Eisenmangel normal sein → Transferrinsättigung niedrig und löslicher Transferrinrezeptor hoch.',
+ nx:'„Welche Differenzialdiagnosen hat die mikrozytäre Anämie und wie grenzen Sie Eisenmangel von einer Thalassämie ab?“',
+ nxa:'Mikrozytär: Eisenmangel, Thalassämie, Anämie der chronischen Erkrankung (kann normo- oder mikrozytär sein), sideroblastische Anämie. Abgrenzung: Ferritin/Transferrinsättigung niedrig spricht für Eisenmangel; bei Thalassämie normales Ferritin, hohe Erythrozytenzahl, niedriger Mentzer-Index und auffällige Hb-Elektrophorese.',
+ zfw:'Eisenmangelanämie — häufigste Anämieform, mikrozytär-hypochrom durch unzureichende Hämoglobinsynthese.',
+ zfy:'Negativer Eisenbilanzsaldo (Blutverlust, Bedarf, Malabsorption) → Eisenmangel → gestörte Hämsynthese → kleine, hämoglobinarme Erythrozyten; RDW steigt früh, reaktive Thrombozytose ist häufig.',
+ zfm:'Ursache (Blutungsquelle) klären und behandeln; Eisensubstitution oral (oder i.v. bei Unverträglichkeit/Malabsorption); Erfolg über Retikulozytenanstieg und Hb-Verlauf kontrollieren.'},
+
+{id:3, hy:1, tier:1, kat:'Makrozytäre Anämie',
+ vig:'69 J., Mann, zunehmende Müdigkeit, Gangunsicherheit und Parästhesien der Füße. Vegane Ernährung seit Jahren.',
+ v:{Hb:9.6,Hkt:29,Ery:2.5,RDW:18.5,Retik:7,Leuk:3.5,Neut:55,Lymph:36,Mono:6,Eos:2,Baso:1,Thrombo:115,MPV:10.6},
+ ex:[{label:'Makroovalozyten',value:'+',unit:'',flag:'high'},
+     {label:'hypersegm. Neutrophile',value:'vorhanden',unit:'',flag:'high'},
+     {label:'LDH',value:'stark erhöht',unit:'',flag:'high'},
+     {label:'Bilirubin indirekt',value:'leicht erhöht',unit:'',flag:'high'}],
+ rot:'Hb 9,6 ↓ → Anämie.',
+ mcv:'MCV ~116 ↑ (makrozytär), MCH ~38 ↑ → makrozytäre Anämie, RDW 18,5 ↑.',
+ retik:'Retikulozyten 7 ‰ → trotz Anämie nicht adäquat erhöht → aregeneratorisch (ineffektive Erythropoese).',
+ weiss:'Leukozyten 3,5 ↓ (leichte Leukopenie) mit hypersegmentierten Neutrophilen.',
+ thrombo:'Thrombozyten 115 ↓ → leichte Thrombozytopenie → beginnende Panzytopenie.',
+ synth:'Makrozytäre, aregeneratorische Anämie mit Bi-/Panzytopenie, Übersegmentierung und ↑ LDH → megaloblastäre Anämie (B12-/Folsäuremangel).',
+ dx:'Megaloblastäre Anämie bei Vitamin-B12-Mangel (hier diätetisch/vegan; an perniziöse Anämie denken).',
+ ac:'Vitamin B12 und Folsäure bestimmen (ggf. Holo-Transcobalamin, Methylmalonsäure); B12-Substitution; neurologischen Status erheben.',
+ fa:'Eine gleichzeitige Eisenmangelkomponente kann das MCV „normalisieren“ (dimorphes Blutbild) → trotz normalem MCV an Mangel denken. Eine Retikulozytose (z. B. Hämolyse) erhöht das MCV ebenfalls — immer Retikulozyten mitbeurteilen.',
+ nx:'„Warum ist bei der megaloblastären Anämie die LDH erhöht und die Retikulozytenzahl niedrig?“',
+ nxa:'Der Reifungsdefekt (DNA-Synthesestörung) führt zur ineffektiven Erythropoese: Vorstufen gehen schon im Knochenmark zugrunde (intramedulläre Hämolyse) → LDH und indirektes Bilirubin steigen, während kaum reife Retikulozyten ausgeschwemmt werden → die Retikulozytenzahl bleibt trotz Anämie niedrig.',
+ zfw:'Megaloblastäre Anämie — makrozytäre, aregeneratorische Anämie durch gestörte DNA-Synthese bei B12- oder Folsäuremangel.',
+ zfy:'B12-/Folatmangel → gestörte DNA-Reifung bei erhaltener Zytoplasmareifung → große, unreife Vorstufen, ineffektive Hämatopoese mit Panzytopenietendenz und Übersegmentierung der Granulozyten.',
+ zfm:'Mangel substituieren (B12 parenteral, Folsäure oral), Ursache klären (perniziöse Anämie, Ernährung, Malabsorption); cave bei B12-Mangel zuerst B12 geben (alleinige Folsäuregabe kann Neurologie verschlechtern).'},
+
+{id:4, hy:1, tier:1, kat:'Hämolyse',
+ vig:'58 J., Frau, rasch zunehmende Blässe und Müdigkeit, Ikterus, dunkler Urin.',
+ v:{Hb:8.0,Hkt:24,Ery:2.4,RDW:16.5,Retik:145,Leuk:9.0,Neut:70,Lymph:22,Mono:5,Eos:2,Baso:1,Thrombo:280,MPV:10.0},
+ ex:[{label:'Sphärozyten',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Polychromasie',value:'vorhanden',unit:'',flag:'high'},
+     {label:'LDH',value:'stark erhöht',unit:'',flag:'high'},
+     {label:'Haptoglobin',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'Bilirubin indirekt',value:'erhöht',unit:'',flag:'high'},
+     {label:'direkter Coombs-Test (DAT)',value:'positiv',unit:'',flag:'high'}],
+ rot:'Hb 8,0 ↓↓ → deutliche Anämie.',
+ mcv:'MCV ~100 (hochnormal/leicht makrozytär), MCH normal → die Makrozytose erklärt sich durch die vielen jungen Retikulozyten.',
+ retik:'Retikulozyten 145 ‰ ↑↑ → ausgeprägte Regeneration (regeneratorische Anämie) → spricht für Hämolyse oder Blutverlust.',
+ weiss:'Leukozyten 9,0 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 280 normal.',
+ synth:'Regeneratorische (retikulozytenreiche) Anämie mit ↑ LDH, ↓ Haptoglobin, ↑ indirektem Bilirubin und positivem direkten Coombs-Test → autoimmunhämolytische Anämie (AIHA).',
+ dx:'Warme autoimmunhämolytische Anämie (AIHA), Coombs-positiv (Wärme-Autoantikörper vom IgG-Typ).',
+ ac:'Hämolyseparameter (LDH, Haptoglobin, indirektes Bilirubin, Retikulozyten) und direkten Coombs-Test bestätigen; Wärme- vs. Kälte-Typ klären; Steroide als Erstlinie der warmen AIHA, Grunderkrankung (Lymphom, Lupus, Medikamente) suchen.',
+ fa:'Der direkte Coombs-Test (DAT) weist Antikörper/Komplement direkt auf dem Erythrozyten nach und sichert die immunhämolytische Genese; der indirekte Coombs-Test sucht freie Antikörper im Serum (Transfusionsvorbereitung, Schwangerschaft). Warme AIHA (IgG): Steroide. Kälteagglutinine (IgM/C3d): Kälte meiden — Kälteagglutinine können das MCHC fälschlich > 37 erhöhen (Erythrozytenaggregation).',
+ nx:'„Worin unterscheiden sich direkter und indirekter Coombs-Test, und was bedeutet ein positiver direkter Test hier?“',
+ nxa:'Direkter Coombs-Test (DAT): Antiglobulin-Serum bindet an bereits in vivo mit Antikörpern/Komplement beladene Erythrozyten des Patienten → positiv bei AIHA, Transfusionsreaktion, Morbus haemolyticus neonatorum. Indirekter Test: Patientenserum wird mit Testerythrozyten inkubiert → weist freie Antikörper nach (Kreuzprobe, Antikörpersuchtest). Der positive DAT bestätigt hier die antikörpervermittelte (autoimmune) Hämolyse.',
+ zfw:'AIHA — Hämolyse durch Autoantikörper gegen Erythrozyten; regeneratorische Anämie mit positivem direkten Coombs-Test.',
+ zfy:'Autoantikörper (warm IgG, kalt IgM) opsonieren Erythrozyten → vorzeitiger Abbau in Milz/Leber (extravasal) oder intravasal → ↑ LDH, ↑ indirektes Bilirubin, ↓ Haptoglobin, reaktive Retikulozytose.',
+ zfm:'Warme AIHA: Kortikosteroide (ggf. Rituximab, Splenektomie); Kälteagglutininkrankheit: Kälteschutz, Rituximab; Grunderkrankung behandeln, Transfusion nur bei vitaler Indikation (Kreuzprobe erschwert).'},
+
+{id:5, hy:1, tier:2, kat:'Lymphozytose',
+ vig:'72 J., Mann, Zufallsbefund bei Routinekontrolle, asymptomatisch, tastbare zervikale Lymphknoten.',
+ v:{Hb:11.3,Hkt:34,Ery:3.9,RDW:14,Retik:12,Leuk:48,Neut:9,Lymph:86,Mono:3,Eos:1,Baso:1,Thrombo:125,MPV:9.0},
+ ex:[{label:'Gumprecht-Kernschatten',value:'reichlich',unit:'',flag:'high'},
+     {label:'reife kleine Lymphozyten',value:'dominierend',unit:'',flag:'norm'}],
+ rot:'Hb 11,3 ↓ leicht → milde Anämie.',
+ mcv:'MCV ~87 → normozytär, MCH normal → normozytäre Anämie.',
+ retik:'Retikulozyten 12 ‰ → grenzwertig, keine ausgeprägte Regeneration.',
+ weiss:'Leukozyten 48 ↑↑ mit absoluter Lymphozytose (~41 G/l) aus reifen, kleinen Lymphozyten; Gumprecht-Kernschatten.',
+ thrombo:'Thrombozyten 125 ↓ leicht.',
+ synth:'Ausgeprägte absolute Lymphozytose aus reifen Lymphozyten mit Gumprecht-Kernschatten beim älteren Patienten → V. a. chronische lymphatische Leukämie (CLL).',
+ dx:'Verdacht auf chronische lymphatische Leukämie (CLL).',
+ ac:'Durchflusszytometrie/Immunphänotypisierung (CD5+, CD19+, CD23+; Matutes-Score), klinische Stadieneinteilung (Binet/Rai); keine voreilige Therapie bei asymptomatischem Frühstadium.',
+ fa:'Gumprecht-Kernschatten entstehen als Ausstrichartefakt fragiler CLL-Zellen — sie sprechen für eine klonale (CLL), nicht für eine reaktive Lymphozytose. Die Diagnose gelingt aus Blut + Durchflusszytometrie, eine Knochenmarkpunktion ist nicht zwingend nötig. Stadium nach Binet (hier Binet A: Hb > 10, Thrombozyten > 100 und ≤ 2 Lymphknotenregionen).',
+ nx:'„Wie unterscheiden Sie eine reaktive von einer klonalen Lymphozytose, und womit sichern Sie die CLL?“',
+ nxa:'Reaktiv: Auslöser (Infekt), oft aktivierte/„atypische“ Lymphozyten, transient, mäßige Erhöhung. Klonal (CLL): persistierend, monomorphe reife kleine Lymphozyten, Gumprecht-Kernschatten, höheres Alter. Sicherung über die Durchflusszytometrie mit typischem Immunphänotyp (CD5+CD19+CD23+, Leichtketten-Restriktion); Stadieneinteilung nach Binet/Rai.',
+ zfw:'CLL — häufigste Leukämie des Erwachsenen, klonale Vermehrung reifer B-Lymphozyten mit absoluter Lymphozytose.',
+ zfy:'Klonale Akkumulation langlebiger, funktionsarmer reifer B-Zellen → absolute Lymphozytose, im Verlauf Verdrängung der normalen Hämatopoese (Anämie, Thrombopenie) und Immundefekt.',
+ zfm:'Diagnostik mit Immunphänotypisierung und Stadieneinteilung; „watch & wait“ im asymptomatischen Frühstadium, Therapie erst bei Symptomen/Progredienz (Zytopenien, B-Symptomatik, rasche Lymphozytenverdopplung).'},
+
+{id:6, hy:1, tier:2, kat:'Leukozytose / Leukämie',
+ vig:'37 J., Mann, seit 10 Tagen Fieber, Petechien und Zahnfleischbluten, zunehmende Abgeschlagenheit.',
+ v:{Hb:8.5,Hkt:25,Ery:2.8,RDW:15.0,Retik:8,Leuk:28,Neut:6,Lymph:13,Mono:2,Eos:1,Baso:0,Blasten:78,Thrombo:35,MPV:9.5},
+ ex:[{label:'Blasten im Ausstrich',value:'~78 %',unit:'',flag:'high'},
+     {label:'Auer-Stäbchen',value:'nachweisbar',unit:'',flag:'high'},
+     {label:'LDH',value:'erhöht',unit:'',flag:'high'},
+     {label:'Harnsäure',value:'erhöht',unit:'',flag:'high'}],
+ rot:'Hb 8,5 ↓ → Anämie (normozytär).',
+ mcv:'MCV ~89 → normozytär, MCH normal.',
+ retik:'Retikulozyten 8 ‰ → trotz Anämie nicht adäquat erhöht → aregeneratorisch (Knochenmarkverdrängung).',
+ weiss:'Leukozyten 28 ↑ mit ~78 % Blasten und nur ~6 % reifen Neutrophilen (absolut ~1,7 G/l, neutropen) → „Hiatus leucaemicus“ (Blasten und reife Zellen, kaum Zwischenstufen).',
+ thrombo:'Thrombozyten 35 ↓↓ → schwere Thrombozytopenie (erklärt Petechien/Blutung).',
+ synth:'Anämie + Neutropenie + Thrombozytopenie bei Blastenschwemme mit Hiatus leucaemicus und Auer-Stäbchen → akute myeloische Leukämie (AML).',
+ dx:'Akute myeloische Leukämie (AML) — Blasten mit Auer-Stäbchen, Verdrängung der reifen Reihen.',
+ ac:'Notfall-Hämatologie: Knochenmarkpunktion mit Zytologie/Zytochemie, Immunphänotypisierung, Zytogenetik/Molekulargenetik; Blutbild + Gerinnung (DIC?), Tumorlyseparameter; rasche Vorstellung im Zentrum.',
+ fa:'AML: Blasten + „Hiatus leucaemicus“ + Auer-Stäbchen (pathognomonisch). CML: kontinuierliche Linksverschiebung über alle Reifungsstufen + Basophilie, meist ohne Hiatus. Reaktive Leukozytose: Linksverschiebung nur bis zu Stabkernigen, keine Blasten. Cave Promyelozytenleukämie (APL) mit DIC — hämatologischer Notfall.',
+ nx:'„Wie unterscheiden Sie im Ausstrich eine akute von einer chronischen Leukämie?“',
+ nxa:'Akut: Vermehrung unreifer Blasten mit Reifungsstopp („Hiatus leucaemicus“ — Blasten und wenige reife Zellen, kaum Zwischenstufen), oft Verdrängung der normalen Reihen, rasche Symptomatik. Chronisch (z. B. CML): kontinuierliche Ausschwemmung aller Reifungsstufen (Myelozyten, Metamyelozyten, Stabkernige) mit Basophilie, anfangs oft asymptomatisch. Akute Leukämien sind dringlich behandlungsbedürftig.',
+ zfw:'AML — klonale Proliferation myeloischer Blasten mit Verdrängung der normalen Hämatopoese.',
+ zfy:'Maligne Blasten verdrängen das Knochenmark → Anämie, Neutropenie und Thrombozytopenie (mit Infekt- und Blutungsneigung), Ausschwemmung von Blasten ins periphere Blut.',
+ zfm:'Sofortige hämatologische Abklärung (Knochenmark, Genetik) und risikoadaptierte Therapie im Zentrum; supportiv Transfusionen, Infektprophylaxe/-therapie, Tumorlyseprophylaxe.'},
+
+{id:7, hy:1, tier:1, kat:'Thrombozytopenie',
+ vig:'28 J., Frau, seit einigen Tagen Petechien an den Unterschenkeln und Zahnfleischbluten, kürzlich viraler Infekt. Sonst gesund.',
+ v:{Hb:13.5,Hkt:40,Ery:4.5,RDW:13.0,Retik:12,Leuk:7.0,Neut:58,Lymph:33,Mono:6,Eos:2,Baso:1,Thrombo:12,MPV:12.5},
+ ex:[{label:'große Thrombozyten',value:'vermehrt',unit:'',flag:'high'},
+     {label:'Schistozyten',value:'keine',unit:'',flag:'norm'},
+     {label:'Blasten',value:'keine',unit:'',flag:'norm'},
+     {label:'rote/weiße Reihe',value:'unauffällig',unit:'',flag:'norm'}],
+ rot:'Hb 13,5, Hkt 40 → rote Reihe normal, keine Anämie.',
+ mcv:'MCV ~89 → normozytär, unauffällig.',
+ retik:'Retikulozyten 12 ‰ → normal.',
+ weiss:'Leukozyten 7,0 normal, Differential unauffällig, keine Blasten.',
+ thrombo:'Thrombozyten 12 ↓↓↓ → schwere isolierte Thrombozytopenie; MPV 12,5 ↑ → große, junge Thrombozyten (gesteigerte Neubildung bei peripherem Verbrauch).',
+ synth:'Isolierte schwere Thrombozytopenie mit großen Thrombozyten, sonst unauffälligem Blutbild, nach viralem Infekt → Verdacht auf Immunthrombozytopenie (ITP).',
+ dx:'Immunthrombozytopenie (ITP) — isolierte Thrombozytopenie, Ausschlussdiagnose.',
+ ac:'Zuerst Pseudothrombozytopenie ausschließen (Kontrolle im Citrat-Röhrchen, Ausstrich auf Plättchenaggregate); Anamnese (Medikamente, Infekte, HIV/HCV), Ausstrich; ITP ist klinische Ausschlussdiagnose. Therapie (Steroide/IVIG) abhängig von Blutung und Thrombozytenzahl.',
+ fa:'Vor jeder „Thrombozytopenie“ die Pseudothrombozytopenie ausschließen: EDTA-induzierte Plättchenverklumpung täuscht falsch niedrige Werte vor → Kontrolle im Citrat-Röhrchen und Blutausstrich (Aggregate?). Die ITP selbst ist eine Ausschlussdiagnose — andere Ursachen (Bildungsstörung, Verbrauch, Verteilung/Splenomegalie) müssen bedacht werden.',
+ nx:'„Eine isolierte Thrombozytopenie wird gemeldet — was prüfen Sie zuerst, bevor Sie eine ITP annehmen?“',
+ nxa:'Zuerst Pseudothrombozytopenie ausschließen: EDTA-abhängige Verklumpung → Kontrolle in Citrat (oder Heparin) und Blutausstrich auf Thrombozytenaggregate. Erst danach echte Ursachen einteilen: verminderte Bildung (Knochenmark: Leukämie, MDS, Aplasie, B12-/Folatmangel), gesteigerter Abbau/Verbrauch (ITP, TTP/HUS, DIC, Heparin-induziert) und Verteilungsstörung (Splenomegalie). Die ITP bleibt eine Ausschlussdiagnose.',
+ zfw:'ITP — immunvermittelter Thrombozytenabbau mit isolierter Thrombozytopenie bei sonst normalem Blutbild.',
+ zfy:'Autoantikörper gegen Thrombozyten-Glykoproteine → vermehrter Abbau in der Milz bei kompensatorisch gesteigerter Bildung (große, junge Thrombozyten, hohes MPV); oft post-viral oder idiopathisch.',
+ zfm:'Pseudothrombozytopenie und sekundäre Ursachen ausschließen; Therapie blutungs-/wertabhängig (Beobachtung, Kortikosteroide, IVIG; Zweitlinie TPO-Rezeptor-Agonisten, ggf. Splenektomie).'},
+
+{id:8, hy:1, tier:2, kat:'Normozytäre Anämie',
+ vig:'71 J., Mann, bekannte chronische Niereninsuffizienz (dialysenah), Müdigkeit und Belastungsdyspnoe.',
+ v:{Hb:9.5,Hkt:28,Ery:3.1,RDW:13.5,Retik:10,Leuk:6.5,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:240,MPV:9.0},
+ ex:[{label:'Kreatinin',value:'stark erhöht',unit:'',flag:'high'},
+     {label:'eGFR',value:'< 30 ml/min',unit:'',flag:'low'},
+     {label:'Erythrozytenmorphologie',value:'normochrom-normozytär',unit:'',flag:'norm'},
+     {label:'Ferritin',value:'normal',unit:'',flag:'norm'}],
+ rot:'Hb 9,5 ↓ → Anämie.',
+ mcv:'MCV ~90, MCH ~31, MCHC normal → normozytär, normochrom.',
+ retik:'Retikulozyten 10 ‰ → trotz Anämie nicht adäquat erhöht → hypoproliferativ (EPO-Mangel).',
+ weiss:'Leukozyten 6,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 240 normal.',
+ synth:'Normozytäre, normochrome, hypoproliferative Anämie bei fortgeschrittener Niereninsuffizienz → renale Anämie (Erythropoetinmangel).',
+ dx:'Renale Anämie bei chronischer Niereninsuffizienz (EPO-Mangel), normozytär-normochrom.',
+ ac:'Eisenstatus (Ferritin, Transferrinsättigung) und andere Ursachen ausschließen; Eisenmangel vor EPO behandeln; bei adäquatem Eisenspeicher Erythropoese-stimulierende Substanzen; Ziel-Hb nicht zu hoch.',
+ fa:'Renale Anämie und Anämie der chronischen Erkrankung (ACD) sind beide normozytär und hypoproliferativ (niedrige Retikulozyten) — Abgrenzung zum Eisenmangel über MCV (eher niedrig), RDW (eher hoch) und Eisenparameter. Cave: Ferritin ist ein Akut-Phase-Protein und kann bei Entzündung trotz Eisenmangel normal/hoch sein → Transferrinsättigung mitbeurteilen. Eisen immer vor EPO substituieren.',
+ nx:'„Wie gehen Sie eine normozytäre Anämie differenzialdiagnostisch an?“',
+ nxa:'Schlüssel sind die Retikulozyten: hyperregeneratorisch (hoch) → Blutverlust oder Hämolyse; hyporegeneratorisch (niedrig) → Bildungsstörung. Bei niedriger Retikulozytenzahl an renale Anämie (EPO-Mangel), Anämie der chronischen Erkrankung, frühen Eisenmangel, endokrine Ursachen und Knochenmarkprozesse denken. Eisenstatus und Nierenfunktion gezielt prüfen.',
+ zfw:'Renale Anämie — hypoproliferative, normozytäre Anämie durch Erythropoetinmangel bei Niereninsuffizienz.',
+ zfy:'Die geschädigte Niere bildet zu wenig Erythropoetin → unzureichende Stimulation der Erythropoese; zusätzlich verkürzte Erythrozytenüberlebenszeit und Eisenverwertungsstörung (Urämie).',
+ zfm:'Eisenmangel ausgleichen, dann Erythropoese-stimulierende Substanzen (ESA) auf moderates Ziel-Hb; Grunderkrankung/Niereninsuffizienz behandeln, andere Anämieursachen ausschließen.'},
+
+{id:9, hy:1, tier:1, kat:'Reaktive Veränderung',
+ vig:'54 J., Mann, hohes Fieber, produktiver Husten und Thoraxschmerz; Verdacht auf Pneumonie.',
+ v:{Hb:13.0,Hkt:39,Ery:4.4,RDW:13.0,Retik:11,Leuk:18,Neut:81,Stab:8,Lymph:8,Mono:3,Eos:0,Baso:0,Thrombo:380,MPV:9.0},
+ ex:[{label:'toxische Granulation',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Döhle-Körperchen',value:'vorhanden',unit:'',flag:'high'},
+     {label:'CRP',value:'stark erhöht',unit:'',flag:'high'},
+     {label:'Blasten',value:'keine',unit:'',flag:'norm'}],
+ rot:'Hb 13,0, Hkt 39 → rote Reihe normal.',
+ mcv:'MCV ~89 → normozytär.',
+ retik:'Retikulozyten 11 ‰ → normal.',
+ weiss:'Leukozyten 18 ↑ mit Neutrophilie (~81 %) und Stabkernigen 8 % (absolut ~1,4 G/l ↑) → Linksverschiebung; Eosinopenie, keine Basophilie, keine Blasten.',
+ thrombo:'Thrombozyten 380 (hochnormal/reaktiv).',
+ synth:'Neutrophile Leukozytose mit Linksverschiebung bis zu Stabkernigen, toxischer Granulation und ↑ CRP, ohne Basophilie/Blasten → reaktive Veränderung bei bakterieller Infektion.',
+ dx:'Reaktive neutrophile Leukozytose mit Linksverschiebung bei bakterieller Infektion (hier Pneumonie).',
+ ac:'Infektfokus suchen und behandeln (Klinik, CRP/Procalcitonin, Bildgebung, Kulturen, kalkulierte Antibiose); Blutbild im Verlauf — Normalisierung bestätigt die reaktive Genese.',
+ fa:'Eine reaktive Linksverschiebung reicht nur bis zu den Stabkernigen (gelegentlich Metamyelozyten) — Myelozyten/Promyelozyten/Blasten und v. a. eine Basophilie passen nicht und sollten an eine CML denken lassen. Toxische Granulation, Döhle-Körperchen und ein Infektauslöser sprechen für reaktiv; die alkalische Leukozytenphosphatase (LAP) ist reaktiv hoch, bei CML niedrig. Sehr ausgeprägte reaktive Formen heißen leukämoide Reaktion.',
+ nx:'„Wann macht Sie eine Leukozytose hellhörig, dass mehr als eine Infektion dahinterstecken könnte?“',
+ nxa:'Verdächtig auf eine Leukämie statt reaktiver Veränderung: sehr hohe Leukozytenzahlen, unreife Vorstufen über die Stabkernigen hinaus (Myelozyten, Blasten), Basophilie/Eosinophilie, begleitende Anämie und Thrombozytopenie, Spleno-/Hepatomegalie und fehlender Infektfokus. Dann Ausstrich, ggf. Knochenmark und molekulare Diagnostik (z. B. BCR-ABL bei CML-Verdacht).',
+ zfw:'Reaktive Leukozytose — infektbedingte Neutrophilie mit Linksverschiebung als physiologische Abwehrreaktion.',
+ zfy:'Bakterielle Infekte setzen über Zytokine (G-CSF u. a.) vermehrt neutrophile Granulozyten und ihre unreifen Vorstufen (Stabkernige) aus dem Knochenmark frei; Aktivierungszeichen sind toxische Granulation und Döhle-Körperchen.',
+ zfm:'Auslösende Infektion identifizieren und behandeln; Blutbildkontrolle zur Bestätigung der Reversibilität; bei untypischen Befunden hämatologische Abklärung.'},
+
+/* ===== ERWEITERUNG (10–18) ===== */
+
+{id:10, hy:1, tier:2, kat:'Mikrozytäre Anämie', bank:'ext',
+ vig:'26 J., Frau, mediterrane Herkunft, milde Anämie als Zufallsbefund; eine frühere Eisengabe blieb erfolglos.',
+ v:{Hb:11.2,Hkt:34,Ery:5.7,RDW:13.5,Retik:16,Leuk:6.5,Neut:58,Lymph:33,Mono:6,Eos:2,Baso:1,Thrombo:250,MPV:8.5},
+ ex:[{label:'Targetzellen (Schießscheibenzellen)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'basophile Tüpfelung',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Ferritin',value:'normal',unit:'',flag:'norm'},
+     {label:'Mentzer-Index (MCV/Ery)',value:'~10,5',unit:'',flag:'low'},
+     {label:'HbA2 (Hb-Elektrophorese)',value:'erhöht',unit:'',flag:'high'}],
+ rot:'Hb 11,2 ↓ leicht → milde Anämie; auffällig hohe Erythrozytenzahl (Ery 5,7 ↑).',
+ mcv:'MCV ~60 ↓↓ (deutlich mikrozytär), MCH ~20 ↓ (hypochrom), aber RDW 13,5 normal → gleichförmig kleine Erythrozyten.',
+ retik:'Retikulozyten 16 ‰ → leicht erhöht/grenzwertig.',
+ weiss:'Leukozyten 6,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 250 normal.',
+ synth:'Ausgeprägte Mikrozytose bei nur milder Anämie, hoher Erythrozytenzahl, normalem RDW und normalem Ferritin → β-Thalassaemia minor (Mentzer-Index ~10, HbA2 erhöht).',
+ dx:'β-Thalassaemia minor (Thalassämie-Trait) — mikrozytär-hypochrom bei normalem Eisenstatus.',
+ ac:'Hb-Elektrophorese/HPLC (HbA2 ↑, ggf. HbF ↑) zur Sicherung; Eisenstatus zur Abgrenzung; genetische Beratung (Familienplanung); keine Eisensubstitution ohne nachgewiesenen Mangel.',
+ fa:'Mikrozytose mit ausgeprägt niedrigem MCV, aber nur milder Anämie, hoher Erythrozytenzahl und normalem RDW spricht für Thalassämie statt Eisenmangel. Der Mentzer-Index (MCV/Erythrozytenzahl) < 13 spricht für Thalassämie, > 13 für Eisenmangel. Keine „blinde“ Eisengabe — bei Thalassämie droht eine Eisenüberladung.',
+ nx:'„Der Eisenmangel wurde behandelt, das MCV bleibt niedrig — wie unterscheiden Sie Eisenmangel von einer Thalassämie?“',
+ nxa:'Bei Thalassämie typisch: nur milde Anämie trotz sehr niedrigem MCV, normale bis hohe Erythrozytenzahl, normales RDW (gleichförmige Mikrozyten) und normales Ferritin; Mentzer-Index (MCV/Ery) < 13. Beim Eisenmangel sind Erythrozytenzahl niedrig, RDW hoch und Ferritin/Transferrinsättigung niedrig. Gesichert wird die Thalassämie über die Hb-Elektrophorese (HbA2 erhöht).',
+ zfw:'β-Thalassaemia minor — genetisch verminderte β-Globinsynthese mit mikrozytär-hypochromen, aber zahlreichen Erythrozyten.',
+ zfy:'Reduzierte β-Kettensynthese → Globinkettenungleichgewicht → kleine, hämoglobinarme Erythrozyten bei kompensatorisch hoher Erythrozytenzahl; nur milde Anämie, da die Erythropoese gesteigert ist.',
+ zfm:'Meist keine Therapie nötig; wichtig sind Diagnosesicherung (Elektrophorese), Vermeidung unnötiger Eisengaben und genetische Beratung bei Kinderwunsch.'},
+
+{id:11, tier:2, kat:'Makrozytäre Anämie', bank:'ext',
+ vig:'52 J., Mann, chronischer Alkoholkonsum und Mangelernährung, Müdigkeit; keine Parästhesien, kein neurologisches Defizit.',
+ v:{Hb:10.2,Hkt:30,Ery:2.7,RDW:17.0,Retik:9,Leuk:3.8,Neut:56,Lymph:35,Mono:6,Eos:2,Baso:1,Thrombo:130,MPV:10.4},
+ ex:[{label:'Makroovalozyten',value:'vorhanden',unit:'',flag:'high'},
+     {label:'hypersegm. Neutrophile',value:'vorhanden',unit:'',flag:'high'},
+     {label:'LDH',value:'erhöht',unit:'',flag:'high'},
+     {label:'Folsäure',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'Vitamin B12',value:'normal',unit:'',flag:'norm'}],
+ rot:'Hb 10,2 ↓ → Anämie.',
+ mcv:'MCV ~111 ↑ (makrozytär), MCH ~38 ↑, RDW 17,0 ↑ → makrozytäre Anämie.',
+ retik:'Retikulozyten 9 ‰ → trotz Anämie nicht adäquat erhöht → aregeneratorisch (ineffektive Erythropoese).',
+ weiss:'Leukozyten 3,8 ↓ leicht mit hypersegmentierten Neutrophilen.',
+ thrombo:'Thrombozyten 130 ↓ leicht → beginnende Bi-/Panzytopenie.',
+ synth:'Makrozytäre, aregeneratorische Anämie mit Übersegmentierung und ↑ LDH bei Alkohol/Mangelernährung, erniedrigter Folsäure und normalem B12, ohne Neurologie → Folsäuremangel.',
+ dx:'Megaloblastäre Anämie bei Folsäuremangel (Alkohol/Mangelernährung), B12 normal, keine Neurologie.',
+ ac:'Folsäure und Vitamin B12 zusammen bestimmen; vor Folsäuregabe einen B12-Mangel ausschließen; Folsäuresubstitution oral, Alkohol-/Ernährungsproblem angehen.',
+ fa:'Folsäure- und B12-Mangel erzeugen ein identisches (megaloblastäres) Blutbild — unterscheidbar nur klinisch/laborchemisch: neurologische Symptome (funikuläre Myelose) sprechen für B12-Mangel. Niemals isoliert Folsäure geben, wenn ein B12-Mangel nicht ausgeschlossen ist (die Neurologie kann sich verschlechtern) → immer beide messen, B12 zuerst.',
+ nx:'„Folsäure- und B12-Mangel sehen im Blutbild gleich aus — wie unterscheiden Sie sie und worauf achten Sie bei der Substitution?“',
+ nxa:'Das Blutbild ist bei beiden megaloblastär (Makrozytose, Übersegmentierung, ineffektive Erythropoese). Unterscheidung über die Klinik (nur B12-Mangel verursacht eine funikuläre Myelose mit Parästhesien/Gangstörung) und gezielte Bestimmung von B12 und Folsäure (ggf. Methylmalonsäure/Holo-TC). Wichtig: bei nachgewiesenem oder möglichem B12-Mangel zuerst B12 substituieren — alleinige Folsäuregabe kann die neurologische Symptomatik verschlechtern.',
+ zfw:'Folsäuremangelanämie — megaloblastäre, makrozytäre Anämie durch Folatmangel (häufig bei Alkohol/Mangelernährung).',
+ zfy:'Folatmangel → gestörte DNA-Synthese mit Reifungsstörung → makroovaläre Erythrozyten, hypersegmentierte Granulozyten und ineffektive Hämatopoese; im Gegensatz zum B12-Mangel ohne neurologische Beteiligung.',
+ zfm:'Folsäure oral substituieren, Auslöser (Alkohol, Ernährung, Malabsorption, Medikamente) behandeln; vorher B12-Mangel ausschließen bzw. B12 zuerst geben.'},
+
+{id:12, hy:1, tier:3, kat:'Leukozytose / Leukämie', bank:'ext',
+ vig:'49 J., Mann, Leistungsknick, Nachtschweiß und Druckgefühl im linken Oberbauch; tastbare Splenomegalie.',
+ v:{Hb:11.5,Hkt:34,Ery:3.9,RDW:14.5,Retik:12,Leuk:95,Neut:56,Stab:18,Lymph:4,Mono:3,Eos:7,Baso:9,Blasten:3,Thrombo:580,MPV:9.5},
+ ex:[{label:'Myelozyten/Metamyelozyten',value:'nachweisbar',unit:'',flag:'high'},
+     {label:'Basophilie',value:'ausgeprägt',unit:'',flag:'high'},
+     {label:'Splenomegalie',value:'tastbar',unit:'',flag:'high'},
+     {label:'BCR-ABL (Philadelphia-Chromosom)',value:'nachweisbar',unit:'',flag:'high'}],
+ rot:'Hb 11,5 ↓ leicht → milde Anämie.',
+ mcv:'MCV ~87 → normozytär, MCH normal.',
+ retik:'Retikulozyten 12 ‰ → normal.',
+ weiss:'Leukozyten 95 ↑↑↑ mit kontinuierlicher Linksverschiebung über alle Reifungsstufen (Stabkernige, Myelozyten/Metamyelozyten, wenige Blasten ~3 %), dazu Eosinophilie und ausgeprägte Basophilie (~9 G/l).',
+ thrombo:'Thrombozyten 580 ↑ → Thrombozytose.',
+ synth:'Massive Leukozytose mit kontinuierlicher Linksverschiebung, Basophilie und Eosinophilie, Splenomegalie und Thrombozytose → chronische myeloische Leukämie (CML).',
+ dx:'Chronische myeloische Leukämie (CML), chronische Phase (Blasten < 10 %) — BCR-ABL/Philadelphia-Chromosom.',
+ ac:'Blutausstrich, BCR-ABL-Nachweis (PCR/Zytogenetik Philadelphia-Chromosom), Knochenmark zur Phasenbestimmung; LDH/Harnsäure; Vorstellung im hämatologischen Zentrum (Tyrosinkinase-Hemmer).',
+ fa:'Die ausgeprägte Basophilie ist der „Wink“ Richtung CML und unterscheidet sie von einer reaktiven Leukozytose (dort keine Basophilie, Linksverschiebung nur bis Stabkernige). Gegenüber der AML: bei der CML kontinuierliche Reifung über alle Stufen ohne Hiatus, Blasten < 10 % in der chronischen Phase. Die alkalische Leukozytenphosphatase (LAP) ist bei CML niedrig (reaktiv hoch); beweisend ist BCR-ABL.',
+ nx:'„Was unterscheidet eine CML von einer ausgeprägten reaktiven Leukozytose (leukämoiden Reaktion)?“',
+ nxa:'CML: sehr hohe Leukozyten mit kontinuierlicher Linksverschiebung über alle Reifungsstufen, typischerweise Basophilie und Eosinophilie, Splenomegalie, oft Thrombozytose; niedrige LAP und Nachweis von BCR-ABL (Philadelphia-Chromosom). Leukämoide Reaktion: reaktiv (Infekt/Entzündung), Linksverschiebung nur bis Stabkernige, toxische Granulation, keine Basophilie, hohe LAP, kein BCR-ABL.',
+ zfw:'CML — klonale myeloproliferative Neoplasie mit BCR-ABL-Fusionsgen und granulozytärer Ausschwemmung.',
+ zfy:'Das BCR-ABL-Fusionsprotein (t(9;22), Philadelphia-Chromosom) ist eine konstitutiv aktive Tyrosinkinase → ungebremste Proliferation der Granulopoese mit Ausschwemmung aller Reifungsstufen, Basophilie und Splenomegalie.',
+ zfm:'Diagnosesicherung über BCR-ABL; Therapie mit Tyrosinkinase-Inhibitoren im Zentrum, Verlaufskontrolle der molekularen Remission.'},
+
+{id:13, hy:1, tier:3, kat:'Hämolyse', bank:'ext',
+ vig:'39 J., Frau, Petechien, Verwirrtheit, Fieber und dunkler Urin; Kreatinin leicht erhöht.',
+ v:{Hb:8.2,Hkt:24,Ery:2.5,RDW:17.5,Retik:130,Leuk:9.5,Neut:70,Lymph:23,Mono:5,Eos:1,Baso:1,Thrombo:22,MPV:10.5},
+ ex:[{label:'Fragmentozyten (Schistozyten)',value:'reichlich',unit:'',flag:'high'},
+     {label:'LDH',value:'stark erhöht',unit:'',flag:'high'},
+     {label:'Haptoglobin',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'direkter Coombs-Test',value:'negativ',unit:'',flag:'norm'},
+     {label:'Gerinnung (Quick/aPTT)',value:'normal',unit:'',flag:'norm'}],
+ rot:'Hb 8,2 ↓↓ → deutliche Anämie.',
+ mcv:'MCV ~96 → normozytär (hochnormal), RDW 17,5 ↑ (Fragmentozyten).',
+ retik:'Retikulozyten 130 ‰ ↑↑ → ausgeprägte Regeneration → Hämolyse/Blutverlust.',
+ weiss:'Leukozyten 9,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 22 ↓↓↓ → schwere Thrombozytopenie (Verbrauch).',
+ synth:'Hämolytische Anämie mit Fragmentozyten und schwerer Thrombozytopenie, Coombs-negativ und normaler Gerinnung, plus neurologische Symptome/Fieber/Nierenbeteiligung → mikroangiopathische hämolytische Anämie (MAHA), V. a. TTP/HUS.',
+ dx:'Mikroangiopathische hämolytische Anämie (MAHA) bei thrombotisch-thrombozytopenischer Purpura (TTP) / HUS — Coombs-negativ.',
+ ac:'Hämatologischer Notfall: sofortige Plasmapherese (TTP), ADAMTS13-Aktivität bestimmen; KEINE Thrombozytentransfusion (verstärkt die Mikrothromben); Gerinnung zur DIC-Abgrenzung; intensivmedizinische Überwachung.',
+ fa:'Fragmentozyten + Thrombozytopenie + Coombs-NEGATIVE Hämolyse = mikroangiopathische hämolytische Anämie (TTP/HUS), nicht AIHA (die ist Coombs-positiv, ohne Fragmentozyten). Zwei eiserne Regeln: TTP ist ein Notfall → sofort Plasmapherese; keine Thrombozytentransfusion (befeuert die Mikrothrombosierung). Eine normale Gerinnung grenzt gegen die DIC ab (dort Quick/aPTT/Fibrinogen pathologisch).',
+ nx:'„Sie sehen Fragmentozyten und eine niedrige Thrombozytenzahl — welche Diagnose, und was dürfen Sie auf keinen Fall tun?“',
+ nxa:'Verdacht auf eine thrombotische Mikroangiopathie (TTP/HUS): mikroangiopathische hämolytische Anämie (Fragmentozyten, ↑ LDH, ↓ Haptoglobin, Coombs-negativ) mit Verbrauchsthrombozytopenie. Es ist ein Notfall — sofortige Plasmapherese (bei TTP), ADAMTS13 bestimmen. Auf keinen Fall Thrombozyten transfundieren, da dies die Mikrothrombenbildung verstärkt. Eine normale plasmatische Gerinnung trennt von der DIC.',
+ zfw:'TTP/HUS — thrombotische Mikroangiopathie mit Plättchenthromben, mechanischer Hämolyse (Fragmentozyten) und Verbrauchsthrombozytopenie.',
+ zfy:'Bei der TTP fehlt ADAMTS13 (spaltet von-Willebrand-Multimere) → Plättchenmikrothromben in der Endstrombahn → mechanische Zerstörung der Erythrozyten (Fragmentozyten), Thrombozytenverbrauch und Organischämie (ZNS, Niere).',
+ zfm:'Sofortige Plasmapherese (TTP), ggf. Immunsuppression; keine Thrombozytentransfusion; bei HUS supportiv/ggf. Komplementhemmung; ADAMTS13 und Auslöser klären.'},
+
+{id:14, hy:1, tier:2, kat:'Reaktive Veränderung', bank:'ext',
+ vig:'19 J., Studentin, seit über einer Woche Fieber, starke Halsschmerzen mit Tonsillitis und zervikale Lymphknotenschwellung.',
+ v:{Hb:13.8,Hkt:41,Ery:4.6,RDW:13.0,Retik:11,Leuk:14,Neut:26,Lymph:53,Mono:8,Eos:1,Baso:0,atyp:12,Thrombo:135,MPV:9.0},
+ ex:[{label:'atypische Lymphozyten (Pfeiffer-Zellen)',value:'reichlich',unit:'',flag:'high'},
+     {label:'Splenomegalie',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Transaminasen',value:'erhöht',unit:'',flag:'high'},
+     {label:'EBV-Serologie',value:'positiv',unit:'',flag:'high'}],
+ rot:'Hb 13,8, Hkt 41 → rote Reihe normal.',
+ mcv:'MCV ~89 → normozytär.',
+ retik:'Retikulozyten 11 ‰ → normal.',
+ weiss:'Leukozyten 14 ↑ mit relativer und absoluter Lymphozytose (~7,4 G/l) und ~12 % atypischen (aktivierten) Lymphozyten/Pfeiffer-Zellen, leichte Monozytose.',
+ thrombo:'Thrombozyten 135 ↓ leicht (bei EBV häufig).',
+ synth:'Lymphozytose mit atypischen/aktivierten Lymphozyten, Tonsillitis, Lymphknoten und Splenomegalie bei junger Patientin → infektiöse Mononukleose (EBV, Pfeiffersches Drüsenfieber).',
+ dx:'Infektiöse Mononukleose (EBV) — reaktive Lymphozytose mit atypischen Lymphozyten (Pfeiffer-Zellen).',
+ ac:'Klinik + EBV-Serologie (ggf. heterophile Antikörper/Schnelltest), Transaminasen/Sonographie (Splenomegalie); symptomatische Therapie.',
+ fa:'Reaktive Lymphozytose (EBV): junger Patient, aktivierte/atypische Lymphozyten, transient — abzugrenzen von der klonalen Lymphozytose (CLL: ältere Patienten, monomorphe reife Lymphozyten, Gumprecht-Kernschatten). Zwei Fallen bei EBV: keine Aminopenicilline (Ampicillin/Amoxicillin → Arzneimittelexanthem) und kein Kontaktsport für mehrere Wochen (Gefahr der Milzruptur bei Splenomegalie).',
+ nx:'„Junge Patientin mit atypischen Lymphozyten — welche Diagnose, und welche zwei Dinge sollten Sie vermeiden?“',
+ nxa:'Verdacht auf infektiöse Mononukleose (EBV) mit reaktiver Lymphozytose und atypischen Lymphozyten. Vermeiden: (1) Aminopenicilline (Ampicillin/Amoxicillin) wegen typischem Arzneimittelexanthem und (2) Kontakt-/Leistungssport für einige Wochen wegen Gefahr der Milzruptur bei Splenomegalie. Sicherung über EBV-Serologie; abzugrenzen ist die klonale Lymphozytose (CLL) beim älteren Patienten.',
+ zfw:'Infektiöse Mononukleose — EBV-Infektion mit reaktiver Lymphozytose und atypischen (aktivierten) T-Lymphozyten.',
+ zfy:'EBV infiziert B-Zellen → massive reaktive Proliferation aktivierter T-Lymphozyten (die „atypischen“ Pfeiffer-Zellen), begleitet von Tonsillitis, Lymphadenopathie, Hepatosplenomegalie und oft milder Transaminasenerhöhung/Thrombozytopenie.',
+ zfm:'Symptomatisch (Schonung, Analgesie); Aminopenicilline und Kontaktsport meiden; Sicherung per Serologie, Verlauf meist selbstlimitierend.'},
+
+{id:15, hy:1, tier:2, kat:'Normozytäre Anämie', bank:'ext',
+ vig:'68 J., Mann, anhaltende Rückenschmerzen, Durst und Verwirrtheit; Labor zeigt Hyperkalzämie und Niereninsuffizienz.',
+ v:{Hb:9.0,Hkt:27,Ery:3.0,RDW:14.0,Retik:9,Leuk:5.5,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:180,MPV:9.0},
+ ex:[{label:'Geldrollenbildung (Rouleaux)',value:'ausgeprägt',unit:'',flag:'high'},
+     {label:'BSG',value:'„Sturzsenkung“',unit:'',flag:'high'},
+     {label:'Calcium',value:'erhöht',unit:'',flag:'high'},
+     {label:'Eiweißelektrophorese',value:'M-Gradient',unit:'',flag:'high'}],
+ rot:'Hb 9,0 ↓ → Anämie.',
+ mcv:'MCV ~90, MCH ~30, MCHC normal → normozytär, normochrom.',
+ retik:'Retikulozyten 9 ‰ → trotz Anämie nicht adäquat erhöht → aregeneratorisch (Knochenmarkverdrängung/chronisch).',
+ weiss:'Leukozyten 5,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 180 (niedrig-normal).',
+ synth:'Normozytäre, hypoproliferative Anämie mit ausgeprägter Geldrollenbildung und stark beschleunigter BSG, dazu Hyperkalzämie, Niereninsuffizienz und Knochenschmerz → Verdacht auf multiples Myelom.',
+ dx:'Verdacht auf multiples Myelom — normozytäre Anämie, Rouleaux, Hyperkalzämie, Niereninsuffizienz, Knochenschmerz (CRAB).',
+ ac:'Serum-/Urin-Eiweißelektrophorese und Immunfixation, freie Leichtketten; Calcium, Kreatinin, β2-Mikroglobulin; Bildgebung (Ganzkörper-CT/MRT) und Knochenmarkdiagnostik; Hämatologie hinzuziehen.',
+ fa:'Im Blutbild zeigt das multiple Myelom oft nur eine normozytäre Anämie — Hinweise sind die ausgeprägte Geldrollenbildung und die stark beschleunigte BSG („Sturzsenkung“). Das Myelom ist eine wichtige Ursache einer Hyperkalzämie. Merkhilfe CRAB: hyperCalcämie, Renale Insuffizienz, Anämie, Bone (Knochenläsionen).',
+ nx:'„Nennen Sie Ursachen einer Hyperkalzämie — und wie hängt das hier mit der Anämie zusammen?“',
+ nxa:'Häufigste Ursachen der Hyperkalzämie sind der primäre Hyperparathyreoidismus und maligne Erkrankungen (osteolytische Metastasen, multiples Myelom, PTHrP-vermittelt). Beim multiplen Myelom verdrängt der maligne Plasmazellklon das Knochenmark (→ normozytäre Anämie) und führt über Osteoklastenaktivierung zu Osteolysen mit Hyperkalzämie; dazu Niereninsuffizienz (Leichtketten) — zusammengefasst in den CRAB-Kriterien.',
+ zfw:'Multiples Myelom — maligne monoklonale Plasmazellvermehrung mit Paraprotein, Osteolysen und Endorganschäden (CRAB).',
+ zfy:'Der Plasmazellklon produziert ein monoklonales Immunglobulin/Leichtketten und verdrängt das Knochenmark → Anämie; Osteoklastenaktivierung → Osteolysen und Hyperkalzämie; Leichtketten schädigen die Niere; das Paraprotein verklebt Erythrozyten zu Geldrollen (hohe BSG).',
+ zfm:'Diagnostik mit Elektrophorese/Immunfixation, freien Leichtketten, Bildgebung und Knochenmark; Therapie und Komplikationsmanagement (Hyperkalzämie, Niere, Knochen) im hämatologischen Zentrum.'},
+
+{id:16, hy:1, tier:2, kat:'Normozytäre Anämie', bank:'ext',
+ vig:'63 J., Mann, vor 3 Tagen Teerstuhl, Schwindel und Schwäche; nimmt regelmäßig NSAR.',
+ v:{Hb:8.8,Hkt:26,Ery:2.9,RDW:14.0,Retik:45,Leuk:11,Neut:73,Lymph:22,Mono:4,Eos:1,Baso:0,Thrombo:450,MPV:9.0},
+ ex:[{label:'Teerstuhl (Meläna)',value:'anamnestisch',unit:'',flag:'high'},
+     {label:'Tachykardie / initiale Hypotonie',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Ferritin',value:'(noch) normal',unit:'',flag:'norm'}],
+ rot:'Hb 8,8 ↓ → Anämie (nach Volumenausgleich demaskiert).',
+ mcv:'MCV ~90, MCH ~30, MCHC normal → normozytär, normochrom.',
+ retik:'Retikulozyten 45 ‰ ↑ → reaktive Retikulozytose (Regeneration ab Tag 2–3 nach Blutverlust).',
+ weiss:'Leukozyten 11 ↑ leicht (Stressleukozytose), Differential im Wesentlichen unauffällig.',
+ thrombo:'Thrombozyten 450 ↑ → reaktive Thrombozytose (typisch nach akuter Blutung).',
+ synth:'Normozytäre, regeneratorische Anämie mit reaktiver Retikulozytose und Thrombozytose bei akuter oberer GI-Blutung (Meläna, NSAR) → akute Blutungsanämie.',
+ dx:'Akute Blutungsanämie bei oberer gastrointestinaler Blutung (NSAR-assoziiert), normozytär mit Retikulozytose.',
+ ac:'Kreislaufstabilisierung und Volumengabe, Hb-Verlauf, Blutgruppe/Kreuzprobe; Ursachensuche (Endoskopie); NSAR pausieren, PPI; bei chronischer Komponente Eisenstatus.',
+ fa:'Zwei Fallen: (1) In der akuten Blutung ist der Hb-Wert anfangs noch normal (es geht Vollblut verloren, die Konzentration ändert sich erst mit Volumenausgleich) — die Anämie demaskiert sich verzögert. (2) Eine akute Blutung ist normozytär mit Retikulozytose; erst ein chronischer Blutverlust führt über den Eisenmangel zur mikrozytären Anämie.',
+ nx:'„Warum kann der Hb-Wert direkt nach einer akuten Blutung normal sein, und wann wird die Blutungsanämie mikrozytär?“',
+ nxa:'Bei akuter Blutung verliert der Körper Vollblut — Erythrozyten und Plasma im gleichen Verhältnis; die Hämoglobinkonzentration bleibt zunächst normal und fällt erst mit dem Volumenausgleich (Einstrom interstitieller Flüssigkeit/Infusion) ab. Die akute Blutungsanämie ist normozytär mit Retikulozytose. Erst ein anhaltender, chronischer Blutverlust erschöpft die Eisenspeicher und führt zu einer mikrozytär-hypochromen Eisenmangelanämie.',
+ zfw:'Akute Blutungsanämie — normozytäre Anämie durch akuten Blutverlust mit reaktiver Retikulozytose und Thrombozytose.',
+ zfy:'Akuter Vollblutverlust → zunächst Volumenmangel (Hb scheinbar normal), nach Ausgleich Abfall des Hb; das Knochenmark reagiert mit Retikulozytose (ab Tag 2–3) und reaktiver Thrombozytose; das MCV bleibt normal, solange die Eisenspeicher nicht erschöpft sind.',
+ zfm:'Kreislaufstabilisierung, Blutungsquelle stoppen (z. B. Endoskopie), ggf. Transfusion; auslösende Noxen (NSAR) absetzen, PPI; bei chronischem Verlust Eisen substituieren.'},
+
+{id:17, tier:3, kat:'Panzytopenie', bank:'ext',
+ vig:'33 J., Frau, rezidivierende Infekte, Aphthen und Petechien; kürzlich neues Medikament/Toxinexposition.',
+ v:{Hb:8.0,Hkt:24,Ery:2.6,RDW:14.5,Retik:4,Leuk:2.2,Neut:30,Lymph:62,Mono:6,Eos:1,Baso:1,Thrombo:18,MPV:8.5},
+ ex:[{label:'Blasten',value:'keine',unit:'',flag:'norm'},
+     {label:'Retikulozyten absolut',value:'stark erniedrigt',unit:'',flag:'low'},
+     {label:'Knochenmark',value:'hypozellulär (aplastisch)',unit:'',flag:'low'}],
+ rot:'Hb 8,0 ↓↓ → Anämie.',
+ mcv:'MCV ~92 → normozytär, MCH normal.',
+ retik:'Retikulozyten 4 ‰ ↓↓ → absolut stark erniedrigt → aregeneratorisch (Bildungsstörung).',
+ weiss:'Leukozyten 2,2 ↓↓ mit absoluter Neutropenie (~0,7 G/l); relative Lymphozytose nur, weil die Neutrophilen fehlen; keine Blasten.',
+ thrombo:'Thrombozyten 18 ↓↓↓ → schwere Thrombozytopenie.',
+ synth:'Panzytopenie (Anämie + Neutropenie + Thrombozytopenie) mit stark erniedrigten Retikulozyten und hypozellulärem Knochenmark ohne Blasten → aplastische Anämie.',
+ dx:'Aplastische Anämie — Panzytopenie mit hypozellulärem Knochenmark, ohne Blasten/Dysplasie.',
+ ac:'Knochenmarkbiopsie zentral (Zellularität, Blasten/Dysplasie, Fibrose); Auslöser/Medikamente/Toxine, Virologie; Retikulozyten zur Regenerationsbeurteilung; Vorstellung in der Hämatologie.',
+ fa:'Panzytopenie ist ein Befund, keine Diagnose — systematisch nach der Ursache suchen. Niedrige Retikulozyten + leeres (hypozelluläres) Knochenmark ohne Blasten sprechen für eine aplastische Anämie. Blasten → Leukämie; Dysplasie → MDS; megaloblastär → B12/Folatmangel; Fragmentozyten → MAHA; Splenomegalie → Sequestration/Hypersplenismus. Die Knochenmarkbiopsie ist zentral.',
+ nx:'„Wie gehen Sie eine Panzytopenie systematisch an?“',
+ nxa:'Erst bestätigen (Pseudobefunde ausschließen) und die Retikulozyten beurteilen. Periphere Ursachen (gesteigerter Verbrauch/Verteilung: Hypersplenismus, MAHA, schwere Sepsis) von zentralen (Bildungsstörung) trennen. Der Blutausstrich gibt Hinweise: Blasten → akute Leukämie; Dysplasie → MDS; Makrozytose/Übersegmentierung → B12-/Folatmangel; Fragmentozyten → Mikroangiopathie. Zentral ist die Knochenmarkdiagnostik (Zellularität, Infiltration, Dysplasie) — bei leerem Mark ohne Blasten spricht alles für eine aplastische Anämie.',
+ zfw:'Aplastische Anämie — Knochenmarkversagen mit Hypozellularität und peripherer Panzytopenie.',
+ zfy:'Schädigung/Autoimmunreaktion gegen die hämatopoetischen Stammzellen (idiopathisch, medikamenten-/toxin-/virusassoziiert) → fehlende Blutbildung in allen drei Reihen mit hypozellulärem Knochenmark und niedrigen Retikulozyten.',
+ zfm:'Auslöser meiden; supportiv (Transfusionen, Infektprophylaxe); kausal immunsuppressive Therapie oder allogene Stammzelltransplantation im Zentrum, abhängig von Schweregrad und Alter.'},
+
+{id:18, tier:3, kat:'Reaktive Veränderung', bank:'ext',
+ vig:'41 J., Mann, seit Wochen Juckreiz und Hautausschlag; neues Medikament begonnen, bekanntes Asthma.',
+ v:{Hb:13.5,Hkt:40,Ery:4.5,RDW:13.0,Retik:11,Leuk:13,Neut:46,Lymph:30,Mono:5,Eos:19,Baso:0,Thrombo:250,MPV:9.0},
+ ex:[{label:'Eosinophile absolut',value:'~2,5 G/l',unit:'',flag:'high'},
+     {label:'IgE',value:'erhöht',unit:'',flag:'high'},
+     {label:'Stuhl auf Parasiten / Reiseanamnese',value:'prüfen',unit:'',flag:'norm'}],
+ rot:'Hb 13,5, Hkt 40 → rote Reihe normal.',
+ mcv:'MCV ~89 → normozytär.',
+ retik:'Retikulozyten 11 ‰ → normal.',
+ weiss:'Leukozyten 13 ↑ mit ausgeprägter Eosinophilie (~19 %, absolut ~2,5 G/l ↑↑); übrige Reihen unauffällig.',
+ thrombo:'Thrombozyten 250 normal.',
+ synth:'Leukozytose mit deutlicher absoluter Eosinophilie (~2,5 G/l) bei Juckreiz/Exanthem, neuem Medikament und Asthma → reaktive Eosinophilie, Ursache abklären.',
+ dx:'Eosinophilie (absolut ~2,5 G/l) — reaktiv, am ehesten allergisch/medikamentös; Ursache abzuklären.',
+ ac:'Ursachensuche: Medikamentenanamnese, Allergie/Asthma, Reise-/Parasitenanamnese (Stuhl auf Wurmeier), IgE; bei Medikament + Exanthem + Organbeteiligung an DRESS denken; bei sehr hoher/persistierender Eosinophilie mit Organschaden an Hypereosinophilie-Syndrom.',
+ fa:'Ursachen der Eosinophilie systematisch mit „NAACP“: Neoplasie, Allergie/Asthma, Addison (Nebenniereninsuffizienz), Collagenosen/Vaskulitiden (z. B. eosinophile Granulomatose mit Polyangiitis), Parasiten. Bei Medikament + Exanthem + Organbeteiligung an ein DRESS-Syndrom denken; bei sehr hoher, persistierender Eosinophilie mit Organschädigung an ein hypereosinophiles Syndrom.',
+ nx:'„Welche Ursachen einer Eosinophilie kennen Sie?“',
+ nxa:'Systematisch (z. B. Merkhilfe NAACP): Neoplasien (CML, Lymphome, hypereosinophiles Syndrom), Allergien/Asthma/atopische Erkrankungen, Arzneimittelreaktionen (bis hin zum DRESS), Nebenniereninsuffizienz (Addison), Kollagenosen/Vaskulitiden (z. B. EGPA) und Parasitosen. Zuerst die häufigen, gut behandelbaren Ursachen (Medikamente, Allergie, Parasiten) abklären.',
+ zfw:'Eosinophilie — absolute Vermehrung eosinophiler Granulozyten (> 0,5 G/l), meist reaktiv.',
+ zfy:'Th2-/IL-5-vermittelte Stimulation der Eosinopoese bei Allergien, Parasitosen, Arzneimittelreaktionen, Autoimmun-/Neoplasieprozessen; sehr hohe, anhaltende Werte können Organe schädigen (Herz, Lunge).',
+ zfm:'Auslöser identifizieren und behandeln (Medikament absetzen, Parasiten therapieren, Allergie/Asthma behandeln); bei Organbeteiligung/Persistenz spezialisierte Abklärung.'},
+/* ===== ERWEITERUNG II — Lückenschluss (19–24) ===== */
+
+{id:19, hy:1, tier:2, kat:'Polyglobulie / Erythrozytose', bank:'ext',
+ vig:'62 J., Mann, rotes („plethorisches“) Gesicht, Kopfschmerzen und Schwindel, quälender Juckreiz nach dem Duschen; Milz tastbar vergrößert.',
+ v:{Hb:19.5,Hkt:58,Ery:6.8,RDW:14.0,Retik:12,Leuk:13,Neut:71,Lymph:22,Mono:5,Eos:1,Baso:1,Thrombo:520,MPV:9.0},
+ ex:[{label:'JAK2-V617F-Mutation',value:'positiv',unit:'',flag:'high'},
+     {label:'Erythropoetin (EPO)',value:'erniedrigt/supprimiert',unit:'',flag:'low'},
+     {label:'arterielle O₂-Sättigung',value:'normal',unit:'',flag:'norm'},
+     {label:'Milz',value:'tastbar vergrößert',unit:'',flag:'high'}],
+ rot:'Hb 19,5 ↑↑ und Hämatokrit 58 ↑↑ bei Erythrozyten 6,8 ↑ → absolute Erythrozytose (Polyglobulie).',
+ mcv:'MCV ~85, MCH und MCHC normal → normozytär, normochrom (bei begleitendem Eisenmangel durch die expandierte Erythrozytenmasse kann das MCV niedrig werden).',
+ retik:'Retikulozyten 12 ‰ → normal.',
+ weiss:'Leukozyten 13 ↑ mit leichter Vermehrung auch von Eosinophilen und Basophilen → begleitende myeloische Beteiligung (Panmyelose).',
+ thrombo:'Thrombozyten 520 ↑ → Thrombozytose; zusammen mit Leuko- und Erythrozytose Hinweis auf eine Panmyelose.',
+ synth:'Absolute Erythrozytose mit Thrombozytose, leichter Leukozytose, Splenomegalie, Pruritus, niedrigem EPO und JAK2-Mutation → Polycythaemia vera (primäre Polyglobulie).',
+ dx:'Polycythaemia vera (PV) — JAK2-positive myeloproliferative Neoplasie mit Panmyelose; supprimiertes EPO.',
+ ac:'Bestätigung über JAK2-V617F und niedriges EPO; Ausschluss sekundärer Ursachen (O₂-Sättigung, ggf. Lungen-/Schlafapnoe-Abklärung); Aderlass auf Ziel-Hämatokrit < 45 %, niedrig dosierte ASS, bei Hochrisiko Zytoreduktion (z. B. Hydroxyurea); Vorstellung in der Hämatologie.',
+ fa:'Drei Schienen der Polyglobulie auseinanderhalten: primär (PV) — JAK2-positiv, EPO erniedrigt, Panmyelose (auch Leuko-/Thrombozytose), Splenomegalie, Aquagener Pruritus; sekundär — EPO erhöht/normal, isolierte rote Reihe, Ursache Hypoxie (COPD, Schlafapnoe, Rauchen, Höhe), EPO-produzierende Tumoren oder Doping; relativ/„Pseudo“ — normale Erythrozytenmasse bei Plasmavolumenmangel (Exsikkose, „Gaisböck“). Schlüssel zur Unterscheidung sind EPO und JAK2. Hauptgefahr der PV ist die Thrombose, nicht die Blutung.',
+ nx:'„Wie grenzen Sie eine Polycythaemia vera von einer sekundären Erythrozytose ab?“',
+ nxa:'Über EPO und JAK2: bei der PV ist das Erythropoetin supprimiert und JAK2-V617F nachweisbar, meist mit Beteiligung aller drei Reihen (Leuko-, Thrombozytose), Splenomegalie und Juckreiz. Bei der sekundären Erythrozytose ist das EPO erhöht oder normal und nur die rote Reihe betroffen — Ursache suchen (Hypoxie bei COPD/Schlafapnoe/Rauchen/Höhe oder EPO-produzierende Tumoren). Vorher eine relative Polyglobulie bei Exsikkose ausschließen.',
+ zfw:'Polycythaemia vera — klonale myeloproliferative Neoplasie mit autonomer, EPO-unabhängiger Überproduktion v. a. der roten Reihe (Panmyelose).',
+ zfy:'Die JAK2-V617F-Mutation aktiviert die JAK-STAT-Signalkette konstitutiv → EPO-unabhängige Proliferation; die gesteigerte Zellmasse erhöht Viskosität und Thromboserisiko, der Pruritus wird auf Mastzell-/Basophilenaktivität zurückgeführt.',
+ zfm:'Hämatokrit durch Aderlass < 45 % senken, niedrig dosierte ASS, bei Hochrisiko Zytoreduktion (Hydroxyurea); kardiovaskuläre Risikofaktoren behandeln, Verlauf wegen Übergang in Myelofibrose/AML kontrollieren.'},
+
+{id:20, hy:1, tier:2, kat:'Normozytäre Anämie', bank:'ext',
+ vig:'67 J., Frau, langjährige rheumatoide Arthritis, zunehmende Müdigkeit und Leistungsminderung.',
+ v:{Hb:10.2,Hkt:31,Ery:3.5,RDW:13.5,Retik:8,Leuk:7.5,Neut:62,Lymph:28,Mono:6,Eos:3,Baso:1,Thrombo:380,MPV:9.0},
+ ex:[{label:'Ferritin',value:'normal/erhöht',unit:'',flag:'high'},
+     {label:'Transferrinsättigung',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'Transferrin',value:'erniedrigt/normal',unit:'',flag:'low'},
+     {label:'CRP / BSG',value:'erhöht',unit:'',flag:'high'},
+     {label:'löslicher Transferrinrezeptor (sTfR)',value:'normal',unit:'',flag:'norm'}],
+ rot:'Hb 10,2 ↓ → Anämie.',
+ mcv:'MCV ~89, MCH ~29, MCHC normal → normozytär, normochrom (kann im Verlauf leicht mikrozytär werden).',
+ retik:'Retikulozyten 8 ‰ → trotz Anämie nicht adäquat erhöht → hypoproliferativ.',
+ weiss:'Leukozyten 7,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 380 hochnormal (bei Entzündung oft reaktiv vermehrt).',
+ synth:'Normozytäre, hypoproliferative Anämie bei chronischer Entzündung (rheumatoide Arthritis) mit normalem/erhöhtem Ferritin und erniedrigter Transferrinsättigung → Anämie der chronischen Erkrankung (Entzündungsanämie).',
+ dx:'Anämie der chronischen Erkrankung (ACD) bei rheumatoider Arthritis — funktioneller Eisenmangel bei vollen Speichern.',
+ ac:'Eisenstatus komplett (Ferritin, Transferrinsättigung, Transferrin, ggf. sTfR), Entzündungsmarker; Grunderkrankung behandeln; Eisen nur bei nachgewiesenem zusätzlichem echtem Eisenmangel; nicht blind substituieren.',
+ fa:'ACD und Eisenmangel sehen sich ähnlich (beide können hypochrom werden), die Eisenparameter trennen sie: bei der ACD ist Ferritin normal oder erhöht (Akut-Phase-Protein), Transferrin niedrig/normal und der lösliche Transferrinrezeptor normal; beim echten Eisenmangel ist Ferritin niedrig, Transferrin hoch und der sTfR erhöht. Die Transferrinsättigung ist bei beiden niedrig. Cave: ACD und echter Eisenmangel können koexistieren (z. B. Rheuma plus NSAR-Blutung) — dann hilft der sTfR oder das Knochenmark-Eisen. Eisen nicht blind geben, da es bei reiner ACD ohnehin sequestriert wird.',
+ nx:'„Wie unterscheiden Sie eine Anämie der chronischen Erkrankung von einer Eisenmangelanämie?“',
+ nxa:'Über die Eisenparameter: bei der ACD blockiert Hepcidin die Eisenfreisetzung — Ferritin ist als Akut-Phase-Protein normal oder erhöht, das Transferrin eher niedrig, der lösliche Transferrinrezeptor normal. Beim Eisenmangel ist Ferritin niedrig, das Transferrin kompensatorisch hoch und der sTfR erhöht. Beide zeigen eine niedrige Transferrinsättigung. An eine Kombination beider denken und gezielt nachmessen, bevor man Eisen gibt.',
+ zfw:'Anämie der chronischen Erkrankung — hypoproliferative, meist normozytäre Anämie bei chronischer Entzündung, Infektion oder Malignom durch gestörte Eisenverwertung.',
+ zfy:'Entzündungszytokine (v. a. IL-6) steigern Hepcidin → Eisen wird in Makrophagen zurückgehalten und die Resorption gedrosselt (funktioneller Eisenmangel trotz voller Speicher); zusätzlich gedämpfte EPO-Antwort und verkürzte Erythrozytenüberlebenszeit.',
+ zfm:'Grunderkrankung behandeln; Eisen nur bei zusätzlich nachgewiesenem echtem Mangel; in ausgewählten Fällen ESA; Bluttransfusion nur bei symptomatischer Anämie.'},
+
+{id:21, hy:1, tier:3, kat:'Thrombozytopenie', bank:'ext',
+ vig:'68 J., Mann, 7 Tage nach gefäßchirurgischer Operation unter Heparin; neu aufgetretene tiefe Beinvenenthrombose, dabei abfallende Thrombozyten.',
+ v:{Hb:13.0,Hkt:39,Ery:4.4,RDW:13.0,Retik:10,Leuk:8.5,Neut:64,Lymph:26,Mono:6,Eos:3,Baso:1,Thrombo:55,MPV:9.5},
+ ex:[{label:'Thrombozyten-Ausgangswert',value:'~220 (Abfall > 50 %)',unit:'',flag:'high'},
+     {label:'4T-Score',value:'hoch',unit:'',flag:'high'},
+     {label:'Anti-PF4/Heparin-Antikörper',value:'positiv',unit:'',flag:'high'},
+     {label:'neue Thrombose (TVT)',value:'nachweisbar',unit:'',flag:'high'},
+     {label:'Gerinnung (Quick/aPTT, Fibrinogen)',value:'normal',unit:'',flag:'norm'}],
+ rot:'Hb 13,0 normal, rote Reihe unauffällig.',
+ mcv:'MCV ~89, MCH und MCHC normal → normozytär, normochrom.',
+ retik:'Retikulozyten 10 ‰ → normal.',
+ weiss:'Leukozyten 8,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 55 ↓ — entscheidend ist der relative Abfall um > 50 % vom Ausgangswert; der Nadir liegt typischerweise bei 30–70 (selten < 20).',
+ synth:'Thrombozytenabfall um mehr als die Hälfte am Tag 5–10 unter Heparin mit gleichzeitiger neuer Thrombose und positiven Anti-PF4-Antikörpern → Heparin-induzierte Thrombozytopenie Typ II (HIT).',
+ dx:'Heparin-induzierte Thrombozytopenie Typ II (HIT) — immunvermittelt, mit paradoxer Thrombose.',
+ ac:'Sofort jegliches Heparin absetzen (auch Spülungen und NMH), Umstellung auf ein Nicht-Heparin-Antikoagulans (Argatroban, Danaparoid, Fondaparinux); keine Thrombozytentransfusion; kein Cumarin/Vitamin-K-Antagonist vor Erholung der Thrombozyten; 4T-Score + Anti-PF4-Antikörper, ggf. funktioneller Test.',
+ fa:'Das Paradoxe: trotz niedriger Thrombozyten ist die Gefahr die Thrombose („weiße Gerinnsel“), nicht die Blutung. Timing typisch Tag 5–14 (schneller bei Vorexposition), Abfall meist > 50 %, Nadir selten < 20 — das hilft gegen ITP/DIC. Drei Sofortregeln: alles Heparin stoppen, auf Argatroban/Danaparoid/Fondaparinux umstellen, keine Thrombozyten transfundieren und kein Cumarin starten (Gefahr der Cumarin-Nekrose/venösen Gangrän). Abgrenzung: DIC hat eine pathologische Gerinnung mit niedrigem Fibrinogen; bei der HIT ist die Gerinnung normal und die Anti-PF4-Antikörper sind positiv.',
+ nx:'„Patient unter Heparin, Thrombozyten fallen ab und es tritt eine Thrombose auf — was tun Sie?“',
+ nxa:'Verdacht auf HIT Typ II. Sofort jegliches Heparin absetzen (auch NMH und Spülungen) und auf ein Nicht-Heparin-Antikoagulans umstellen (Argatroban, Danaparoid oder Fondaparinux). Keine Thrombozytentransfusion und kein Vitamin-K-Antagonist, solange die Thrombozyten niedrig sind. Diagnostisch 4T-Score und Anti-PF4/Heparin-Antikörper, bei Bedarf funktioneller Bestätigungstest.',
+ zfw:'HIT Typ II — antikörpervermittelte Heparin-Komplikation mit Thrombozytenabfall und paradox erhöhtem Thromboserisiko.',
+ zfy:'Antikörper gegen Heparin-Plättchenfaktor-4-Komplexe aktivieren Thrombozyten über den FcγRIIa-Rezeptor → Plättchenverbrauch und massive Thrombingenerierung → arterielle und venöse Thrombosen bei gleichzeitiger Thrombozytopenie.',
+ zfm:'Heparin sofort und vollständig absetzen, alternativ antikoagulieren (Argatroban/Danaparoid/Fondaparinux), keine Thrombozyten, kein früher VKA; Diagnose mit 4T-Score und Anti-PF4-Antikörpern sichern, HIT im Allergiepass dokumentieren.'},
+
+{id:22, hy:1, tier:3, kat:'Thrombozytopenie', bank:'ext',
+ vig:'58 J., Mann, schwere gramnegative Sepsis (Urosepsis), jetzt Blutungen aus Einstichstellen und hämodynamisch instabil.',
+ v:{Hb:9.0,Hkt:27,Ery:3.0,RDW:15.5,Retik:18,Leuk:16,Neut:78,Stab:6,Lymph:11,Mono:5,Eos:0,Baso:0,Thrombo:45,MPV:10.5},
+ ex:[{label:'Fragmentozyten (Schistozyten)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Quick (INR)',value:'erniedrigt (INR ↑)',unit:'',flag:'low'},
+     {label:'aPTT',value:'verlängert',unit:'',flag:'high'},
+     {label:'Fibrinogen',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'D-Dimere',value:'stark erhöht',unit:'',flag:'high'},
+     {label:'Auslöser',value:'Sepsis',unit:'',flag:'high'}],
+ rot:'Hb 9,0 ↓ → Anämie bei kombinierter Hämolyse (mechanisch) und Blutung.',
+ mcv:'MCV ~90, MCHC normal → normozytär; RDW 15,5 ↑ als Ausdruck der Fragmentierung/Anisozytose.',
+ retik:'Retikulozyten 18 ‰ ↑ → Regeneration bei Hämolyse/Blutverlust.',
+ weiss:'Leukozyten 16 ↑ mit Linksverschiebung (Stabkernige 6 %) → septische Leukozytose.',
+ thrombo:'Thrombozyten 45 ↓ → Verbrauchsthrombozytopenie.',
+ synth:'Thrombozytopenie mit Fragmentozyten, verlängerter Gerinnung, niedrigem Fibrinogen und stark erhöhten D-Dimeren bei Sepsis → disseminierte intravasale Gerinnung (Verbrauchskoagulopathie).',
+ dx:'Disseminierte intravasale Gerinnung (DIC) bei Sepsis — Verbrauch von Thrombozyten und Gerinnungsfaktoren.',
+ ac:'Auslöser sofort behandeln (z. B. Antibiotika/Fokuskontrolle bei Sepsis — die einzige kausale Therapie); supportiv Thrombozyten, FFP und Fibrinogen NUR bei aktiver Blutung oder vor Eingriffen; Gerinnungsmonitoring (Quick, aPTT, Fibrinogen, D-Dimere, Thrombozyten); Heparin nur bei thrombosebetonter DIC erwägen.',
+ fa:'DIC = gleichzeitige überschießende Gerinnungsaktivierung (Mikrothromben) und Fibrinolyse → Verbrauch von Thrombozyten und Faktoren → Blutung UND Thrombose. Im Blutbild: Thrombozytopenie + Fragmentozyten + pathologische Gerinnung (Fibrinogen ↓, Quick ↓/aPTT ↑, D-Dimere ↑↑). Wichtigste Abgrenzung zur TTP/HUS: die TTP hat eine NORMALE Gerinnung und normales Fibrinogen (plättchengetriebene Mikroangiopathie), die DIC eine pathologische Gerinnung mit niedrigem Fibrinogen und immer einen Auslöser (Sepsis, Malignom, geburtshilflich, Trauma). Immer den Auslöser suchen und behandeln.',
+ nx:'„Wie unterscheiden Sie eine DIC von einer TTP?“',
+ nxa:'Über die plasmatische Gerinnung und das Fibrinogen: bei der DIC sind Quick/aPTT pathologisch, das Fibrinogen erniedrigt und die D-Dimere stark erhöht — und es gibt einen Auslöser (Sepsis, Malignom, geburtshilfliche Komplikation, Trauma). Bei der TTP ist die Gerinnung normal und das Fibrinogen normal, im Vordergrund stehen ADAMTS13-Mangel, Fragmentozyten und Verbrauchsthrombozytopenie. Beide zeigen eine mikroangiopathische Hämolyse, die Gerinnung trennt sie.',
+ zfw:'Verbrauchskoagulopathie (DIC) — generalisierte Aktivierung der Gerinnung mit Mikrothrombosierung und sekundärer Hyperfibrinolyse bis zur Blutungsneigung.',
+ zfy:'Auslöser (Sepsis, Malignom, Geburtskomplikationen, Trauma) setzen Gewebethromboplastin frei → systemische Thrombinbildung, Mikrothromben und Verbrauch von Thrombozyten und Faktoren; die reaktive Fibrinolyse erzeugt D-Dimere und verstärkt die Blutung. Fragmentozyten entstehen mechanisch an Fibrinnetzen.',
+ zfm:'Kausale Behandlung des Auslösers steht im Vordergrund (z. B. Sepsistherapie); supportive Substitution von Thrombozyten/FFP/Fibrinogen nur bei Blutung oder vor Eingriffen; Verlaufskontrolle der Gerinnungsparameter.'},
+
+{id:23, tier:3, kat:'Makrozytäre Anämie', bank:'ext',
+ vig:'74 J., Mann, langsam zunehmende Müdigkeit, wiederholte Infekte und vermehrte Hämatome; Vitamin B12 und Folsäure normal.',
+ v:{Hb:9.8,Hkt:30,Ery:2.85,RDW:16.5,Retik:4,Leuk:3.2,Neut:38,Lymph:50,Mono:8,Eos:3,Baso:1,Thrombo:95,MPV:11.0},
+ ex:[{label:'Pseudo-Pelger-Huët-Zellen (hypogranulär)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Ringsideroblasten (Knochenmark)',value:'nachweisbar',unit:'',flag:'high'},
+     {label:'Blasten im Ausstrich',value:'< 5 %',unit:'',flag:'high'},
+     {label:'Vitamin B12 / Folsäure',value:'normal',unit:'',flag:'norm'},
+     {label:'Knochenmark',value:'zellreich, dysplastisch',unit:'',flag:'high'}],
+ rot:'Hb 9,8 ↓ → Anämie.',
+ mcv:'MCV ~105 ↑ → makrozytär; RDW 16,5 ↑ als Ausdruck der Anisozytose bei Dysplasie.',
+ retik:'Retikulozyten 4 ‰ ↓ → inadäquat niedrig → ineffektive Hämatopoese (zellreiches, aber dysplastisches Mark).',
+ weiss:'Leukozyten 3,2 ↓ mit absoluter Neutropenie (~1,2) → dysplastische Granulopoese.',
+ thrombo:'Thrombozyten 95 ↓ → zusätzliche Thrombozytopenie → Mehrlinien-Dysplasie.',
+ synth:'Makrozytäre Anämie mit Neutropenie und Thrombozytopenie, niedrigen Retikulozyten, Dysplasiezeichen (Pseudo-Pelger, Ringsideroblasten) und normalem B12/Folsäure bei einem älteren Patienten → myelodysplastisches Syndrom.',
+ dx:'Myelodysplastisches Syndrom (MDS) — klonale, ineffektive Hämatopoese mit Mehrlinien-Dysplasie; Blasten < 5 %.',
+ ac:'Knochenmark mit Zytologie/Histologie (Dysplasie ≥ 10 % einer Reihe, Blastenanteil), Eisenfärbung (Ringsideroblasten), Zytogenetik (z. B. del(5q)); reaktive Ursachen ausschließen (B12/Folsäure, Alkohol, Medikamente, Kupfermangel); risikoadaptierte Therapie über die Hämatologie.',
+ fa:'Zwei Abgrenzungen sind prüfungsrelevant. Gegen die megaloblastäre Anämie (B12-/Folsäuremangel): das MDS ist ebenfalls makrozytär, aber B12 und Folsäure sind NORMAL und es zeigen sich Dysplasiezeichen (Pseudo-Pelger-Huët-Zellen, Ringsideroblasten) — nicht reflexhaft „makrozytär → B12 geben“, sondern B12/Folsäure bestimmen und bei Normwerten an MDS denken. Gegen die aplastische Anämie: beide machen Zytopenien, aber das Knochenmark ist beim MDS ZELLREICH und dysplastisch (ggf. Blastenvermehrung), bei der aplastischen Anämie LEER/hypozellulär ohne Dysplasie. Gegen die akute Leukämie: Blasten < 20 % (≥ 20 % → AML).',
+ nx:'„Makrozytäre Anämie, aber B12 und Folsäure sind normal — woran denken Sie?“',
+ nxa:'An ein myelodysplastisches Syndrom, besonders beim älteren Patienten mit zusätzlicher Neutropenie und/oder Thrombozytopenie. Typisch sind Dysplasiezeichen im Ausstrich (Pseudo-Pelger-Huët-Zellen, hypogranuläre Neutrophile, Ringsideroblasten) und inadäquat niedrige Retikulozyten bei zellreichem Knochenmark. Gesichert wird die Diagnose durch Knochenmarkdiagnostik mit Blastenbestimmung und Zytogenetik, nach Ausschluss reaktiver Ursachen (B12/Folsäure, Alkohol, Medikamente).',
+ zfw:'Myelodysplastisches Syndrom — klonale Stammzellerkrankung des höheren Alters mit ineffektiver, dysplastischer Hämatopoese und Zytopenien, Übergang in eine AML möglich.',
+ zfy:'Klonale Mutationen der Stammzelle führen zu gestörter Ausreifung → die Zellen werden im Mark vermehrt gebildet, aber funktionsuntüchtig abgebaut (ineffektive Hämatopoese) → periphere Zytopenien trotz zellreichem Mark; mit zunehmendem Blastenanteil steigt das Risiko des Übergangs in eine akute Leukämie.',
+ zfm:'Risikoadaptiert: bei Niedrigrisiko supportiv (Transfusionen, EPO, G-CSF) und ggf. Lenalidomid (del(5q)); bei Hochrisiko hypomethylierende Substanzen (Azacitidin) und bei geeigneten Patienten allogene Stammzelltransplantation als einzige kurative Option.'},
+
+{id:24, hy:1, tier:2, kat:'Neutropenie / Agranulozytose', bank:'ext',
+ vig:'52 J., Frau, seit Tagen Metamizol gegen Schmerzen; plötzlich hohes Fieber, schwere Halsschmerzen mit Tonsillenbelägen und Mundschleimhautulzera.',
+ v:{Hb:13.5,Hkt:40,Ery:4.5,RDW:13.0,Retik:12,Leuk:1.9,Neut:5,Lymph:80,Mono:12,Eos:2,Baso:1,Thrombo:250,MPV:9.0},
+ ex:[{label:'Blutausstrich',value:'Granulozyten nahezu fehlend',unit:'',flag:'low'},
+     {label:'rote Reihe und Thrombozyten',value:'normal',unit:'',flag:'norm'},
+     {label:'Knochenmark',value:'Granulopoese-Stopp, übrige Reihen erhalten',unit:'',flag:'low'},
+     {label:'auslösendes Medikament',value:'Metamizol',unit:'',flag:'high'},
+     {label:'Blasten',value:'keine',unit:'',flag:'norm'}],
+ rot:'Hb 13,5 normal, rote Reihe unauffällig.',
+ mcv:'MCV ~89, MCH und MCHC normal → normozytär, normochrom.',
+ retik:'Retikulozyten 12 ‰ → normal (rote Reihe nicht betroffen).',
+ weiss:'Leukozyten 1,9 ↓ — getragen vom nahezu vollständigen Fehlen der Neutrophilen (absolut ~0,1 ↓↓); die Lymphozyten sind absolut normal (relative Lymphozytose).',
+ thrombo:'Thrombozyten 250 normal → KEINE Panzytopenie, sondern isolierte Neutropenie.',
+ synth:'Plötzliche, isolierte schwere Neutropenie (Agranulozytose) mit Fieber und Angina unter einem typischen Auslöser (Metamizol), bei normaler roter Reihe und normalen Thrombozyten → medikamentös induzierte Agranulozytose.',
+ dx:'Medikamentös induzierte Agranulozytose — isolierte schwere Neutropenie (< 0,5 G/l) bei erhaltener Erythro- und Megakaryopoese.',
+ ac:'Auslösendes Medikament sofort absetzen; bei Fieber wie bei febriler Neutropenie sofort Blutkulturen und breite empirische Antibiose (nicht abwarten — Sepsisgefahr); G-CSF zur Beschleunigung der Erholung; Umkehrisolation; sorgfältige Medikamentenanamnese und Dokumentation des Auslösers.',
+ fa:'Agranulozytose = plötzliche, ISOLIERTE schwere Neutropenie (oft nahe 0), klassisch medikamentös, klinisch als Fieber + Angina/Mundulzera → fieberhafte Neutropenie ist ein Notfall. Abgrenzung zur aplastischen Anämie: hier sind rote Reihe und Thrombozyten NORMAL und das Mark zeigt nur einen Granulopoese-Stopp bei erhaltener Erythro-/Megakaryopoese — die aplastische Anämie ist dagegen eine Panzytopenie mit leerem Mark. Abgrenzung zur Leukämie: keine Blasten, keine Organomegalie. Typische deutsche Auslöser kennen: Metamizol (Prüfungsklassiker!), Thyreostatika (Thiamazol/Carbimazol), Clozapin (Pflichtmonitoring), Sulfasalazin, Cotrimoxazol, Ticlopidin.',
+ nx:'„Patientin unter Metamizol mit Fieber und Halsschmerzen, Leukozyten 1,9 — was steckt dahinter und was tun Sie?“',
+ nxa:'Verdacht auf eine medikamentös induzierte Agranulozytose: isolierte schwere Neutropenie bei normaler roter Reihe und normalen Thrombozyten. Das Metamizol (oder ein anderes typisches Medikament wie Thyreostatika oder Clozapin) sofort absetzen. Da Fieber besteht, wie bei febriler Neutropenie sofort Blutkulturen abnehmen und breit empirisch antibiotisch behandeln — nicht abwarten. G-CSF zur Beschleunigung der Granulozytenerholung, Umkehrisolation und Dokumentation des Auslösers im Allergiepass.',
+ zfw:'Agranulozytose — akute, isolierte schwere Verminderung der neutrophilen Granulozyten (< 0,5 G/l), meist medikamentös-idiosynkratisch ausgelöst.',
+ zfy:'Idiosynkratische immunologische oder direkt toxische Medikamentenwirkung zerstört reife Granulozyten bzw. blockiert die Granulopoese (Reifungsstopp) → fehlende Infektabwehr bei erhaltener Erythro- und Megakaryopoese; klinisch drohen rasch Schleimhautinfekte und Sepsis.',
+ zfm:'Auslösendes Medikament sofort und dauerhaft absetzen, bei Fieber umgehend Blutkulturen und breite Antibiose, G-CSF zur Erholung der Granulopoese; Erholung meist innerhalb von 1–3 Wochen, Reexposition vermeiden.'}
+,
+/* ===== ERWEITERUNG III — Differenzialdiagnosen als Fälle (25–45) ===== */
+
+{id:25, tier:3, kat:'Mikrozytäre Anämie', bank:'ext',
+ vig:'64 J., Mann, langjähriger Alkoholkonsum, Müdigkeit; im Ausstrich ein gemischtbildiges (dimorphes) Blutbild.',
+ v:{Hb:9.8,Hkt:30,Ery:4.2,RDW:17.0,Retik:12,Leuk:6.5,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:240,MPV:9.0},
+ ex:[{label:'Ringsideroblasten (Knochenmark, Eisenfärbung)',value:'nachweisbar',unit:'',flag:'high'},
+     {label:'Ferritin / Serumeisen',value:'erhöht (Eisenüberladung)',unit:'',flag:'high'},
+     {label:'Pappenheimer-Körperchen',value:'vorhanden',unit:'',flag:'high'},
+     {label:'dimorphes Blutbild',value:'mikrozytär + normozytär',unit:'',flag:'high'},
+     {label:'Hb-Elektrophorese',value:'normal',unit:'',flag:'norm'}],
+ rot:'Hb 9,8 ↓ → Anämie.',
+ mcv:'MCV ~71 ↓, MCH ~23 ↓ → mikrozytär, hypochrom; RDW 17 ↑ als Ausdruck des dimorphen Blutbildes.',
+ retik:'Retikulozyten 12 ‰ → trotz Anämie nicht adäquat erhöht → ineffektive Erythropoese.',
+ weiss:'Leukozyten 6,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 240 normal.',
+ synth:'Mikrozytär-hypochrome, dimorphe Anämie mit Eisenüberladung und Ringsideroblasten → sideroblastische Anämie.',
+ dx:'Sideroblastische Anämie — gestörter Hämeinbau mit Ringsideroblasten und Eisenüberladung (hier erworben, alkoholassoziiert).',
+ ac:'Knochenmark mit Eisenfärbung (Ringsideroblasten), kompletter Eisenstatus (Ferritin/Eisen ↑); Ursachen suchen (Alkohol, Blei, Isoniazid, Kupfermangel, MDS-RS); Pyridoxin(B6)-Versuch bei hereditären Formen; KEINE Eisensubstitution.',
+ fa:'Mikrozytäre Anämie, aber das Eisen ist HOCH, nicht niedrig — Eisengabe wäre schädlich (Eisenüberladung). Abgrenzung: Eisenmangel (Ferritin ↓, Transferrin ↑), Thalassämie (Hb-Elektrophorese auffällig, Eisen normal), sideroblastische Anämie (Ferritin/Eisen ↑, Ringsideroblasten im Mark). Ursachen erworben (Alkohol, Blei, Isoniazid, Kupfermangel, MDS mit Ringsideroblasten) oder hereditär (X-chromosomal, ALAS2). Beweisend ist die Eisenfärbung des Knochenmarks.',
+ nx:'„Mikrozytäre Anämie mit hohem Ferritin — was tun Sie und woran denken Sie?“',
+ nxa:'An eine sideroblastische Anämie (oder ACD), NICHT an einen Eisenmangel — und kein Eisen geben. Beweisend ist die Eisenfärbung des Knochenmarks mit Ringsideroblasten. Ursachen abklären (Alkohol, Blei, Isoniazid, Kupfermangel, MDS); bei hereditären Formen einen Pyridoxin-Versuch erwägen, sonst Auslöser meiden und bei Eisenüberladung Chelattherapie.',
+ zfw:'Sideroblastische Anämie — Störung der Hämsynthese mit Eiseneinlagerung in die Mitochondrien der Erythroblasten (Ringsideroblasten).',
+ zfy:'Defekte Hämbiosynthese (hereditär ALAS2 oder erworben durch Alkohol/Blei/Medikamente/MDS) → Eisen wird nicht in Häm eingebaut, sondern ringförmig in Mitochondrien abgelagert → ineffektive Erythropoese mit dimorphem Blutbild und systemischer Eisenüberladung.',
+ zfm:'Auslöser beseitigen (Alkohol/Medikament/Blei), Pyridoxin bei hereditären Formen; bei Eisenüberladung Chelattherapie; bei MDS-assoziierter Form risikoadaptierte hämatologische Therapie.'},
+
+{id:26, tier:3, kat:'Mikrozytäre Anämie', bank:'ext',
+ vig:'41 J., Mann, Renovierung von Altbauten; kolikartige Bauchschmerzen, Müdigkeit und Handgelenksschwäche (Fallhand).',
+ v:{Hb:10.8,Hkt:33,Ery:4.5,RDW:14.0,Retik:14,Leuk:6.8,Neut:58,Lymph:32,Mono:6,Eos:3,Baso:1,Thrombo:250,MPV:9.0},
+ ex:[{label:'basophile Tüpfelung der Erythrozyten',value:'ausgeprägt',unit:'',flag:'high'},
+     {label:'Blut-Blei-Spiegel',value:'stark erhöht',unit:'',flag:'high'},
+     {label:'Zinkprotoporphyrin',value:'erhöht',unit:'',flag:'high'},
+     {label:'Exposition',value:'Bleibelastung (Altbau/Beruf)',unit:'',flag:'high'},
+     {label:'abdominelle Koliken / Neuropathie',value:'vorhanden',unit:'',flag:'high'}],
+ rot:'Hb 10,8 ↓ → Anämie.',
+ mcv:'MCV ~73 ↓, MCH ~24 ↓ → mikrozytär, hypochrom.',
+ retik:'Retikulozyten 14 ‰ → leicht erhöht (begleitende milde Hämolyse).',
+ weiss:'Leukozyten 6,8 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 250 normal.',
+ synth:'Mikrozytäre Anämie mit ausgeprägter basophiler Tüpfelung, Bauchkoliken und Neuropathie bei Bleiexposition → Bleiintoxikation.',
+ dx:'Bleiintoxikation (Bleianämie) — Hemmung der Hämsynthese mit basophiler Tüpfelung.',
+ ac:'Blut-Blei-Spiegel (beweisend), Zinkprotoporphyrin; Expositionsanamnese; Exposition beenden; bei hohen Spiegeln/Symptomen Chelattherapie (z. B. DMSA, EDTA); neurologische und abdominelle Symptome erfassen.',
+ fa:'Mikrozytäre Anämie plus ausgeprägte basophile Tüpfelung, abdominelle Koliken und periphere Neuropathie (Fallhand) bei entsprechender Exposition lenkt auf eine Bleiintoxikation. Blei hemmt die ALA-Dehydratase und die Ferrochelatase → gestörte Hämsynthese. Abgrenzung zu Eisenmangel und Thalassämie über den Blut-Blei-Spiegel; Blei ist zudem eine Ursache der sideroblastischen Anämie. Beweisend ist der Blut-Blei-Spiegel.',
+ nx:'„Mikrozytäre Anämie mit basophiler Tüpfelung und Bauchkoliken — welche Ursache prüfen Sie?“',
+ nxa:'Eine Bleiintoxikation. Die basophile Tüpfelung, kolikartige Bauchschmerzen und eine periphere Neuropathie bei entsprechender Exposition sind typisch. Beweisend ist der Blut-Blei-Spiegel (zusätzlich Zinkprotoporphyrin erhöht). Therapie: Exposition beenden und bei hohen Spiegeln chelatieren.',
+ zfw:'Bleiintoxikation — Störung der Hämbiosynthese durch Blei mit mikrozytärer Anämie und basophiler Tüpfelung.',
+ zfy:'Blei hemmt mehrere Enzyme der Hämsynthese (u. a. ALA-Dehydratase, Ferrochelatase) → Hämmangel und Anreicherung von Vorstufen; die gestörte RNA-Degradation führt zur basophilen Tüpfelung, zusätzlich neurotoxische und gastrointestinale Wirkungen.',
+ zfm:'Expositionsstopp; bei relevanten Spiegeln/Symptomen Chelattherapie (DMSA/EDTA); Verlaufskontrolle der Bleispiegel und der Neurologie.'},
+
+{id:27, tier:2, kat:'Makrozytäre Anämie', bank:'ext',
+ vig:'55 J., Mann, chronischer Alkoholkonsum, bekannte Leberzirrhose; im Ausstrich Targetzellen.',
+ v:{Hb:11.5,Hkt:35,Ery:3.3,RDW:14.0,Retik:12,Leuk:5.0,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:135,MPV:10.0},
+ ex:[{label:'Targetzellen (Schießscheibenzellen)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'GGT / Transaminasen',value:'erhöht',unit:'',flag:'high'},
+     {label:'hypersegmentierte Neutrophile',value:'keine',unit:'',flag:'norm'},
+     {label:'Vitamin B12 / Folsäure',value:'normal (Folsäure ggf. erniedrigt)',unit:'',flag:'norm'},
+     {label:'CDT',value:'erhöht',unit:'',flag:'high'}],
+ rot:'Hb 11,5 ↓ → milde Anämie.',
+ mcv:'MCV ~106 ↑ → makrozytär; runde Makrozyten ohne Megaloblastenzeichen.',
+ retik:'Retikulozyten 12 ‰ → normal.',
+ weiss:'Leukozyten 5,0 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 135 ↓ → milde Thrombozytopenie (Leberzirrhose/Hypersplenismus).',
+ synth:'Makrozytäre Anämie mit Targetzellen, erhöhter GGT und OHNE Megaloblastenzeichen bei Alkohol/Lebererkrankung → nicht-megaloblastäre (hepatische) Makrozytose.',
+ dx:'Nicht-megaloblastäre Makrozytose bei Alkohol/Lebererkrankung — runde Makrozyten ohne Hypersegmentierung.',
+ ac:'Leberwerte (GGT/Transaminasen), CDT, Alkoholanamnese; B12 und Folsäure zur Abgrenzung der megaloblastären Anämie; Sonographie der Leber; Abstinenz und Substitution bei begleitendem Folsäuremangel.',
+ fa:'Makrozytose ohne Anämie oder mit milder Anämie ist bei Alkohol/Lebererkrankung häufig. Entscheidend ist die Abgrenzung megaloblastär (B12-/Folsäuremangel: hypersegmentierte Neutrophile, Makroovalozyten) versus nicht-megaloblastär (Alkohol/Leber: runde Makrozyten, Targetzellen, KEINE Hypersegmentierung). Cave: bei Alkohol oft zusätzlicher Folsäuremangel — beides bedenken. B12/Folsäure messen und Leberwerte bestimmen.',
+ nx:'„Makrozytose, aber B12 und Folsäure normal und keine hypersegmentierten Neutrophilen — woran denken Sie?“',
+ nxa:'An eine nicht-megaloblastäre Makrozytose, am häufigsten durch Alkohol oder eine Lebererkrankung. Typisch sind runde Makrozyten und Targetzellen ohne Hypersegmentierung, dazu erhöhte Leberwerte. Über GGT/Transaminasen und die Alkoholanamnese abklären; auch Hypothyreose (TSH) und ein begleitender Folsäuremangel sind zu bedenken.',
+ zfw:'Hepatische/alkoholische Makrozytose — nicht-megaloblastäre Vergrößerung der Erythrozyten bei Lebererkrankung oder Alkoholkonsum.',
+ zfy:'Alkohol wirkt direkt toxisch auf die Erythropoese, und die Lebererkrankung verändert die Erythrozytenmembran (Lipideinlagerung) → runde Makrozyten und Targetzellen ohne die Reifungsstörung der megaloblastären Anämie; häufig zusätzlicher Folsäuremangel.',
+ zfm:'Alkoholabstinenz, Behandlung der Lebererkrankung, Substitution bei nachgewiesenem Folsäuremangel; Verlaufskontrolle.'},
+
+{id:28, tier:2, kat:'Makrozytäre Anämie', bank:'ext',
+ vig:'58 J., Frau, Müdigkeit, Gewichtszunahme, Kälteintoleranz und Obstipation.',
+ v:{Hb:11.0,Hkt:33,Ery:3.2,RDW:13.5,Retik:10,Leuk:5.5,Neut:58,Lymph:32,Mono:6,Eos:3,Baso:1,Thrombo:230,MPV:9.0},
+ ex:[{label:'TSH',value:'stark erhöht',unit:'',flag:'high'},
+     {label:'freies T4 (fT4)',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'Cholesterin',value:'erhöht',unit:'',flag:'high'},
+     {label:'anti-TPO-Antikörper',value:'positiv (Hashimoto)',unit:'',flag:'high'},
+     {label:'Vitamin B12',value:'normal',unit:'',flag:'norm'}],
+ rot:'Hb 11,0 ↓ → milde Anämie.',
+ mcv:'MCV ~103 ↑ → leicht makrozytär (kann auch normozytär sein).',
+ retik:'Retikulozyten 10 ‰ → trotz Anämie nicht adäquat erhöht → hypoproliferativ.',
+ weiss:'Leukozyten 5,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 230 normal.',
+ synth:'Leicht makrozytäre, hypoproliferative Anämie mit klinischen Hypothyreose-Zeichen und stark erhöhtem TSH → Anämie bei Hypothyreose.',
+ dx:'Anämie bei Hypothyreose — meist leicht makrozytär/normozytär, hypoproliferativ.',
+ ac:'TSH und fT4; bei Autoimmunthyreoiditis anti-TPO; B12 mitbestimmen (Assoziation mit perniziöser Anämie); Substitution mit Levothyroxin; Verlauf des Blutbildes.',
+ fa:'Die Hypothyreose verursacht eine milde makrozytäre oder normozytäre Anämie über einen reduzierten Stoffwechsel und verminderte EPO-Wirkung. Wichtig: die autoimmune Hypothyreose (Hashimoto) ist mit der perniziösen Anämie (B12-Mangel) assoziiert — bei makrozytärer Anämie also auch B12 prüfen. Abgrenzung zur megaloblastären Anämie über B12/Folsäure und das fehlende Megaloblastenbild. Schlüsseltest ist das TSH.',
+ nx:'„Welche endokrine Ursache einer makrozytären/normozytären Anämie sollten Sie nicht übersehen?“',
+ nxa:'Die Hypothyreose. Bei Müdigkeit, Gewichtszunahme, Kälteintoleranz und milder Anämie das TSH bestimmen (erhöht, fT4 erniedrigt). Da Hashimoto mit perniziöser Anämie assoziiert ist, zusätzlich B12 prüfen. Die Anämie bessert sich unter Levothyroxin-Substitution.',
+ zfw:'Anämie bei Hypothyreose — hypoproliferative Anämie infolge verminderter Schilddrüsenhormonwirkung.',
+ zfy:'Schilddrüsenhormonmangel senkt den Sauerstoffbedarf und die EPO-Stimulation und verlangsamt die Erythropoese → milde makrozytäre/normozytäre Anämie; bei autoimmuner Genese zusätzlich Assoziation mit perniziöser Anämie.',
+ zfm:'Levothyroxin-Substitution behebt meist die Anämie; begleitende Ursachen (B12-/Eisenmangel) ausschließen und mitbehandeln.'},
+
+{id:29, tier:3, kat:'Hämolyse', bank:'ext',
+ vig:'68 J., kürzlich Mykoplasmen-Pneumonie; Akrozyanose bei Kälte, dunkler Urin und Blässe.',
+ v:{Hb:9.5,Hkt:28,Ery:2.9,RDW:15.0,Retik:90,Leuk:7.5,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:250,MPV:9.5},
+ ex:[{label:'direkter Coombs-Test',value:'positiv für C3d (Komplement)',unit:'',flag:'high'},
+     {label:'Kälteagglutinintiter',value:'erhöht',unit:'',flag:'high'},
+     {label:'Erythrozytenagglutination im Ausstrich',value:'vorhanden (MCHC im Gerät falsch hoch)',unit:'',flag:'high'},
+     {label:'LDH / Haptoglobin',value:'LDH ↑, Haptoglobin ↓',unit:'',flag:'high'},
+     {label:'Mykoplasmen-/EBV-Serologie',value:'auslösend',unit:'',flag:'high'}],
+ rot:'Hb 9,5 ↓ → Anämie; im Gerät Agglutination (MCHC kann falsch hoch gemessen werden).',
+ mcv:'MCV hochnormal/erhöht durch Retikulozytose und Agglutination; im Ausstrich Erythrozytenverklumpung.',
+ retik:'Retikulozyten 90 ‰ ↑↑ → ausgeprägte Regeneration → Hämolyse.',
+ weiss:'Leukozyten 7,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 250 normal.',
+ synth:'Hämolytische Anämie mit Komplement-positivem Coombs (C3d), hohem Kälteagglutinintiter, Agglutination und Kältesymptomatik nach Mykoplasmen-Infekt → Kälteagglutinin-Krankheit (kalte AIHA).',
+ dx:'Kälteagglutinin-Krankheit (kalte autoimmunhämolytische Anämie) — IgM-/komplementvermittelt, Coombs C3d-positiv.',
+ ac:'Direkter Coombs (C3d), Kälteagglutinintiter, LDH/Haptoglobin/Bilirubin; Auslöser suchen (Mykoplasmen, EBV, Lymphom); Patient warmhalten, Grunderkrankung behandeln, bei Bedarf Rituximab; Steroide/Splenektomie wenig wirksam.',
+ fa:'Warme versus kalte AIHA: die warme Form ist IgG-vermittelt (Coombs IgG-positiv, extravasal, spricht auf Steroide an, idiopathisch/CLL/SLE). Die kalte Form ist IgM-/komplementvermittelt (Coombs C3d-positiv), durch Kälte ausgelöst (Mykoplasmen, EBV, Lymphom) — Therapie: warmhalten und Grunderkrankung behandeln, Rituximab; Steroide/Splenektomie helfen kaum. Die Agglutination kann die MCHC im Analysegerät falsch erhöhen und zeigt sich als Verklumpung im Ausstrich. Schlüssel ist der Coombs-Test mit C3d-Muster.',
+ nx:'„Hämolyse mit Komplement-positivem Coombs und Kältesymptomatik — welche Form und welche Therapie?“',
+ nxa:'Eine Kälteagglutinin-Krankheit (kalte AIHA), IgM-/komplementvermittelt, oft nach Mykoplasmen oder EBV bzw. bei Lymphom. Im Gegensatz zur warmen AIHA (IgG, Steroide) steht hier das Warmhalten und die Behandlung der Grunderkrankung im Vordergrund, bei Bedarf Rituximab. Hinweisend sind der hohe Kälteagglutinintiter und die Erythrozytenagglutination (falsch hohe MCHC im Gerät).',
+ zfw:'Kälteagglutinin-Krankheit — komplementvermittelte Hämolyse durch kältereaktive IgM-Antikörper gegen Erythrozyten.',
+ zfy:'IgM-Antikörper binden in der Kälte an Erythrozyten und aktivieren Komplement → vorwiegend intravasale/leberständige Hämolyse; sekundär bei Infektionen (Mykoplasmen, EBV) oder lymphoproliferativen Erkrankungen.',
+ zfm:'Patient warmhalten, Auslöser/Grunderkrankung behandeln; bei relevanter Hämolyse Rituximab; Steroide und Splenektomie sind meist wenig wirksam.'},
+
+{id:30, hy:1, tier:2, kat:'Hämolyse', bank:'ext',
+ vig:'24 J., wiederkehrender Ikterus, Gallensteine in jungen Jahren in der Familie, tastbare Milz.',
+ v:{Hb:11.0,Hkt:31,Ery:3.5,RDW:14.5,Retik:120,Leuk:7.0,Neut:58,Lymph:32,Mono:6,Eos:3,Baso:1,Thrombo:280,MPV:9.0},
+ ex:[{label:'Sphärozyten im Ausstrich',value:'vorhanden',unit:'',flag:'high'},
+     {label:'MCHC',value:'hochnormal/erhöht (typisch)',unit:'',flag:'high'},
+     {label:'EMA-Bindungstest / osmotische Resistenz',value:'pathologisch (Resistenz ↓)',unit:'',flag:'low'},
+     {label:'direkter Coombs-Test',value:'NEGATIV',unit:'',flag:'norm'},
+     {label:'Splenomegalie / Cholelithiasis / Familienanamnese',value:'positiv',unit:'',flag:'high'}],
+ rot:'Hb 11,0 ↓ → Anämie.',
+ mcv:'MCV ~89 → normozytär; MCHC hochnormal/erhöht (dehydrierte Sphärozyten) ist typisch.',
+ retik:'Retikulozyten 120 ‰ ↑↑ → ausgeprägte Regeneration → Hämolyse.',
+ weiss:'Leukozyten 7,0 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 280 normal.',
+ synth:'Coombs-negative hämolytische Anämie mit Sphärozyten, erhöhter MCHC, Splenomegalie und positiver Familienanamnese → hereditäre Sphärozytose.',
+ dx:'Hereditäre Sphärozytose — Erythrozytenmembrandefekt, Coombs-negativ, MCHC erhöht.',
+ ac:'Ausstrich (Sphärozyten), EMA-Bindungstest bzw. osmotische Resistenz, direkter Coombs (negativ — Abgrenzung zur warmen AIHA); Familienanamnese; Folsäure-Substitution, bei schwerer Hämolyse Splenektomie (mit Cholezystektomie), Impfungen vor Splenektomie.',
+ fa:'Sphärozyten finden sich bei der warmen AIHA UND bei der hereditären Sphärozytose — der Coombs-Test trennt: negativ bei der hereditären Sphärozytose, positiv bei der AIHA. Die hereditäre Sphärozytose ist ein Membranproteindefekt (Spektrin/Ankyrin), meist autosomal-dominant, mit erhöhter MCHC, positiver Familienanamnese, Splenomegalie und Pigmentgallensteinen. Komplikation: aplastische Krise bei Parvovirus B19. Beweisend sind EMA-Test/osmotische Resistenz bei negativem Coombs.',
+ nx:'„Coombs-negative Hämolyse mit Sphärozyten und positiver Familienanamnese — Diagnose und Bestätigung?“',
+ nxa:'Eine hereditäre Sphärozytose. Sphärozyten plus negativer Coombs (Abgrenzung zur warmen AIHA), erhöhte MCHC, Splenomegalie und Gallensteine in der Familie sind typisch. Bestätigt wird sie durch den EMA-Bindungstest bzw. die osmotische Resistenz. Therapie: Folsäure, bei schwerer Hämolyse Splenektomie (Impfungen vorher).',
+ zfw:'Hereditäre Sphärozytose — angeborener Erythrozytenmembrandefekt mit Kugelzellen und extravasaler Hämolyse.',
+ zfy:'Defekte Membranproteine (Spektrin, Ankyrin, Band 3) destabilisieren die Erythrozytenmembran → Verlust von Membran, Kugelform und vorzeitiger Abbau in der Milz; die dehydrierten Sphärozyten erklären die erhöhte MCHC.',
+ zfm:'Folsäure-Substitution; bei schwerer Hämolyse Splenektomie (vorher Impfung gegen Kapselbakterien) und ggf. Cholezystektomie; Verlaufskontrolle, Vorsicht bei Parvovirus-B19-Krise.'},
+
+{id:31, tier:3, kat:'Hämolyse', bank:'ext',
+ vig:'28 J., Mann, mediterrane Herkunft; akute Hämolyse mit dunklem Urin nach Verzehr von Favabohnen.',
+ v:{Hb:9.0,Hkt:27,Ery:3.0,RDW:15.5,Retik:100,Leuk:8.0,Neut:62,Lymph:28,Mono:6,Eos:3,Baso:1,Thrombo:260,MPV:9.5},
+ ex:[{label:'„Bite cells“ / Blasenzellen',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Heinz-Innenkörper (Supravitalfärbung)',value:'nachweisbar',unit:'',flag:'high'},
+     {label:'LDH / Haptoglobin / indir. Bilirubin',value:'LDH ↑, Haptoglobin ↓, Bilirubin ↑',unit:'',flag:'high'},
+     {label:'direkter Coombs-Test',value:'NEGATIV',unit:'',flag:'norm'},
+     {label:'G6PD-Aktivität',value:'erniedrigt (nicht im akuten Schub messen)',unit:'',flag:'low'}],
+ rot:'Hb 9,0 ↓ → Anämie.',
+ mcv:'MCV ~90 → normozytär; RDW 15,5 ↑ bei akuter Hämolyse.',
+ retik:'Retikulozyten 100 ‰ ↑↑ → starke Regeneration.',
+ weiss:'Leukozyten 8,0 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 260 normal.',
+ synth:'Episodische, Coombs-negative Hämolyse nach oxidativem Trigger (Favabohnen) mit Bite cells und Heinz-Körperchen → G6PD-Mangel.',
+ dx:'Glucose-6-Phosphat-Dehydrogenase-Mangel — episodische oxidative Hämolyse, X-chromosomal.',
+ ac:'Ausstrich (Bite cells, Heinz-Körperchen), Hämolyseparameter, Coombs (negativ); G6PD-Aktivität messen — aber erst NACH dem akuten Schub (Retikulozyten haben hohe G6PD → falsch normal); auslösende Substanzen meiden; supportiv.',
+ fa:'Episodische, Coombs-negative Hämolyse nach oxidativem Stress (Favabohnen; Medikamente wie Primaquin, Sulfonamide, Nitrofurantoin, Dapson; Infekte) bei X-chromosomaler Vererbung (Männer). Typisch sind Bite cells und Heinz-Innenkörper. Wichtige Falle: die G6PD-Aktivität im akuten Schub kann falsch normal sein (junge Retikulozyten haben viel G6PD) → erst nach Erholung messen. Therapie: Auslöser meiden, supportiv.',
+ nx:'„Episodische Hämolyse nach Favabohnen, Coombs negativ — Diagnose und Messzeitpunkt?“',
+ nxa:'Ein G6PD-Mangel. Hinweisend sind Bite cells und Heinz-Körperchen, eine X-chromosomale Vererbung und der oxidative Auslöser. Die G6PD-Aktivität sollte erst nach dem akuten Schub gemessen werden, da sie durch die Retikulozytose falsch normal ausfallen kann. Therapie: auslösende Medikamente und Favabohnen meiden, supportiv.',
+ zfw:'G6PD-Mangel — X-chromosomaler Enzymdefekt mit episodischer oxidativer Hämolyse.',
+ zfy:'Fehlende G6PD vermindert NADPH und Glutathion → Erythrozyten sind gegen oxidativen Stress ungeschützt → Hämoglobin denaturiert (Heinz-Körperchen), die Milz „beißt“ Anteile heraus (Bite cells), es kommt zur Hämolyse nach Oxidanzien/Favabohnen/Infekt.',
+ zfm:'Auslösende Substanzen (Oxidanzien, bestimmte Medikamente, Favabohnen) konsequent meiden; im Schub supportiv (Hydratation, ggf. Transfusion).'},
+
+{id:32, tier:3, kat:'Hämolyse', bank:'ext',
+ vig:'22 J., afrikanische Herkunft; wiederkehrende heftige Knochen-/Gliederschmerzen (Krisen), Ikterus.',
+ v:{Hb:8.0,Hkt:24,Ery:2.8,RDW:16.0,Retik:110,Leuk:11,Neut:66,Lymph:27,Mono:5,Eos:2,Baso:0,Thrombo:420,MPV:9.0},
+ ex:[{label:'Sichelzellen im Ausstrich',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Howell-Jolly-Körperchen (funktionelle Asplenie)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Hb-Elektrophorese',value:'HbS nachweisbar',unit:'',flag:'high'},
+     {label:'LDH / Bilirubin',value:'erhöht',unit:'',flag:'high'},
+     {label:'direkter Coombs-Test',value:'NEGATIV',unit:'',flag:'norm'}],
+ rot:'Hb 8,0 ↓↓ → ausgeprägte Anämie.',
+ mcv:'MCV ~86 → normozytär; RDW 16 ↑ (Anisozytose).',
+ retik:'Retikulozyten 110 ‰ ↑↑ → chronische Hämolyse mit starker Regeneration.',
+ weiss:'Leukozyten 11 ↑ → leichte Leukozytose (typisch bei Sichelzellkrankheit).',
+ thrombo:'Thrombozyten 420 ↑ → Thrombozytose bei funktioneller Asplenie.',
+ synth:'Coombs-negative chronische Hämolyse mit Sichelzellen, Howell-Jolly-Körperchen und vasookklusiven Krisen → Sichelzellkrankheit.',
+ dx:'Sichelzellkrankheit — HbS-bedingte chronische Hämolyse mit Vasookklusion und funktioneller Asplenie.',
+ ac:'Hb-Elektrophorese (HbS), Ausstrich (Sichelzellen, Howell-Jolly), Hämolyseparameter; Schmerzkrisen mit Hydratation und Analgesie behandeln; Hydroxyurea als Dauertherapie; Pneumokokken-Impfung und Penicillin-Prophylaxe (Asplenie); auf Krisen (aplastisch bei Parvovirus B19, Sequestration) achten.',
+ fa:'Coombs-negative chronische Hämolyse mit Sichelzellen und vasookklusiven Krisen. Howell-Jolly-Körperchen zeigen eine funktionelle Asplenie (Autosplenektomie durch rezidivierende Infarkte) → erhöhtes Risiko für Infekte durch bekapselte Erreger (Impfung, Penicillin-Prophylaxe). Ursache ist die HbS-Punktmutation (β-Globin). Krisenformen: vasookklusiv, aplastisch (Parvovirus B19), Sequestration. Beweisend ist die Hb-Elektrophorese.',
+ nx:'„Junger Patient mit Schmerzkrisen, Sichelzellen und Howell-Jolly-Körperchen — Diagnose und Konsequenz der Asplenie?“',
+ nxa:'Eine Sichelzellkrankheit. Die Hb-Elektrophorese (HbS) sichert die Diagnose. Die Howell-Jolly-Körperchen zeigen eine funktionelle Asplenie an, weshalb gegen bekapselte Erreger geimpft und eine Penicillin-Prophylaxe gegeben wird. Krisen werden mit Hydratation und Analgesie behandelt, Hydroxyurea reduziert die Krisenfrequenz.',
+ zfw:'Sichelzellkrankheit — hereditäre Hämoglobinopathie (HbS) mit Sichelung, Hämolyse und Gefäßverschlüssen.',
+ zfy:'Die HbS-Mutation lässt Hämoglobin bei Desoxygenierung polymerisieren → starre Sichelzellen, die kleine Gefäße verstopfen (Vasookklusion/Infarkte) und vorzeitig hämolysieren; rezidivierende Milzinfarkte führen zur funktionellen Asplenie.',
+ zfm:'Hydratation und Analgesie in der Krise, Hydroxyurea zur Krisenprophylaxe, Impfungen/Penicillin-Prophylaxe wegen Asplenie; bei schweren Verläufen Transfusion/spezialisierte Therapie.'},
+
+{id:33, tier:3, kat:'Hämolyse', bank:'ext',
+ vig:'70 J., Z. n. mechanischem Aortenklappenersatz; Müdigkeit, dunkler Urin, Belastungsdyspnoe.',
+ v:{Hb:10.0,Hkt:30,Ery:3.4,RDW:15.0,Retik:60,Leuk:7.0,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:230,MPV:9.0},
+ ex:[{label:'Fragmentozyten (Schistozyten)',value:'vorhanden (mechanisch)',unit:'',flag:'high'},
+     {label:'Echokardiografie',value:'Klappenprothese / paravalvuläres Leck',unit:'',flag:'high'},
+     {label:'LDH / Haptoglobin',value:'LDH ↑↑, Haptoglobin ↓',unit:'',flag:'high'},
+     {label:'Hämosiderinurie',value:'vorhanden (chronisch intravasal)',unit:'',flag:'high'},
+     {label:'direkter Coombs / Gerinnung / Thrombozyten',value:'Coombs negativ, Gerinnung & Thrombozyten normal',unit:'',flag:'norm'}],
+ rot:'Hb 10,0 ↓ → Anämie.',
+ mcv:'MCV ~88 → normozytär; RDW 15 ↑ (Fragmentierung).',
+ retik:'Retikulozyten 60 ‰ ↑ → Regeneration.',
+ weiss:'Leukozyten 7,0 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 230 NORMAL → grenzt gegen TTP/DIC ab.',
+ synth:'Coombs-negative Hämolyse mit Fragmentozyten bei NORMALEN Thrombozyten und normaler Gerinnung an einer Klappenprothese → mechanische (makroangiopathische) Hämolyse.',
+ dx:'Mechanische Hämolyse bei Herzklappenprothese — Fragmentozyten, Thrombozyten und Gerinnung normal.',
+ ac:'Ausstrich (Fragmentozyten), Echokardiografie (Klappenfunktion/paravalvuläres Leck), LDH/Haptoglobin, Hämosiderinurie; Klappenproblem behandeln; Eisen-/Folsäuresubstitution bei chronischem intravasalem Verlust.',
+ fa:'Fragmentozyten plus NORMALE Thrombozyten und NORMALE Gerinnung sprechen für eine mechanische (makroangiopathische) Hämolyse — anders als bei TTP/HUS und DIC, die mit Thrombozytopenie einhergehen. Ursachen: Herzklappenprothese/paravalvuläres Leck, Marschhämoglobinurie, AV-Malformationen. Der chronische intravasale Verlust führt zu Hämosiderinurie und Eisenmangel. Schlüssel: Echokardiografie und das Fehlen einer Thrombozytopenie.',
+ nx:'„Fragmentozyten, aber normale Thrombozyten und Gerinnung — welche Hämolyseform?“',
+ nxa:'Eine mechanische (makroangiopathische) Hämolyse, z. B. an einer Herzklappenprothese. Im Gegensatz zur TTP/HUS und DIC sind hier die Thrombozyten und die Gerinnung normal. Abklärung mit Echokardiografie; bei chronischem intravasalem Verlust Eisen/Folsäure substituieren und das Klappenproblem behandeln.',
+ zfw:'Mechanische Hämolyse — Erythrozytenzerstörung durch mechanische Scherkräfte (z. B. Klappenprothese).',
+ zfy:'Hohe Scherkräfte an Prothesen/paravalvulären Lecks zerschneiden Erythrozyten mechanisch → Fragmentozyten und intravasale Hämolyse; im Unterschied zur Mikroangiopathie ohne Thrombozytenverbrauch und ohne Gerinnungsstörung.',
+ zfm:'Ursächliches Klappenproblem korrigieren; bei chronischem intravasalem Eisenverlust Eisen- und Folsäuresubstitution; Verlaufskontrolle der Hämolyseparameter.'},
+
+{id:34, tier:3, kat:'Hämolyse', bank:'ext',
+ vig:'35 J., morgens dunkler Urin, rezidivierende Thrombosen an ungewöhnlichen Stellen (z. B. Lebervenen) und leichte Zytopenie.',
+ v:{Hb:9.5,Hkt:29,Ery:3.1,RDW:15.0,Retik:90,Leuk:3.0,Neut:45,Lymph:45,Mono:7,Eos:2,Baso:1,Thrombo:110,MPV:9.5},
+ ex:[{label:'Durchflusszytometrie (CD55/CD59, FLAER)',value:'GPI-defiziente Klone (erniedrigt)',unit:'',flag:'low'},
+     {label:'LDH',value:'stark erhöht (intravasal)',unit:'',flag:'high'},
+     {label:'Haptoglobin',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'Hämoglobinurie',value:'morgendlich',unit:'',flag:'high'},
+     {label:'direkter Coombs-Test',value:'NEGATIV',unit:'',flag:'norm'}],
+ rot:'Hb 9,5 ↓ → Anämie.',
+ mcv:'MCV ~94 → normozytär.',
+ retik:'Retikulozyten 90 ‰ ↑↑ → Regeneration bei intravasaler Hämolyse.',
+ weiss:'Leukozyten 3,0 ↓ mit leichter Neutropenie (~1,4) → Überlappung mit Knochenmarkversagen.',
+ thrombo:'Thrombozyten 110 ↓ → begleitende Thrombozytopenie.',
+ synth:'Coombs-negative intravasale Hämolyse plus Thrombosen an atypischen Stellen plus Zytopenie mit morgendlicher Hämoglobinurie → paroxysmale nächtliche Hämoglobinurie (PNH).',
+ dx:'Paroxysmale nächtliche Hämoglobinurie (PNH) — komplementvermittelte intravasale Hämolyse, Coombs-negativ.',
+ ac:'Durchflusszytometrie (CD55/CD59, FLAER — beweisend), LDH/Haptoglobin, Coombs (negativ); Thrombose-Diagnostik; Komplementinhibitor (Eculizumab), Antikoagulation bei Thrombose, Folsäure/Eisen; Überlappung mit aplastischer Anämie/MDS bedenken.',
+ fa:'Trias der PNH: Coombs-negative intravasale Hämolyse + Thrombosen (oft an atypischen Stellen, z. B. Budd-Chiari oder Sinusvenen — die Hauptgefahr) + Zytopenie/Knochenmarkversagen. Ursache ist eine PIGA-Mutation mit Verlust der GPI-verankerten Komplementregulatoren CD55/CD59. Beweisend ist die Durchflusszytometrie (nicht mehr der Ham-Test). Therapie: Komplementinhibitor (Eculizumab) und Antikoagulation.',
+ nx:'„Intravasale Hämolyse mit Thrombosen an ungewöhnlichen Stellen und Zytopenie — Diagnose und Bestätigungstest?“',
+ nxa:'Eine paroxysmale nächtliche Hämoglobinurie. Die Kombination aus Coombs-negativer intravasaler Hämolyse, Thrombosen an atypischen Stellen und Zytopenie ist typisch. Bestätigt wird sie durch die Durchflusszytometrie (CD55/CD59-Defizit, FLAER). Therapie: Komplementinhibitor (Eculizumab) und Antikoagulation; Überlappung mit aplastischer Anämie/MDS bedenken.',
+ zfw:'Paroxysmale nächtliche Hämoglobinurie — erworbene Stammzellerkrankung mit komplementvermittelter intravasaler Hämolyse, Thromboseneigung und Zytopenie.',
+ zfy:'Eine PIGA-Mutation führt zum Verlust GPI-verankerter Proteine (u. a. CD55/CD59) → fehlender Komplementschutz → intravasale Hämolyse; freies Hämoglobin bindet NO und begünstigt zusammen mit Plättchenaktivierung die typischen Thrombosen.',
+ zfm:'Komplementinhibitor (Eculizumab) gegen Hämolyse und Thrombose, Antikoagulation bei Thrombose, supportiv Folsäure/Eisen; bei Markversagen ggf. Stammzelltransplantation.'},
+
+{id:35, tier:2, kat:'Polyglobulie / Erythrozytose', bank:'ext',
+ vig:'64 J., Mann, langjähriger starker Raucher mit COPD; rotes Gesicht, im Labor erhöhter Hämatokrit.',
+ v:{Hb:18.5,Hkt:55,Ery:6.3,RDW:13.5,Retik:14,Leuk:8.0,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:280,MPV:9.0},
+ ex:[{label:'Erythropoetin (EPO)',value:'erhöht/normal',unit:'',flag:'high'},
+     {label:'JAK2-V617F-Mutation',value:'NEGATIV',unit:'',flag:'norm'},
+     {label:'arterielle O₂-Sättigung',value:'erniedrigt (COPD)',unit:'',flag:'low'},
+     {label:'CO-Hb',value:'erhöht (Raucher)',unit:'',flag:'high'},
+     {label:'Milz',value:'nicht vergrößert',unit:'',flag:'norm'}],
+ rot:'Hb 18,5 ↑ und Hämatokrit 55 ↑ bei Erythrozyten 6,3 ↑ → absolute Erythrozytose, ISOLIERT (rote Reihe).',
+ mcv:'MCV ~87 → normozytär.',
+ retik:'Retikulozyten 14 ‰ → obere Norm.',
+ weiss:'Leukozyten 8,0 normal → KEINE Leukozytose (anders als bei PV).',
+ thrombo:'Thrombozyten 280 normal → KEINE Thrombozytose (anders als bei PV).',
+ synth:'Isolierte absolute Erythrozytose mit erhöhtem EPO, negativem JAK2 und Hypoxie (COPD/Rauchen), ohne Panmyelose oder Splenomegalie → sekundäre (hypoxische) Erythrozytose.',
+ dx:'Sekundäre (hypoxische) Erythrozytose bei COPD/Rauchen — EPO erhöht/normal, JAK2 negativ.',
+ ac:'EPO und JAK2; O₂-Sättigung/BGA, CO-Hb; bei fehlender Hypoxie an EPO-produzierende Tumoren denken (Sonographie Nieren); Grunderkrankung behandeln (O₂, Rauchstopp); Aderlass bei sehr hohem Hämatokrit/Symptomen.',
+ fa:'Sekundäre versus primäre Erythrozytose: bei der sekundären Form ist das EPO erhöht/normal, JAK2 negativ, NUR die rote Reihe betroffen und keine Splenomegalie — Ursache ist eine Hypoxie (COPD, Schlafapnoe, Höhe, Rauchen/CO, zyanotischer Herzfehler) oder ein EPO-produzierender Tumor (Nierenzellkarzinom, Hepatom, Kleinhirnhämangioblastom; dann EPO hoch ohne Hypoxie → Nieren-Bildgebung). Die PV hat dagegen ein supprimiertes EPO, JAK2 positiv und eine Panmyelose. Vorher die relative Polyglobulie (Exsikkose) ausschließen.',
+ nx:'„Erythrozytose mit hohem EPO und negativem JAK2 — primär oder sekundär, und welche Ursachen?“',
+ nxa:'Eine sekundäre Erythrozytose. Hohes/normales EPO, negatives JAK2 und nur eine erhöhte rote Reihe ohne Splenomegalie sprechen dagegen für eine reaktive Form. Ursachen sind Hypoxie (COPD, Schlafapnoe, Höhe, Rauchen) oder ein EPO-produzierender Tumor — bei fehlender Hypoxie die Nieren bildgebend abklären. Therapie: Grunderkrankung behandeln, bei sehr hohem Hämatokrit Aderlass.',
+ zfw:'Sekundäre Erythrozytose — EPO-getriebene Vermehrung der roten Reihe bei Hypoxie oder EPO-produzierendem Tumor.',
+ zfy:'Chronische Hypoxie (oder ein autonom EPO-bildender Tumor) steigert das Erythropoetin → vermehrte Erythropoese ausschließlich der roten Reihe; im Gegensatz zur PV ohne klonale Panmyelose.',
+ zfm:'Grunderkrankung behandeln (O₂-Gabe, Rauchstopp, Tumortherapie); bei symptomatisch hohem Hämatokrit Aderlass; relative und primäre Polyglobulie abgrenzen.'},
+
+{id:36, tier:3, kat:'Polyglobulie / Erythrozytose', bank:'ext',
+ vig:'52 J., Mann, Hypertonie, Übergewicht, Raucher, unter Diuretika; erhöhter Hämatokrit als Zufallsbefund.',
+ v:{Hb:17.0,Hkt:51,Ery:5.6,RDW:13.0,Retik:12,Leuk:7.5,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:290,MPV:9.0},
+ ex:[{label:'Erythrozytenmasse (Isotopenmessung)',value:'normal',unit:'',flag:'norm'},
+     {label:'Plasmavolumen',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'Erythropoetin (EPO)',value:'normal',unit:'',flag:'norm'},
+     {label:'JAK2-V617F-Mutation',value:'NEGATIV',unit:'',flag:'norm'},
+     {label:'Milz',value:'nicht vergrößert',unit:'',flag:'norm'}],
+ rot:'Hb 17,0 ↑ und Hämatokrit 51 ↑ bei nur grenzwertig erhöhten Erythrozyten → Hämokonzentration.',
+ mcv:'MCV ~91 → normozytär.',
+ retik:'Retikulozyten 12 ‰ → normal.',
+ weiss:'Leukozyten 7,5 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 290 normal.',
+ synth:'Erhöhter Hämatokrit bei NORMALER Erythrozytenmasse und erniedrigtem Plasmavolumen, EPO und JAK2 unauffällig → relative (Pseudo-)Polyglobulie.',
+ dx:'Relative (Pseudo-)Polyglobulie — Hämokonzentration bei Plasmavolumenmangel; Erythrozytenmasse normal.',
+ ac:'Erythrozytenmasse/Plasmavolumen (normal bzw. erniedrigt), EPO und JAK2 (unauffällig); Volumenstatus/Anamnese (Exsikkose, Diuretika, Alkohol); auslösende Faktoren beheben; kardiovaskuläre Risikofaktoren behandeln.',
+ fa:'Bei der relativen Polyglobulie ist die Erythrozytenmasse NORMAL und nur das Plasmavolumen vermindert (Exsikkose, Diuretika, Alkohol, Stress — „Gaisböck“) → der Hämatokrit ist scheinbar erhöht. Abgrenzung zur PV (EPO ↓, JAK2 positiv, Panmyelose) und zur sekundären Erythrozytose (EPO ↑). Typischer Patient: mittelaltriger, hypertensiver Raucher. Beweisend ist die normale Erythrozytenmasse.',
+ nx:'„Erhöhter Hämatokrit, aber EPO und JAK2 normal und keine Splenomegalie — woran denken Sie?“',
+ nxa:'An eine relative (Pseudo-)Polyglobulie durch Plasmavolumenmangel (Exsikkose, Diuretika, Alkohol, Stress). Die Erythrozytenmasse ist normal, nur der Hämatokrit scheinbar erhöht. Abgrenzung zur PV und zur sekundären Erythrozytose über EPO, JAK2 und ggf. die Erythrozytenmassenmessung. Therapie: auslösende Faktoren beheben und kardiovaskuläre Risikofaktoren behandeln.',
+ zfw:'Relative Polyglobulie — scheinbar erhöhter Hämatokrit durch vermindertes Plasmavolumen bei normaler Erythrozytenmasse.',
+ zfy:'Ein verringertes Plasmavolumen (Flüssigkeitsverlust, Diuretika, Alkohol, Stress) konzentriert die normale Erythrozytenmasse → der gemessene Hämatokrit steigt, ohne dass eine echte Vermehrung der Erythrozyten vorliegt.',
+ zfm:'Auslösende Faktoren beheben (Hydratation, Diuretika/Alkohol überdenken), kardiovaskuläre Risikofaktoren behandeln; primäre und sekundäre Polyglobulie ausschließen.'},
+
+{id:37, tier:3, kat:'Leukozytose / Leukämie', bank:'ext',
+ vig:'19 J., Mann, Müdigkeit, Knochenschmerzen, Lymphknotenschwellungen und Fieber; Petechien.',
+ v:{Hb:8.5,Hkt:26,Ery:2.9,RDW:14.0,Retik:8,Leuk:35,Neut:4,Blasten:85,Lymph:9,Mono:2,Eos:0,Baso:0,Thrombo:30,MPV:9.0},
+ ex:[{label:'Blasten im Ausstrich (lymphatisch)',value:'~85 %',unit:'',flag:'high'},
+     {label:'Immunphänotyp',value:'TdT+, B-Linie (CD19/CD10) oder T-Linie (CD3/CD7)',unit:'',flag:'high'},
+     {label:'Auer-Stäbchen',value:'keine (Abgrenzung AML)',unit:'',flag:'norm'},
+     {label:'Lymphadenopathie / Hepatosplenomegalie',value:'vorhanden',unit:'',flag:'high'},
+     {label:'LDH / Harnsäure',value:'erhöht (Tumorlyse)',unit:'',flag:'high'}],
+ rot:'Hb 8,5 ↓ → Anämie durch Knochenmarkverdrängung.',
+ mcv:'MCV ~90 → normozytär.',
+ retik:'Retikulozyten 8 ‰ → trotz Anämie nicht adäquat erhöht (Verdrängung).',
+ weiss:'Leukozyten 35 ↑↑ mit ~85 % lymphatischen Blasten und Neutropenie (~1,4).',
+ thrombo:'Thrombozyten 30 ↓ → Thrombozytopenie durch Verdrängung.',
+ synth:'Leukozytose mit massenhaft lymphatischen Blasten, Verdrängung der übrigen Reihen, Lymphadenopathie und Knochenschmerzen beim jungen Patienten → akute lymphatische Leukämie (ALL).',
+ dx:'Akute lymphatische Leukämie (ALL) — lymphatische Blasten ≥ 20 %, ohne Auer-Stäbchen.',
+ ac:'Blutausstrich und Knochenmark mit Immunphänotypisierung (TdT, B-/T-Linienmarker) und Zytogenetik (u. a. BCR-ABL); LDH/Harnsäure (Tumorlyse), ZNS-Diagnostik; Vorstellung im hämatoonkologischen Zentrum (Polychemotherapie mit ZNS-Prophylaxe).',
+ fa:'AML versus ALL: beide zeigen Blasten und eine Verdrängung der übrigen Reihen. Für die ALL sprechen junges Alter, Lymphadenopathie/Hepatosplenomegalie sowie ein möglicher ZNS-/Hodenbefall; Auer-Stäbchen FEHLEN (sie sind myeloisch, also AML-typisch). Die Unterscheidung gelingt über den Immunphänotyp (TdT, CD19/CD10 = lymphatisch B; CD3/CD7 = T). Ein Philadelphia-Chromosom (BCR-ABL) ist prognostisch wichtig. Beweisend ist das Knochenmark mit Immunphänotypisierung.',
+ nx:'„Wie unterscheiden Sie eine ALL von einer AML?“',
+ nxa:'Über den Immunphänotyp und die Zytomorphologie: die ALL zeigt lymphatische Blasten (TdT-positiv, B- oder T-Linienmarker) und betrifft eher Kinder und junge Erwachsene mit Lymphadenopathie und möglichem ZNS-Befall; Auer-Stäbchen fehlen. Die AML zeigt myeloische Blasten, oft mit Auer-Stäbchen. Gesichert wird die Diagnose im Knochenmark mit Immunphänotypisierung und Zytogenetik.',
+ zfw:'Akute lymphatische Leukämie — maligne Proliferation lymphatischer Blasten mit Verdrängung der normalen Hämatopoese.',
+ zfy:'Klonale Vermehrung unreifer lymphatischer Vorläuferzellen verdrängt die normale Blutbildung → Anämie, Thrombozytopenie und Granulozytopenie; die Blasten können in Lymphknoten, Leber/Milz und ZNS infiltrieren.',
+ zfm:'Risikoadaptierte Polychemotherapie mit ZNS-Prophylaxe im Zentrum, bei BCR-ABL zusätzlich Tyrosinkinase-Hemmer; supportive Therapie und Tumorlyse-Prophylaxe.'},
+
+{id:38, tier:3, kat:'Lymphozytose', bank:'ext',
+ vig:'6 J., Kind, anfallsartiger Husten mit „Hustenstößen“ und anschließendem Erbrechen; unvollständiger Impfschutz.',
+ v:{Hb:12.5,Hkt:38,Ery:4.4,RDW:13.0,Retik:12,Leuk:30,Neut:13,Lymph:84,Mono:2,Eos:1,Baso:0,Thrombo:300,MPV:9.0},
+ ex:[{label:'reife kleine Lymphozyten (nicht atypisch)',value:'dominierend',unit:'',flag:'high'},
+     {label:'Bordetella-pertussis-PCR/Serologie',value:'positiv',unit:'',flag:'high'},
+     {label:'Hustenanamnese (Stakkato / Whoop)',value:'typisch',unit:'',flag:'high'},
+     {label:'Impfstatus',value:'unvollständig',unit:'',flag:'high'},
+     {label:'Milz',value:'nicht vergrößert',unit:'',flag:'norm'}],
+ rot:'Hb 12,5 normal, rote Reihe unauffällig.',
+ mcv:'MCV ~86 → normozytär.',
+ retik:'Retikulozyten 12 ‰ → normal.',
+ weiss:'Leukozyten 30 ↑↑ mit ausgeprägter Lymphozytose (~25) aus reifen kleinen Lymphozyten.',
+ thrombo:'Thrombozyten 300 normal.',
+ synth:'Ausgeprägte Lymphozytose aus reifen kleinen (nicht atypischen) Lymphozyten beim ungeimpften Kind mit Stakkatohusten → Pertussis (Keuchhusten).',
+ dx:'Pertussis-Lymphozytose — reaktive Lymphozytose mit reifen kleinen Lymphozyten.',
+ ac:'Bordetella-pertussis-PCR/Serologie; Hustenanamnese und Impfstatus; Makrolid (z. B. Azithromycin), Isolation, Riegelungsimpfung/Postexpositionsprophylaxe der Kontaktpersonen.',
+ fa:'Reaktive Lymphozytose: bei Pertussis dominieren REIFE kleine Lymphozyten (anders als bei EBV mit atypischen/aktivierten Lymphozyten und anders als die monomorphe klonale Lymphozytose der CLL beim älteren Patienten). Pertussistoxin treibt die Lymphozytose. Beweisend ist die Bordetella-PCR. Therapie: Makrolid und Isolation, Schutz der Kontaktpersonen.',
+ nx:'„Kind mit Stakkatohusten und ausgeprägter Lymphozytose aus reifen Lymphozyten — Ursache?“',
+ nxa:'Eine Pertussis (Keuchhusten). Typisch sind reife kleine Lymphozyten (nicht atypisch) und der anfallsartige Husten beim unvollständig geimpften Kind. Beweisend ist die Bordetella-pertussis-PCR. Therapie: Makrolid, Isolation und Schutz der Kontaktpersonen.',
+ zfw:'Pertussis-Lymphozytose — reaktive Vermehrung reifer Lymphozyten bei Bordetella-pertussis-Infektion.',
+ zfy:'Pertussistoxin hemmt die Auswanderung der Lymphozyten aus dem Blut in die Lymphknoten → ausgeprägte Lymphozytose aus reifen kleinen Lymphozyten, begleitet vom typischen Hustenbild.',
+ zfm:'Makrolid-Antibiotikum (z. B. Azithromycin), Isolation und Postexpositionsprophylaxe/Impfung der Kontaktpersonen; supportive Therapie.'},
+
+{id:39, hy:1, tier:2, kat:'Thrombozytopenie', bank:'ext',
+ vig:'45 J., Routinelabor vor einer geplanten Operation zeigt „niedrige Thrombozyten“ — der Patient hat KEINE Blutungszeichen.',
+ v:{Hb:14.0,Hkt:42,Ery:4.7,RDW:13.0,Retik:12,Leuk:7.0,Neut:60,Lymph:30,Mono:6,Eos:3,Baso:1,Thrombo:35,MPV:10.5},
+ ex:[{label:'Thrombozytenaggregate/-klumpen im Ausstrich',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Kontrolle im Citratröhrchen',value:'Thrombozyten normal',unit:'',flag:'norm'},
+     {label:'Petechien / Blutung',value:'keine',unit:'',flag:'norm'},
+     {label:'EDTA-abhängige Agglutination',value:'nachweisbar',unit:'',flag:'high'}],
+ rot:'Hb 14,0 normal, rote Reihe unauffällig.',
+ mcv:'MCV ~89 → normozytär.',
+ retik:'Retikulozyten 12 ‰ → normal.',
+ weiss:'Leukozyten 7,0 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten im EDTA-Röhrchen scheinbar 35 ↓ — im Citratröhrchen jedoch normal → Messartefakt.',
+ synth:'Isoliert „niedrige“ Thrombozyten ohne Blutungszeichen, mit Aggregaten im Ausstrich und normalem Wert im Citratröhrchen → Pseudothrombozytopenie.',
+ dx:'Pseudothrombozytopenie — EDTA-induzierte Thrombozytenaggregation (Messartefakt).',
+ ac:'Blutausstrich (Thrombozytenaggregate) und Kontrolle im Citrat-/Heparinröhrchen (normaler Wert); klinisch keine Blutung; damit unnötige Diagnostik/Therapie vermeiden.',
+ fa:'Vor jeder Abklärung einer Thrombozytopenie zuerst die Pseudothrombozytopenie ausschließen: EDTA induziert in vitro eine Thrombozytenaggregation → das Analysegerät zählt zu wenige Thrombozyten, obwohl der Patient KEINE Blutung hat. Beweisend sind Aggregate im Ausstrich und ein normaler Wert in der Citrat-/Heparin-Kontrolle. So vermeidet man unnötige Knochenmarkpunktionen oder Therapien.',
+ nx:'„Isoliert niedrige Thrombozyten ohne Blutungszeichen — was prüfen Sie zuerst?“',
+ nxa:'Zuerst eine Pseudothrombozytopenie ausschließen. Im Blutausstrich zeigen sich Thrombozytenaggregate, und die Kontrolle im Citrat- oder Heparinröhrchen ergibt einen normalen Wert. Klinisch fehlen Blutungszeichen. Damit erspart man dem Patienten eine unnötige Abklärung und Therapie.',
+ zfw:'Pseudothrombozytopenie — falsch niedrige Thrombozytenzahl durch EDTA-induzierte Aggregation in vitro.',
+ zfy:'Bei manchen Menschen führen EDTA-abhängige Antikörper zur Verklumpung der Thrombozyten im Probenröhrchen → das Gerät erfasst die Aggregate nicht als Einzelthrombozyten und meldet eine falsch niedrige Zahl; in vivo ist die Thrombozytenzahl normal.',
+ zfm:'Keine Therapie nötig; Kontrolle im Citrat-/Heparinröhrchen zur Bestätigung, den Befund dokumentieren, um wiederholte Fehldiagnosen zu vermeiden.'},
+
+{id:40, tier:3, kat:'Thrombozytopenie', bank:'ext',
+ vig:'32 J., 34. Schwangerschaftswoche, Bluthochdruck, Oberbauchschmerz rechts und Kopfschmerzen.',
+ v:{Hb:9.5,Hkt:29,Ery:3.2,RDW:15.0,Retik:40,Leuk:9.5,Neut:70,Stab:3,Lymph:20,Mono:5,Eos:1,Baso:1,Thrombo:70,MPV:10.0},
+ ex:[{label:'Fragmentozyten',value:'vorhanden (mikroangiopathisch)',unit:'',flag:'high'},
+     {label:'Transaminasen (GOT/GPT)',value:'erhöht',unit:'',flag:'high'},
+     {label:'LDH / Haptoglobin',value:'LDH ↑, Haptoglobin ↓',unit:'',flag:'high'},
+     {label:'Blutdruck / Proteinurie',value:'erhöht / vorhanden (Präeklampsie)',unit:'',flag:'high'},
+     {label:'indir. Bilirubin',value:'erhöht',unit:'',flag:'high'}],
+ rot:'Hb 9,5 ↓ → Anämie (Hämolyse-Komponente).',
+ mcv:'MCV ~91 → normozytär; RDW 15 ↑ (Fragmentierung).',
+ retik:'Retikulozyten 40 ‰ ↑ → Regeneration bei Hämolyse.',
+ weiss:'Leukozyten 9,5 normal mit leichter Linksverschiebung.',
+ thrombo:'Thrombozyten 70 ↓ → Thrombozytopenie.',
+ synth:'Schwangere im 3. Trimenon mit Hämolyse (Fragmentozyten, LDH ↑, Haptoglobin ↓), erhöhten Transaminasen, Thrombozytopenie und Präeklampsie → HELLP-Syndrom.',
+ dx:'HELLP-Syndrom — Hämolyse, erhöhte Leberenzyme, niedrige Thrombozyten im Rahmen der Präeklampsie.',
+ ac:'Hämolyseparameter (LDH/Haptoglobin/Bilirubin, Fragmentozyten), Transaminasen, Thrombozyten; Blutdruck und Proteinurie; geburtshilflicher Notfall — definitive Therapie ist die Entbindung; Magnesium und Blutdruckkontrolle; Abgrenzung zu TTP/AFLP/Gestationsthrombozytopenie.',
+ fa:'In der Schwangerschaft mehrere Ursachen einer Thrombozytopenie unterscheiden: die Gestationsthrombozytopenie (mild, benigne, KEINE Hämolyse), die ITP, die TTP (ADAMTS13) und das HELLP-Syndrom. Für das HELLP sprechen die Leberbeteiligung (Transaminasen ↑) plus mikroangiopathische Hämolyse plus Thrombozytopenie auf dem Boden einer Präeklampsie (Hypertonie/Proteinurie). Es ist ein geburtshilflicher Notfall — die definitive Therapie ist die Entbindung. Schlüssel sind Transaminasen, Hämolyseparameter und der Schwangerschaftskontext.',
+ nx:'„Schwangere mit Thrombozytopenie, Hämolyse und erhöhten Leberwerten — Diagnose und Therapie?“',
+ nxa:'Ein HELLP-Syndrom (Hämolyse, erhöhte Leberenzyme, niedrige Thrombozyten) auf dem Boden einer Präeklampsie. Abgegrenzt wird es von der benignen Gestationsthrombozytopenie (keine Hämolyse), der ITP und der TTP. Es ist ein geburtshilflicher Notfall — die definitive Therapie ist die Entbindung, begleitet von Magnesium und Blutdruckkontrolle.',
+ zfw:'HELLP-Syndrom — schwere Verlaufsform der Präeklampsie mit Hämolyse, Leberbeteiligung und Thrombozytopenie.',
+ zfy:'Eine plazentavermittelte Endothelschädigung (Präeklampsie) führt zu mikroangiopathischer Hämolyse, Leberzellschädigung und Thrombozytenverbrauch → die typische Trias aus Hämolyse, erhöhten Transaminasen und niedrigen Thrombozyten.',
+ zfm:'Geburtshilflicher Notfall: Stabilisierung (Magnesium, Blutdruckkontrolle) und zeitgerechte Entbindung als definitive Therapie; engmaschige Überwachung von Mutter und Kind.'},
+
+{id:41, tier:2, kat:'Panzytopenie', bank:'ext',
+ vig:'58 J., bekannte Leberzirrhose mit Splenomegalie; in der Routine leichte Verminderung aller Blutreihen.',
+ v:{Hb:10.5,Hkt:32,Ery:3.6,RDW:14.0,Retik:14,Leuk:3.0,Neut:50,Lymph:38,Mono:8,Eos:3,Baso:1,Thrombo:90,MPV:9.0},
+ ex:[{label:'Splenomegalie (Sonografie)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Leberzirrhose / portale Hypertension',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Knochenmark',value:'normal/reaktiv (nicht leer, nicht dysplastisch)',unit:'',flag:'norm'},
+     {label:'Zytopenien',value:'mild, alle drei Reihen',unit:'',flag:'low'}],
+ rot:'Hb 10,5 ↓ → milde Anämie.',
+ mcv:'MCV ~89 → normozytär.',
+ retik:'Retikulozyten 14 ‰ → normal/leicht erhöht (Mark kompensiert).',
+ weiss:'Leukozyten 3,0 ↓ mit milder Neutropenie (~1,5).',
+ thrombo:'Thrombozyten 90 ↓ → Thrombozytopenie (im Vordergrund, durch Pooling).',
+ synth:'Milde Panzytopenie bei Splenomegalie/Leberzirrhose mit normalem Knochenmark → Hypersplenismus.',
+ dx:'Hypersplenismus bei portaler Hypertension — Pooling/Sequestration mit milder Panzytopenie.',
+ ac:'Sonographie (Splenomegalie), Leberdiagnostik; Knochenmark bei Unklarheit (normal/reaktiv); Behandlung der portalen Hypertension/Grunderkrankung; Splenektomie nur in Ausnahmefällen.',
+ fa:'Hypersplenismus führt durch Pooling/Sequestration in der vergrößerten Milz zu einer meist MILDEN Panzytopenie bei NORMALEM/reaktivem Knochenmark — das grenzt ihn von der aplastischen Anämie (leeres Mark), vom MDS (dysplastisches Mark) und von der Leukämie (Blasten) ab. Häufigste Ursache ist die portale Hypertension/Leberzirrhose. Schlüssel: Splenomegalie in der Sonographie und ein unauffälliges Knochenmark.',
+ nx:'„Milde Panzytopenie mit großer Milz und normalem Knochenmark — Ursache?“',
+ nxa:'Ein Hypersplenismus, meist bei portaler Hypertension/Leberzirrhose. Die vergrößerte Milz „poolt“ Blutzellen → milde Verminderung aller drei Reihen bei normalem oder reaktivem Knochenmark. Das unterscheidet ihn von aplastischer Anämie, MDS und Leukämie. Therapie: Behandlung der Grunderkrankung; Splenektomie nur selten.',
+ zfw:'Hypersplenismus — Zytopenie durch vermehrtes Pooling und Abbau von Blutzellen in der vergrößerten Milz.',
+ zfy:'Eine vergrößerte Milz (meist bei portaler Hypertension) sequestriert und baut vermehrt Blutzellen ab → milde Panzytopenie, während das Knochenmark normal arbeitet oder kompensatorisch reagiert.',
+ zfm:'Grunderkrankung (portale Hypertension/Leberzirrhose) behandeln; bei schweren, symptomatischen Zytopenien in Ausnahmefällen Splenektomie/Embolisation.'},
+
+{id:42, tier:3, kat:'Panzytopenie', bank:'ext',
+ vig:'67 J., Mann, Müdigkeit, Gewichtsverlust und massiv tastbare Milz.',
+ v:{Hb:9.2,Hkt:28,Ery:3.0,RDW:17.0,Retik:20,Leuk:13,Neut:60,Stab:8,Blasten:3,Lymph:21,Mono:6,Eos:2,Baso:0,Thrombo:110,MPV:11.0},
+ ex:[{label:'Tränentropfenzellen (Dakryozyten)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'leukoerythroblastisches Blutbild',value:'unreife Myeloische + Erythroblasten',unit:'',flag:'high'},
+     {label:'Knochenmark („Punctio sicca“)',value:'Fibrose (Retikulinfasern)',unit:'',flag:'high'},
+     {label:'Splenomegalie (extramedulläre Hämatopoese)',value:'massiv',unit:'',flag:'high'},
+     {label:'JAK2 / CALR / MPL',value:'Mutation nachweisbar',unit:'',flag:'high'}],
+ rot:'Hb 9,2 ↓ → Anämie; RDW 17 ↑ mit Anisopoikilozytose.',
+ mcv:'MCV ~93 → normozytär.',
+ retik:'Retikulozyten 20 ‰ ↑ → leichte Regeneration; oft auch kernhaltige Erythrozyten.',
+ weiss:'Leukozyten 13 ↑ mit Linksverschiebung (Stabkernige, wenige Blasten ~3 %) → leukoerythroblastisches Bild.',
+ thrombo:'Thrombozyten 110 ↓ → Thrombozytopenie (fortgeschrittene Fibrose).',
+ synth:'Leukoerythroblastisches Blutbild mit Tränentropfenzellen, massiver Splenomegalie und Markfibrose → primäre Myelofibrose (bzw. Knochenmarkinfiltration).',
+ dx:'Primäre Myelofibrose — Markfibrose mit leukoerythroblastischem Blutbild und Dakryozyten.',
+ ac:'Blutausstrich (Tränentropfenzellen, leukoerythroblastisch), Knochenmarkbiopsie (Fibrose, „Punctio sicca“), JAK2/CALR/MPL; bei unklarem Bild auch Karzinom-/Lymphominfiltration ausschließen; symptomatisch (JAK-Inhibitor Ruxolitinib), supportiv, bei geeigneten Patienten Stammzelltransplantation.',
+ fa:'Ein leukoerythroblastisches Blutbild (unreife Myeloische plus kernhaltige Erythrozyten) plus Tränentropfenzellen signalisiert eine Knochenmarkverdrängung/-fibrose. Die primäre Myelofibrose (myeloproliferative Neoplasie) zeigt zusätzlich eine massive Splenomegalie (extramedulläre Hämatopoese), ein fibrotisches Mark („Punctio sicca“) und JAK2/CALR/MPL-Mutationen. Abzugrenzen sind Knochenmarkmetastasen (Karzinom) und Lymphominfiltrate. Beweisend ist die Knochenmarkbiopsie.',
+ nx:'„Leukoerythroblastisches Blutbild mit Tränentropfenzellen und großer Milz — woran denken Sie?“',
+ nxa:'An eine Knochenmarkverdrängung, allen voran die primäre Myelofibrose. Typisch sind Tränentropfenzellen, ein leukoerythroblastisches Blutbild, eine massive Splenomegalie und ein fibrotisches Mark mit „Punctio sicca“ sowie JAK2/CALR/MPL-Mutationen. Knochenmarkmetastasen und Lymphome sind abzugrenzen. Beweisend ist die Knochenmarkbiopsie.',
+ zfw:'Primäre Myelofibrose — klonale myeloproliferative Neoplasie mit fortschreitender Knochenmarkfibrose und extramedullärer Hämatopoese.',
+ zfy:'Klonale Megakaryozyten setzen fibrosefördernde Zytokine frei → das Mark vernarbt, die Blutbildung verlagert sich in Milz/Leber (extramedulläre Hämatopoese) → leukoerythroblastisches Blutbild, Tränentropfenzellen und Splenomegalie, im Verlauf Zytopenien.',
+ zfm:'Symptomorientiert (JAK-Inhibitor Ruxolitinib gegen Splenomegalie/Symptome), supportive Transfusionen; bei geeigneten Patienten allogene Stammzelltransplantation als einzige kurative Option.'},
+
+{id:43, tier:3, kat:'Panzytopenie', bank:'ext',
+ vig:'40 J., anhaltend hohes Fieber, Hepatosplenomegalie und Verschlechterung des Allgemeinzustands; vorausgehender EBV-Infekt.',
+ v:{Hb:8.5,Hkt:26,Ery:2.9,RDW:15.0,Retik:8,Leuk:2.0,Neut:40,Lymph:46,Mono:12,Eos:1,Baso:1,Thrombo:50,MPV:9.5},
+ ex:[{label:'Ferritin',value:'stark erhöht (↑↑↑)',unit:'',flag:'high'},
+     {label:'Triglyzeride',value:'erhöht',unit:'',flag:'high'},
+     {label:'Fibrinogen',value:'erniedrigt',unit:'',flag:'low'},
+     {label:'Hämophagozytose im Knochenmark',value:'nachweisbar',unit:'',flag:'high'},
+     {label:'löslicher IL-2-Rezeptor (sCD25)',value:'erhöht',unit:'',flag:'high'}],
+ rot:'Hb 8,5 ↓ → Anämie.',
+ mcv:'MCV ~90 → normozytär.',
+ retik:'Retikulozyten 8 ‰ → trotz Anämie nicht adäquat erhöht.',
+ weiss:'Leukozyten 2,0 ↓ mit Neutropenie (~0,8) und Lymphopenie.',
+ thrombo:'Thrombozyten 50 ↓ → Thrombozytopenie.',
+ synth:'Dauerfieber, Hepatosplenomegalie und Zytopenien mit stark erhöhtem Ferritin, hohen Triglyzeriden, niedrigem Fibrinogen und Hämophagozytose → hämophagozytische Lymphohistiozytose (HLH).',
+ dx:'Hämophagozytische Lymphohistiozytose (HLH) — hyperinflammatorisches Syndrom mit Zytopenien.',
+ ac:'Ferritin (stark erhöht), Triglyzeride, Fibrinogen, löslicher IL-2-Rezeptor (sCD25); Knochenmark (Hämophagozytose); Auslöser suchen (EBV/andere Infekte, Lymphom, Autoimmun = MAS); HLH-Kriterien anwenden; rasche immunsuppressive Therapie (z. B. Dexamethason/Etoposid-Protokolle) und Behandlung des Auslösers.',
+ fa:'HLH ist ein hyperinflammatorisches Syndrom: anhaltendes Fieber + Splenomegalie + Zytopenien (≥ 2 Reihen) + stark erhöhtes Ferritin + hohe Triglyzeride + niedriges Fibrinogen + Hämophagozytose im Mark + erhöhter sCD25 (HLH-2004-Kriterien). Auslöser: Infektionen (v. a. EBV), Malignome (Lymphom) oder Autoimmunerkrankungen (Makrophagenaktivierungssyndrom bei Still/SLE). Das sehr hohe Ferritin und die Kriterien grenzen es von einer „einfachen“ Sepsis/Panzytopenie ab. Es ist ein Notfall.',
+ nx:'„Dauerfieber, Splenomegalie, Zytopenien und Ferritin im fünfstelligen Bereich — woran denken Sie?“',
+ nxa:'An eine hämophagozytische Lymphohistiozytose (HLH). Charakteristisch sind anhaltendes Fieber, Splenomegalie, Zytopenien, ein sehr hohes Ferritin, hohe Triglyzeride, niedriges Fibrinogen, ein erhöhter löslicher IL-2-Rezeptor und Hämophagozytose im Knochenmark. Auslöser (EBV, Lymphom, Autoimmunerkrankung) suchen und rasch immunsuppressiv behandeln — es ist ein Notfall.',
+ zfw:'Hämophagozytische Lymphohistiozytose — überschießende, fehlregulierte Immunaktivierung mit Hämophagozytose und Zytopenien.',
+ zfy:'Eine fehlregulierte Aktivierung von T-Zellen und Makrophagen (infekt-, tumor- oder autoimmungetriggert) führt zu einem Zytokinsturm; aktivierte Makrophagen phagozytieren Blutzellen → Zytopenien, hohes Ferritin, niedriges Fibrinogen und Organschäden.',
+ zfm:'Auslöser behandeln und das überschießende Immunsystem dämpfen (z. B. Dexamethason/Etoposid-Protokolle, ggf. zielgerichtet); intensivmedizinische Überwachung — unbehandelt rasch lebensbedrohlich.'},
+
+{id:44, tier:3, kat:'Neutropenie / Agranulozytose', bank:'ext',
+ vig:'60 J., Frau, langjährige seropositive rheumatoide Arthritis; rezidivierende Infekte und tastbare Milz.',
+ v:{Hb:11.0,Hkt:33,Ery:3.7,RDW:13.5,Retik:10,Leuk:2.5,Neut:25,Lymph:60,Mono:12,Eos:2,Baso:1,Thrombo:150,MPV:9.0},
+ ex:[{label:'Rheumafaktor / Anti-CCP',value:'positiv (seropositive RA)',unit:'',flag:'high'},
+     {label:'Splenomegalie (Sonografie)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'rezidivierende Infekte',value:'vorhanden',unit:'',flag:'high'},
+     {label:'Knochenmark',value:'normale/reaktive Granulopoese (kein Reifungsstopp)',unit:'',flag:'norm'},
+     {label:'ANA',value:'häufig positiv',unit:'',flag:'high'}],
+ rot:'Hb 11,0 ↓ → milde Anämie (Begleitanämie).',
+ mcv:'MCV ~89 → normozytär.',
+ retik:'Retikulozyten 10 ‰ → normal.',
+ weiss:'Leukozyten 2,5 ↓ mit ausgeprägter Neutropenie (~0,6).',
+ thrombo:'Thrombozyten 150 → unterer Normbereich.',
+ synth:'Chronische Neutropenie bei seropositiver rheumatoider Arthritis mit Splenomegalie → Felty-Syndrom.',
+ dx:'Felty-Syndrom — Trias aus rheumatoider Arthritis, Splenomegalie und Neutropenie.',
+ ac:'Rheumafaktor/Anti-CCP, Sonographie (Splenomegalie), Differentialblutbild; Knochenmark (normale/reaktive Granulopoese — kein Reifungsstopp wie bei der Agranulozytose); LGL-Leukämie abgrenzen; RA behandeln (z. B. Methotrexat), G-CSF bei Infekten.',
+ fa:'Das Felty-Syndrom ist die Trias rheumatoide Arthritis + Splenomegalie + Neutropenie (chronisch, autoimmun/sequestrierend). Abgrenzung zur medikamentösen Agranulozytose: diese ist akut, medikamenteninduziert und zeigt einen Granulopoese-Reifungsstopp; das Felty-Syndrom ist chronisch mit zugrunde liegender RA, großer Milz und normalem/reaktivem Mark. Auch eine T-Zell-LGL-Leukämie (RA + Neutropenie) ist abzugrenzen. Schlüssel: RA-Serologie und Splenomegalie.',
+ nx:'„Chronische Neutropenie bei rheumatoider Arthritis mit Splenomegalie — Diagnose und Abgrenzung?“',
+ nxa:'Ein Felty-Syndrom (RA + Splenomegalie + Neutropenie). Anders als die akute medikamentöse Agranulozytose (Reifungsstopp im Mark) ist es chronisch und beruht auf der RA mit großer Milz und normalem/reaktivem Mark. Abzugrenzen ist eine T-Zell-LGL-Leukämie. Therapie: Behandlung der RA (z. B. Methotrexat), G-CSF bei rezidivierenden Infekten.',
+ zfw:'Felty-Syndrom — Kombination aus rheumatoider Arthritis, Splenomegalie und Neutropenie.',
+ zfy:'Bei langjähriger seropositiver RA führen immunvermittelte Granulozytenzerstörung und splenisches Pooling zur chronischen Neutropenie; das Knochenmark zeigt eine normale oder reaktive Granulopoese ohne Reifungsstopp.',
+ zfm:'Behandlung der rheumatoiden Grunderkrankung (z. B. Methotrexat), G-CSF bei Infektneigung; eine LGL-Leukämie abgrenzen und Infekte konsequent behandeln.'},
+
+{id:45, tier:2, kat:'Reaktive Veränderung', bank:'ext',
+ vig:'50 J., Z. n. Splenektomie nach Trauma; deutlich erhöhte Thrombozyten als Zufallsbefund, beschwerdefrei.',
+ v:{Hb:12.5,Hkt:38,Ery:4.5,RDW:14.0,Retik:12,Leuk:9.0,Neut:62,Lymph:28,Mono:6,Eos:3,Baso:1,Thrombo:750,MPV:8.5},
+ ex:[{label:'Howell-Jolly-Körperchen (postsplenektomisch)',value:'vorhanden',unit:'',flag:'high'},
+     {label:'CRP / BSG (falls entzündlich) bzw. Ferritin (falls Eisenmangel)',value:'auslöserabhängig',unit:'',flag:'high'},
+     {label:'JAK2 / CALR',value:'NEGATIV',unit:'',flag:'norm'},
+     {label:'Thrombozytenmorphologie',value:'normal',unit:'',flag:'norm'},
+     {label:'Thrombose-/Blutungsanamnese',value:'leer',unit:'',flag:'norm'}],
+ rot:'Hb 12,5 normal/grenzwertig, rote Reihe weitgehend unauffällig.',
+ mcv:'MCV ~84 → normozytär (unterer Bereich).',
+ retik:'Retikulozyten 12 ‰ → normal.',
+ weiss:'Leukozyten 9,0 normal, Differential unauffällig.',
+ thrombo:'Thrombozyten 750 ↑↑ → ausgeprägte Thrombozytose; Morphologie normal.',
+ synth:'Ausgeprägte Thrombozytose mit normaler Thrombozytenmorphologie, negativem JAK2/CALR und erkennbarem Auslöser (Z. n. Splenektomie) → reaktive Thrombozytose.',
+ dx:'Reaktive (sekundäre) Thrombozytose — auslösergetriggert, JAK2/CALR negativ.',
+ ac:'Auslöser suchen (Entzündung/Infekt: CRP/BSG; Eisenmangel: Ferritin; Z. n. Splenektomie/Operation/Blutung; Malignom); JAK2/CALR zur Abgrenzung der essenziellen Thrombozythämie; Blutausstrich; in der Regel Behandlung des Auslösers, keine routinemäßige Thrombozytenaggregationshemmung.',
+ fa:'Reaktive (sekundäre) versus essenzielle Thrombozythämie (ET, klonale myeloproliferative Neoplasie): bei der reaktiven Form findet sich ein Auslöser (Entzündung/Infekt, Eisenmangel, Z. n. Splenektomie, Operation/Blutung, Malignom), die Thrombozytenmorphologie ist normal, JAK2/CALR sind negativ und das Thromboserisiko ist niedrig → den Auslöser behandeln. Die ET ist klonal (JAK2/CALR/MPL positiv), zeigt große/Riesenthrombozyten, ein erhöhtes Thrombose-/Blutungsrisiko und oft eine Splenomegalie. Schlüssel: CRP/Ferritin und JAK2/CALR.',
+ nx:'„Hohe Thrombozyten — wie unterscheiden Sie reaktiv von essenzieller Thrombozythämie?“',
+ nxa:'Über den Auslöser und die Klonalität: bei der reaktiven Thrombozytose gibt es einen Auslöser (Entzündung, Eisenmangel, Z. n. Splenektomie, Operation/Blutung, Malignom), die Thrombozyten sind morphologisch normal und JAK2/CALR negativ — Therapie ist die Behandlung des Auslösers. Die essenzielle Thrombozythämie ist klonal (JAK2/CALR/MPL positiv), zeigt große Thrombozyten und ein erhöhtes Thrombose-/Blutungsrisiko. Hilfreich sind CRP/Ferritin und die Mutationsanalyse.',
+ zfw:'Reaktive Thrombozytose — sekundäre Vermehrung der Thrombozyten als Reaktion auf einen Auslöser.',
+ zfy:'Entzündungs-/Stresszytokine (v. a. IL-6 → Thrombopoetin) sowie der Wegfall des splenischen Poolings nach Splenektomie steigern die Thrombozytenzahl reaktiv; die Thrombozyten sind funktionell und morphologisch normal, das Thromboserisiko ist gering.',
+ zfm:'Auslöser behandeln (Entzündung/Infekt, Eisenmangel); in der Regel keine routinemäßige Thrombozytenaggregationshemmung; bei Verdacht auf essenzielle Thrombozythämie hämatologische Abklärung (JAK2/CALR).'}
+
+];
+
+/* ===== Zusatzbefunde / Morphologie (renders under the panel) ===== */
+function zusatzHTML(card){
+  if(!card.ex || !card.ex.length) return '';
+  let rows = card.ex.map(e=>{
+    const ab = (e.flag==='high'||e.flag==='low') ? 'ab' : '';
+    const arrow = e.flag==='high' ? ' <span class="flag">↑</span>' : e.flag==='low' ? ' <span class="flag">↓</span>' : '';
+    const u = e.unit ? ` <span class="u">${e.unit}</span>` : '';
+    return `<tr><td class="lab">${e.label}</td><td class="val ${ab}">${e.value}${u}${arrow}</td></tr>`;
+  }).join('');
+  return `<div class="zusatz"><div class="zt">Morphologie / Zusatzbefunde</div><table>${rows}</table></div>`;
+}
+
+/* ===== profile-driven printout (same values, layout per analyzer) ===== */
+function buildPrintout(card){
+  const prof = ANALYZERS[analyzerProfile] || ANALYZERS.gen;
+  const P = buildPanel(card); const byId={}; P.forEach(p=>byId[p.id]=p);
+  const valid = p => p && !(p.val===null||p.val===undefined||(typeof p.val==='number'&&isNaN(p.val)));
+  const cols = prof.cols.map(col=>{
+    let rows='';
+    col.forEach(group=>{
+      const ids = group.ids.filter(id=>valid(byId[id]));
+      if(!ids.length) return;
+      rows += `<tr class="sec"><td colspan="3">${group.h}</td></tr>`;
+      ids.forEach(id=>{
+        const p=byId[id];
+        const label=(prof.labels&&prof.labels[id])||p.label;
+        let fl='norm';
+        if(!p.fixedNorm && typeof p.val==='number'){ if(p.val<p.lo) fl='low'; else if(p.val>p.hi) fl='high'; }
+        const showFl = showFlags && fl!=='norm';
+        const arrow = showFl ? (fl==='high'?'↑':'↓') : '';
+        const ab = showFl ? 'ab' : '';
+        const u = p.unit ? ` <span class="u">${p.unit}</span>` : '';
+        rows += `<tr><td class="lab">${label}</td><td class="val ${ab}">${fmt(p.val,p.dec)}${u}${arrow?` <span class="flag">${arrow}</span>`:''}</td><td class="ref">${showRef?p.ref:''}</td></tr>`;
+      });
+    });
+    return `<table class="bga">${rows}</table>`;
+  }).join('');
+  return `
+        <div class="po-head">
+          <span class="po-title">${prof.title}</span>
+          <span class="po-meta">${prof.meta}${card.hy?` · <span class="hy-mark">★ High-Yield</span>`:''}</span>
+        </div>
+        ${showKlinik?`<div class="vignette">${card.vig}</div>`:''}
+        <div class="po-cols">${cols}</div>
+        ${showMorph?zusatzHTML(card):''}`;
+}
+
+/* ===== state ===== */
+const host = document.getElementById('cardHost');
+const examChk = document.getElementById('examChk');
+const klinikChk = document.getElementById('klinikChk');
+const flagsChk = document.getElementById('flagsChk');
+const morphChk = document.getElementById('morphChk');
+const refChk = document.getElementById('refChk');
+let deck = DATA.slice();
+let idx = 0;
+let revealed = false;
+let progress = {};            // card.id -> 'right' | 'wrong' | 'seen' (this sitting)
+let tierFilter = 'all';
+let katFilter = 'Alle Kategorien';
+let bankFilter = 'all';
+let hyFilter = 'all';
+let showKlinik = false;
+let showFlags = false;
+let showMorph = false;
+let showRef = false;
+let examMode = true;
+let lastRenderedId = null;
+let analyzerProfile = 'gen';
+let ddxCatIndex = {};
+
+function buildDeck(){
+  deck = DATA.filter(c =>
+    (tierFilter==='all' || c.tier===Number(tierFilter)) &&
+    (katFilter==='Alle Kategorien' || c.kat===katFilter) &&
+    (bankFilter==='all' || (c.bank||'kern')===bankFilter) &&
+    (hyFilter==='all' || c.hy)
+  );
+  if(idx>=deck.length) idx=0;
+}
+
+/* ===== render ===== */
+function render(){
+  const navHidden = examMode;
+  document.getElementById('counter').style.visibility = navHidden ? 'hidden' : 'visible';
+  document.getElementById('dots').style.display = navHidden ? 'none' : '';
+  if(deck.length===0){
+    host.innerHTML = `<div class="card"><div class="empty">Keine Karten für diese Filter.</div></div>`;
+    document.getElementById('counter').textContent = '0 / 0';
+    document.getElementById('prevBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = true;
+    updateScore();
+    return;
+  }
+  const card = deck[idx];
+  if(examMode && card.id !== lastRenderedId){
+    showKlinik = showFlags = showMorph = showRef = false;
+    klinikChk.checked = flagsChk.checked = morphChk.checked = refChk.checked = false;
+  }
+  lastRenderedId = card.id;
+  const pst = progress[card.id];
+  const pill = pst==='right' ? `<span class="status-pill st-right">✓ schon richtig</span>`
+            : pst==='wrong' ? `<span class="status-pill st-wrong">✗ schon falsch</span>` : '';
+
+  const stepsHTML = STEPS.map(s=>`
+        <div class="step">
+          <div class="step-n">${s.n}</div>
+          <div class="step-b"><div class="step-k">${s.label}</div><div class="step-v">${card[s.key]||'—'}</div></div>
+        </div>`).join('');
+
+  const ans = !revealed ? '' : `
+    <div class="answer">
+      <div class="ans-head">
+        <span class="tier-pill">Tier ${card.tier}</span>
+        <span class="kat-pill">${card.kat}</span>
+        ${card.hy?`<span class="hy-pill">★ High-Yield</span>`:''}
+      </div>
+      ${stepsHTML}
+      <div class="block dx"><span class="bk">Diagnose</span><span class="bv">${card.dx}</span></div>
+      <div class="block"><span class="bk">Erster Schritt</span><span class="bv">${card.ac}</span></div>
+      <div class="block fa"><span class="bk">⚠ Falle</span><span class="bv">${card.fa}</span></div>
+      <div class="zf">
+        <div class="zf-row"><span class="zf-k">Was</span><span>${card.zfw}</span></div>
+        <div class="zf-row"><span class="zf-k">Warum</span><span>${card.zfy}</span></div>
+        <div class="zf-row"><span class="zf-k">Management</span><span>${card.zfm}</span></div>
+      </div>
+      <div class="block nx"><span class="bk">Prüfer fragt weiter</span><span class="bv">${card.nx}</span>${card.nxa?`<div class="nxa"><span class="nxa-k">Antwort</span> ${card.nxa}</div>`:''}</div>
+      <div class="grade">
+        <button class="g-right" id="gRight">Richtig</button>
+        <button class="g-wrong" id="gWrong">Falsch</button>
+      </div>
+    </div>`;
+
+  host.innerHTML = `
+    <article class="card">
+      <div class="card-head">
+        <span class="idtag-l">Blutbild #${String(card.id).padStart(2,'0')}</span>
+        ${pill}
+        <span class="masked">Befund verdeckt — selbst bestimmen</span>
+      </div>
+      <div class="printout">
+        ${buildPrintout(card)}
+      </div>
+      <div class="prompt">Befunden Sie strukturiert: Anämie? Zellgröße (MCV/MCH)? Regeneration (Retikulozyten)? Weiße Reihe / Differential? Thrombozyten? Wahrscheinlichste Diagnose? Erster Schritt?</div>
+      ${revealed?'':`<button class="reveal-btn" id="revealBtn">Befund aufdecken</button>`}
+      ${ans}
+    </article>`;
+
+  document.getElementById('counter').textContent = `${idx+1} / ${deck.length}`;
+  document.getElementById('prevBtn').disabled = idx===0;
+  document.getElementById('nextBtn').disabled = idx===deck.length-1;
+
+  const rb=document.getElementById('revealBtn');
+  if(rb) rb.onclick = ()=>{revealed=true; markSeen(); render();};
+  const gr=document.getElementById('gRight'); const gw=document.getElementById('gWrong');
+  if(gr) gr.onclick = ()=>grade('right');
+  if(gw) gw.onclick = ()=>grade('wrong');
+  updateScore();
+}
+
+/* ===== session memory ===== */
+function updateScore(){
+  let r=0,w=0;
+  deck.forEach(c=>{ const s=progress[c.id]; if(s==='right')r++; else if(s==='wrong')w++; });
+  document.getElementById('rCount').textContent = r;
+  document.getElementById('fCount').textContent = w;
+  const dc=document.getElementById('doneCount');
+  if(dc) dc.textContent = `${r+w} / ${deck.length}`;
+  renderDots();
+}
+function grade(status){ if(deck.length===0) return; progress[deck[idx].id]=status; next(); }
+function markSeen(){ if(deck.length===0) return; const id=deck[idx].id; if(!progress[id]) progress[id]='seen'; }
+function renderDots(){
+  const el=document.getElementById('dots'); if(!el) return;
+  if(deck.length===0){ el.innerHTML=''; return; }
+  const dotsHTML = deck.map((c,i)=>{
+    const s=progress[c.id]||'none'; const cur=i===idx?' cur':'';
+    const t=s==='right'?'richtig':s==='wrong'?'falsch':s==='seen'?'gesehen':'offen';
+    return `<button class="dot d-${s}${cur}" data-i="${i}" title="#${String(c.id).padStart(2,'0')} · ${t}"></button>`;
+  }).join('');
+  const open=deck.filter(c=>!progress[c.id]).length;
+  el.innerHTML = `<span class="dots-lab">Sitzung</span>${dotsHTML}<span class="dots-rest">${open} offen</span>`;
+  el.querySelectorAll('.dot').forEach(d=>{ d.onclick=()=>{ idx=Number(d.dataset.i); revealed=false; render(); }; });
+}
+
+/* ===== navigation ===== */
+function next(){ if(idx<deck.length-1){ idx++; revealed=false; render(); } else { revealed=false; render(); } }
+function prev(){ if(idx>0){ idx--; revealed=false; render(); } }
+function toggleReveal(){ if(deck.length===0) return; revealed=!revealed; if(revealed) markSeen(); render(); }
+function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; } idx=0; revealed=false; render(); }
+
+/* ===== controls wiring ===== */
+const katSel = document.getElementById('katSel');
+KATS.forEach(k=>{const o=document.createElement('option'); o.value=k; o.textContent=k; katSel.appendChild(o);});
+katSel.onchange = ()=>{katFilter=katSel.value; buildDeck(); render();};
+
+const analyzerSel = document.getElementById('analyzerSel');
+function applyAnalyzer(){ if(!analyzerSel) return; analyzerProfile=analyzerSel.value; render(); }
+analyzerSel.addEventListener('change', applyAnalyzer);
+analyzerSel.addEventListener('input', applyAnalyzer);
+
+document.querySelectorAll('#tierSeg button').forEach(b=>{
+  b.onclick = ()=>{ document.querySelectorAll('#tierSeg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); tierFilter=b.dataset.tier; buildDeck(); render(); };
+});
+document.querySelectorAll('#bankSeg button').forEach(b=>{
+  b.onclick = ()=>{ document.querySelectorAll('#bankSeg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); bankFilter=b.dataset.bank; buildDeck(); render(); };
+});
+document.querySelectorAll('#hySeg button').forEach(b=>{
+  b.onclick = ()=>{ document.querySelectorAll('#hySeg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); hyFilter=b.dataset.hy; idx=0; buildDeck(); render(); };
+});
+document.getElementById('klinikChk').onchange = (e)=>{showKlinik=e.target.checked; render();};
+document.getElementById('flagsChk').onchange = (e)=>{showFlags=e.target.checked; render();};
+document.getElementById('morphChk').onchange = (e)=>{showMorph=e.target.checked; render();};
+document.getElementById('refChk').onchange = (e)=>{showRef=e.target.checked; render();};
+document.getElementById('examChk').onchange = (e)=>{
+  examMode = e.target.checked;
+  const v = !examMode;                       // exam mode on → hide; off → show all
+  showKlinik = showFlags = showMorph = showRef = v;
+  klinikChk.checked = flagsChk.checked = morphChk.checked = refChk.checked = v;
+  lastRenderedId = null;
+  render();
+};
+document.getElementById('shuffleBtn').onclick = shuffleDeck;
+document.getElementById('resetBtn').onclick = ()=>{progress={}; revealed=false; render();};
+document.getElementById('prevBtn').onclick = prev;
+document.getElementById('nextBtn').onclick = next;
+
+/* schema modal (auto-built from STEPS + REF) */
+const modal=document.getElementById('schemaModal');
+document.getElementById('schemaList').innerHTML = STEPS.map(s=>`<li><b>${s.n}. ${s.label}</b></li>`).join('');
+document.getElementById('schemaRef').textContent = Object.keys(REF).map(k=>{
+  const m=REF[k]; return `${(m.lab).padEnd(16,' ')} ${(m.ref||m.refAbs||'')} ${m.u}`;
+}).join('\n');
+document.getElementById('schemaBtn').onclick = ()=>modal.classList.add('open');
+document.getElementById('schemaClose').onclick = ()=>modal.classList.remove('open');
+modal.onclick = (e)=>{ if(e.target===modal) modal.classList.remove('open'); };
+
+/* ============================================================
+   EDIT ZONE 6 — DIFFERENZIALDIAGNOSEN pro Kategorie
+   Für jede Kategorie: häufige Ursachen + differenzierende Tests.
+   (Inhalt wird HTML-escaped gerendert: <, >, & sind erlaubt.)
+   ============================================================ */
+const DDX = {
+ 'Mikrozytäre Anämie': {
+   intro:'MCV < 80. Schlüssel ist der Eisenstatus (Ferritin, Transferrin/Transferrinsättigung, löslicher Transferrinrezeptor); ergänzend Hb-Elektrophorese, Mentzer-Index (MCV/Ery), RDW und Ausstrich. Merkhilfe: Eisenmangel, Thalassämie, Anämie der chronischen Erkrankung, sideroblastische Anämie, Bleiintoxikation.',
+   causes:[
+     {dz:'Eisenmangelanämie (häufigste Ursache)', befund:'RDW erhöht, Thrombozytose, Hypochromie/Anisozytose; Blutungsanamnese (GI, Menorrhagie).', test:'Ferritin ↓ (beweisend), Transferrin ↑, Transferrinsättigung ↓, löslicher Transferrinrezeptor ↑. Cave: Ferritin ist Akut-Phase-Protein.'},
+     {dz:'Thalassämie (β-/α-Trait)', befund:'sehr niedriges MCV bei normalen/HOHEN Erythrozyten, RDW oft normal, Targetzellen, basophile Tüpfelung; Herkunft/Familienanamnese.', test:'Mentzer-Index < 13 spricht für Thalassämie; Hb-Elektrophorese (HbA2 ↑ bei β-Thal); Eisenstatus NORMAL. Kein Eisen blind geben.'},
+     {dz:'Anämie der chronischen Erkrankung', befund:'meist normozytär, kann mikrozytär werden; chronische Entzündung/Infekt/Malignom.', test:'Ferritin normal/↑, Transferrin ↓/normal, löslicher Transferrinrezeptor normal, CRP/BSG ↑.'},
+     {dz:'Sideroblastische Anämie', befund:'dimorphes Blutbild; hereditär oder erworben (MDS, Alkohol, Blei, Isoniazid, Kupfermangel).', test:'Knochenmark mit Eisenfärbung → Ringsideroblasten; Ferritin/Eisen eher ↑ (Eisenüberladung).'},
+     {dz:'Bleiintoxikation', befund:'basophile Tüpfelung, Bauchkoliken, Neuropathie, Exposition.', test:'Blut-Blei-Spiegel; Zinkprotoporphyrin ↑.'}
+   ]
+ },
+ 'Makrozytäre Anämie': {
+   intro:'MCV > 100. Erst Retikulozyten (hoch → Pseudomakrozytose bei Hämolyse/Blutung) und Ausstrich (Megaloblastenzeichen) prüfen, dann megaloblastär (B12/Folsäure) von nicht-megaloblastär (MDS, Alkohol/Leber, Hypothyreose, Medikamente) trennen.',
+   causes:[
+     {dz:'Vitamin-B12-Mangel (z. B. perniziöse Anämie)', befund:'megaloblastär, hypersegmentierte Neutrophile, Makroovalozyten, LDH ↑, indir. Bilirubin ↑; NEUROLOGIE (funikuläre Myelose).', test:'B12 ↓, Methylmalonsäure/Holo-Transcobalamin ↑; Intrinsic-Faktor-/Parietalzell-Antikörper.'},
+     {dz:'Folsäuremangel', befund:'identisches megaloblastäres Bild, ABER keine Neurologie; Alkohol, Mangelernährung, Schwangerschaft.', test:'Folsäure ↓ bei NORMALEM B12. Bei Unsicherheit B12 zuerst substituieren.'},
+     {dz:'Myelodysplastisches Syndrom (MDS)', befund:'Dysplasiezeichen (Pseudo-Pelger-Huët, Ringsideroblasten), Zytopenien, niedrige Retikulozyten, älterer Patient.', test:'B12/Folsäure NORMAL; Knochenmark (Dysplasie, Blasten, Zytogenetik).'},
+     {dz:'Alkohol / Lebererkrankung', befund:'Makrozytose oft auch ohne Anämie; Targetzellen.', test:'GGT/Transaminasen ↑, CDT; Alkoholanamnese.'},
+     {dz:'Hypothyreose', befund:'meist milde Makrozytose, klinische Hypothyreose-Zeichen.', test:'TSH ↑.'},
+     {dz:'Retikulozytose (Pseudomakrozytose)', befund:'große junge Retikulozyten heben das MCV; Hämolyse oder Blutung.', test:'Retikulozyten ↑↑; Hämolyseparameter (LDH, Haptoglobin, Bilirubin).'},
+     {dz:'Medikamente', befund:'Methotrexat, Hydroxyurea, Zytostatika, Antikonvulsiva.', test:'Medikamentenanamnese.'}
+   ]
+ },
+ 'Normozytäre Anämie': {
+   intro:'MCV 80–96. Die Retikulozyten teilen entscheidend: regeneratorisch (Blutung, Hämolyse) vs hypoproliferativ (Bildungsstörung). Eisenstatus, Kreatinin, TSH, Hämolyseparameter, Coombs und Eiweißelektrophorese gezielt einsetzen.',
+   causes:[
+     {dz:'Anämie der chronischen Erkrankung', befund:'hypoproliferativ; chronische Entzündung/Infekt/Tumor.', test:'Ferritin normal/↑, Transferrinsättigung ↓, CRP/BSG ↑.'},
+     {dz:'Renale Anämie (EPO-Mangel)', befund:'hypoproliferativ, niedrige Retikulozyten; chronische Niereninsuffizienz.', test:'Kreatinin ↑, eGFR ↓; Eisen vor EPO ausgleichen.'},
+     {dz:'Frühe Eisenmangelanämie', befund:'noch normozytär, später mikrozytär.', test:'Ferritin ↓, Transferrinsättigung ↓.'},
+     {dz:'Akute Blutungsanämie', befund:'Retikulozyten ↑ (nach Tagen), Thrombozytose; Hb initial normal durch Hämokonzentration.', test:'Blutungsquelle suchen (GI), Hb-Verlauf.'},
+     {dz:'Hämolyse', befund:'Retikulozyten ↑, Ikterus.', test:'LDH ↑, Haptoglobin ↓, indir. Bilirubin ↑, Retikulozyten ↑; Coombs.'},
+     {dz:'Multiples Myelom', befund:'Geldrollenbildung (Rouleaux), BSG-Sturzsenkung, Hyperkalzämie, Niereninsuffizienz, Knochenschmerzen.', test:'Serum-/Urin-Eiweißelektrophorese, freie Leichtketten, Immunfixation.'},
+     {dz:'Knochenmarkprozess (aplastisch, MDS, Infiltration)', befund:'oft weitere Zytopenien oder Blasten.', test:'Ausstrich, Knochenmark.'},
+     {dz:'Endokrin (Hypothyreose, Nebenniere)', befund:'begleitende endokrine Klinik.', test:'TSH, Hormondiagnostik.'}
+   ]
+ },
+ 'Hämolyse': {
+   intro:'Hämolyse bestätigen (Retikulozyten ↑, LDH ↑, Haptoglobin ↓, indir. Bilirubin ↑), dann Coombs (DAT) und der Ausstrich führen: Coombs-positiv = immun (warm IgG / kalt IgM); Coombs-negativ = Ausstrich entscheidend (Fragmentozyten, Sphärozyten, Sichelzellen, Bite cells).',
+   causes:[
+     {dz:'Warme autoimmunhämolytische Anämie (AIHA)', befund:'Sphärozyten; idiopathisch, SLE, CLL, Medikamente.', test:'direkter Coombs (IgG) positiv; Steroide als Therapie.'},
+     {dz:'Kälteagglutinin-Krankheit', befund:'Agglutination, MCHC falsch erhöht; Kälteexposition, Mykoplasmen/EBV/Lymphom.', test:'Coombs (C3d) positiv, Kälteagglutinintiter.'},
+     {dz:'Mikroangiopathie (TTP / HUS)', befund:'Fragmentozyten, Thrombozytopenie, neurologisch/renal; NORMALE Gerinnung.', test:'Ausstrich (Schistozyten), ADAMTS13, Coombs negativ. Notfall: Plasmapherese, keine Thrombozyten.'},
+     {dz:'DIC', befund:'Fragmentozyten + pathologische Gerinnung, Auslöser (Sepsis u. a.).', test:'Quick/aPTT ↑, Fibrinogen ↓, D-Dimere ↑↑ (trennt von TTP).'},
+     {dz:'Hereditäre Sphärozytose', befund:'Sphärozyten, MCHC ↑, Splenomegalie, Familienanamnese, Coombs negativ.', test:'EMA-Bindungstest / osmotische Resistenz ↓.'},
+     {dz:'G6PD-Mangel', befund:'episodische Hämolyse nach Oxidanzien/Favabohnen/Infekt, Heinz-Körperchen, Bite cells.', test:'G6PD-Aktivität (nicht im akuten Schub messen).'},
+     {dz:'Sichelzellanämie', befund:'Sichelzellen, vasookklusive Krisen, Herkunft.', test:'Hb-Elektrophorese (HbS).'},
+     {dz:'Mechanische Hämolyse', befund:'Herzklappenprothese, Marschhämoglobinurie.', test:'Anamnese, Echokardiografie, Fragmentozyten.'},
+     {dz:'Paroxysmale nächtliche Hämoglobinurie (PNH)', befund:'Hämolyse + Thrombosen + Zytopenie, morgendliche Hämoglobinurie.', test:'Durchflusszytometrie (CD55/CD59, FLAER).'}
+   ]
+ },
+ 'Polyglobulie / Erythrozytose': {
+   intro:'Hb/Hkt/Ery ↑. EPO und JAK2 sind die Schlüssel: primär (PV, JAK2+, EPO ↓, Panmyelose) vs sekundär (EPO ↑/normal, nur rote Reihe). Vorher relative Polyglobulie (Exsikkose) ausschließen.',
+   causes:[
+     {dz:'Polycythaemia vera (primär)', befund:'Panmyelose (Leuko-/Thrombozytose), Splenomegalie, Aquagener Pruritus, Plethora.', test:'JAK2-V617F positiv, EPO ↓/supprimiert.'},
+     {dz:'Sekundäre Erythrozytose – hypoxisch', befund:'nur rote Reihe; COPD, Schlafapnoe, Höhe, Rauchen/CO, zyanotischer Herzfehler.', test:'O₂-Sättigung/BGA, EPO ↑/normal, CO-Hb (Raucher).'},
+     {dz:'Sekundäre Erythrozytose – EPO-produzierend', befund:'Nierenzellkarzinom, Hepatom, Kleinhirnhämangioblastom, EPO-Doping.', test:'EPO ↑; Bildgebung (Sonografie Nieren).'},
+     {dz:'Relative / Pseudopolyglobulie', befund:'Plasmavolumenmangel bei normaler Erythrozytenmasse; Exsikkose, Diuretika, „Gaisböck“.', test:'Volumenstatus/Anamnese; ggf. Erythrozytenvolumenmessung.'}
+   ]
+ },
+ 'Leukozytose / Leukämie': {
+   intro:'Leukozyten ↑. Ausstrich und Differenzialblutbild führen: Blasten → akute Leukämie (AML vs ALL per Immunphänotyp); reife Granulozyten über alle Stufen + Basophilie → CML; nur Stabkernige + toxische Granulation, keine Basophilie → reaktiv. Reife Lymphozyten + Gumprecht → CLL.',
+   causes:[
+     {dz:'Reaktive Leukozytose / leukämoide Reaktion', befund:'Neutrophilie, Linksverschiebung NUR bis Stabkernige, toxische Granulation, KEINE Basophilie; Infekt/Entzündung/Steroide.', test:'CRP/Klinik; alkalische Leukozytenphosphatase (LAP) hoch; kein BCR-ABL.'},
+     {dz:'Akute myeloische Leukämie (AML)', befund:'Blasten ≥ 20 %, Auer-Stäbchen, Hiatus leucaemicus, Verdrängung der übrigen Reihen.', test:'Knochenmark + Immunphänotyp/Zytogenetik; bei APL t(15;17) auf DIC achten.'},
+     {dz:'Chronische myeloische Leukämie (CML)', befund:'sehr hohe Leuko, kontinuierliche Linksverschiebung über ALLE Stufen, Basophilie + Eosinophilie, Splenomegalie, Thrombozytose.', test:'BCR-ABL / Philadelphia-Chromosom; LAP niedrig.'},
+     {dz:'Akute lymphatische Leukämie (ALL)', befund:'Blasten; oft Kinder/junge Erwachsene, Lymphadenopathie, ZNS-Befall.', test:'Knochenmark + Immunphänotyp.'},
+     {dz:'Chronische lymphatische Leukämie (CLL)', befund:'reife kleine Lymphozyten, Gumprecht-Kernschatten, älterer Patient.', test:'Durchflusszytometrie (CD5+CD19+CD23+).'},
+     {dz:'Reaktive Lymphozytose (EBV/CMV/Pertussis)', befund:'atypische/aktivierte Lymphozyten, jung, transient.', test:'Serologie (EBV/CMV), heterophile Antikörper.'}
+   ]
+ },
+ 'Lymphozytose': {
+   intro:'Lymphozyten ↑. Reife monomorphe Lymphozyten + Gumprecht beim Älteren → CLL (Durchflusszytometrie); atypische/aktivierte Lymphozyten beim Jungen → reaktiv/EBV (Serologie); Blasten → ALL. Klonalität sichert die malignen Formen.',
+   causes:[
+     {dz:'Chronische lymphatische Leukämie (CLL)', befund:'reife monomorphe Lymphozyten, Gumprecht-Kernschatten, älterer Patient, oft Zufallsbefund.', test:'Durchflusszytometrie / Immunphänotyp (CD5+CD19+CD23+).'},
+     {dz:'Reaktive virale Lymphozytose (EBV-Mononukleose, CMV)', befund:'atypische/aktivierte Lymphozyten (Pfeiffer-Zellen), jung, Splenomegalie, Transaminasen ↑.', test:'EBV-/CMV-Serologie, heterophile Antikörper.'},
+     {dz:'Pertussis (Keuchhusten)', befund:'ausgeprägte Lymphozytose, v. a. Kinder, Hustenanfälle.', test:'PCR/Serologie.'},
+     {dz:'Lymphom in leukämischer Phase', befund:'z. B. Mantelzell-, follikuläres Lymphom; Lymphadenopathie.', test:'Durchflusszytometrie/Histologie.'},
+     {dz:'Akute lymphatische Leukämie (ALL)', befund:'Blasten (keine reifen Lymphozyten).', test:'Knochenmark/Immunphänotyp.'}
+   ]
+ },
+ 'Thrombozytopenie': {
+   intro:'Thrombozyten ↓. ZUERST Pseudothrombozytopenie ausschließen (Kontrolle im Citratröhrchen + Ausstrich). Dann Ausstrich: Fragmentozyten → MAHA; Blasten/Dysplasie → Knochenmark. Heparin + Thrombose → HIT. Mechanismen: verminderte Bildung, gesteigerter Umsatz (immun/Verbrauch), Verteilung (Pooling).',
+   causes:[
+     {dz:'Pseudothrombozytopenie', befund:'EDTA-induzierte Aggregation, KEINE Blutungszeichen.', test:'Kontrolle im Citrat-/Heparinröhrchen; Ausstrich (Thrombozytenaggregate). Immer zuerst.'},
+     {dz:'Immunthrombozytopenie (ITP)', befund:'isolierte Thrombozytopenie, MPV ↑, post-viral/idiopathisch; Ausschlussdiagnose.', test:'Ausschluss anderer Ursachen, Ausstrich; ggf. Knochenmark bei Atypien.'},
+     {dz:'HIT Typ II', befund:'Heparin, Abfall > 50 % an Tag 5–10, paradoxe THROMBOSE.', test:'4T-Score + Anti-PF4/Heparin-Antikörper; Gerinnung normal.'},
+     {dz:'TTP / HUS', befund:'Fragmentozyten, Hämolyse, neurologisch/renal; normale Gerinnung.', test:'Ausstrich (Schistozyten) + ADAMTS13.'},
+     {dz:'DIC', befund:'Fragmentozyten + pathologische Gerinnung, Auslöser (Sepsis, Malignom, geburtshilflich).', test:'Quick/aPTT ↑, Fibrinogen ↓, D-Dimere ↑↑.'},
+     {dz:'Bildungsstörung', befund:'Leukämie, MDS, aplastische Anämie, KM-Infiltration, B12-/Folsäuremangel, Chemo, Alkohol; meist weitere Zytopenien/Blasten.', test:'Blutbild/Ausstrich, Knochenmark, B12/Folsäure.'},
+     {dz:'Hypersplenismus / Lebererkrankung', befund:'Splenomegalie, Leberzirrhose; oft milde Mehrlinien-Zytopenie.', test:'Sonografie (Milz/Leber), Leberstatus.'},
+     {dz:'Medikamentös/immun, Schwangerschaft, Sepsis', befund:'Chinin, Sulfonamide; Gestationsthrombozytopenie/HELLP; Sepsis.', test:'Medikamenten-/Schwangerschaftsanamnese, Klinik.'}
+   ]
+ },
+ 'Panzytopenie': {
+   intro:'Alle drei Reihen ↓. Retikulozyten, Ausstrich und vor allem das Knochenmark führen: leer (aplastisch) vs zellreich-dysplastisch (MDS) vs blastär (Leukämie) vs infiltriert (Lymphom/Karzinom/Myelofibrose). Reversibles (B12/Folsäure) vorher prüfen.',
+   causes:[
+     {dz:'Aplastische Anämie', befund:'hypozelluläres/leeres Mark, KEINE Dysplasie, KEINE Blasten, Retikulozyten ↓↓; Medikamente/Virus/Toxine/idiopathisch.', test:'Knochenmark (leer/hypozellulär).'},
+     {dz:'Myelodysplastisches Syndrom (MDS)', befund:'zellreiches, dysplastisches Mark, Pseudo-Pelger/Ringsideroblasten, ggf. Blasten.', test:'Knochenmark (Dysplasie, Blasten, Zytogenetik).'},
+     {dz:'Akute Leukämie', befund:'Blasten ≥ 20 %, Verdrängung.', test:'Knochenmark + Immunphänotyp.'},
+     {dz:'Knochenmarkinfiltration', befund:'Lymphom, Karzinommetastasen, Myelofibrose; leukoerythroblastisches Bild, Tränentropfenzellen (Myelofibrose).', test:'Knochenmarkbiopsie.'},
+     {dz:'Schwerer B12-/Folsäuremangel', befund:'makrozytär, hypersegmentierte Neutrophile, LDH ↑ (reversibel).', test:'B12/Folsäure vor invasiver Diagnostik.'},
+     {dz:'Hypersplenismus', befund:'Splenomegalie; Mark normal/reaktiv.', test:'Sonografie.'},
+     {dz:'Paroxysmale nächtliche Hämoglobinurie (PNH)', befund:'Hämolyse + Zytopenie + Thrombosen.', test:'Durchflusszytometrie (CD55/CD59).'},
+     {dz:'Sepsis/HLH, SLE, Strahlung/Zytostatika', befund:'schwere Infektion; HLH mit Fieber/Splenomegalie/Ferritin ↑↑.', test:'Klinik, Ferritin/Trigylceride (HLH), Autoimmunserologie, Knochenmark.'}
+   ]
+ },
+ 'Neutropenie / Agranulozytose': {
+   intro:'Neutrophile ↓ (Agranulozytose < 0,5 G/l). Zuerst ISOLIERT vs Teil einer Panzytopenie unterscheiden (Blutbild). Isolierte schwere Neutropenie + Medikament → Agranulozytose; begleitende Zytopenien/Blasten → Knochenmarkerkrankung. Bei Fieber sofort als febrile Neutropenie behandeln.',
+   causes:[
+     {dz:'Medikamentös-toxische/immune Agranulozytose', befund:'ISOLIERTE Neutropenie, übrige Reihen normal; Mark mit Granulopoese-Stopp. Metamizol, Thyreostatika, Clozapin, Sulfasalazin, Cotrimoxazol, Ticlopidin.', test:'Medikamentenanamnese; Knochenmark (isolierter Reifungsstopp).'},
+     {dz:'Chemotherapie / Bestrahlung', befund:'erwartbar, dosisabhängig.', test:'Anamnese.'},
+     {dz:'Virale Infektion', befund:'häufigste milde Neutropenie; EBV, CMV, HIV, Hepatitis.', test:'Serologie/Virologie.'},
+     {dz:'Schwere bakterielle Sepsis', befund:'Verbrauch, prognostisch ungünstig.', test:'Klinik, Blutkulturen.'},
+     {dz:'Autoimmunneutropenie / Felty-Syndrom', befund:'Felty = rheumatoide Arthritis + Splenomegalie + Neutropenie; auch SLE.', test:'Autoimmunserologie (RF, ANA).'},
+     {dz:'Knochenmarkerkrankung (MDS, Leukämie, aplastisch)', befund:'meist weitere Zytopenien/Blasten.', test:'Knochenmark.'},
+     {dz:'Benigne ethnische / kongenitale Neutropenie', befund:'chronisch, asymptomatisch.', test:'Verlauf/Anamnese.'},
+     {dz:'Hypersplenismus, B12-/Folsäuremangel', befund:'Splenomegalie; megaloblastäre Zeichen.', test:'Sonografie; B12/Folsäure.'}
+   ]
+ },
+ 'Reaktive Veränderung': {
+   intro:'Sekundäre, nicht-klonale Veränderungen. Klinik, Entzündungsmarker (CRP, BSG) und Ausstrich (toxische Granulation, Döhle-Körperchen, atypische Lymphozyten) weisen auf eine Reaktion. Wichtig ist die Abgrenzung zur klonalen Erkrankung.',
+   causes:[
+     {dz:'Bakterielle Infektion (Neutrophilie/Linksverschiebung)', befund:'toxische Granulation, Döhle-Körperchen, Linksverschiebung nur bis Stabkernige, KEINE Basophilie.', test:'CRP ↑, LAP hoch; kein BCR-ABL (Abgrenzung CML).'},
+     {dz:'Virale Infektion (Lymphozytose)', befund:'atypische/aktivierte Lymphozyten, Pfeiffer-Zellen; EBV/CMV.', test:'Serologie (Abgrenzung CLL über Klonalität).'},
+     {dz:'Eosinophilie', befund:'Merkhilfe NAACP: Neoplasie, Allergie/Asthma, Addison, Kollagenose/Parasiten; auch Arzneimittel (DRESS).', test:'ursachenabhängig: IgE, Stuhl auf Parasiten, Medikamentenanamnese, Tryptase; bei Persistenz HES-Abklärung.'},
+     {dz:'Reaktive Thrombozytose', befund:'Entzündung, Eisenmangel, post-Splenektomie, Blutung.', test:'CRP/Ferritin; JAK2 bei Verdacht auf essenzielle Thrombozythämie.'},
+     {dz:'Leukoerythroblastisches Bild', befund:'unreife Vorstufen + Erythroblasten; schwere Infektion oder KM-Infiltration.', test:'Ausstrich; ggf. Knochenmark.'}
+   ]
+ }
+};
+
+/* ===== DD-Übersicht modal ===== */
+const ddxModal = document.getElementById('ddxModal');
+(function buildDdx(){
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const order = KATS.filter(k => k!=='Alle Kategorien' && DDX[k]);
+  ddxCatIndex = {};
+  const html = order.map((kat,i)=>{
+    ddxCatIndex[kat] = i;
+    const d = DDX[kat];
+    const items = d.causes.map(c=>`
+      <div class="ddx-item">
+        <div class="ddx-dz">${esc(c.dz)}</div>
+        <div class="ddx-line"><span class="ddx-k">Befund</span> ${esc(c.befund)}</div>
+        <div class="ddx-line"><span class="ddx-k">Test</span> ${esc(c.test)}</div>
+      </div>`).join('');
+    return `<section class="ddx-cat" id="ddx-${i}">
+        <h4 class="ddx-h">${esc(kat)}</h4>
+        <p class="ddx-intro">${esc(d.intro)}</p>
+        ${items}
+      </section>`;
+  }).join('');
+  document.getElementById('ddxBody').innerHTML = html;
+})();
+function openDdx(){
+  ddxModal.classList.add('open');
+  const kat = (deck.length && deck[idx]) ? deck[idx].kat : null;
+  ddxModal.querySelectorAll('.ddx-cat').forEach(s=>s.classList.remove('here'));
+  if(kat && ddxCatIndex[kat]!=null){
+    const sec = document.getElementById('ddx-'+ddxCatIndex[kat]);
+    if(sec){ sec.classList.add('here'); sec.scrollIntoView({block:'start'}); }
+  } else {
+    document.querySelector('#ddxBody').scrollTop = 0;
+  }
+}
+document.getElementById('ddxBtn').onclick = openDdx;
+document.getElementById('ddxClose').onclick = ()=>ddxModal.classList.remove('open');
+ddxModal.onclick = (e)=>{ if(e.target===ddxModal) ddxModal.classList.remove('open'); };
+
+
+/* keyboard */
+document.addEventListener('keydown', (e)=>{
+  const tag=(e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='select'||tag==='textarea') return;
+  if(modal.classList.contains('open')||ddxModal.classList.contains('open')){ if(e.key==='Escape'){ modal.classList.remove('open'); ddxModal.classList.remove('open'); } return; }
+  if(e.code==='Space'){ e.preventDefault(); toggleReveal(); }
+  else if(e.key==='ArrowRight'){ next(); }
+  else if(e.key==='ArrowLeft'){ prev(); }
+  else if(e.key==='r'||e.key==='R'){ if(revealed) grade('right'); }
+  else if(e.key==='f'||e.key==='F'){ if(revealed) grade('wrong'); }
+});
+
+/* init */
+buildDeck();
+render();
+updateScore();
+</script>
+</body>
+</html>

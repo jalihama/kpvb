@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerinnungsdiagnostik – Kaskade &amp; Laborparameter</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #f0ece3;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #1a1814;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 { font-weight: 700; font-size: 1.5rem; color: #1a1814; letter-spacing: -0.4px; }
+  header p { color: #5a5650; font-size: 11px; font-weight: 500; margin-top: 6px; text-transform: uppercase; letter-spacing: 2px; }
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  /* ── Notes section ── */
+  .notes { max-width: 1100px; margin: 20px auto 0; border-top: 2px solid #1a1814; padding-top: 14px; }
+  .notes-title { font-weight: 700; font-size: 0.85rem; color: #1a1814; margin-bottom: 2px; letter-spacing: -0.1px; }
+  .notes-subtitle { font-size: 9px; font-weight: 500; color: #5a5650; text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 10px; }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .note-card {
+    background: #fff; border: 1px solid #c8c2b5; border-radius: 3px;
+    padding: 7px 10px 7px 14px; position: relative;
+  }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .note-card .bar.blue  { background: #2a4a7f; }
+  .note-card .bar.amber { background: #7a4a00; }
+  .note-card .bar.red   { background: #b02020; }
+  .note-card .bar.green { background: #1a8a40; }
+  .note-card .bar.muted { background: #5a5650; }
+  .note-card-label { font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #7a7468; margin-bottom: 1px; }
+  .note-card-title { font-weight: 600; font-size: 0.78rem; color: #1a1814; margin-bottom: 4px; letter-spacing: -0.1px; }
+  .note-card-body { font-size: 10.5px; font-weight: 400; color: #2a2820; line-height: 1.6; }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+  .cave  { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+  .neg   { color: #b02020; font-weight: 600; }
+  footer {
+    max-width: 1100px; margin: 14px auto 0; padding-top: 12px;
+    border-top: 1px solid #c8c2b5; color: #7a7468; font-size: 10px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px;
+    display: flex; justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Gerinnungsdiagnostik – Kaskade &amp; Laborparameter</h1>
+  <p>Hämatologie · Hämostaseologie · Klinische Interpretation</p>
+</header>
+
+<div class="wrap">
+<svg width="1100" height="670" viewBox="0 0 1100 670" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#555"/>
+  </marker>
+  <marker id="arr-blue" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#2a4a7f"/>
+  </marker>
+  <marker id="arr-amber" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#8a5500"/>
+  </marker>
+  <marker id="arr-red" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#b02020"/>
+  </marker>
+  <marker id="arr-green" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#1a8a40"/>
+  </marker>
+  <style>
+    text { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: 400; fill: #1a1814; }
+    .tag  { font-size: 9px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    .lbl  { font-size: 10px; font-weight: 500; fill: #555; }
+    .hd   { font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+    .hd2  { font-size: 9.5px; font-weight: 500; }
+    .title { font-size: 12px; font-weight: 600; }
+    .cave { fill: #b02020; font-weight: 700; }
+    .fn   { font-size: 9.5px; fill: #888; font-style: italic; }
+  </style>
+</defs>
+
+<!-- ============================================================
+     BACKGROUND COVERAGE BANDS (very light tints behind pathways)
+     ============================================================ -->
+<!-- aPTT light blue tint behind intrinsic column -->
+<rect x="22" y="74" width="252" height="219" rx="4" fill="#eef2fb" opacity="0.4"/>
+<!-- Shared common path tint (both tests cover this) -->
+<rect x="434" y="314" width="232" height="284" rx="4" fill="#f5f5f0" opacity="0.5"/>
+<!-- Extrinsic amber tint -->
+<rect x="826" y="159" width="252" height="79" rx="4" fill="#fff4e0" opacity="0.4"/>
+
+<!-- ============================================================
+     TEST COVERAGE BRACKETS  (left = aPTT, right = PT/INR)
+     ============================================================ -->
+
+<!-- ── aPTT bracket (blue, left side) ── -->
+<!-- covers y=78 (XII top) to y=592 (Fibrin+XIIIa bottom) -->
+<rect x="2" y="78" width="6" height="514" rx="2" fill="#2a4a7f" opacity="0.75"/>
+<line x1="8"  y1="78"  x2="22"  y2="78"  stroke="#2a4a7f" stroke-width="1.5"/>
+<line x1="8"  y1="592" x2="22"  y2="592" stroke="#2a4a7f" stroke-width="1.5"/>
+<!-- aPTT label (rotated) -->
+<text transform="rotate(-90, 13, 335)" x="13" y="335"
+      font-size="11" font-weight="700" fill="#2a4a7f"
+      text-anchor="middle" letter-spacing="1.5">aPTT</text>
+
+<!-- ── PT · Quick · INR bracket (amber, right side) ── -->
+<!-- covers y=159 (TF+VII top) to y=592 (Fibrin bottom) -->
+<rect x="1092" y="159" width="6" height="433" rx="2" fill="#8a5500" opacity="0.75"/>
+<line x1="1092" y1="159" x2="1078" y2="159" stroke="#8a5500" stroke-width="1.5"/>
+<line x1="1092" y1="592" x2="1078" y2="592" stroke="#8a5500" stroke-width="1.5"/>
+<!-- PT/INR label (rotated) -->
+<text transform="rotate(90, 1096, 374)" x="1096" y="374"
+      font-size="10" font-weight="700" fill="#8a5500"
+      text-anchor="middle" letter-spacing="0.8">PT · Quick · INR</text>
+
+<!-- ── TZ bracket (green, left of Fibrinogen box) ── -->
+<!-- covers y=452 (prothrombin bottom) to y=522 (fibrinogen bottom) = just the fibrinogen step -->
+<rect x="432" y="452" width="5" height="70" rx="2" fill="#1a8a40" opacity="0.85"/>
+<line x1="437" y1="452" x2="447" y2="452" stroke="#1a8a40" stroke-width="1.5"/>
+<line x1="437" y1="522" x2="447" y2="522" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="428" y="491" font-size="10.5" font-weight="700" fill="#1a8a40" text-anchor="middle">TZ</text>
+
+<!-- ============================================================
+     COLUMN HEADERS
+     ============================================================ -->
+<!-- Intrinsic header -->
+<text x="148" y="44" class="hd" fill="#2a4a7f" text-anchor="middle">Intrinsischer Weg</text>
+<text x="148" y="58" class="hd2" fill="#2a4a7f" text-anchor="middle">(Kontaktaktivierung)</text>
+
+<!-- Common header -->
+<text x="550" y="44" class="hd" fill="#444" text-anchor="middle">Gemeinsamer Weg</text>
+
+<!-- Extrinsic header -->
+<text x="950" y="44" class="hd" fill="#8a5500" text-anchor="middle">Extrinsischer Weg</text>
+<text x="950" y="58" class="hd2" fill="#8a5500" text-anchor="middle">(Gewebefaktor / Tissue Factor)</text>
+
+<!-- ============================================================
+     CONNECTORS
+     ============================================================ -->
+<!-- Intrinsic vertical: XII → XI → IX -->
+<line x1="148" y1="138" x2="148" y2="163" stroke="#2a4a7f" stroke-width="2" marker-end="url(#arr-blue)"/>
+<line x1="148" y1="207" x2="148" y2="223" stroke="#2a4a7f" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+<!-- IX right arm → junction at (550, 310) via (525, 257) waypoint -->
+<polyline points="268,257 525,257 525,310 550,310"
+          fill="none" stroke="#2a4a7f" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+<!-- Extrinsic: TF+VII left arm → junction at (550, 310) via (575, 198) waypoint -->
+<polyline points="828,198 575,198 575,310 550,310"
+          fill="none" stroke="#8a5500" stroke-width="2" marker-end="url(#arr-amber)"/>
+
+<!-- Junction → Xa box top -->
+<line x1="550" y1="316" x2="550" y2="323" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Common vertical: Xa → Prothrombin → Fibrinogen → Fibrin -->
+<line x1="550" y1="385" x2="550" y2="405" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="550" y1="452" x2="550" y2="472" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="550" y1="519" x2="550" y2="542" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Fibrin → D-Dimer (fibrinolyse, dashed red) -->
+<line x1="550" y1="592" x2="550" y2="615"
+      stroke="#b02020" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-red)"/>
+
+<!-- Fibrinolyse label on dashed arrow -->
+<text x="558" y="607" class="fn" fill="#b02020">Fibrinolyse (Plasmin)</text>
+
+<!-- ============================================================
+     JUNCTION DOT
+     ============================================================ -->
+<circle cx="550" cy="312" r="5" fill="#555"/>
+
+<!-- ============================================================
+     COFACTOR / ANNOTATION LABELS
+     ============================================================ -->
+<!-- VIIIa cofactor between IX box and common -->
+<text x="310" y="252" class="fn">+ VIIIa</text>
+<text x="310" y="264" class="fn">(Kofaktor)</text>
+
+<!-- Va cofactor note beside Xa box -->
+<text x="668" y="348" class="fn">+ Va, Ca²⁺</text>
+<text x="668" y="360" class="fn">(Kofaktor, PL)</text>
+
+<!-- Thrombin acts on Fibrinogen label -->
+<text x="668" y="450" class="fn">Thrombin</text>
+<text x="668" y="462" class="fn">spaltet Fibg.</text>
+
+<!-- XIIIa crosslink label -->
+<text x="668" y="565" class="fn">+ XIIIa</text>
+<text x="668" y="577" class="fn">(Quervernetzung)</text>
+
+<!-- ============================================================
+     BOXES
+     ============================================================ -->
+
+<!-- ── Intrinsic: XII / Kontaktphase ── -->
+<rect x="28" y="78" width="240" height="60" rx="5" fill="#eef2fb" stroke="#2a4a7f" stroke-width="1.5"/>
+<text x="48" y="97"  class="tag" fill="#2a4a7f">Kontaktphase</text>
+<text x="48" y="115" class="title" fill="#1a1814">XII · Präkallikrein · HMWK</text>
+<text x="48" y="130" font-size="10" fill="#2a4060">→ XIIa  (aktiviert Faktor XI)</text>
+
+<!-- ── Intrinsic: XI ── -->
+<rect x="28" y="163" width="240" height="44" rx="5" fill="#eef2fb" stroke="#2a4a7f" stroke-width="1.5"/>
+<text x="48" y="182" class="title" fill="#1a1814">XI  →  XIa</text>
+<text x="48" y="199" font-size="10" fill="#2a4060">aktiviert Faktor IX</text>
+
+<!-- ── Intrinsic: IX / Tenase ── -->
+<rect x="28" y="223" width="240" height="62" rx="5" fill="#eef2fb" stroke="#2a4a7f" stroke-width="2"/>
+<text x="48" y="243" class="tag" fill="#2a4a7f">Tenase-Komplex</text>
+<text x="48" y="260" class="title" fill="#1a1814">IXa + VIIIa + Ca²⁺ + PL</text>
+<text x="48" y="276" font-size="10" fill="#2a4060">→  aktiviert Faktor X</text>
+<!-- Hemophilia callout -->
+<text x="48" y="288" font-size="9" fill="#b02020" font-weight="600">Häm. A: VIII ↓ · Häm. B: IX ↓</text>
+
+<!-- ── Extrinsic: TF + VII ── -->
+<rect x="828" y="159" width="244" height="70" rx="5" fill="#fff4e0" stroke="#8a5500" stroke-width="2"/>
+<text x="848" y="179" class="tag" fill="#8a5500">Tissue-Factor-Komplex</text>
+<text x="848" y="196" class="title" fill="#1a1814">TF (III) + VII  →  VIIa</text>
+<text x="848" y="212" font-size="10" fill="#6a4000">Gewebefaktor aus Subendothel</text>
+<text x="848" y="225" font-size="10" fill="#6a4000">→  aktiviert direkt Faktor X</text>
+
+<!-- ── Common: Xa / Prothrombinase ── -->
+<rect x="440" y="323" width="220" height="62" rx="5" fill="#f8f7f4" stroke="#666" stroke-width="2"/>
+<text x="460" y="342" class="tag" fill="#555">Prothrombinase-Komplex</text>
+<text x="460" y="359" class="title" fill="#1a1814">Xa + Va + Ca²⁺ + PL</text>
+<text x="460" y="375" font-size="10" fill="#333">→  spaltet Prothrombin</text>
+
+<!-- ── Common: Prothrombin ── -->
+<rect x="440" y="405" width="220" height="47" rx="5" fill="#f8f7f4" stroke="#666" stroke-width="2"/>
+<text x="460" y="424" class="title" fill="#1a1814">Prothrombin (II)  →  Thrombin (IIa)</text>
+<text x="460" y="440" font-size="10" fill="#333">Schlüsselenzym der Hämostase</text>
+
+<!-- ── Common: Fibrinogen → Fibrin (TZ covers this) ── -->
+<rect x="440" y="472" width="220" height="47" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="460" y="490" class="title" fill="#1a1814">Fibrinogen (I)  →  Fibrin</text>
+<text x="460" y="506" font-size="10" fill="#1a4a2a">Thrombin spaltet Fibrinogen</text>
+<!-- Fibrinogen reference -->
+<text x="460" y="516" font-size="9" fill="#888">Normalwert: 1,8–3,5 g/l</text>
+
+<!-- ── Common: Fibrin + XIIIa → Stabiles Gerinnsel ── -->
+<rect x="440" y="542" width="220" height="50" rx="5" fill="#f8f7f4" stroke="#666" stroke-width="1.5"/>
+<text x="460" y="561" class="title" fill="#1a1814">Fibrin + XIIIa</text>
+<text x="460" y="577" font-size="10" fill="#333">→  Quervernetztes Fibrin</text>
+<text x="460" y="589" font-size="9" fill="#555">(stabiles Gerinnsel)</text>
+
+<!-- ── D-Dimer (dashed red, fibrinolysis product) ── -->
+<rect x="440" y="618" width="220" height="42" rx="5" fill="#fdeaea" stroke="#b02020" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text x="460" y="637" font-size="12" font-weight="700" fill="#b02020">D-Dimer  ↑</text>
+<text x="460" y="653" font-size="10" fill="#b02020">Fibrinspaltprodukte (FSP) · Marker DIC / VTE</text>
+
+<!-- ============================================================
+     TEST LABELS (pill tags near brackets)
+     ============================================================ -->
+<!-- aPTT pill (left side) -->
+<rect x="22" y="63" width="58" height="16" rx="8" fill="#2a4a7f"/>
+<text x="51" y="75" font-size="9" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.5">aPTT</text>
+
+<!-- PT/INR pill (right side) -->
+<rect x="1020" y="63" width="78" height="16" rx="8" fill="#8a5500"/>
+<text x="1059" y="75" font-size="9" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.5">PT / INR</text>
+
+<!-- TZ pill (beside fibrinogen box) -->
+<rect x="408" y="481" width="28" height="16" rx="8" fill="#1a8a40"/>
+<text x="422" y="493" font-size="9" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.5">TZ</text>
+
+<!-- ============================================================
+     "BOTH TESTS" label for common pathway
+     ============================================================ -->
+<text x="550" y="306" font-size="9" font-weight="600" fill="#888" text-anchor="middle" letter-spacing="1">← aPTT  +  PT / INR →</text>
+
+</svg>
+</div>
+
+<!-- ============================================================
+     NOTES / PARAMETER CARDS
+     ============================================================ -->
+<div class="notes">
+  <div class="notes-title">Gerinnungsparameter – Klinische Interpretation</div>
+  <div class="notes-subtitle">Referenzwerte · Ursachen bei Abweichungen · Klinische Bedeutung</div>
+  <div class="notes-grid">
+
+    <!-- ── aPTT ── -->
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Intrinsischer + Gemeinsamer Weg · XII, XI, IX, VIII, X, V, II, I</div>
+      <div class="note-card-title">aPTT – Aktivierte partielle Thromboplastinzeit</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Normalwert:</strong> 25–38 s (reagenzabhängig)</li>
+          <li><strong>Verlängert (>38 s) bei:</strong> UFH-Therapie (Ziel 60–100 s) · Hämophilie A (VIII↓) / B (IX↓) · vWD Typ III · Lupus-Antikoagulans · Dabigatran, Argatroban, Hirudin</li>
+          <li><span class="cave">Cave Lupus-AK:</span> aPTT ↑↑ in vitro — aber Thromboserisiko ↑ in vivo! (Mischversuch hilft zur Differenzierung)</li>
+          <li><span class="cave">Cave FXII-Mangel:</span> aPTT ↑↑ ohne Blutungsneigung — klinisch irrelevant</li>
+          <li><strong>Nicht erfasst:</strong> Faktor VII (extrinsisch) · Faktor XIII</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── PT / Quick / INR ── -->
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Extrinsischer + Gemeinsamer Weg · VII, X, V, II, I</div>
+      <div class="note-card-title">PT · Quick · INR</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Normalwerte:</strong> Quick ≥70% · INR 0,8–1,2 · PT 11–14 s</li>
+          <li><strong>Quick ↓ / INR ↑ bei:</strong> VKA-Therapie (Phenprocoumon, Warfarin) · Vitamin-K-Mangel · Leberinsuffizienz (Frühindikator!) · DIC · Malabsorption</li>
+          <li><strong>Faktor VII:</strong> kürzeste HWZ (~4–6 h) → Quick fällt als Erster bei Leberversagen / VKA-Einnahme</li>
+          <li><strong>INR vs. Quick:</strong> INR ist standardisiert und zwischen Laboren vergleichbar; Quick ist reagenzabhängig</li>
+          <li><strong>Nicht erfasst:</strong> Intrinsischer Weg (XII, XI, IX, VIII) · Faktor XIII</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Thrombinzeit ── -->
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Letzter Schritt: Thrombin → Fibrin</div>
+      <div class="note-card-title">Thrombinzeit (TZ)</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Normalwert:</strong> 14–21 s</li>
+          <li><strong>Misst ausschließlich:</strong> den Schritt Fibrinogen → Fibrin durch exogen zugesetztes Thrombin</li>
+          <li><strong>Verlängert bei:</strong> UFH (stärker als NMH) · Fibrinogen ↓ (Hypofibrinogenämie) · Dysfibrinogenämie · direkte Thrombininhibitoren (Dabigatran, Argatroban, Hirudin)</li>
+          <li><strong>Normal trotz Gerinnungsstörung:</strong> TZ normal bei Hämophilie · VKA · Thrombozytopenie</li>
+          <li>Hilfreich zur Differenzierung Heparin- vs. Faktorenmangel-aPTT-Verlängerung</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Fibrinogen ── -->
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Faktor I · Akutphasenprotein</div>
+      <div class="note-card-title">Fibrinogen</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Normalwert:</strong> 1,8–3,5 g/l (Clauss-Methode)</li>
+          <li><strong>Erniedrigt (&lt;1,5 g/l) bei:</strong> DIC (Verbrauchskoagulopathie) · schwere Leberinsuffizienz · Hyperfibrinolyse (z.B. nach Lyse-Therapie) · Afibrinogenämie (kongenital, selten)</li>
+          <li><strong>Erhöht bei:</strong> Akute Entzündung (APR) · Schwangerschaft · Metabolisches Syndrom (RF für VTE)</li>
+          <li><span class="cave">Kritisch &lt;1,0 g/l:</span> schwere Blutungsneigung → Substitution mit Fibrinogenkonzentrat oder FFP</li>
+          <li><span class="cave">Cave DIC:</span> Fibrinogen kann durch APR initial normal sein, trotz Verbrauch</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── D-Dimer ── -->
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Fibrinolyse-Marker · Quervernetztes Fibrin → Abbauprodukt</div>
+      <div class="note-card-title">D-Dimer</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Normalwert:</strong> &lt;0,5 mg/l FEU · Altersadaptiert: Alter × 0,01 mg/l (ab 50 J.)</li>
+          <li><strong>Hohe Sensitivität (~95% für TVT/LE)</strong> → geeignet zum <span class="first">Ausschluss</span> bei niedriger Vortestwahrscheinlichkeit</li>
+          <li><span class="cave">Niedrige Spezifität!</span> Erhöht auch bei: Trauma · OP · Sepsis · Malignom · Schwangerschaft · Vorhofflimmern · hohes Alter</li>
+          <li>Positiver D-Dimer allein stellt <span class="neg">keine</span> VTE-Diagnose — stets im Kontext (Wells-Score, Geneva)</li>
+          <li><strong>DIC-Monitoring:</strong> D-Dimer + Fibrinogen + Quick + Thrombos im Verlauf beobachten</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Thrombozyten ── -->
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">Primäre Hämostase · Thrombozytär</div>
+      <div class="note-card-title">Thrombozyten</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Normalwert:</strong> 150–400 × 10⁹/l</li>
+          <li><strong>Klinische Schwellen:</strong> &lt;100: OP-Risiko ↑ · &lt;50: Blutungsrisiko klinisch relevant · &lt;20: spontane Blutungen möglich</li>
+          <li><strong>Thrombozytopenie Ursachen:</strong> ITP · HIT II (Cave: Heparin!) · TTP/HUS · DIC · Aplastische Anämie · Leberzirrhose/Hypersplenismus · myeloische Neoplasien</li>
+          <li><span class="cave">Cave HIT:</span> Thrombozyten ↓ &gt;50% unter Heparin → HIT Typ II ausschließen! HIPA-Test / PF4-Ak</li>
+          <li>Thrombozytose reaktiv (Entzündung, Eisenmangel) vs. klonal (ET, Myelofibrose)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Second notes row: DIC + interpretation guide ── -->
+<div class="notes" style="border-top: 1px solid #c8c2b5; margin-top: 10px;">
+  <div class="notes-grid" style="grid-template-columns: 1fr 1fr; margin-top: 10px;">
+
+    <!-- DIC interpretation -->
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Notfall · Verbrauchskoagulopathie</div>
+      <div class="note-card-title">DIC – Disseminierte intravasale Gerinnung</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Konstellation:</strong> Quick ↓ · aPTT ↑ · Fibrinogen ↓ · D-Dimer ↑↑ · Thrombozyten ↓</li>
+          <li><strong>Auslöser:</strong> Sepsis · Trauma · Verbrennung · Tumoren (v.a. AML M3) · Abruptio placentae · Transfusionsreaktion</li>
+          <li><span class="cave">Cave:</span> Fibrinogen kann initial durch APR normal oder erhöht sein — Verlauf entscheidend!</li>
+          <li><strong>ISTH-DIC-Score:</strong> Thrombozyten + PT-Verlängerung + D-Dimer + Fibrinogen → ≥5 Punkte = overt DIC</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Isolated test abnormality guide -->
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">Orientierendes Schema</div>
+      <div class="note-card-title">Isolierte Verlängerung – Differenzierung</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Nur aPTT ↑, Quick normal:</strong> Heparin (UFH) · Hämophilie A/B · Lupus-AK · FXII-Mangel</li>
+          <li><strong>Nur Quick ↓, aPTT normal:</strong> frühe VKA-Therapie · FVII-Einzelmangel · Vit-K-Mangel (früh)</li>
+          <li><strong>Beide verlängert:</strong> Leberinsuffizienz · DIC · schwerer Vit-K-Mangel · gemeinsamer Weg (FX, FV, FII, FI)</li>
+          <li><strong>TZ ↑ allein:</strong> Heparin · Fibrinogenmangel/-dysfunktion · DTI (Dabigatran)</li>
+          <li><strong>NMH-Therapie:</strong> Anti-Xa-Aktivität (kein Einfluss auf aPTT/Quick bei therapeutischer Dosierung)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>Hämatologie · Hämostaseologie · Klinische Interpretation der Gerinnungsdiagnostik</span>
+  <span>Gerinnungskaskade &amp; Laborparameter · Übersicht</span>
+</footer>
+
+</body>
+</html>

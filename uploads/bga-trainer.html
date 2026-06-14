@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BGA-Trainer — Kenntnisprüfung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c1219; --ink-2:#111a24; --ink-3:#18242f; --line:#243341;
+    --teal:#37c6ae; --teal-dim:#1f8576; --teal-deep:#0f2d2a;
+    --high:#e0554c; --low:#3e92d8; --amber:#e6a542; --amber-deep:#2c2415;
+    --text:#e9eef3; --text-dim:#93a2b1; --text-faint:#5c6b79;
+    --mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--sans); color:var(--text); line-height:1.55;
+    background:radial-gradient(1200px 600px at 50% -10%, #14202c 0%, transparent 60%), var(--ink);
+    min-height:100vh; padding:22px 16px 60px}
+  .wrap{max-width:760px; margin:0 auto}
+
+  .masthead{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px}
+  .mast-left{display:flex; flex-direction:column; gap:6px}
+  .logo{display:flex; align-items:center; gap:9px; font-weight:700; font-size:18px; letter-spacing:-.01em}
+  .mark{font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.14em; color:var(--teal); border:1px solid var(--teal-dim); border-radius:5px; padding:3px 7px; background:var(--teal-deep)}
+  .tagline{font-size:12.5px; color:var(--text-dim); letter-spacing:.01em}
+  .ghost{font-family:var(--sans); font-size:12.5px; color:var(--text-dim); background:var(--ink-2); border:1px solid var(--line); border-radius:8px; padding:8px 12px; cursor:pointer; transition:border-color .15s, color .15s; white-space:nowrap}
+  .ghost:hover{color:var(--text); border-color:var(--teal-dim)}
+
+  .controls{display:flex; flex-wrap:wrap; align-items:center; gap:9px; padding:11px; background:var(--ink-2); border:1px solid var(--line); border-radius:12px; margin-bottom:16px}
+  .seg{display:inline-flex; background:var(--ink); border:1px solid var(--line); border-radius:9px; padding:3px}
+  .seg button{font-family:var(--sans); font-size:12.5px; color:var(--text-dim); background:transparent; border:0; border-radius:7px; padding:6px 11px; cursor:pointer}
+  .seg button.on{background:var(--ink-3); color:var(--text); box-shadow:inset 0 0 0 1px var(--line)}
+  select{font-family:var(--sans); font-size:12.5px; color:var(--text); background:var(--ink); border:1px solid var(--line); border-radius:9px; padding:7px 9px; cursor:pointer; max-width:220px}
+  .switch{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:var(--text-dim); cursor:pointer; user-select:none}
+  .switch input{accent-color:var(--teal); width:15px; height:15px; cursor:pointer}
+  .score{margin-left:auto; display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12px; color:var(--text-dim)}
+  .score b{color:var(--teal); font-weight:600}
+  .score .wr{color:var(--high)}
+  .reset{background:transparent; border:0; color:var(--text-faint); cursor:pointer; font-size:14px; padding:0 2px; line-height:1}
+  .reset:hover{color:var(--text-dim)}
+
+  .card{background:var(--ink-2); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 18px 40px rgba(0,0,0,.35)}
+  .card-head{display:flex; align-items:center; gap:10px; margin-bottom:14px}
+  .idtag-l{font-family:var(--mono); font-size:11px; color:var(--text-faint); letter-spacing:.08em}
+  .masked{margin-left:auto; font-size:11.5px; color:var(--text-faint); font-style:italic}
+  .status-pill{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.04em; padding:2px 8px; border-radius:999px; text-transform:uppercase; white-space:nowrap}
+  .st-right{color:var(--teal); background:var(--teal-deep); border:1px solid var(--teal-dim)}
+  .st-wrong{color:var(--high); background:#2c1714; border:1px solid #5e2a25}
+  .dots{display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-bottom:16px; padding:11px 12px; background:var(--ink-2); border:1px solid var(--line); border-radius:12px}
+  .dots:empty{display:none}
+  .dots-lab{font-family:var(--mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.05em; margin-right:3px}
+  .dot{width:11px; height:11px; border-radius:50%; border:1.5px solid var(--text-faint); background:transparent; padding:0; cursor:pointer; transition:transform .1s}
+  .dot:hover{transform:scale(1.35)}
+  .dot.d-seen{background:var(--text-faint); border-color:var(--text-faint)}
+  .dot.d-right{background:var(--teal); border-color:var(--teal)}
+  .dot.d-wrong{background:var(--high); border-color:var(--high)}
+  .dot.cur{box-shadow:0 0 0 2px var(--ink-2),0 0 0 4px var(--text); transform:scale(1.15)}
+  .dots-rest{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--text-dim); letter-spacing:.04em}
+
+  /* ---- BGA printout: black & white paper on the dark chrome ---- */
+  .printout{background:#f5f5f3; color:#15181c; border-radius:6px; padding:13px 16px; box-shadow:0 10px 24px rgba(0,0,0,.30)}
+  .po-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; border-bottom:2px solid #20232a; padding-bottom:5px; margin-bottom:4px}
+  .po-title{font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.16em; color:#15181c}
+  .po-meta{font-family:var(--mono); font-size:10px; color:#6b7178; letter-spacing:.02em}
+  .vignette{font-size:11.5px; color:#33373c; line-height:1.4; padding:6px 0; border-bottom:1px dashed #c4c7cb; margin-bottom:2px}
+  .po-cols{display:grid; grid-template-columns:1fr 1fr; gap:0 26px}
+  table.bga{width:100%; border-collapse:collapse; font-family:var(--mono)}
+  table.bga td{padding:2px 0; border-bottom:1px solid #e7e8ea; vertical-align:baseline}
+  td.lab{font-size:11px; color:#23272c}
+  td.val{font-size:11px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; padding-left:8px; color:#15181c}
+  td.ref{font-size:9.5px; text-align:right; white-space:nowrap; color:#9298a0; padding-left:8px}
+  .u{color:#9298a0; font-size:9.5px; margin-left:1px}
+  .val.ab{font-weight:700}
+  .flag{font-weight:700; margin-left:2px}
+  tr.sec td{font-size:8px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#111; border-bottom:1.5px solid #20232a; padding:8px 0 2px}
+  tr.sec:first-child td{padding-top:1px}
+  .zusatz{margin-top:8px; border-top:1.5px solid #20232a; padding-top:3px}
+  .zlabel{font-family:var(--mono); font-size:8px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#111; margin-bottom:1px}
+
+  .prompt{font-size:13px; color:var(--text-dim); line-height:1.5; margin:15px 2px 14px}
+
+  .reveal-btn{width:100%; font-family:var(--sans); font-size:14px; font-weight:600; color:#0c1219; background:var(--teal); border:0; border-radius:10px; padding:12px; cursor:pointer; transition:filter .15s}
+  .reveal-btn:hover{filter:brightness(1.06)}
+
+  .answer{margin-top:16px; overflow:hidden}
+  @media (prefers-reduced-motion:no-preference){ .answer{animation:rise .28s ease} @keyframes rise{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}} }
+  .screen{background:linear-gradient(180deg,#0d1d1c,#0c171f); border:1px solid #16403a; border-radius:12px; padding:15px 16px}
+  .answer-head{display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:11px; border-bottom:1px solid #142a2a}
+  .kat-reveal{font-size:13px; color:var(--teal); font-weight:600}
+  .badge{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; font-weight:600; padding:3px 8px; border-radius:5px; text-transform:uppercase}
+  .t1{color:#0c1219; background:var(--teal)}
+  .t2{color:var(--text); background:var(--ink-3); box-shadow:inset 0 0 0 1px var(--low)}
+  .t3{color:var(--text-dim); background:var(--ink-3); box-shadow:inset 0 0 0 1px var(--line)}
+  ol.steps{list-style:none; margin:0 0 4px; padding:0}
+  ol.steps li{display:grid; grid-template-columns:104px 1fr; gap:12px; padding:8px 0; border-bottom:1px solid #142a2a; font-size:13px}
+  ol.steps li:last-child{border-bottom:0}
+  .step-k{font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.06em; color:var(--teal); text-transform:uppercase; padding-top:1px}
+  .step-v{color:var(--text)}
+  .ag-calc{font-family:var(--mono); font-size:12px; color:var(--teal); background:#0c2220; border:1px solid #16403a; border-radius:6px; padding:3px 8px; display:inline-block; margin-top:5px}
+  .block{margin-top:11px; padding:11px 13px; border-radius:9px; font-size:13px}
+  .block .bk{font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; display:block; margin-bottom:4px}
+  .dx{background:var(--teal-deep); border-left:3px solid var(--teal)}
+  .dx .bk{color:var(--teal)}
+  .dx .bv{font-weight:600}
+  .act{background:var(--ink-3); border-left:3px solid var(--teal-dim)}
+  .act .bk{color:var(--text-dim)}
+  .falle{background:var(--amber-deep); border-left:3px solid var(--amber)}
+  .falle .bk{color:var(--amber)}
+  .nx{background:var(--ink); border-left:3px solid var(--line)}
+  .nx .bk{color:var(--text-faint)}
+  .nx .bv{font-style:italic; color:var(--text-dim)}
+  .nxa{margin-top:9px; padding-top:9px; border-top:1px solid #142a2a; color:var(--text); font-style:normal}
+  .nxa-k{font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); margin-right:6px}
+  .zf{background:var(--ink); border-left:3px solid var(--teal-dim)}
+  .zf .bk{color:var(--text-dim)}
+  .zf-row{display:grid; grid-template-columns:92px 1fr; gap:10px; padding:4px 0; font-size:12.5px}
+  .zf-row .zf-k{font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--teal); padding-top:2px}
+  .grade{display:flex; gap:9px; margin-top:14px}
+  .grade button{flex:1; font-family:var(--sans); font-size:13px; font-weight:600; padding:9px; border-radius:9px; cursor:pointer; border:1px solid transparent; transition:filter .15s, background .15s}
+  .g-right{color:#0c1219; background:var(--teal)} .g-right:hover{filter:brightness(1.06)}
+  .g-wrong{color:var(--high); background:transparent; border-color:var(--high)} .g-wrong:hover{background:rgba(224,85,76,.1)}
+
+  .navbar{display:flex; align-items:center; gap:12px; margin-top:16px}
+  .navbar button{font-family:var(--sans); font-size:13px; font-weight:500; color:var(--text); background:var(--ink-2); border:1px solid var(--line); border-radius:10px; padding:10px 16px; cursor:pointer; transition:border-color .15s}
+  .navbar button:hover:not(:disabled){border-color:var(--teal-dim)}
+  .navbar button:disabled{opacity:.35; cursor:default}
+  .counter{margin:0 auto; font-family:var(--mono); font-size:12.5px; color:var(--text-dim); letter-spacing:.05em}
+  .hint{text-align:center; font-size:11.5px; color:var(--text-faint); margin-top:14px; font-family:var(--mono); letter-spacing:.02em}
+  .empty{text-align:center; color:var(--text-dim); padding:40px 10px; font-size:13.5px}
+
+  .modal{position:fixed; inset:0; background:rgba(6,10,14,.74); display:none; align-items:flex-start; justify-content:center; padding:36px 16px; z-index:50; overflow-y:auto}
+  .modal.open{display:flex}
+  .sheet{max-width:620px; width:100%; background:var(--ink-2); border:1px solid var(--line); border-radius:16px; padding:22px}
+  .sheet h2{font-size:16px; margin:0 0 4px; letter-spacing:-.01em}
+  .sheet .sub{font-size:12.5px; color:var(--text-dim); margin-bottom:16px}
+  .sheet h3{font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); margin:18px 0 8px}
+  .sheet ol{margin:0; padding-left:0; list-style:none}
+  .sheet ol li{display:grid; grid-template-columns:118px 1fr; gap:12px; padding:6px 0; border-bottom:1px solid var(--ink-3); font-size:13px}
+  .sheet .sk{font-family:var(--mono); font-size:11px; color:var(--teal); font-weight:600}
+  .sheet ul{margin:0; padding-left:18px; font-size:13px; color:var(--text)}
+  .sheet ul li{margin:5px 0}
+  .normwerte{font-family:var(--mono); font-size:12px; color:var(--text-dim); line-height:1.9; background:var(--ink); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+  .normwerte b{color:var(--text)}
+  .close{float:right; background:transparent; border:0; color:var(--text-dim); font-size:22px; cursor:pointer; line-height:1; margin:-4px -4px 0 0}
+  .close:hover{color:var(--text)}
+
+  @media (max-width:680px){
+    body{padding:16px 10px 50px}
+    .controls{padding:10px}
+    .po-cols{grid-template-columns:1fr; gap:0}
+    .score{margin-left:0; width:100%; order:9; justify-content:flex-end}
+    ol.steps li{grid-template-columns:84px 1fr; gap:9px}
+    .sheet ol li{grid-template-columns:96px 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <div class="mast-left">
+      <div class="logo"><span class="mark">BGA</span> Trainer</div>
+      <div class="tagline">Kenntnisprüfung · LMU München · Befundung in 6 Schritten</div>
+    </div>
+    <button class="ghost" id="schemaBtn">Schema &amp; Normwerte</button>
+  </div>
+
+  <div class="controls">
+    <div class="seg" id="tierSeg">
+      <button data-tier="all" class="on">Alle</button>
+      <button data-tier="1">Tier&nbsp;1</button>
+      <button data-tier="2">Tier&nbsp;2</button>
+      <button data-tier="3">Tier&nbsp;3</button>
+    </div>
+    <div class="seg" id="bankSeg">
+      <button data-bank="all" class="on">Beide&nbsp;Decks</button>
+      <button data-bank="kern">KP-Kern</button>
+      <button data-bank="ext">Erweiterung</button>
+    </div>
+    <select id="katSel"></select>
+    <select id="analyzerSel" title="Analyzer / Gerätelayout">
+      <option value="gen">Gerät: Generisch</option>
+      <option value="radiometer">Gerät: Radiometer (ABL)</option>
+      <option value="siemens">Gerät: Siemens (RAPIDPoint)</option>
+      <option value="roche">Gerät: Roche (cobas)</option>
+    </select>
+    <label class="switch"><input type="checkbox" id="klinikChk" checked> Klinik anzeigen</label>
+    <label class="switch"><input type="checkbox" id="flagsChk" checked> Flags anzeigen</label>
+    <button class="ghost" id="shuffleBtn">Mischen</button>
+    <div class="score">
+      Richtig&nbsp;<b id="rCount">0</b> · Falsch&nbsp;<span class="wr" id="fCount">0</span> · Bearbeitet&nbsp;<b id="doneCount">0&nbsp;/&nbsp;0</b>
+      <button class="reset" id="resetBtn" title="Sitzung zurücksetzen">↺</button>
+    </div>
+  </div>
+
+  <div class="dots" id="dots"></div>
+
+  <main id="cardHost"></main>
+
+  <div class="navbar">
+    <button id="prevBtn">← Zurück</button>
+    <div class="counter" id="counter">– / –</div>
+    <button id="nextBtn">Weiter →</button>
+  </div>
+  <div class="hint">Leertaste = aufdecken · ← → = blättern · R = richtig · F = falsch</div>
+</div>
+
+<div class="modal" id="schemaModal">
+  <div class="sheet">
+    <button class="close" id="schemaClose">×</button>
+    <h2>Lese-Schema</h2>
+    <div class="sub">Dieses Schema läuft bei <em>jeder</em> BGA in fester Reihenfolge — laut, in unter 30 Sekunden.</div>
+    <ol>
+      <li><span class="sk">1 · pH</span><span>Azidämie (&lt; 7,35) oder Alkalämie (&gt; 7,45)?</span></li>
+      <li><span class="sk">2 · Störung</span><span>Primär respiratorisch (pCO₂) oder metabolisch (HCO₃⁻ / BE)?</span></li>
+      <li><span class="sk">3 · Kompensation</span><span>Vorhanden? adäquat? Bei respiratorisch: <b>akut vs. chronisch</b>.</span></li>
+      <li><span class="sk">4 · Anionenlücke</span><span><b>IMMER</b> rechnen: Na⁺ − (Cl⁻ + HCO₃⁻), normal 8–12. Hohe AL → Delta-Delta.</span></li>
+      <li><span class="sk">5 · Oxygenierung</span><span>pO₂, SaO₂, ggf. P/F, A-aDO₂. Hypoxämie?</span></li>
+      <li><span class="sk">6 · Synthese</span><span>Störung(en) → wahrscheinlichste Ursache → <b>erster Schritt</b>.</span></li>
+    </ol>
+    <h3>Faustregeln</h3>
+    <ul>
+      <li>Respiratorisch <b>akut</b>: pH ≈ 0,08 ↓ je 10 mmHg pCO₂ ↑ &nbsp;(<b>chronisch</b> ≈ 0,03).</li>
+      <li><b>Winter</b> (metab. Azidose): erwartetes pCO₂ = 1,5 × HCO₃⁻ + 8 ± 2.</li>
+      <li>Kompensation normalisiert den pH <b>nie vollständig</b> und überkompensiert nie → sonst gemischt oder chronisch.</li>
+    </ul>
+    <h3>Normwerte (arteriell)</h3>
+    <div class="normwerte">
+      <b>pH</b> 7,35–7,45 · <b>pCO₂</b> 35–45 mmHg · <b>pO₂</b> 80–100 mmHg · <b>HCO₃⁻</b> 22–26 mmol/l · <b>BE</b> ±2 · <b>SaO₂</b> 95–99 % · <b>Laktat</b> &lt; 2,0 · <b>Na⁺</b> 135–145 · <b>K⁺</b> 3,5–5,0 · <b>Cl⁻</b> 98–107 · <b>Anionenlücke</b> 8–12 mmol/l
+    </div>
+  </div>
+</div>
+
+<script>
+/* ------- panel model (full BGA analyzer printout) ------- */
+const KATS = ['Alle Kategorien','Respiratorische Azidose','Respiratorische Alkalose','Metabolische Azidose · hohe AL','Metabolische Azidose · normale AL','Metabolische Alkalose','Gemischte Störung','Oxygenierung / Hb','Normalbefund'];
+
+function fmt(n,dec,sign){
+  let s = Number(n).toFixed(dec).replace('.', ',');
+  if(sign && n>0) s = '+'+s;
+  if(n<0) s = s.replace('-','−');
+  return s;
+}
+
+// O₂-Sättigung aus pO₂ (Severinghaus) — nur als Default, wenn der Fall keine sO₂ vorgibt
+function sO2fromPO2(p){ return (1/((23400/(Math.pow(p,3)+150*p))+1))*100; }
+
+// Default-Normalwerte für Panel-Parameter, die der Fall nicht festlegt
+const DEF = {ctHb:14.0, Ca:1.20, FCOHb:0.8, FMetHb:0.6, p50:26.7, FiO2:0.21, glc:90, lac:1.0, Na:140, K:4.2, Cl:103};
+
+// Vollständige, geordnete BGA-Tabelle: Fallwerte (v) + Overrides (o) + berechnete + Default-Normalwerte
+function buildPanel(card){
+  const v=card.v, o=card.o||{};
+  const g=(k)=> (o[k]!==undefined ? o[k] : (v[k]!==undefined ? v[k] : DEF[k]));
+  const pH=v.pH, pCO2=v.pCO2, pO2=v.pO2, HCO3=v.HCO3, BE=v.BE;
+  const FiO2=g('FiO2'), ctHb=g('ctHb'), Ca=g('Ca'), FCOHb=g('FCOHb'), FMetHb=g('FMetHb');
+  const Na=g('Na'), K=g('K'), Cl=g('Cl'), glc=g('glc'), lac=g('lac');
+  const sO2 = (v.SaO2!==undefined ? v.SaO2 : sO2fromPO2(pO2));
+  const dyN  = 100 - FCOHb - FMetHb;        // Hb-Anteil ohne CO/Met
+  const FO2Hb= (sO2/100)*dyN;               // fraktionelles Oxy-Hb
+  const FHHb = dyN - FO2Hb;                  // Desoxy-Hb
+  const Hct  = ctHb*2.94;                    // Hämatokrit ≈ Hb × 2,94
+  const ctCO2= HCO3 + 0.03*pCO2;             // Gesamt-CO₂
+  const horo = pO2/FiO2;                      // Horowitz (pO₂/FiO₂)
+  const P=[];
+  const r=(id,sec,label,unit,ref,val,lo,hi,dec,opt)=>P.push({id,sec,label,unit,ref,val,lo,hi,dec,sign:(opt&&opt.sign),fixedNorm:(opt&&opt.fixedNorm)});
+  r('pH','Blutgase','pH','','7,35–7,45',pH,7.35,7.45,2);
+  r('pCO2','Blutgase','pCO₂','mmHg','35–45',pCO2,35,45,0);
+  r('pO2','Blutgase','pO₂','mmHg','80–100',pO2,80,100,0);
+  r('ctHb','CO-Oximetrie','ctHb','g/dl','12–16',ctHb,12,16,1);
+  r('sO2','CO-Oximetrie','sO₂','%','95–99',sO2,95,99,0);
+  r('FO2Hb','CO-Oximetrie','FO₂Hb','%','94–98',FO2Hb,94,98,1);
+  r('FCOHb','CO-Oximetrie','FCOHb','%','< 1,5',FCOHb,-999,1.5,1);
+  r('FMetHb','CO-Oximetrie','FMetHb','%','< 1,5',FMetHb,-999,1.5,1);
+  r('FHHb','CO-Oximetrie','FHHb','%','1–5',FHHb,-999,5,1);
+  r('Hct','CO-Oximetrie','Hkt','%','37–50',Hct,37,50,0);
+  r('Na','Elektrolyte','Na⁺','mmol/l','135–145',Na,135,145,0);
+  r('K','Elektrolyte','K⁺','mmol/l','3,5–5,0',K,3.5,5.0,1);
+  r('Ca','Elektrolyte','Ca²⁺ (ion.)','mmol/l','1,15–1,29',Ca,1.15,1.29,2);
+  r('Cl','Elektrolyte','Cl⁻','mmol/l','98–107',Cl,98,107,0);
+  r('glc','Metabolite','Glukose','mg/dl','70–110',glc,70,110,0);
+  r('lac','Metabolite','Laktat','mmol/l','< 2,0',lac,-999,2.0,1);
+  r('HCO3','Berechnet','HCO₃⁻ (st.)','mmol/l','22–26',HCO3,22,26,0);
+  r('ctCO2','Berechnet','ctCO₂','mmol/l','23–27',ctCO2,23,27,0);
+  r('BE_B','Berechnet','BE (B)','mmol/l','−2…+2',BE,-2,2,0,{sign:true});
+  r('BE_ecf','Berechnet','BE (ecf)','mmol/l','−2…+2',BE,-2,2,0,{sign:true});
+  r('p50','Berechnet','p50','mmHg','26–28',DEF.p50,26,28,1,{fixedNorm:true});
+  r('horo','Berechnet','Horowitz (pO₂/FiO₂)','','> 400',horo,300,99999,0);
+  return P;
+}
+
+/* ------- analyzer printout profiles (same values, different layout/labels) ------- */
+const ANALYZERS = {
+  gen: {
+    name:'Generisch', title:'BLUTGASANALYSE', meta:'arteriell · 37,0 °C · FiO₂ 0,21',
+    cols:[
+      [ {h:'Blutgase', ids:['pH','pCO2','pO2']},
+        {h:'CO-Oximetrie', ids:['ctHb','sO2','FO2Hb','FCOHb','FMetHb','FHHb','Hct']} ],
+      [ {h:'Elektrolyte', ids:['Na','K','Ca','Cl']},
+        {h:'Metabolite', ids:['glc','lac']},
+        {h:'Berechnet', ids:['HCO3','ctCO2','BE_B','BE_ecf','p50','horo']} ]
+    ]
+  },
+  radiometer: {
+    name:'Radiometer (ABL-Stil)', title:'Radiometer ABL800 FLEX', meta:'Probe arteriell · 37,0 °C · FIO₂ 0,21',
+    labels:{ Na:'cNa⁺', K:'cK⁺', Ca:'cCa²⁺', Cl:'cCl⁻', glc:'cGlu', lac:'cLac', HCO3:'cHCO₃⁻(P,st)', ctCO2:'ctCO₂(P)', BE_B:'cBase(B)', BE_ecf:'cBase(Ecf)', Hct:'Hct(c)', horo:'pO₂(a)/FIO₂' },
+    cols:[
+      [ {h:'Blutgaswerte', ids:['pH','pCO2','pO2']},
+        {h:'Oximetriewerte', ids:['ctHb','Hct','sO2','FO2Hb','FCOHb','FMetHb','FHHb']} ],
+      [ {h:'Elektrolytwerte', ids:['K','Na','Ca','Cl']},
+        {h:'Metabolitwerte', ids:['glc','lac']},
+        {h:'Säure-Basen-Status', ids:['BE_ecf','BE_B','HCO3','ctCO2']},
+        {h:'Oxygenierungsstatus', ids:['p50','horo']} ]
+    ]
+  },
+  siemens: {
+    name:'Siemens (RAPIDPoint-Stil)', title:'Siemens RAPIDPoint 500', meta:'arteriell · 37,0 °C · FIO₂ 0,21',
+    labels:{ ctHb:'tHb', FO2Hb:'O₂Hb', FCOHb:'COHb', FMetHb:'MetHb', FHHb:'HHb', HCO3:'HCO₃⁻', BE_B:'BE(B)', BE_ecf:'BE(ecf)', ctCO2:'ctCO₂', horo:'pO₂/FIO₂' },
+    cols:[
+      [ {h:'Blutgase', ids:['pH','pCO2','pO2']},
+        {h:'Oximetrie', ids:['ctHb','FO2Hb','FCOHb','FMetHb','FHHb','sO2','Hct']} ],
+      [ {h:'Elektrolyte', ids:['Na','K','Ca','Cl']},
+        {h:'Metabolite', ids:['glc','lac']},
+        {h:'Berechnete Werte', ids:['HCO3','ctCO2','BE_B','BE_ecf','p50','horo']} ]
+    ]
+  },
+  roche: {
+    name:'Roche (cobas-Stil)', title:'Roche cobas b 221', meta:'arteriell · 37,0 °C · FiO₂ 0,21',
+    labels:{ Na:'cNa⁺', K:'cK⁺', Ca:'cCa²⁺', Cl:'cCl⁻', FO2Hb:'O₂Hb', FCOHb:'COHb', FMetHb:'MetHb', FHHb:'RHb', HCO3:'HCO₃⁻', BE_B:'ABE', BE_ecf:'SBE', ctCO2:'ctCO₂', horo:'Horowitz' },
+    cols:[
+      [ {h:'Blutgase', ids:['pH','pCO2','pO2']},
+        {h:'Oxymetrie', ids:['ctHb','FO2Hb','FCOHb','FMetHb','FHHb','sO2','Hct']} ],
+      [ {h:'Elektrolyte', ids:['Na','K','Ca','Cl']},
+        {h:'Metabolite', ids:['glc','lac']},
+        {h:'Säurebasenhaushalt', ids:['HCO3','BE_B','BE_ecf','ctCO2','p50','horo']} ]
+    ]
+  }
+};
+
+function buildPrintout(card){
+  const prof = ANALYZERS[analyzerProfile] || ANALYZERS.gen;
+  const P = buildPanel(card); const byId={}; P.forEach(p=>byId[p.id]=p);
+  const valid = p => p && !(p.val===null||p.val===undefined||(typeof p.val==='number'&&isNaN(p.val)));
+  const cols = prof.cols.map(col=>{
+    let rows='';
+    col.forEach(group=>{
+      const ids = group.ids.filter(id=>valid(byId[id]));
+      if(!ids.length) return;
+      rows += `<tr class="sec"><td colspan="3">${group.h}</td></tr>`;
+      ids.forEach(id=>{
+        const p=byId[id];
+        const label=(prof.labels&&prof.labels[id])||p.label;
+        let fl='norm';
+        if(!p.fixedNorm && typeof p.val==='number'){ if(p.val<p.lo) fl='low'; else if(p.val>p.hi) fl='high'; }
+        const showFl = showFlags && fl!=='norm';
+        const arrow = showFl ? (fl==='high'?'↑':'↓') : '';
+        const ab = showFl ? 'ab' : '';
+        const u = p.unit ? ` <span class="u">${p.unit}</span>` : '';
+        rows += `<tr><td class="lab">${label}</td><td class="val ${ab}">${fmt(p.val,p.dec,p.sign)}${u}${arrow?` <span class="flag">${arrow}</span>`:''}</td><td class="ref">${p.ref}</td></tr>`;
+      });
+    });
+    return `<table class="bga">${rows}</table>`;
+  }).join('');
+  return `
+        <div class="po-head">
+          <span class="po-title">${prof.title}</span>
+          <span class="po-meta">${prof.meta}</span>
+        </div>
+        ${showKlinik?`<div class="vignette">${card.vig}</div>`:''}
+        <div class="po-cols">${cols}</div>
+        ${zusatzHTML(card)}`;
+}
+/*DATA_START*/
+const DATA = [
+{id:1,tier:1,kat:'Respiratorische Azidose',
+ vig:'71 J., langjähriger Raucher (≈ 50 py). Seit Tagen zunehmende Belastungsdyspnoe, Husten mit gelblichem Auswurf. Arterielle BGA unter Raumluft.',
+ v:{pH:7.34,pCO2:62,pO2:54,HCO3:33,BE:7,SaO2:87,Na:140,K:4.2,Cl:100},
+ ph:'pH 7,34 → leichte Azidämie.',
+ st:'pCO₂ 62 ↑ bei niedrigem pH → respiratorische Azidose.',
+ ko:'HCO₃⁻ 33 ↑, BE +7 → metabolische Kompensation. pH nur leicht erniedrigt trotz stark erhöhtem pCO₂ → überwiegend chronisch (Faustregel ~0,03/10 mmHg), leichte akute Komponente bei Exazerbation.',
+ al:'AG normal → keine zusätzliche metabolische Azidose.',
+ ox:'pO₂ 54, SaO₂ 87 % → Hypoxämie → respiratorische Globalinsuffizienz (Typ II).',
+ sy:'Chronisch (teil-akut) kompensierte respiratorische Azidose mit Hypoxämie → infektexazerbierte COPD.',
+ dx:'COPD-Exazerbation — chronisch kompensierte respiratorische Azidose + Hypoxämie (Globalinsuffizienz Typ II).',
+ ac:'Kontrollierte O₂-Gabe mit Ziel-SpO₂ 88–92 %, NIV erwägen, inhalative Bronchodilatatoren (Salbutamol/Ipratropium), systemische Steroide, ggf. Antibiotikum.',
+ fa:'O₂-Falle: kein unkontrolliertes O₂ → Gefahr der CO₂-Narkose. Ziel-SpO₂ nur 88–92 %, lieber NIV als hochdosiertes O₂.',
+ nx:'„Wie behandeln Sie die respiratorische Insuffizienz? Warum kein hochdosiertes O₂? Wann NIV, wann Intubation?“',
+ zfw:'COPD mit akuter, meist infektgetriggerter Exazerbation und respiratorischer Globalinsuffizienz (Typ II).',
+ zfy:'Chronische Atemwegsobstruktion + Air-Trapping → alveoläre Hypoventilation → CO₂-Retention; renale HCO₃-Retention kompensiert chronisch.',
+ zfm:'Kontrollierte O₂ (Ziel 88–92 %), Bronchodilatatoren (Salbutamol/Ipratropium), systemische Steroide, NIV bei resp. Azidose, Antibiose bei Infektzeichen.',
+ nxa:'O₂ nur kontrolliert, weil hohe FiO₂ über Wegfall des hypoxischen Atemantriebs und den Haldane-Effekt die Hyperkapnie verstärkt (CO₂-Narkose). NIV bei pH < 7,35 mit Hyperkapnie; Intubation bei Erschöpfung, Vigilanzminderung, NIV-Versagen oder Instabilität.'},
+
+{id:2,tier:1,kat:'Respiratorische Azidose',
+ vig:'68 J., bekannte COPD GOLD III. Nach Atemwegsinfekt jetzt zunehmend somnolent, kaum erweckbar, flache Atmung, gerötetes Gesicht.',
+ v:{pH:7.26,pCO2:78,pO2:48,HCO3:34,BE:6,SaO2:80,Na:139,K:4.5,Cl:99},
+ ph:'pH 7,26 → deutliche Azidämie.',
+ st:'pCO₂ 78 ↑↑ bei niedrigem pH → respiratorische Azidose.',
+ ko:'HCO₃⁻ 34 ↑ verrät den chronischen Boden, aber pH 7,26 ist zu sauer für reine chronische Kompensation → akut dekompensiert auf chronischem Boden (acute-on-chronic).',
+ al:'AG normal → keine zusätzliche metabolische Azidose.',
+ ox:'pO₂ 48, SaO₂ 80 % → schwere Hypoxämie.',
+ sy:'Akut dekompensierte respiratorische Azidose bei COPD; Somnolenz = beginnende CO₂-Narkose.',
+ dx:'Acute-on-chronic respiratorische Azidose bei COPD — beginnende CO₂-Narkose.',
+ ac:'NIV (sofern keine KI), kontrollierte O₂-Gabe, Bronchodilatatoren/Steroide; bei Erschöpfung oder weiterer Vigilanzminderung Intubation.',
+ fa:'Somnolenz + Hyperkapnie = CO₂-Narkose. Hochdosiertes O₂ verschärft sie. Das hohe HCO₃ verrät den chronischen Boden.',
+ nx:'„Was sind NIV-Kontraindikationen? Wann intubieren Sie?“',
+ zfw:'Akute Dekompensation einer COPD auf chronischem Boden mit beginnender CO₂-Narkose.',
+ zfy:'Infekt verschlechtert die Ventilation zusätzlich → akuter pCO₂-Anstieg, den die chronische Kompensation nicht mehr abfängt → pH fällt.',
+ zfm:'Sofort NIV + kontrollierte O₂, Bronchodilatatoren/Steroide; bei NIV-Versagen oder Eintrübung Intubation; Auslöser behandeln.',
+ nxa:'NIV-KI: fehlende Schutzreflexe/Koma, Atemstillstand, hämodynamische Instabilität, schwere Agitation, Gesichtstrauma oder Erbrechen mit Aspirationsgefahr. Intubation bei NIV-Versagen, zunehmender Eintrübung, Erschöpfung oder Kreislaufinstabilität.'},
+
+{id:3,tier:1,kat:'Metabolische Azidose · hohe AL',
+ vig:'24 J., Typ-1-Diabetes. Seit 2 Tagen Polyurie, Erbrechen, Bauchschmerzen. Tiefe, schnelle Atmung (Kussmaul), Azetongeruch.',
+ v:{pH:7.15,pCO2:21,pO2:102,HCO3:7,BE:-20,Na:133,K:5.5,Cl:95,glc:490,lac:1.8},
+ ex:[{label:'Ketone (β-HB)',value:'stark erhöht',unit:'',flag:'high'}],
+ ph:'pH 7,15 → schwere Azidämie.',
+ st:'HCO₃⁻ 7 ↓↓, BE −20 bei niedrigem pH → metabolische Azidose.',
+ ko:'pCO₂ 21 ↓ (Kussmaul). Winter: erwartetes pCO₂ = 1,5 × 7 + 8 ≈ 18,5 ± 2 → adäquate respiratorische Kompensation.',
+ al:'Anionenlücke ↑↑ → High-AG-Azidose durch Ketonkörper.',
+ ox:'pO₂ 102 (Hyperventilation), SaO₂ normal → keine Hypoxämie.',
+ sy:'High-AG-Azidose + Hyperglykämie + Ketone → diabetische Ketoazidose (DKA).',
+ dx:'Diabetische Ketoazidose (DKA) — High-AG-Azidose, respiratorisch kompensiert (Kussmaul).',
+ ac:'Reihenfolge: 1) Volumen (NaCl 0,9 %), 2) Insulin-Perfusor, 3) Kalium früh substituieren (sobald K < 5,2 und Diurese). Auslöser suchen.',
+ fa:'NaBic nur bei pH < 6,9. Kalium initial normal/hoch trotz Gesamtkörperdepletion — Insulin verschiebt K⁺ nach intrazellulär → engmaschig monitoren.',
+ nx:'„Warum kein Bikarbonat? Wie managen Sie das Kalium? Flüssigkeit oder Insulin zuerst?“',
+ zfw:'Diabetische Ketoazidose — Insulinmangelkrise mit Hyperglykämie, Ketose und High-AG-Azidose.',
+ zfy:'Insulinmangel → Lipolyse → Ketonkörper (Säuren) + osmotische Diurese → Exsikkose und Elektrolytverlust.',
+ zfm:'Volumen (NaCl 0,9 %) zuerst, dann Insulin-Perfusor, Kalium früh substituieren, Auslöser suchen; engmaschiges Monitoring.',
+ nxa:'Kein Bikarbonat (außer pH < 6,9), weil es Hypokaliämie, paradoxe ZNS-Azidose und Linksverschiebung der O₂-Kurve fördert und sich die Azidose unter Insulin/Volumen selbst korrigiert. Kalium: Gesamtkörper depletiert trotz initial normalem Serum-K — Insulin senkt es weiter, daher ab K < 5,2 (und Diurese) substituieren. Flüssigkeit zuerst.'},
+
+{id:4,tier:1,kat:'Metabolische Azidose · hohe AL',
+ vig:'78 J., Fieber, Schüttelfrost, RR 85/50, Tachykardie, zunehmende Verwirrtheit. V.a. Urosepsis.',
+ v:{pH:7.28,pCO2:30,pO2:70,HCO3:14,BE:-11,lac:6.5,Na:138,K:4.4,Cl:102,SaO2:93},
+ ph:'pH 7,28 → Azidämie.',
+ st:'HCO₃⁻ 14 ↓, BE −11 → metabolische Azidose.',
+ ko:'pCO₂ 30 ↓. Winter: 1,5 × 14 + 8 = 29 ± 2 → adäquat kompensiert.',
+ al:'AG ↑; Laktat 6,5 ↑↑ erklärt die Lücke.',
+ ox:'pO₂ 70, SaO₂ 93 % → leichte Hypoxämie (pulmonaler Fokus möglich).',
+ sy:'High-AG-(Laktat-)Azidose bei Hypoperfusion → Sepsis.',
+ dx:'Laktatazidose bei Sepsis — High-AG-Azidose, respiratorisch kompensiert.',
+ ac:'Sepsis-Bündel: Blutkulturen vor Antibiose, frühe Breitband-Antibiose, Volumen (Kristalloide), Laktat-Verlauf, Fokussuche/-sanierung.',
+ fa:'Laktat ist Marker der Hypoperfusion — Therapie ist die Ursache (Perfusion, Antibiose), nicht Bikarbonat.',
+ nx:'„Was sagt Ihnen das Laktat? qSOFA / Sepsis-Definition? Was tun Sie in der ersten Stunde?“',
+ zfw:'Sepsis — lebensbedrohliche Organdysfunktion durch dysregulierte Wirtsantwort auf eine Infektion, hier mit Laktatazidose.',
+ zfy:'Infektion → Vasodilatation/Hypovolämie/Mikrozirkulationsstörung → Gewebehypoxie → anaerobe Glykolyse → Laktat ↑.',
+ zfm:'Sepsis-Bündel: Blutkulturen, frühe Breitband-Antibiose, Volumen, Vasopressoren bei Bedarf, Fokuskontrolle, Laktat-Verlauf.',
+ nxa:'Laktat ↑ zeigt Hypoperfusion und korreliert mit Schweregrad/Prognose. qSOFA (≥ 2 von: AF ≥ 22, RR syst. ≤ 100, GCS < 15) screent außerhalb der Intensiv; Sepsis = Infektion + Organdysfunktion. Erste Stunde: Kulturen, Antibiose, 30 ml/kg Kristalloide, Laktat messen, ggf. Vasopressoren.'},
+
+{id:5,tier:1,kat:'Metabolische Azidose · hohe AL',
+ vig:'80 J., bekanntes Vorhofflimmern ohne Antikoagulation. Akut einsetzender heftigster Bauchschmerz — Abdomen klinisch nur wenig druckschmerzhaft („weicher Bauch“).',
+ v:{pH:7.25,pCO2:28,pO2:88,HCO3:12,BE:-13,lac:8.2,Na:140,K:4.8,Cl:103},
+ ph:'pH 7,25 → Azidämie.',
+ st:'HCO₃⁻ 12 ↓, BE −13 → metabolische Azidose.',
+ ko:'pCO₂ 28 ↓. Winter: 1,5 × 12 + 8 = 26 ± 2 → adäquat.',
+ al:'AG ↑; Laktat 8,2 ↑↑ → High-AG-Laktatazidose.',
+ ox:'pO₂ 88 → unauffällig.',
+ sy:'VHF + heftiger Bauchschmerz + hohes Laktat bei mildem Tastbefund → akute (embolische) Mesenterialischämie.',
+ dx:'Akute Mesenterialischämie (embolisch bei VHF) — Laktatazidose.',
+ ac:'Sofortige CT-Angiographie des Abdomens, Gefäß-/Viszeralchirurgie, Antikoagulation, Volumen — zeitkritischer Notfall.',
+ fa:'VHF + Laktatazidose + Bauchschmerz = Mesenterialischämie bis zum Beweis des Gegenteils. „Symptomarmer Bauch, todkranker Patient.“',
+ nx:'„Welche Bildgebung? Warum das Missverhältnis Schmerz/Tastbefund? Therapie?“',
+ zfw:'Akute Mesenterialischämie — meist embolischer Verschluss der A. mesenterica superior (hier bei VHF).',
+ zfy:'Kardialer Embolus → akute Darmminderperfusion → ischämische Laktatazidose; früh ist nur die Mukosa betroffen → starker Schmerz bei weichem Bauch.',
+ zfm:'Notfall: CT-Angiographie, sofortige Revaskularisation, Antikoagulation, Volumen, Breitbandantibiose; Resektion nekrotischer Abschnitte.',
+ nxa:'Bildgebung der Wahl: CT-Angiographie des Abdomens. Das Missverhältnis entsteht, weil der viszerale Ischämieschmerz der peritonealen Reizung vorausgeht — Peritonismus kommt erst mit der Nekrose. Therapie: Revaskularisation + Antikoagulation, ggf. Laparotomie/Resektion.'},
+
+{id:6,tier:1,kat:'Metabolische Azidose · hohe AL',
+ vig:'74 J., Typ-2-Diabetes unter Metformin. Nach Gastroenteritis exsikkiert, jetzt zunehmende Schwäche; akut verschlechterte Nierenfunktion.',
+ v:{pH:7.18,pCO2:26,pO2:92,HCO3:10,BE:-16,lac:9.0,Na:137,K:5.6,Cl:100},
+ ex:[{label:'Kreatinin',value:'deutlich erhöht',unit:'',flag:'high'}],
+ ph:'pH 7,18 → schwere Azidämie.',
+ st:'HCO₃⁻ 10 ↓, BE −16 → metabolische Azidose.',
+ ko:'pCO₂ 26 ↓. Winter: 1,5 × 10 + 8 = 23 ± 2 → grenzwertig/adäquat.',
+ al:'AG ↑; Laktat 9,0 ↑↑ → High-AG-Laktatazidose.',
+ ox:'pO₂ 92 → unauffällig.',
+ sy:'Laktatazidose unter Metformin bei akuter Niereninsuffizienz → MALA. K⁺ ↑.',
+ dx:'Metformin-assoziierte Laktatazidose (MALA) bei akuter Niereninsuffizienz.',
+ ac:'Metformin absetzen, Volumen, AKI behandeln. Bei schwerer Azidose / Nierenversagen Hämodialyse (entfernt Metformin + korrigiert Azidose).',
+ fa:'Metformin-KI: eGFR < 30, Hypoxie, Sepsis, vor KM-Gabe → pausieren. Die AKI macht aus Metformin eine Falle.',
+ nx:'„Metformin-Kontraindikationen? Wann Dialyse? Warum ist die AKI der Schlüssel?“',
+ zfw:'Metformin-assoziierte Laktatazidose (MALA) — schwere High-AG-Laktatazidose bei gestörter Elimination.',
+ zfy:'Metformin hemmt hepatische Gluconeogenese und mitochondriale Atmung → Laktat ↑; bei AKI kumuliert es renal → Azidose.',
+ zfm:'Metformin absetzen, Volumen, AKI behandeln; bei schwerer Azidose/Nierenversagen Hämodialyse (entfernt Metformin + korrigiert Azidose).',
+ nxa:'KI: eGFR < 30, Hypoxie/Schock, Sepsis, schwere Leberinsuffizienz, vor KM-Gabe pausieren. Dialyse bei pH < 7,1, Nierenversagen oder hohem Laktat. Die AKI ist der Schlüssel, weil sie die Elimination blockiert → Akkumulation → Azidose.'},
+
+{id:7,tier:1,kat:'Respiratorische Alkalose',
+ vig:'58 J., plötzliche Dyspnoe und stechender Thoraxschmerz, Tachykardie. Z.n. Langstreckenflug; linkes Bein einseitig geschwollen.',
+ v:{pH:7.49,pCO2:30,pO2:62,HCO3:23,BE:-1,SaO2:90,Na:140,K:4.0,Cl:105},
+ ph:'pH 7,49 → Alkalämie.',
+ st:'pCO₂ 30 ↓ bei hohem pH → respiratorische Alkalose.',
+ ko:'HCO₃⁻ 23 normal → akut (noch keine metabolische Kompensation).',
+ al:'AG normal.',
+ ox:'pO₂ 62, SaO₂ 90 % → Hypoxämie. Hypoxämie UND Hypokapnie gleichzeitig + erhöhte A-aDO₂ = klassisch.',
+ sy:'Akute respiratorische Alkalose mit Hypoxämie + Tachypnoe → Lungenembolie.',
+ dx:'Lungenembolie — akute respiratorische Alkalose mit Hypoxämie.',
+ ac:'Wells-Score → D-Dimer bzw. CT-Angiographie; therapeutische Antikoagulation. Bei hämodynamischer Instabilität Lyse erwägen.',
+ fa:'Hypoxämie UND Hypokapnie zusammen → an LAE denken, nicht nur „hyperventiliert“. Normales pO₂ schließt eine LAE nicht aus.',
+ nx:'„Wells-Score? Wann CT, wann D-Dimer? Wann systemische Lyse?“',
+ zfw:'Lungenembolie — Verschluss von Pulmonalarterien durch (meist) tiefe Venenthrombose-Embolie.',
+ zfy:'Thrombus aus Bein-/Beckenvenen embolisiert → Verlegung der Lungenstrombahn → Totraumventilation, Hypoxämie, Hyperventilation.',
+ zfm:'Risikostratifizierung (hämodynamisch?), Antikoagulation (NMH/DOAK), bei Hochrisiko systemische Lyse; O₂/Kreislauf supportiv.',
+ nxa:'Wells schätzt die Vortestwahrscheinlichkeit (TVT-Zeichen, Tachykardie, Immobilisation/OP, frühere VTE, Hämoptyse, Malignom, LAE wahrscheinlichste Diagnose). Niedrig/intermediär → D-Dimer (negativ schließt aus); hoch oder D-Dimer positiv → CT-Angiographie. Systemische Lyse nur bei Hochrisiko-LAE (Schock/Hypotonie).'},
+
+{id:8,tier:1,kat:'Respiratorische Alkalose',
+ vig:'22 J., akute Panikattacke. Kribbeln um den Mund und in den Händen, Pfötchenstellung. Keine kardiopulmonale Vorerkrankung.',
+ v:{pH:7.52,pCO2:28,pO2:108,HCO3:22,BE:-1,SaO2:99,Na:140,K:3.6,Cl:106},
+ o:{Ca:1.05},
+ ph:'pH 7,52 → Alkalämie.',
+ st:'pCO₂ 28 ↓ bei hohem pH → respiratorische Alkalose.',
+ ko:'HCO₃⁻ 22 normal → akut.',
+ al:'AG normal.',
+ ox:'pO₂ 108, SaO₂ 99 % → KEINE Hypoxämie (wichtige Abgrenzung zur LAE).',
+ sy:'Akute respiratorische Alkalose ohne Hypoxämie bei psychogener Hyperventilation. Parästhesien/Tetanie durch Abfall des ionisierten Calciums.',
+ dx:'Psychogene Hyperventilation — respiratorische Alkalose, Tetanie durch Alkalose.',
+ ac:'Beruhigung, ruhige Atemführung/Coaching (CO₂-Rückatmung in den Beutel umstritten/zurückhaltend); organische Ursachen (LAE, Sepsis) zuerst ausschließen.',
+ fa:'pO₂ normal/hoch + keine Risikofaktoren → eher psychogen. Tetanie = Alkalose-Effekt auf ionisiertes Ca, nicht absolute Hypokalzämie.',
+ nx:'„Woher die Parästhesien? Wie grenzen Sie gegen die LAE ab?“',
+ zfw:'Psychogene Hyperventilation mit respiratorischer Alkalose und Tetanie (Hyperventilationssyndrom).',
+ zfy:'Angst → Hyperventilation → pCO₂ ↓ → Alkalose → vermehrte Ca²⁺-Bindung an Albumin → ionisiertes Ca²⁺ ↓ → neuromuskuläre Übererregbarkeit.',
+ zfm:'Beruhigung und Atemführung; organische Ursachen ausschließen; keine Routine-Tütenrückatmung (Hypoxie-Risiko).',
+ nxa:'Die Parästhesien/Pfötchenstellung entstehen durch das alkalosebedingt erniedrigte ionisierte Calcium, nicht durch absoluten Ca-Mangel. Abgrenzung zur LAE: hier pO₂ normal/hoch, keine Hypoxämie, keine Risikofaktoren — bei LAE Hypoxämie + erhöhte A-aDO₂. Im Zweifel LAE/Sepsis zuerst ausschließen.'},
+
+{id:9,tier:1,kat:'Metabolische Azidose · hohe AL',
+ vig:'66 J., bekannte chronische Niereninsuffizienz (Diabetes/Hypertonie). Zunehmende Müdigkeit, Übelkeit, jetzt oligurisch.',
+ v:{pH:7.29,pCO2:30,pO2:90,HCO3:14,BE:-11,Na:138,K:5.8,Cl:100},
+ ex:[{label:'Kreatinin',value:'stark erhöht',unit:'',flag:'high'}],
+ ph:'pH 7,29 → Azidämie.',
+ st:'HCO₃⁻ 14 ↓, BE −11 → metabolische Azidose.',
+ ko:'pCO₂ 30 ↓. Winter: 1,5 × 14 + 8 = 29 ± 2 → adäquat.',
+ al:'AG ↑ → retinierte Anionen (Sulfat, Phosphat, organische Säuren).',
+ ox:'pO₂ 90 → unauffällig.',
+ sy:'Urämische High-AG-Azidose bei (akut-auf-chronischer) Niereninsuffizienz mit Hyperkaliämie (K⁺ 5,8).',
+ dx:'Urämische High-AG-Azidose bei Niereninsuffizienz + Hyperkaliämie.',
+ ac:'Hyperkaliämie ist die akute Gefahr → sofort EKG; Therapie: Calciumglukonat (Membranstabilisierung), Glukose-Insulin, ggf. Salbutamol; Dialyse-Indikation prüfen.',
+ fa:'Akute Lebensgefahr ist die Hyperkaliämie → EKG + sofortige Therapie. Dialyse-Indikationen (AEIOU) kennen.',
+ nx:'„Dialyse-Indikationen? EKG-Zeichen der Hyperkaliämie? Akut vs. chronisch?“',
+ zfw:'Urämische metabolische Azidose bei (akut-auf-chronischer) Niereninsuffizienz mit Hyperkaliämie.',
+ zfy:'GFR-Abfall → verminderte Säure-/Anionen- und Kaliumausscheidung → Retention von Säuren (High-AG) und K⁺.',
+ zfm:'Hyperkaliämie sofort behandeln (Calcium, Glukose-Insulin, ggf. Salbutamol); Azidose ausgleichen; Dialyse nach Indikation; Grunderkrankung behandeln.',
+ nxa:'Dialyse-Indikationen (AEIOU): therapierefraktäre Azidose, Elektrolyte (Hyperkaliämie), Intoxikation, Overload (Lungenödem), Urämie (Perikarditis/Enzephalopathie). EKG bei Hyperkaliämie: hohe spitze T-Wellen → P-Abflachung/PQ-Verlängerung → QRS-Verbreiterung → Kammerflimmern. Für chronisch sprechen Anämie, kleine Nieren, sekundärer Hyperparathyreoidismus.'},
+
+{id:10,tier:1,kat:'Metabolische Azidose · hohe AL',
+ vig:'19 J., Erstmanifestation Diabetes. Wochenlanger Gewichtsverlust und Polydipsie, jetzt Kussmaul-Atmung und zunehmende Eintrübung.',
+ v:{pH:7.05,pCO2:18,pO2:105,HCO3:5,BE:-24,Na:130,K:5.2,Cl:94,glc:620},
+ ex:[{label:'Ketone (β-HB)',value:'massiv erhöht',unit:'',flag:'high'}],
+ ph:'pH 7,05 → lebensbedrohliche Azidämie.',
+ st:'HCO₃⁻ 5 ↓↓, BE −24 → schwere metabolische Azidose.',
+ ko:'pCO₂ 18 ↓↓. Winter: 1,5 × 5 + 8 ≈ 15,5 ± 2 → maximale respiratorische Kompensation (Kussmaul).',
+ al:'AG ↑↑ → schwere High-AG-Ketoazidose.',
+ ox:'pO₂ 105 (Hyperventilation) → keine Hypoxämie.',
+ sy:'Schwere DKA bei Erstmanifestation. Na⁺ 130 = Pseudohyponatriämie bei Hyperglykämie (für Glukose korrigieren → real normal).',
+ dx:'Schwere DKA (Erstmanifestation) — Pseudohyponatriämie bei Hyperglykämie.',
+ ac:'Volumen + Insulin-Perfusor + frühe Kaliumsubstitution; pH 7,05 ist > 6,9 → KEIN Bikarbonat. Intensivüberwachung.',
+ fa:'Natrium für die Glukose korrigieren (+ ~2 mmol je 100 mg/dl über 100). Bikarbonat erst bei pH < 6,9.',
+ nx:'„Korrigieren Sie das Natrium? Ab welchem pH Bikarbonat?“',
+ zfw:'Schwere DKA bei Erstmanifestation eines Typ-1-Diabetes mit Pseudohyponatriämie.',
+ zfy:'Insulinmangel → Hyperglykämie + Ketoazidose; Glukose zieht osmotisch Wasser nach intravasal → Verdünnungs-(Pseudo-)Hyponatriämie.',
+ zfm:'Volumen + Insulin-Perfusor + frühe Kaliumsubstitution; kein Bikarbonat (pH > 6,9); Intensivüberwachung, langsame Korrektur.',
+ nxa:'Ja — das Natrium für die Hyperglykämie korrigieren: +1,6 mmol/l je 100 mg/dl Glukose über 100; korrigiert liegt es hier normal. Bikarbonat erst bei pH < 6,9.'},
+
+{id:11,tier:1,kat:'Respiratorische Azidose',
+ vig:'64 J., stabile COPD, ambulant. BGA in Ruhe unter Raumluft. Lungenfunktion: FEV₁/FVC < 70 %, nicht reversibel.',
+ v:{pH:7.38,pCO2:55,pO2:60,HCO3:32,BE:6,SaO2:90,Na:141,K:4.3,Cl:101},
+ ph:'pH 7,38 → low-normal.',
+ st:'pCO₂ 55 ↑ → respiratorische Azidose.',
+ ko:'HCO₃⁻ 32 ↑, BE +6, pH (fast) normal → vollständig chronisch kompensiert.',
+ al:'AG normal.',
+ ox:'pO₂ 60, SaO₂ 90 % → chronische Hypoxämie.',
+ sy:'Chronisch kompensierte respiratorische Azidose (Globalinsuffizienz Typ II) bei COPD. BGA ↔ LuFu: obstruktive, nicht reversible Ventilationsstörung.',
+ dx:'Stabile COPD — chronisch kompensierte respiratorische Azidose (Typ-II-Insuffizienz).',
+ ac:'Langzeit-O₂-Therapie (LTOT) prüfen: Indikation bei pO₂ ≤ 55 mmHg, bzw. ≤ 60 mmHg mit Cor pulmonale/Polyglobulie. Inhalativa optimieren, Reha.',
+ fa:'LTOT-Indikation und Ziel-SpO₂ 88–92 % kennen. BGA + LuFu zusammen lesen.',
+ nx:'„BGA und LuFu zusammen — was sehen Sie? LTOT-Indikation? Ziel-SpO₂?“',
+ zfw:'Stabile COPD mit chronisch kompensierter respiratorischer Azidose (Typ-II-Insuffizienz).',
+ zfy:'Fortgeschrittene Obstruktion → chronische alveoläre Hypoventilation → kompensierte Hyperkapnie und chronische Hypoxämie.',
+ zfm:'Inhalative Therapie optimieren, Reha, Impfungen, Rauchstopp; Langzeit-O₂-Therapie bei Indikation.',
+ nxa:'BGA (kompensierte resp. Azidose, Hypoxämie) + LuFu (FEV₁/FVC < 70 %, nicht reversibel) = obstruktive Ventilationsstörung mit Typ-II-Insuffizienz. LTOT-Indikation: pO₂ ≤ 55 mmHg in Ruhe, bzw. ≤ 60 mmHg mit Cor pulmonale/Polyglobulie (≥ 15–16 h/Tag). Ziel-SpO₂ 88–92 %.'},
+
+{id:12,tier:2,kat:'Metabolische Alkalose',
+ vig:'45 J., seit Tagen rezidivierendes Erbrechen (z.B. bei Magenausgangsstenose). Exsikkose, Muskelschwäche.',
+ v:{pH:7.52,pCO2:48,pO2:80,HCO3:38,BE:13,Na:138,K:3.0,Cl:88},
+ ph:'pH 7,52 → Alkalämie.',
+ st:'HCO₃⁻ 38 ↑, BE +13 bei hohem pH → metabolische Alkalose.',
+ ko:'pCO₂ 48 ↑ → kompensatorische Hypoventilation (adäquat).',
+ al:'AG normal.',
+ ox:'pO₂ 80 → unauffällig.',
+ sy:'Hypochlorämische (Cl⁻ 88), hypokaliämische (K⁺ 3,0) metabolische Alkalose durch Verlust von HCl + K⁺ beim Erbrechen → chloridsensitiv.',
+ dx:'Metabolische Alkalose bei Erbrechen — hypochlorämisch, hypokaliämisch (chloridsensitiv).',
+ ac:'Volumen + NaCl 0,9 % (Chlorid ersetzen!), Kalium substituieren, Ursache (Erbrechen) behandeln.',
+ fa:'Chloridsensitiv (Urin-Cl⁻ < 20) → NaCl korrigiert. Kalium nicht vergessen.',
+ nx:'„Chloridsensitiv vs. -resistent? Warum NaCl? Bedeutung des Urin-Chlorids?“',
+ zfw:'Hypochlorämische, hypokaliämische metabolische Alkalose durch Erbrechen (chloridsensitiv).',
+ zfy:'Verlust von Magensäure (HCl) und K⁺ → HCO₃-Überschuss; der Volumenmangel hält die Alkalose über Aldosteron aufrecht.',
+ zfm:'Volumen + NaCl 0,9 % (Chlorid!), Kalium substituieren, Ursache behandeln; ggf. PPI.',
+ nxa:'Chloridsensitiv (Urin-Cl⁻ < 20, z. B. Erbrechen, Diuretika) spricht auf NaCl an; chloridresistent (Urin-Cl⁻ > 20, z. B. Conn) nicht. NaCl ersetzt Chlorid und Volumen → die Niere kann HCO₃ wieder ausscheiden. Das Urin-Chlorid unterscheidet beide Gruppen.'},
+
+{id:13,tier:2,kat:'Metabolische Alkalose',
+ vig:'52 J., therapierefraktäre Hypertonie. Hypokaliämie ohne Diuretika, Muskelschwäche, Krämpfe.',
+ v:{pH:7.49,pCO2:46,pO2:88,HCO3:34,BE:9,Na:144,K:2.9,Cl:98},
+ ph:'pH 7,49 → Alkalämie.',
+ st:'HCO₃⁻ 34 ↑, BE +9 → metabolische Alkalose.',
+ ko:'pCO₂ 46 ↑ → adäquate respiratorische Kompensation.',
+ al:'AG normal.',
+ ox:'pO₂ 88 → unauffällig.',
+ sy:'Metabolische Alkalose + Hypokaliämie (K⁺ 2,9) + therapierefraktäre Hypertonie → primärer Hyperaldosteronismus (Conn) → chloridresistent.',
+ dx:'Primärer Hyperaldosteronismus (Conn) — metabolische Alkalose mit Hypokaliämie.',
+ ac:'Aldosteron-Renin-Quotient (ARR), Bestätigungstest, NN-Bildgebung; Therapie mit Aldosteron-Antagonist (Spironolacton/Eplerenon); Kalium.',
+ fa:'Chloridresistent (Urin-Cl⁻ > 20) → NaCl korrigiert NICHT. Conn = sekundäre Hypertonie-Ursache. Eplerenon = selektiver, nebenwirkungsärmer als Spironolacton.',
+ nx:'„ARR? Was heißt chloridresistent therapeutisch? Eplerenon vs. Spironolacton?“',
+ zfw:'Primärer Hyperaldosteronismus (Conn) — autonome Aldosteronüberproduktion mit Hypertonie, Hypokaliämie und Alkalose.',
+ zfy:'Aldosteron ↑ → renale Na⁺-Retention bei K⁺-/H⁺-Verlust → Hypertonie, Hypokaliämie, metabolische Alkalose; Renin supprimiert.',
+ zfm:'Bestätigung (ARR, Bestätigungstest), NN-CT/Venenkatheter; Adenom → OP, Hyperplasie → Aldosteron-Antagonist; Kalium.',
+ nxa:'ARR = Aldosteron-Renin-Quotient (Aldosteron ↑ bei supprimiertem Renin). Chloridresistent heißt, NaCl korrigiert die Alkalose NICHT — man muss die Aldosteronwirkung blockieren. Eplerenon ist selektiver und hat weniger antiandrogene Nebenwirkungen (Gynäkomastie) als Spironolacton, ist aber teurer/kürzer wirksam.'},
+
+{id:14,tier:2,kat:'Metabolische Azidose · normale AL',
+ vig:'34 J., seit Tagen schwere wässrige Diarrhö (z.B. nach Tropenreise). Exsikkose.',
+ v:{pH:7.30,pCO2:30,pO2:95,HCO3:14,BE:-10,Na:138,K:3.2,Cl:114},
+ ph:'pH 7,30 → Azidämie.',
+ st:'HCO₃⁻ 14 ↓, BE −10 → metabolische Azidose.',
+ ko:'pCO₂ 30 ↓. Winter: 1,5 × 14 + 8 = 29 ± 2 → adäquat.',
+ al:'AG NORMAL trotz Azidose → hyperchlorämisch (Cl⁻ 114 ↑). Das ist der entscheidende Unterschied zur High-AG-Azidose.',
+ ox:'pO₂ 95 → unauffällig.',
+ sy:'Normale-AL-(hyperchlorämische) metabolische Azidose durch enteralen Bikarbonatverlust → Diarrhö. K⁺ ↓.',
+ dx:'Diarrhö — normale-AL- (hyperchlorämische) metabolische Azidose.',
+ ac:'Rehydratation, Kalium ersetzen, Ursache behandeln.',
+ fa:'Anionenlücke NORMAL → grenzt gegen High-AG ab. DDx normale AL: Diarrhö, RTA, Acetazolamid. Urin-Anionenlücke unterscheidet GI- (negativ) von renalem Verlust (positiv).',
+ nx:'„Warum ist die Anionenlücke normal? DDx? Urin-Anionenlücke?“',
+ zfw:'Normale-AL- (hyperchlorämische) metabolische Azidose durch Diarrhö (enteraler Bikarbonatverlust).',
+ zfy:'Verlust HCO₃-reichen Darmsekrets → HCO₃ ↓; die Niere retiniert kompensatorisch Chlorid → hyperchlorämisch, AG normal.',
+ zfm:'Rehydratation, Kaliumersatz, Ursache behandeln.',
+ nxa:'Die AG bleibt normal, weil das verlorene HCO₃ durch Cl⁻ ersetzt wird (kein neues Anion). DDx normale-AL-Azidose: Diarrhö, RTA, Acetazolamid, Ureterosigmoidostomie. Urin-Anionenlücke (Na+K−Cl): negativ → GI-Verlust; positiv → renaler Defekt (RTA).'},
+
+{id:15,tier:2,kat:'Metabolische Azidose · normale AL',
+ vig:'40 J., seit Längerem Schwäche, rezidivierende Nierensteine/Nephrokalzinose. Chronische, normale-AL-Azidose.',
+ v:{pH:7.31,pCO2:31,pO2:92,HCO3:15,BE:-9,Na:139,K:3.0,Cl:113},
+ ex:[{label:'Urin-pH',value:'inadäquat hoch (> 5,5)',unit:'',flag:'high'}],
+ ph:'pH 7,31 → Azidämie.',
+ st:'HCO₃⁻ 15 ↓ → metabolische Azidose.',
+ ko:'pCO₂ 31 ↓ → adäquat.',
+ al:'AG normal → hyperchlorämisch (Cl⁻ 113 ↑).',
+ ox:'pO₂ 92 → unauffällig.',
+ sy:'Normale-AL-Azidose + inadäquat hoher Urin-pH + Hypokaliämie → renal-tubuläre Azidose (distal, Typ 1).',
+ dx:'Renal-tubuläre Azidose (distal) — normale-AL-Azidose, Hypokaliämie.',
+ ac:'Bikarbonat-/Citrat-Substitution, Kalium; Ursachenabklärung.',
+ fa:'Hier zählt nur das Prinzip: normale AL + Niere → RTA. (Tiefe Subtypisierung ist für die KP nicht das Ziel.)',
+ nx:'„Wie unterscheiden Sie renale von GI-bedingter normale-AL-Azidose?“',
+ zfw:'Renal-tubuläre Azidose (distal, Typ 1) — normale-AL-Azidose durch gestörte renale H⁺-Ausscheidung.',
+ zfy:'Der distale Tubulus kann H⁺ nicht ausreichend sezernieren → Säureretention, inadäquat hoher Urin-pH, Hypokaliämie, Nephrokalzinose.',
+ zfm:'Alkali-/Citrat-Substitution, Kalium; Ursachenabklärung.',
+ nxa:'Über die Urin-Anionenlücke (Na+K−Cl): bei GI-Verlust scheidet die Niere NH₄Cl aus → UAG negativ; bei RTA ist die NH₄⁺-Ausscheidung gestört → UAG positiv. Zusätzlich spricht ein inadäquat hoher Urin-pH (> 5,5 trotz Azidose) für eine distale RTA.'},
+
+{id:16,tier:2,kat:'Respiratorische Azidose',
+ vig:'28 J., bewusstlos aufgefunden. Stecknadelpupillen (Miosis), Atemfrequenz 6/min, Einstichstellen am Arm.',
+ v:{pH:7.22,pCO2:70,pO2:55,HCO3:26,BE:1,SaO2:82,Na:140,K:4.2,Cl:102},
+ ph:'pH 7,22 → Azidämie.',
+ st:'pCO₂ 70 ↑↑ bei niedrigem pH → respiratorische Azidose.',
+ ko:'HCO₃⁻ 26 normal, BE +1 → noch keine metabolische Kompensation → AKUT.',
+ al:'AG normal.',
+ ox:'pO₂ 55, SaO₂ 82 % → Hypoxämie durch Hypoventilation.',
+ sy:'Akute respiratorische Azidose durch Hypoventilation; Miosis + Bradypnoe → Opioidintoxikation.',
+ dx:'Opioidintoxikation — akute respiratorische Azidose (HCO₃ normal = akut).',
+ ac:'Naloxon titriert (Antidot), Atemwege/Beatmung sichern, Monitoring.',
+ fa:'HCO₃ normal trotz hohem pCO₂ → akut (vs. chronisch hoch). Naloxon wirkt kürzer als viele Opioide → Reintoxikation möglich, nachüberwachen.',
+ nx:'„Akut oder chronisch — woran erkennen Sie das? Antidot? Warum nachüberwachen?“',
+ zfw:'Opioidintoxikation mit akuter respiratorischer Azidose durch Hypoventilation.',
+ zfy:'Opioide dämpfen das zentrale Atemzentrum → Bradypnoe/Hypoventilation → akuter pCO₂-Anstieg (noch keine renale Kompensation).',
+ zfm:'Atemwege/Beatmung sichern, Naloxon titriert, Monitoring; Begleitintoxikation bedenken.',
+ nxa:'Akut erkennbar am normalen HCO₃ trotz hohem pCO₂ (renale Kompensation braucht Tage; chronisch wäre HCO₃ ↑). Antidot: Naloxon (titriert). Nachüberwachen, weil Naloxon kürzer wirkt als die meisten Opioide → Rebound-Atemdepression möglich.'},
+
+{id:17,tier:2,kat:'Gemischte Störung',
+ vig:'70 J., bekannte COPD. Zusätzlich seit 2 Tagen heftiges Erbrechen bei Gastroenteritis.',
+ v:{pH:7.44,pCO2:60,pO2:62,HCO3:40,BE:14,SaO2:90,Na:140,K:3.1,Cl:90},
+ ph:'pH 7,44 → (fast) normal — bei diesen Werten verdächtig!',
+ st:'pCO₂ 60 ↑ → respiratorische Azidose-Komponente.',
+ ko:'HCO₃⁻ 40 ↑↑ ist zu hoch für die reine Kompensation einer respiratorischen Azidose → zusätzlich metabolische Alkalose.',
+ al:'AG normal. Hypochlorämie (Cl⁻ 90) + Hypokaliämie (K⁺ 3,1) bestätigen die Alkalose-Komponente (Erbrechen).',
+ ox:'pO₂ 62, SaO₂ 90 % → Hypoxämie.',
+ sy:'Gemischte Störung: chronische respiratorische Azidose (COPD) + metabolische Alkalose (Erbrechen). Normaler pH bei entgleistem pCO₂ UND überhöhtem HCO₃ = Hinweis.',
+ dx:'Gemischt: respiratorische Azidose (COPD) + metabolische Alkalose (Erbrechen).',
+ ac:'Beide adressieren: Volumen/Chlorid/Kalium für die Alkalose + COPD-Therapie. Cave: Alkalose dämpft den Atemantrieb zusätzlich.',
+ fa:'Normaler pH ≠ „alles in Ordnung“. Kompensation normalisiert den pH nie vollständig und überkompensiert nie → normaler pH bei zwei Entgleisungen = gemischt.',
+ nx:'„Warum ist der normale pH verdächtig? Wie erkennen Sie die gemischte Störung?“',
+ zfw:'Gemischte Störung — chronische respiratorische Azidose (COPD) + metabolische Alkalose (Erbrechen).',
+ zfy:'COPD hält das pCO₂ hoch; Erbrechen erzeugt zusätzlich eine HCO₃-Überschuss-Alkalose → beide Effekte heben den pH-Ausschlag auf.',
+ zfm:'Beide Komponenten: Volumen/Chlorid/Kalium für die Alkalose + COPD-Therapie; Atemantrieb beachten.',
+ nxa:'Ein normaler pH ist verdächtig, weil pCO₂ UND HCO₃ deutlich entgleist sind — reine Kompensation normalisiert den pH nie vollständig und überkompensiert nie. Erkennen: primäre Störung bestimmen, erwartete Kompensation berechnen — passt das HCO₃ nicht (hier zu hoch), liegt eine zweite Störung vor.'},
+
+{id:18,tier:2,kat:'Gemischte Störung',
+ vig:'32 J., nach ASS-Überdosierung. Ohrensausen (Tinnitus), Hyperventilation, Übelkeit, innere Unruhe.',
+ v:{pH:7.40,pCO2:22,pO2:105,HCO3:13,BE:-10,Na:140,K:3.8,Cl:102,lac:2.5},
+ ph:'pH 7,40 → normal — bei diesen Extremwerten verdächtig auf gemischte Störung.',
+ st:'Zwei gegenläufige Störungen: pCO₂ 22 ↓↓ → respiratorische Alkalose; HCO₃⁻ 13 ↓ → metabolische Azidose.',
+ ko:'Winter für HCO₃ 13: 1,5 × 13 + 8 = 27,5 ± 2 → erwartetes pCO₂ ~25–30. Gemessen 22 ist NIEDRIGER → eigenständige respiratorische Alkalose, keine reine Kompensation.',
+ al:'AG ↑ → High-AG-metabolische Azidose.',
+ ox:'pO₂ 105 → keine Hypoxämie.',
+ sy:'Salizylat stimuliert das Atemzentrum (respiratorische Alkalose) UND erzeugt eine High-AG-Azidose → klassische gleichzeitige Doppelstörung; pH normal, weil sich beide aufheben.',
+ dx:'Salizylatintoxikation — gemischt: respiratorische Alkalose + High-AG-Azidose.',
+ ac:'Salizylatspiegel, Volumen, Urin-Alkalisierung mit NaBic (fördert Ausscheidung), Glukose; bei schwerer Intoxikation Hämodialyse; Giftnotruf.',
+ fa:'Das pCO₂ unter dem Winter-Erwartungswert beweist die zusätzliche respiratorische Alkalose. Delta-Delta entlarvt die gemischte Störung.',
+ nx:'„Welche zwei Störungen liegen vor? Wie beweisen Sie das rechnerisch?“',
+ zfw:'Salizylatintoxikation mit gemischter Störung — respiratorische Alkalose + High-AG-Azidose gleichzeitig.',
+ zfy:'Salizylat stimuliert direkt das Atemzentrum (Hyperventilation) und entkoppelt die oxidative Phosphorylierung (organische Säuren/Laktat).',
+ zfm:'Salizylatspiegel, Volumen, Urin-Alkalisierung (NaBic), Glukose; bei schwerer Intoxikation Hämodialyse; Giftnotruf.',
+ nxa:'Zwei Störungen: respiratorische Alkalose (pCO₂ ↓↓) + High-AG-Azidose. Rechnerisch: das gemessene pCO₂ (22) liegt unter dem per Winter erwarteten Wert (1,5 × 13 + 8 ≈ 27,5 ± 2) → eigenständige respiratorische Alkalose; zusätzlich Delta-Delta auffällig.'},
+
+{id:19,tier:3,kat:'Oxygenierung / Hb',
+ vig:'40 J., im Winter aus Wohnung mit defekter Gastherme gerettet (mehrere Betroffene). Kopfschmerz, Schwindel, auffallend „rosige“ Haut.',
+ v:{pH:7.34,pCO2:34,pO2:95,HCO3:18,BE:-6,SaO2:97,lac:4.0,Na:140,K:4.1,Cl:105},
+ o:{FCOHb:28},
+ ph:'pH 7,34 → leichte Azidämie.',
+ st:'HCO₃⁻ 18 ↓, BE −6 → metabolische Azidose.',
+ ko:'pCO₂ 34 ↓ → respiratorische Kompensation.',
+ al:'AG ↑; Laktat 4,0 ↑ → Gewebehypoxie.',
+ ox:'Diskrepanz: pO₂ 95 NORMAL und sO₂ scheinbar ~97 %, ABER FCOHb 28 % ↑↑ und FO₂Hb dadurch erniedrigt → der gelöste O₂ täuscht, der Sauerstofftransport ist blockiert.',
+ sy:'CO-Intoxikation: pO₂ normal, Pulsoxymetrie täuschend normal, FCOHb hoch (FO₂Hb erniedrigt), Laktatazidose durch Gewebehypoxie.',
+ dx:'CO-Intoxikation — SaO₂-Diskrepanz, Laktatazidose durch Gewebehypoxie.',
+ ac:'Sofort 100 % O₂ über Reservoirmaske; CO-Hb messen (CO-Oxymetrie); hyperbare O₂-Therapie bei schwerer Intoxikation, neurologischen Symptomen oder Schwangerschaft.',
+ fa:'Pulsoxymetrie unterscheidet O₂-Hb nicht von CO-Hb → täuschend „normale“ SpO₂. pO₂ misst nur den gelösten O₂, nicht den Transport.',
+ nx:'„Warum ist die SpO₂ unzuverlässig? Therapie? Wann hyperbare O₂?“',
+ zfw:'Kohlenmonoxid-Intoxikation — funktionelle Hypoxie durch CO-Hb bei normalem pO₂.',
+ zfy:'CO bindet ~250× stärker als O₂ an Hämoglobin → CO-Hb ↑, O₂-Transportkapazität ↓ und Linksverschiebung der O₂-Kurve → Gewebehypoxie → Laktatazidose.',
+ zfm:'Sofort 100 % O₂ (Reservoirmaske), CO-Hb messen (CO-Oxymetrie), hyperbare O₂ bei schweren Fällen; von der Quelle entfernen.',
+ nxa:'Die Pulsoxymetrie unterscheidet O₂-Hb nicht von CO-Hb und zeigt fälschlich normale Werte (pO₂ misst nur den gelösten O₂). Therapie: hochdosiertes O₂ verkürzt die CO-Halbwertszeit. Hyperbare O₂ bei Bewusstlosigkeit/neurologischen Symptomen, sehr hohem CO-Hb, Schwangerschaft oder kardialer Ischämie.'},
+
+{id:20,tier:3,kat:'Respiratorische Alkalose',
+ vig:'55 J., Leberzirrhose (Child B). Chronische Hyperventilation, leicht belastungsdyspnoeisch.',
+ v:{pH:7.46,pCO2:30,pO2:75,HCO3:21,BE:-2,SaO2:93,Na:134,K:3.8,Cl:106},
+ ph:'pH 7,46 → leichte Alkalämie.',
+ st:'pCO₂ 30 ↓ bei hohem pH → respiratorische Alkalose.',
+ ko:'HCO₃⁻ 21 ↓ → metabolische Kompensation vorhanden → CHRONISCH (akute respiratorische Alkalose hätte normales HCO₃).',
+ al:'AG normal.',
+ ox:'pO₂ 75 → leichte Hypoxämie (an hepatopulmonales Syndrom denken).',
+ sy:'Chronische (kompensierte) respiratorische Alkalose bei Leberzirrhose. Auch typisch bei Schwangerschaft und Höhenaufenthalt.',
+ dx:'Chronische respiratorische Alkalose (Leberzirrhose) — metabolisch kompensiert.',
+ ac:'Grunderkrankung behandeln; bei Zirrhose + Hypoxämie an hepatopulmonales Syndrom denken.',
+ fa:'Akut vs. chronisch am HCO₃: akut normal, chronisch erniedrigt (renale Kompensation). pH ↑ (nicht ↓ wie bei metabolischer Azidose).',
+ nx:'„Akute vs. chronische respiratorische Alkalose — woran am HCO₃? Ursachen?“',
+ zfw:'Chronische (kompensierte) respiratorische Alkalose, hier bei Leberzirrhose.',
+ zfy:'Zirrhose → chronische Hyperventilation (u. a. Progesteron, Ammoniak, pulmonale Shunts) → pCO₂ ↓; renale HCO₃-Ausscheidung kompensiert.',
+ zfm:'Grunderkrankung behandeln; bei Hypoxämie an hepatopulmonales Syndrom denken.',
+ nxa:'Am HCO₃: akut ist es normal (renale Kompensation braucht 1–2 Tage), chronisch kompensatorisch erniedrigt. Ursachen chronischer resp. Alkalose: Schwangerschaft, Leberzirrhose, Höhenaufenthalt, chronische Lungenerkrankungen, zentrale Hyperventilation.'},
+
+{id:21,tier:3,kat:'Respiratorische Azidose',
+ vig:'58 J., Adipositas permagna (BMI 46). Tagesmüdigkeit, morgendliche Kopfschmerzen, lautes Schnarchen. Keine Lungenerkrankung.',
+ v:{pH:7.37,pCO2:58,pO2:64,HCO3:33,BE:7,SaO2:90,Na:140,K:4.2,Cl:100},
+ ph:'pH 7,37 → low-normal.',
+ st:'pCO₂ 58 ↑ → respiratorische Azidose.',
+ ko:'HCO₃⁻ 33 ↑, BE +7 → chronisch kompensiert.',
+ al:'AG normal.',
+ ox:'pO₂ 64, SaO₂ 90 % → Hypoxämie.',
+ sy:'Gleiches BGA-Bild wie COPD, aber Lunge gesund → extrapulmonale Hypoventilation: Obesitas-Hypoventilationssyndrom (Pickwick) / OSAS.',
+ dx:'Obesitas-Hypoventilationssyndrom — chronisch kompensierte respiratorische Azidose.',
+ ac:'Nächtliche NIV/CPAP, Schlaflabor, Gewichtsreduktion.',
+ fa:'Chronische Hyperkapnie OHNE Lungenerkrankung → an extrapulmonale Ursachen denken: Adipositas, neuromuskulär (ALS, Myasthenie), Kyphoskoliose, zentrale Hypoventilation.',
+ nx:'„DDx der chronischen Hyperkapnie ohne Lungenerkrankung?“',
+ zfw:'Obesitas-Hypoventilationssyndrom (Pickwick) — chronische Hyperkapnie ohne primäre Lungenerkrankung, oft mit OSAS.',
+ zfy:'Adipositas → reduzierte Thorax-Compliance + verminderter zentraler Atemantrieb → chronische alveoläre Hypoventilation → kompensierte Hyperkapnie.',
+ zfm:'Nächtliche NIV/CPAP, Gewichtsreduktion, Schlaflabor; Komorbiditäten behandeln.',
+ nxa:'DDx chronischer Hyperkapnie bei gesunder Lunge: Adipositas-Hypoventilation/OSAS, neuromuskuläre Erkrankungen (ALS, Myasthenie, Muskeldystrophie), Thoraxdeformität (Kyphoskoliose), zentrale Hypoventilation.'},
+
+{id:22,tier:2,kat:'Respiratorische Azidose',
+ vig:'26 J., schwerer Asthmaanfall. Anfangs hyperventiliert, jetzt zunehmend erschöpft, kaum noch Atemgeräusch („stille Lunge“).',
+ v:{pH:7.30,pCO2:48,pO2:58,HCO3:23,BE:-2,SaO2:88,Na:140,K:3.8,Cl:105},
+ ph:'pH 7,30 → Azidämie (kippt).',
+ st:'pCO₂ 48 ↑ → respiratorische Azidose — und genau das ist hier das Alarmzeichen.',
+ ko:'HCO₃⁻ 23 normal → akut.',
+ al:'AG normal.',
+ ox:'pO₂ 58, SaO₂ 88 % → Hypoxämie.',
+ sy:'Im Asthmaanfall ist normalerweise das pCO₂ ERNIEDRIGT (Hyperventilation). Ein „normalisiertes“/steigendes pCO₂ bei weiter schwer kranker Patientin = respiratorische Erschöpfung → drohendes Versagen.',
+ dx:'Status asthmaticus — drohende respiratorische Erschöpfung (pCO₂-Anstieg = Alarm).',
+ ac:'Intensiv, Intubationsbereitschaft; maximale Bronchodilatation (Salbutamol + Ipratropium), systemische Steroide, Magnesium i.v.; ggf. Beatmung.',
+ fa:'Bei Asthma/Hyperventilation ist ein normaler/steigender pCO₂ KEINE Entwarnung, sondern Zeichen der Erschöpfung → drohende respiratorische Insuffizienz.',
+ nx:'„Warum ist ein „normaler“ pCO₂ hier gefährlich?“',
+ zfw:'Schwerer Asthmaanfall mit drohender respiratorischer Erschöpfung.',
+ zfy:'Bronchospasmus → anfangs Hyperventilation (pCO₂ ↓); bei Erschöpfung hält die Atempumpe die Ventilation nicht mehr → pCO₂ steigt.',
+ zfm:'Intensiv, Intubationsbereitschaft; hochdosierte Bronchodilatatoren (Salbutamol + Ipratropium), systemische Steroide, Magnesium i.v.; O₂, ggf. Beatmung.',
+ nxa:'Weil im Anfall eigentlich Hyperventilation (niedriges pCO₂) zu erwarten ist — ein normales oder steigendes pCO₂ bedeutet, dass die erschöpfte Atempumpe versagt → drohende respiratorische Insuffizienz, nicht Besserung.'},
+
+{id:23,tier:2,kat:'Metabolische Azidose · hohe AL',
+ vig:'48 J., chronischer Alkoholkonsum. Nach Trinkexzess Erbrechen, seit Tagen kaum Nahrung. Bauchschmerz; Blutzucker normal/niedrig.',
+ v:{pH:7.28,pCO2:28,pO2:96,HCO3:13,BE:-12,Na:138,K:3.6,Cl:100,glc:75,lac:2.8},
+ ex:[{label:'Ketone (β-HB)',value:'erhöht',unit:'',flag:'high'}],
+ ph:'pH 7,28 → Azidämie.',
+ st:'HCO₃⁻ 13 ↓, BE −12 → metabolische Azidose.',
+ ko:'pCO₂ 28 ↓ → adäquat.',
+ al:'AG ↑ → High-AG-Azidose.',
+ ox:'pO₂ 96 → unauffällig.',
+ sy:'High-AG-Ketoazidose bei normaler/niedriger Glukose → alkoholische Ketoazidose (Abgrenzung zur DKA = dort Hyperglykämie).',
+ dx:'Alkoholische Ketoazidose — High-AG-Azidose, Glukose normal/niedrig.',
+ ac:'Glukose i.v. — aber Thiamin ZUERST (Wernicke-Prophylaxe!), Volumen, Elektrolyte (K, Mg, Phosphat).',
+ fa:'Ketoazidose ≠ immer Diabetes. Thiamin vor Glukose geben.',
+ nx:'„DDx der Ketoazidose? Warum Thiamin vor Glukose?“',
+ zfw:'Alkoholische Ketoazidose — High-AG-Ketoazidose bei normaler/niedriger Glukose nach Alkoholexzess und Nahrungskarenz.',
+ zfy:'Alkohol + Hunger → Glykogenmangel und NADH ↑ → Lipolyse und Ketogenese; im Gegensatz zur DKA ohne wesentliche Hyperglykämie.',
+ zfm:'Glukose i.v. (nach Thiamin), Volumen, Elektrolyte (K, Mg, Phosphat); Auslöser behandeln.',
+ nxa:'DDx der Ketoazidose: diabetisch (Hyperglykämie), alkoholisch (Glukose normal/niedrig), Hunger-Ketose (mild). Thiamin VOR Glukose, weil Glukosegabe bei Thiaminmangel eine Wernicke-Enzephalopathie auslösen kann.'},
+
+{id:24,tier:3,kat:'Metabolische Azidose · hohe AL',
+ vig:'50 J., nach Aufnahme einer unklaren Flüssigkeit („Frostschutz“). Sehstörungen bzw. beginnendes Nierenversagen, schwere Azidose.',
+ v:{pH:7.15,pCO2:22,pO2:98,HCO3:7,BE:-20,Na:140,K:4.5,Cl:100,lac:2.0},
+ ex:[{label:'Osmotische Lücke',value:'stark erhöht',unit:'',flag:'high'}],
+ ph:'pH 7,15 → schwere Azidämie.',
+ st:'HCO₃⁻ 7 ↓↓, BE −20 → schwere metabolische Azidose.',
+ ko:'pCO₂ 22 ↓ → respiratorische Kompensation.',
+ al:'AG ↑↑ → High-AG-Azidose. Zusätzlich osmotische Lücke ↑.',
+ ox:'pO₂ 98 → unauffällig.',
+ sy:'Hohe Anionenlücke + erhöhte osmotische Lücke + passende Anamnese → toxische Alkohole (Methanol → Sehstörung; Ethylenglykol → Nierenversagen, Oxalatkristalle).',
+ dx:'Toxische Alkohole (Methanol/Ethylenglykol) — High-AG-Azidose + osmotische Lücke.',
+ ac:'Fomepizol (oder Ethanol) als Antidot, Hämodialyse, Bikarbonat erwägen, Giftnotruf.',
+ fa:'Hohe AG + hohe osmotische Lücke → toxische Alkohole. Antidot Fomepizol. (Für die KP: Prinzip nennen, nicht in die Tiefe.)',
+ nx:'„Was ist die osmotische Lücke? Antidot? Wann Dialyse?“',
+ zfw:'Vergiftung mit toxischen Alkoholen (Methanol/Ethylenglykol) — schwere High-AG-Azidose mit osmotischer Lücke.',
+ zfy:'Abbau über die Alkoholdehydrogenase zu toxischen Säuren (Ameisensäure bzw. Glykol-/Oxalsäure) → High-AG-Azidose; die Muttersubstanz erhöht die osmotische Lücke.',
+ zfm:'Fomepizol (oder Ethanol) hemmt die ADH; Hämodialyse; Bikarbonat; Cofaktoren (Folsäure/Thiamin/Pyridoxin); Giftnotruf.',
+ nxa:'Osmotische Lücke = gemessene minus berechnete Osmolalität (> 10 mosm/kg), erhöht durch osmotisch aktive, nicht erfasste Moleküle (die Alkohole). Antidot: Fomepizol (alternativ Ethanol). Dialyse bei schwerer Azidose, hohen Spiegeln, Nieren-/Sehstörung.'},
+
+{id:25,tier:2,kat:'Metabolische Azidose · hohe AL',
+ vig:'76 J., Typ-2-Diabetes. Über Tage zunehmende Eintrübung, extremer Durst, Exsikkose. KEINE Kussmaul-Atmung.',
+ v:{pH:7.33,pCO2:38,pO2:90,HCO3:20,BE:-4,Na:150,K:4.2,Cl:110,glc:850},
+ ex:[{label:'Ketone (β-HB)',value:'negativ / Spur',unit:'',flag:'norm'}],
+ ph:'pH 7,33 → grenzwertig/leichte Azidämie.',
+ st:'HCO₃⁻ 20 (nur leicht ↓), BE −4 → allenfalls geringe metabolische Azidose.',
+ ko:'pCO₂ 38 normal → kein Kussmaul (passt zu HHS).',
+ al:'AG leicht ↑, aber Ketone negativ → keine wesentliche Ketoazidose.',
+ ox:'pO₂ 90 → unauffällig.',
+ sy:'Extreme Hyperglykämie (850), Hypernatriämie/Exsikkose, kaum Ketose, kaum Azidose → hyperosmolares hyperglykämes Syndrom (HHS), NICHT DKA.',
+ dx:'Hyperosmolares hyperglykämes Syndrom (HHS) — vs. DKA: kaum Ketose/Azidose.',
+ ac:'Aggressive Volumengabe ist das Hauptproblem; Insulin vorsichtig; Osmolalität langsam senken; Kalium; Thromboseprophylaxe.',
+ fa:'HHS vs. DKA: Ketone negativ, Azidose gering, Osmolalität ↑↑. Volumen vor Insulin; zu schnelle Korrektur vermeiden.',
+ nx:'„HHS vs. DKA — Unterschiede? Wo liegt der Therapieschwerpunkt?“',
+ zfw:'Hyperosmolares hyperglykämes Syndrom (HHS) — extreme Hyperglykämie mit Hyperosmolarität, geringe Ketose/Azidose.',
+ zfy:'Restinsulin verhindert eine massive Ketogenese, nicht aber die Hyperglykämie; osmotische Diurese → schwere Exsikkose und Hypernatriämie.',
+ zfm:'Aggressive Volumengabe im Vordergrund, vorsichtig Insulin, langsame Osmolalitätssenkung, Kalium, Thromboseprophylaxe.',
+ nxa:'HHS vs. DKA: HHS hat höhere Glukose/Osmolalität, kaum Ketone/Azidose, meist ältere Typ-2-Diabetiker; DKA hat Ketoazidose, oft Typ 1. Therapieschwerpunkt im HHS ist die Flüssigkeit (größeres Volumendefizit), Insulin nachrangig und vorsichtig.'},
+
+{id:26,tier:2,kat:'Respiratorische Alkalose',
+ vig:'66 J., beginnende Pneumonie. Tachypnoe, Fieber, noch normotensiv. Laktat (noch) normal.',
+ v:{pH:7.48,pCO2:30,pO2:76,HCO3:22,BE:-1,lac:1.6,SaO2:92,Na:138,K:3.9,Cl:104},
+ ph:'pH 7,48 → Alkalämie.',
+ st:'pCO₂ 30 ↓ bei hohem pH → respiratorische Alkalose.',
+ ko:'HCO₃⁻ 22 normal → akut.',
+ al:'AG normal; Laktat 1,6 → (noch) normal.',
+ ox:'pO₂ 76, SaO₂ 92 % → leichte Hypoxämie (pulmonaler Fokus).',
+ sy:'Frühe respiratorische Alkalose durch Tachypnoe bei beginnender Sepsis/Pneumonie — Laktat noch normal, trotzdem ernst nehmen.',
+ dx:'Frühe Sepsis/Pneumonie — respiratorische Alkalose (Laktat noch normal).',
+ ac:'Sepsis-Workup, Laktat im Verlauf!, Fokussuche, kalkulierte Antibiose nach Kulturen; engmaschige Überwachung.',
+ fa:'Respiratorische Alkalose kann das ERSTE BGA-Zeichen der Sepsis sein — noch vor der Laktatazidose. Verlauf kontrollieren.',
+ nx:'„Wie entwickelt sich die BGA im Verlauf einer Sepsis?“',
+ zfw:'Frühe Sepsis/Pneumonie mit respiratorischer Alkalose (Tachypnoe), Laktat noch normal.',
+ zfy:'Infektion und Fieber → Tachypnoe → pCO₂ ↓ (resp. Alkalose), bevor eine relevante Hypoperfusion/Laktatazidose entsteht.',
+ zfm:'Sepsis-Workup, Laktat im Verlauf, Fokussuche, kalkulierte Antibiose; engmaschige Überwachung.',
+ nxa:'Typischer Verlauf: zuerst respiratorische Alkalose (Tachypnoe) → bei zunehmender Hypoperfusion High-AG-Laktatazidose → oft gemischtes Bild → bei Erschöpfung/Multiorganversagen schwere Azidämie.'},
+
+{id:27,tier:2,kat:'Metabolische Alkalose',
+ vig:'74 J., Herzinsuffizienz unter hochdosiertem Furosemid. Schwäche, Wadenkrämpfe.',
+ v:{pH:7.50,pCO2:47,pO2:84,HCO3:36,BE:11,Na:140,K:2.8,Cl:92},
+ ph:'pH 7,50 → Alkalämie.',
+ st:'HCO₃⁻ 36 ↑, BE +11 → metabolische Alkalose.',
+ ko:'pCO₂ 47 ↑ → adäquate Kompensation.',
+ al:'AG normal. Hypokaliämie (K⁺ 2,8) + Hypochlorämie (Cl⁻ 92).',
+ ox:'pO₂ 84 → unauffällig.',
+ sy:'Kontraktionsalkalose unter Schleifendiuretika mit Hypokaliämie und Hypochlorämie.',
+ dx:'Schleifendiuretika — metabolische (Kontraktions-)Alkalose, Hypokaliämie.',
+ ac:'Kalium ersetzen; Volumen/Chlorid je nach Volumenstatus anpassen; Diuretikadosis überprüfen; ggf. kaliumsparende Komponente.',
+ fa:'Bei Herzinsuffizienz Gratwanderung Volumen. Kaliumsparende Diuretika (z.B. Eplerenon/Spironolacton) helfen gegen die Hypokaliämie.',
+ nx:'„Warum Alkalose unter Schleifendiuretika? Kaliumsparende Optionen?“',
+ zfw:'Metabolische (Kontraktions-)Alkalose mit Hypokaliämie unter Schleifendiuretika.',
+ zfy:'Diuretika → Volumenkontraktion + verstärkter distaler Na⁺/H⁺/K⁺-Austausch (Aldosteron) → H⁺-/K⁺-Verlust und HCO₃-Anstieg.',
+ zfm:'Kalium ersetzen, Volumen/Chlorid je nach Status, Diuretikadosis anpassen, ggf. kaliumsparende Komponente.',
+ nxa:'Alkalose durch Kontraktionsalkalose plus aldosteronvermittelten renalen H⁺-/K⁺-Verlust. Kaliumsparende Optionen: Aldosteron-Antagonisten (Spironolacton/Eplerenon), Amilorid/Triamteren — sie wirken Hypokaliämie und Alkalose entgegen.'},
+
+{id:28,tier:2,kat:'Respiratorische Azidose',
+ vig:'60 J., am ersten Tag nach Oberbaucheingriff. Opioid-Analgesie, flache Atmung, schläfrig. BGA unter Raumluft.',
+ v:{pH:7.28,pCO2:60,pO2:60,HCO3:27,BE:2,SaO2:89,Na:139,K:4.1,Cl:101},
+ ph:'pH 7,28 → Azidämie.',
+ st:'pCO₂ 60 ↑ → respiratorische Azidose.',
+ ko:'HCO₃⁻ 27 ~normal, BE +2 → noch keine wesentliche metabolische Kompensation → AKUT.',
+ al:'AG normal.',
+ ox:'pO₂ 60, SaO₂ 89 % → Hypoxämie.',
+ sy:'Akute respiratorische Azidose durch postoperative Hypoventilation (Opioide, Schmerz, Atelektasen, Zwerchfellschonung). HCO₃ ~normal = akut.',
+ dx:'Postoperative Hypoventilation — akute respiratorische Azidose.',
+ ac:'Atemtherapie/Mobilisation, Schmerz- und Sedierungsmanagement anpassen, kontrollierte O₂-Gabe, ggf. NIV; Atelektasen behandeln; Naloxon nur bei klarem Opioidüberhang titriert.',
+ fa:'HCO₃ ~normal → akut. Ursache meist multifaktoriell — nicht nur „zu viel Opioid“.',
+ nx:'„Ursachen der postoperativen Hyperkapnie? Woran erkennen Sie, dass es akut ist?“',
+ zfw:'Postoperative alveoläre Hypoventilation mit akuter respiratorischer Azidose.',
+ zfy:'Opioide/Restanästhetika dämpfen den Atemantrieb; Schmerz, Zwerchfellschonung und Atelektasen reduzieren die Ventilation → pCO₂ ↑.',
+ zfm:'Atemtherapie/Mobilisation, Analgesie-/Sedierungssteuerung, O₂ kontrolliert, ggf. NIV; Naloxon nur bei klarem Opioidüberhang.',
+ nxa:'Ursachen: Opioid-/Sedativaüberhang, Schmerz und Schonatmung, Atelektasen, neuromuskuläre Restblockade, Zwerchfelldysfunktion. Akut erkennbar am normalen HCO₃ trotz erhöhtem pCO₂ (keine renale Kompensation).'},
+
+{id:29,tier:1,kat:'Normalbefund',
+ vig:'50 J., Routine-BGA, klinisch beschwerdefrei.',
+ v:{pH:7.41,pCO2:40,pO2:92,HCO3:24,BE:0,SaO2:97,Na:140,K:4.2,Cl:104},
+ ph:'pH 7,41 → normal.',
+ st:'pCO₂ 40 normal, HCO₃⁻ 24 normal → keine primäre Störung.',
+ ko:'Keine nötig.',
+ al:'AG im oberen Normbereich → unauffällig.',
+ ox:'pO₂ 92, SaO₂ 97 % → normale Oxygenierung.',
+ sy:'Vollständiger Normalbefund — keine Säure-Basen-Störung.',
+ dx:'Normalbefund — keine Säure-Basen-Störung.',
+ ac:'Keine. Schema sauber durchsprechen und selbstbewusst „normal“ benennen — auch das ist eine vollständige Befundung.',
+ fa:'Nicht über-interpretieren. Aber: die Anionenlücke trotzdem immer berechnen.',
+ nx:'„Befunden Sie strukturiert und sagen Sie klar, dass alles normal ist.“',
+ zfw:'Normaler Säure-Basen- und Oxygenierungsstatus — keine Störung.',
+ zfy:'pH, pCO₂, HCO₃ und Oxygenierung liegen im Referenzbereich; keine primäre Störung, keine Kompensation nötig.',
+ zfm:'Keine spezifische Therapie; bei klinischem Verdacht Verlauf/weitere Diagnostik.',
+ nxa:'Strukturiert: pH normal → keine Azidämie/Alkalämie; pCO₂ und HCO₃ normal → keine primäre Störung; Anionenlücke im Normbereich; Oxygenierung normal. Fazit klar benennen: unauffällige BGA, kein Handlungsbedarf aus der Blutgasanalyse.'},
+
+{id:30,tier:2,kat:'Gemischte Störung',
+ vig:'70 J., Sepsis, sehr tachypnoeisch (AF 32). Laktat hoch — aber pH fast normal.',
+ v:{pH:7.39,pCO2:20,pO2:80,HCO3:12,BE:-12,lac:7.0,Na:138,K:4.3,Cl:100,SaO2:94},
+ ph:'pH 7,39 → normal — bei diesen Extremwerten verdächtig.',
+ st:'HCO₃⁻ 12 ↓, BE −12 → metabolische Azidose; pCO₂ 20 ↓↓.',
+ ko:'Winter für HCO₃ 12: 1,5 × 12 + 8 = 26 ± 2 → erwartetes pCO₂ ~24–28. Gemessen 20 ist NIEDRIGER → zusätzliche eigenständige respiratorische Alkalose.',
+ al:'AG ↑; Laktat 7,0 ↑↑ → High-AG-Laktatazidose.',
+ ox:'pO₂ 80, SaO₂ 94 % → grenzwertig.',
+ sy:'Gemischte Störung bei Sepsis: High-AG-(Laktat-)Azidose + respiratorische Alkalose (Tachypnoe). Der pH normalisiert sich scheinbar.',
+ dx:'Gemischt bei Sepsis: High-AG-Laktatazidose + respiratorische Alkalose.',
+ ac:'Sepsistherapie (Antibiose, Volumen, Fokus, Laktat-Verlauf). Rechnerisch die gemischte Störung benennen.',
+ fa:'pCO₂ unter dem Winter-Erwartungswert → zusätzliche respiratorische Alkalose. Normaler pH ≠ „kompensiert“.',
+ nx:'„Beweisen Sie die gemischte Störung mit der Winter-Formel.“',
+ zfw:'Gemischte Störung bei Sepsis — High-AG-Laktatazidose + respiratorische Alkalose, pH scheinbar normal.',
+ zfy:'Hypoperfusion → Laktatazidose; gleichzeitig starke Tachypnoe → eigenständige respiratorische Alkalose; beide heben den pH-Ausschlag auf.',
+ zfm:'Sepsistherapie (Antibiose, Volumen, Fokus, ggf. Vasopressoren), Laktat-Verlauf; gemischte Störung dokumentieren.',
+ nxa:'Winter: erwartetes pCO₂ = 1,5 × HCO₃ + 8 = 1,5 × 12 + 8 = 26 ± 2 (24–28). Gemessen 20 liegt darunter → zusätzlich zur metabolischen Azidose eine eigenständige respiratorische Alkalose → gemischte Störung.'},
+
+{id:31,tier:2,kat:'Gemischte Störung',
+ vig:'62 J., Synkope, jetzt Schock (RR 80/40), schwere Dyspnoe. EKG: SI-QIII-TIII, neuer Rechtsschenkelblock. Z.n. Hüft-OP.',
+ v:{pH:7.41,pCO2:26,pO2:54,HCO3:16,BE:-8,lac:5.5,SaO2:86,Na:139,K:4.2,Cl:105},
+ ph:'pH 7,41 → normal — und genau das ist bei diesen Werten der verräterische Befund.',
+ st:'HCO₃⁻ 16 ↓, BE −8, hohe Anionenlücke → metabolische (Laktat-)Azidose. pCO₂ 26 ↓↓.',
+ ko:'NICHT einfach „beide Werte niedrig → gemischt“ — das ist auch das Bild der reinen Kompensation. Winter rechnen: erwartetes pCO₂ = 1,5 × 16 + 8 = 32 ± 2 → ~30–34. Gemessen 26 liegt deutlich DARUNTER → eigenständige respiratorische Alkalose zusätzlich zur Azidose.',
+ al:'AG ↑↑ (s. Berechnung); Laktat 5,5 ↑↑ (Schock/Hypoperfusion) erklärt die Lücke.',
+ ox:'pO₂ 54, SaO₂ 86 % → schwere Hypoxämie.',
+ sy:'Hochrisiko-(„massive“) Lungenembolie: Laktatazidose im Schock + anhaltende Hyperventilation (Hypoxämie, LAE-Reiz) → gemischt = metabolische Azidose + respiratorische Alkalose. Der normale pH täuscht. BGA ↔ EKG: Rechtsherzbelastung (SI-QIII-TIII, RSB).',
+ dx:'Hochrisiko-Lungenembolie im Schock — gemischt: metabolische (Laktat-)Azidose + respiratorische Alkalose (normaler pH!).',
+ ac:'Hämodynamik stabilisieren; bedside-Echo (RV-Belastung) bzw. CT-Angio; systemische Lyse bei Hochrisiko-LAE; Antikoagulation.',
+ fa:'Normaler pH ≠ normal: metabolische Azidose (BE/AG) + pCO₂ unter dem Winter-Erwartungswert = gemischt. Zwei tiefe Werte allein beweisen das NICHT (das wäre auch reine Kompensation) — erst der Winter-Abgleich entlarvt die zusätzliche respiratorische Alkalose. Hochrisiko-LAE = Lyse-Indikation.',
+ nx:'„Beweisen Sie die gemischte Störung mit der Winter-Formel. Hochrisiko- vs. intermediäre LAE? Lyse-Indikation? EKG-Zeichen?“',
+ zfw:'Hochrisiko- (massive) Lungenembolie im Schock mit gemischter Störung (Laktatazidose + respiratorische Alkalose).',
+ zfy:'Akute Rechtsherz-Druckbelastung → Obstruktionsschock → Hypoperfusion (Laktat) und anhaltende Hyperventilation/Hypoxämie (resp. Alkalose).',
+ zfm:'Kreislaufstabilisierung, sofortige systemische Lyse bei Hochrisiko, Antikoagulation; Bildgebung (CT-Angio/Echo) je nach Stabilität.',
+ nxa:'Winter: erwartetes pCO₂ = 1,5 × 16 + 8 = 32 ± 2 (30–34); gemessen 26 → zusätzlich respiratorische Alkalose. Hochrisiko = Schock/Hypotonie (→ Lyse-Indikation); intermediär = stabil, aber RV-Dysfunktion/Troponin ↑. EKG: Sinustachykardie, SI-QIII-TIII, (neuer) Rechtsschenkelblock, T-Negativierung rechtspräkordial.'},
+
+{id:32,tier:2,kat:'Metabolische Azidose · hohe AL',
+ vig:'68 J., großer Vorderwandinfarkt, jetzt kalt-schweißig, RR 75/50, Lungenödem. Kardiogener Schock.',
+ v:{pH:7.26,pCO2:30,pO2:70,HCO3:13,BE:-12,lac:7.5,Na:138,K:4.5,Cl:102},
+ ph:'pH 7,26 → Azidämie.',
+ st:'HCO₃⁻ 13 ↓, BE −12 → metabolische Azidose.',
+ ko:'pCO₂ 30 ↓ → adäquat (Winter ~27,5 ± 2).',
+ al:'AG ↑; Laktat 7,5 ↑↑ → Hypoperfusion.',
+ ox:'pO₂ 70 → Hypoxämie (Lungenödem).',
+ sy:'Laktatazidose bei kardiogenem Schock (Hypoperfusion) nach Myokardinfarkt.',
+ dx:'Kardiogener Schock nach Myokardinfarkt — Laktatazidose.',
+ ac:'Revaskularisation (PCI!) ist kausal; Schocktherapie (Katecholamine, ggf. mechanische Unterstützung); Laktat als Perfusionsmarker im Verlauf.',
+ fa:'Laktat = Hypoperfusionsmarker. Steigendes Laktat trotz Therapie = schlechtes Zeichen; fallendes = Perfusion bessert sich.',
+ nx:'„Was bedeutet ein steigendes/fallendes Laktat unter Therapie?“',
+ zfw:'Kardiogener Schock nach Myokardinfarkt mit Laktatazidose.',
+ zfy:'Pumpversagen → vermindertes Herzzeitvolumen → systemische Hypoperfusion → anaerobe Glykolyse → Laktat ↑; zusätzlich Lungenödem/Hypoxämie.',
+ zfm:'Sofortige Revaskularisation (PCI), Schocktherapie (Katecholamine, ggf. mechanische Unterstützung), Lungenödem behandeln; Laktat als Verlaufsparameter.',
+ nxa:'Steigendes Laktat unter Therapie = anhaltende/zunehmende Hypoperfusion → schlechte Prognose, Therapie eskalieren. Fallendes Laktat (Clearance) = sich bessernde Perfusion → günstiges Zeichen und Steuergröße der Schocktherapie.'},
+
+{id:33,tier:3,kat:'Respiratorische Alkalose',
+ vig:'30 J., Bergsteiger auf 4000 m, am Ankunftstag. Kopfschmerz, Schlafstörung, Belastungsdyspnoe.',
+ v:{pH:7.47,pCO2:30,pO2:55,HCO3:22,BE:-1,SaO2:87,Na:139,K:4.0,Cl:105},
+ ph:'pH 7,47 → Alkalämie.',
+ st:'pCO₂ 30 ↓ bei hohem pH → respiratorische Alkalose.',
+ ko:'HCO₃⁻ 22 normal → AKUT (renale Kompensation braucht Tage).',
+ al:'AG normal.',
+ ox:'pO₂ 55, SaO₂ 87 % → Höhenhypoxie → hypoxische Hyperventilation.',
+ sy:'Akute respiratorische Alkalose durch hypoxisch getriggerte Hyperventilation in der Höhe.',
+ dx:'Akute Höhenexposition — respiratorische Alkalose (hypoxische Hyperventilation).',
+ ac:'Abstieg/O₂; Acetazolamid (steigert renale HCO₃-Ausscheidung → erleichtert Akklimatisation); bei AMS/HACE/HAPE entsprechend behandeln.',
+ fa:'Akut → HCO₃ normal; nach Tagen (Akklimatisation) → HCO₃ ↓ (renale Kompensation). Acetazolamid „hilft der Niere nach“.',
+ nx:'„Wie akklimatisiert die Niere? Warum hilft Acetazolamid?“',
+ zfw:'Akute Höhenexposition mit respiratorischer Alkalose (hypoxische Hyperventilation).',
+ zfy:'Niedriger O₂-Partialdruck in der Höhe → hypoxisch getriggerte Hyperventilation → pCO₂ ↓ → respiratorische Alkalose.',
+ zfm:'Abstieg/O₂, Acetazolamid zur Akklimatisationshilfe; bei AMS/HACE/HAPE spezifisch behandeln.',
+ nxa:'Die Niere scheidet über Tage HCO₃ aus (metabolische Kompensation) → der pH normalisiert sich und die Atmung kann gesteigert bleiben. Acetazolamid (Carboanhydrasehemmer) fördert genau diese HCO₃-Ausscheidung → leichte metabolische Azidose, die den Atemantrieb unterstützt und die Akklimatisation beschleunigt.'},
+
+{id:34,tier:2,kat:'Gemischte Störung',
+ vig:'70 J., bekannte COPD, jetzt schwere Pneumonie mit Sepsis. Hypoton, Laktat hoch.',
+ v:{pH:7.10,pCO2:60,pO2:50,HCO3:18,BE:-8,lac:5.0,SaO2:84,Na:139,K:4.8,Cl:101},
+ ph:'pH 7,10 → schwere Azidämie.',
+ st:'pCO₂ 60 ↑ → respiratorische Azidose (COPD).',
+ ko:'Erwartet wäre bei COPD ein HOHES HCO₃. Hier ist HCO₃⁻ 18 NIEDRIG → eine zusätzliche metabolische Azidose zieht es herunter.',
+ al:'AG ↑; Laktat 5,0 ↑ → High-AG-(Laktat-)Azidose.',
+ ox:'pO₂ 50, SaO₂ 84 % → schwere Hypoxämie.',
+ sy:'Gemischte Azidose: respiratorische Azidose (COPD) + metabolische Laktatazidose (Sepsis/Pneumonie). Zwei azidotische Störungen → schwere Azidämie.',
+ dx:'Gemischte Azidose: respiratorisch (COPD) + metabolisch (Sepsis/Laktat).',
+ ac:'Beide Komponenten: Sepsis/Pneumonie (Antibiose, Volumen, Fokus) UND Ventilation (NIV/Beatmung, kontrollierte O₂).',
+ fa:'Bei COPD ist ein NIEDRIGES HCO₃ das Alarmzeichen (erwartet wäre hoch) → entlarvt die zusätzliche metabolische Azidose. Stark erniedrigter pH = zwei azidotische Störungen.',
+ nx:'„Warum ist hier das niedrige HCO₃ verdächtig? Welche zwei Störungen?“',
+ zfw:'Gemischte Azidose — respiratorische Azidose (COPD) + metabolische Laktatazidose (Sepsis/Pneumonie).',
+ zfy:'COPD hält pCO₂ hoch (eigentlich HCO₃-Anstieg erwartet); die zusätzliche Sepsis-Laktatazidose verbraucht HCO₃ → es ist niedrig statt hoch → schwere Azidämie.',
+ zfm:'Beide Komponenten: Sepsis/Pneumonie (Antibiose, Volumen, Fokus) + Ventilation (NIV/Beatmung, kontrollierte O₂); Kreislauf stützen.',
+ nxa:'Das niedrige HCO₃ ist verdächtig, weil eine chronische respiratorische Azidose (COPD) ein HOHES HCO₃ erwarten lässt — ein niedriges entlarvt eine zusätzliche metabolische Azidose. Zwei Störungen: respiratorische Azidose (COPD) + High-AG-Laktatazidose (Sepsis).'},
+
+{id:35,tier:3,kat:'Oxygenierung / Hb',
+ vig:'35 J., nach Lokalanästhesie (z.B. Prilocain/Benzocain). Zyanose trotz O₂-Gabe, „schokoladenbraunes“ Blut; SpO₂ hängt bei ~85 % fest.',
+ v:{pH:7.36,pCO2:38,pO2:95,HCO3:21,BE:-3,SaO2:85,lac:2.5,Na:140,K:4.2,Cl:104},
+ o:{FMetHb:25},
+ ph:'pH 7,36 → grenzwertig.',
+ st:'HCO₃⁻ 21 leicht ↓ → allenfalls geringe metabolische Azidose.',
+ ko:'pCO₂ 38 normal.',
+ al:'AG leicht ↑; Laktat 2,5 ↑ → leichte Gewebehypoxie.',
+ ox:'Diskrepanz: pO₂ 95 NORMAL, aber sO₂ „klemmt“ bei ~85 % und FMetHb 25 % ↑↑ (FO₂Hb erniedrigt) → Sauerstofftransport gestört trotz normalem gelöstem O₂.',
+ sy:'Methämoglobinämie: pO₂ normal, sO₂ klemmt um 85 %, Zyanose trotz O₂, FMetHb hoch.',
+ dx:'Methämoglobinämie — SaO₂-Diskrepanz (SpO₂ „klemmt“ ~85 %).',
+ ac:'Auslösendes Agens stoppen; bei symptomatischer Methämoglobinämie Methylenblau (Antidot); CO-Oxymetrie zur Messung.',
+ fa:'pO₂ normal, aber SpO₂ täuscht (klemmt ~85 %), Zyanose trotz O₂ → an Met-Hb (oder CO) denken. Antidot: Methylenblau.',
+ nx:'„Warum täuscht die Pulsoxymetrie? Antidot bei Methämoglobinämie?“',
+ zfw:'Methämoglobinämie — oxidiertes Hämoglobin (Fe³⁺), das keinen Sauerstoff bindet, hier nach Lokalanästhetikum.',
+ zfy:'Oxidanzien (Prilocain/Benzocain, Nitrite, Dapson) oxidieren das Hb-Eisen zu Fe³⁺ (Met-Hb) → reduzierte O₂-Bindung und Linksverschiebung → funktionelle Hypoxie, Zyanose.',
+ zfm:'Auslöser stoppen, O₂; bei symptomatischer/hoher Met-Hb Methylenblau; CO-Oxymetrie zur Messung.',
+ nxa:'Die Pulsoxymetrie misst nur zwei Wellenlängen und erfasst Met-Hb nicht korrekt — die SpO₂ klemmt typischerweise um 85 % (pO₂ bleibt normal). Antidot: Methylenblau (reduziert Met-Hb; Cave G6PD-Mangel).'}
+,
+{id:36,tier:2,kat:'Respiratorische Azidose',
+ vig:'68 J., bekannte Myasthenia gravis, seit Tagen Infekt. Zunehmende Schwäche, Schluck- und Sprechstörung, flache Atmung. Lunge auskultatorisch frei. Arterielle BGA unter Raumluft.',
+ v:{pH:7.25,pCO2:62,pO2:70,HCO3:26,BE:0,SaO2:93,Na:140,K:4.2,Cl:103},
+ ph:'pH 7,25 → Azidämie.',
+ st:'pCO₂ 62 ↑↑ → respiratorische Azidose.',
+ ko:'HCO₃⁻ 26 (fast normal), BE 0 → akut, noch keine metabolische Kompensation (chronisch wäre HCO₃⁻ deutlich ↑).',
+ al:'AG 11 normal, Laktat normal → keine zusätzliche metabolische Azidose.',
+ ox:'pO₂ 70 ↓ leicht, SaO₂ 93 % → Hypoxämie allein durch Hypoventilation (Lunge frei), kein Shunt.',
+ sy:'Akute respiratorische Azidose bei ventilatorischer Pumpinsuffizienz (neuromuskulär) — gesunde Lunge, versagende Atempumpe.',
+ dx:'Myasthene Krise — akute respiratorische (Typ-II-)Insuffizienz durch neuromuskuläre Atempumpschwäche.',
+ ac:'Atmung sichern, engmaschig Vitalkapazität/Atemkraft messen; frühzeitig NIV/Intubation bei Erschöpfung; Auslöser behandeln, atemdepressive Medikamente meiden.',
+ fa:'Lunge ist frei — die Hypoxämie kommt rein aus Hypoventilation. Nicht auf die SpO₂ verlassen: der pCO₂-Anstieg und die fallende Vitalkapazität zeigen das Versagen früher; die Pulsoxymetrie bleibt lange „normal“.',
+ nx:'„Wie überwachen Sie eine neuromuskuläre Ateminsuffizienz? Ab wann intubieren Sie? Welche Medikamente meiden Sie?“',
+ zfw:'Akute respiratorische Azidose durch neuromuskuläre Atempumpschwäche (z. B. myasthene Krise, Guillain-Barré) bei lungengesundem Patienten.',
+ zfy:'Gestörte neuromuskuläre Übertragung bzw. Nervenleitung → Ermüdung der Atemmuskulatur → alveoläre Hypoventilation → akuter pCO₂-Anstieg; HCO₃⁻ noch normal, weil die renale Kompensation Tage braucht.',
+ zfm:'Engmaschiges Monitoring (Vitalkapazität/Atemkraft), rechtzeitig NIV oder Intubation, Auslöser behandeln; bei Myasthenie Cholinesterasehemmer/IVIG/Plasmapherese, atemdepressive Medikamente meiden.',
+ nxa:'Überwachen über die Vitalkapazität (FVC) und die Atemkraft (NIF), nicht primär über die SpO₂ — die täuscht lange Normwerte vor. Intubation droht bei FVC unter ~15 ml/kg (etwa 1 l), bei Schluckstörung/Sekretverhalt oder steigendem pCO₂. Meiden: Sedativa/Opioide, Relaxanzien-Überhang, bei Myasthenie zusätzlich Aminoglykoside, Makrolide und hohe Magnesiumgaben.',
+ bank:'ext'},
+{id:37,tier:3,kat:'Oxygenierung / Hb',
+ vig:'55 J., schwere Pneumonie mit Sepsis, rasch progrediente Dyspnoe. Bilaterale Infiltrate im Röntgen, SpO₂ trotz O₂-Vorlage niedrig. Arterielle BGA.',
+ v:{pH:7.49,pCO2:30,pO2:48,HCO3:22,BE:-1,SaO2:82,lac:1.2,Na:138,K:4.0,Cl:102},
+ ph:'pH 7,49 → Alkalämie.',
+ st:'pCO₂ 30 ↓ → respiratorische Alkalose (Tachypnoe).',
+ ko:'HCO₃⁻ 22, BE −1 → akut, metabolisch noch normal (passende Akut-Antwort).',
+ al:'AG 14 normal, Laktat normal → keine metabolische Azidose.',
+ ox:'pO₂ 48 ↓↓ bei SaO₂ 82 % → schwere Hypoxämie; Horowitz (pO₂/FiO₂) stark erniedrigt → Gasaustauschstörung/Shunt, nicht Hypoventilation.',
+ sy:'Schwere hypoxämische (Typ-I-)Insuffizienz mit respiratorischer Alkalose → Bild eines ARDS bei diffuser Lungenschädigung (Shunt).',
+ dx:'ARDS / schweres hypoxämisches Lungenversagen (Typ I) — Shunt-bedingte Hypoxämie, Horowitz erniedrigt.',
+ ac:'O₂/Atemunterstützung eskalieren, frühe lungenprotektive Beatmung (niedriges Tidalvolumen, PEEP), Ursache (Pneumonie/Sepsis) behandeln; Horowitz unter standardisierten Bedingungen bestimmen.',
+ fa:'Die Hypoxämie ist NICHT durch Hypoventilation erklärbar (pCO₂ ist niedrig, nicht hoch) → Shunt. Reines O₂ bessert den pO₂ beim echten Shunt nur wenig; ein steigender pCO₂ wäre hier ein Alarmzeichen der Erschöpfung.',
+ nx:'„Was ist der Horowitz-Index und wie definiert er das ARDS? Warum bessert O₂ die Hypoxämie beim Shunt kaum?“',
+ zfw:'ARDS — akutes, diffuses Lungenschädigungssyndrom mit schwerer, therapierefraktärer Hypoxämie (Typ-I-Versagen) und niedrigem Horowitz-Index.',
+ zfy:'Entzündliche Schädigung der alveolokapillären Membran (Pneumonie, Sepsis, Aspiration) → Permeabilitätsödem und Atelektasen → intrapulmonaler Rechts-links-Shunt → Hypoxämie; die Tachypnoe erzeugt eine respiratorische Alkalose.',
+ zfm:'Auslöser behandeln; lungenprotektive Beatmung (Vt ~6 ml/kg ideales KG, PEEP, Plateaudruck begrenzen), bei schwerem ARDS Bauchlage und restriktive Volumenstrategie; ggf. ECMO.',
+ nxa:'Der Horowitz-Index = pO₂/FiO₂ (in mmHg) quantifiziert die Oxygenierungsstörung; nach der Berlin-Definition (gemessen mit PEEP ≥ 5) gilt ARDS als mild ≤ 300, moderat ≤ 200, schwer ≤ 100 mmHg. O₂ allein bessert die Hypoxämie beim Shunt kaum, weil das Blut an nicht-ventilierten (atelektatischen/ödematösen) Alveolen vorbeifließt und keinen Kontakt zum Sauerstoff bekommt — deshalb PEEP/Rekrutierung statt nur FiO₂.',
+ bank:'ext'},
+{id:38,tier:2,kat:'Respiratorische Alkalose',
+ vig:'76 J., bekannte Herzinsuffizienz, nachts akute schwere Atemnot, feuchte Rasselgeräusche über beiden Lungen, kaltschweißig. SpO₂ niedrig. Arterielle BGA.',
+ v:{pH:7.47,pCO2:31,pO2:58,HCO3:22,BE:-1,SaO2:89,lac:1.6,Na:139,K:4.0,Cl:104},
+ ph:'pH 7,47 → Alkalämie.',
+ st:'pCO₂ 31 ↓ → respiratorische Alkalose (Dyspnoe/Tachypnoe).',
+ ko:'HCO₃⁻ 22, BE −1 → akut, metabolisch unauffällig.',
+ al:'AG 13 normal, Laktat 1,6 normal → (noch) keine Hypoperfusion/Laktatazidose.',
+ ox:'pO₂ 58 ↓ bei SaO₂ 89 % → Hypoxämie durch alveoläres Ödem (Diffusions-/Shuntstörung).',
+ sy:'Akut dekompensierte Herzinsuffizienz mit Lungenödem: hypoxämische Insuffizienz + respiratorische Alkalose, noch ohne Laktatazidose.',
+ dx:'Akut dekompensierte Herzinsuffizienz / kardiales Lungenödem — Hypoxämie + respiratorische Alkalose.',
+ ac:'Oberkörper hoch, O₂/NIV (CPAP), Schleifendiuretikum i.v., Nitrate bei Hypertonie; Trigger suchen (Ischämie, Tachyarrhythmie, hypertensive Entgleisung).',
+ fa:'Solange der Patient hyperventiliert, ist der pCO₂ niedrig — ein „normaler“ oder steigender pCO₂ mit Laktatanstieg kündigt die Erschöpfung bzw. den Übergang in den kardiogenen Schock an (dann metabolische Azidose). Nicht abwarten.',
+ nx:'„Wie unterscheidet sich diese BGA vom kardiogenen Schock? Was bedeutet ein steigender pCO₂ hier?“',
+ zfw:'Akut dekompensierte Herzinsuffizienz mit kardialem Lungenödem — hypoxämische Insuffizienz (Typ I) mit respiratorischer Alkalose.',
+ zfy:'Erhöhter linksatrialer Druck → hydrostatisches Lungenödem → gestörter Gasaustausch (Hypoxämie); Dyspnoe und Angst führen zur Hyperventilation → respiratorische Alkalose.',
+ zfm:'Sitzende Lagerung, O₂/CPAP, Schleifendiuretika, Vor- und Nachlastsenkung mit Nitraten (bei Hypertonie); auslösenden Faktor behandeln, Flüssigkeits-/Gewichtsbilanz steuern.',
+ nxa:'Beim noch nicht dekompensierten Lungenödem überwiegt die respiratorische Alkalose bei normalem Laktat; im kardiogenen Schock (eigene Karte) führt das niedrige Herzzeitvolumen zur High-AG-Laktatazidose. Ein steigender pCO₂ ist hier ein Warnzeichen: die erschöpfte Atempumpe hält die Ventilation nicht mehr → drohende Erschöpfung und Übergang in den Schock.',
+ bank:'ext'},
+{id:39,tier:3,kat:'Metabolische Azidose · normale AL',
+ vig:'64 J., Typ-2-Diabetes mit diabetischer Nephropathie, ACE-Hemmer-Therapie. Routinekontrolle, leichte Müdigkeit. Arterielle BGA.',
+ v:{pH:7.34,pCO2:33,pO2:92,HCO3:17,BE:-7,SaO2:96,lac:1.0,Na:138,K:5.8,Cl:113,glc:150},
+ ex:[{label:'Urin-pH',value:'sauer (< 5,5)',unit:'',flag:'norm'}],
+ ph:'pH 7,34 → Azidämie.',
+ st:'HCO₃⁻ 17 ↓, BE −7 → metabolische Azidose.',
+ ko:'pCO₂ 33 ↓ (Winter: 1,5×17+8 ≈ 33) → adäquate respiratorische Kompensation.',
+ al:'AG 8 normal → normale Anionenlücke (hyperchlorämisch, Cl 113 ↑).',
+ ox:'pO₂ 92, SaO₂ 96 % → Oxygenierung normal.',
+ sy:'Hyperchlorämische (normale-AL-)Azidose MIT Hyperkaliämie (K 5,8) bei diabetischer Nephropathie → renal-tubuläre Azidose Typ 4.',
+ dx:'Renal-tubuläre Azidose Typ 4 (hyporeninämischer Hypoaldosteronismus) — normale-AL-Azidose mit Hyperkaliämie.',
+ ac:'Hyperkaliämie behandeln/überwachen; auslösende Medikamente prüfen (ACE-Hemmer/ARB, Aldosteronantagonisten, NSAR); Diabeteskontrolle; ggf. Fludrocortison, Schleifendiuretikum, Alkali.',
+ fa:'Anders als die distale RTA Typ 1 (Karte „RTA“) geht Typ 4 mit HOHEM Kalium einher und der Urin-pH ist meist sauer (< 5,5). Normale-AL-Azidose + Hyperkaliämie beim Diabetiker = an Typ 4 denken.',
+ nx:'„Wie unterscheiden Sie RTA Typ 1 und Typ 4? Welche Medikamente können eine RTA Typ 4 auslösen?“',
+ zfw:'Renal-tubuläre Azidose Typ 4 — normale-AL-(hyperchlorämische) Azidose mit Hyperkaliämie durch Aldosteronmangel oder -resistenz, klassisch bei diabetischer Nephropathie.',
+ zfy:'Zu wenig wirksames Aldosteron → verminderte renale H⁺- und K⁺-Ausscheidung → milde metabolische Azidose und Hyperkaliämie; die Hyperkaliämie hemmt zusätzlich die Ammoniogenese.',
+ zfm:'Auslösende Medikamente absetzen/reduzieren (ACE-Hemmer/ARB, Spironolacton, NSAR, Trimethoprim), Kalium senken (Diät, Schleifendiuretikum, ggf. Kationenaustauscher), Diabetes einstellen; bei Bedarf Fludrocortison oder Bikarbonat.',
+ nxa:'Typ 1 (distal): HYPOkaliämie, Urin-pH inadäquat hoch (> 5,5), Nephrokalzinose/Steine. Typ 4: HYPERkaliämie, Urin-pH meist sauer (< 5,5), oft Diabetiker. Auslöser einer RTA Typ 4: ACE-Hemmer/ARB, Aldosteronantagonisten (Spironolacton/Eplerenon), NSAR, Calcineurininhibitoren, Trimethoprim, Heparin — alles, was die Aldosteronachse hemmt.',
+ bank:'ext'},
+{id:40,tier:2,kat:'Metabolische Azidose · normale AL',
+ vig:'37 J., seit Wochen Müdigkeit, Gewichtsverlust, Hyperpigmentierung; jetzt nach Infekt Erbrechen, Hypotonie, Verwirrtheit. Arterielle BGA.',
+ v:{pH:7.33,pCO2:35,pO2:94,HCO3:18,BE:-6,SaO2:96,lac:1.4,Na:128,K:6.0,Cl:100,glc:62},
+ ph:'pH 7,33 → Azidämie.',
+ st:'HCO₃⁻ 18 ↓, BE −6 → metabolische Azidose.',
+ ko:'pCO₂ 35 ↓ (Winter: 1,5×18+8 ≈ 35) → adäquate Kompensation.',
+ al:'AG 10 normal → normale Anionenlücke.',
+ ox:'pO₂ 94, SaO₂ 96 % → Oxygenierung normal.',
+ sy:'Leichte normale-AL-Azidose + Hyponatriämie (128) + Hyperkaliämie (6,0) + Hypoglykämie (62) → Bild der Nebennierenrindeninsuffizienz / Addison-Krise.',
+ dx:'Addison-Krise (akute NNR-Insuffizienz) — Hyponatriämie, Hyperkaliämie, milde metabolische Azidose, Hypoglykämie.',
+ ac:'Sofort Hydrocortison i.v. (nach Blutentnahme, Therapie nicht verzögern), Volumen mit NaCl 0,9 % plus Glukose, Hyperkaliämie und Hypoglykämie behandeln; Auslöser (Infekt) suchen.',
+ fa:'Die Trias Na ↓ / K ↑ / Glukose ↓ mit milder Azidose ist der Fingerzeig — nicht als „unspezifisch“ abtun. Therapie (Hydrocortison + Volumen) startet klinisch, vor dem Cortisol-Ergebnis.',
+ nx:'„Welche Elektrolytkonstellation erwarten Sie bei Addison? Womit behandeln Sie die Krise sofort?“',
+ zfw:'Addison-Krise — lebensbedrohliche akute Nebennierenrindeninsuffizienz mit Mangel an Cortisol und Aldosteron.',
+ zfy:'Aldosteronmangel → renaler Na⁺-Verlust bei K⁺-/H⁺-Retention → Hyponatriämie, Hyperkaliämie, milde metabolische Azidose; Cortisolmangel → Hypoglykämie und Hypotonie/Schock.',
+ zfm:'Sofort Hydrocortison i.v., großzügig NaCl 0,9 % (mit Glukose), Hyperkaliämie und Hypoglykämie behandeln, auslösenden Stressor (Infekt, abruptes Steroid-Absetzen) beseitigen; danach Diagnostik (Cortisol/ACTH).',
+ nxa:'Erwartet: Hyponatriämie + Hyperkaliämie + milde metabolische Azidose, oft Hypoglykämie und Hypotonie. Sofortbehandlung: Hydrocortison i.v. plus Volumensubstitution mit NaCl 0,9 % und Glukose — die Therapie beginnt bei klinischem Verdacht und wird nicht bis zum Laborergebnis aufgeschoben.',
+ bank:'ext'},
+{id:41,tier:3,kat:'Metabolische Alkalose',
+ vig:'62 J., Raucher, seit Wochen Schwäche und Ödeme, neu Hypertonie und Hyperglykämie, auffällige Hautpigmentierung. V. a. paraneoplastisches Geschehen. Arterielle BGA.',
+ v:{pH:7.48,pCO2:47,pO2:95,HCO3:34,BE:9,SaO2:97,lac:1.2,Na:144,K:2.9,Cl:98,glc:168},
+ ph:'pH 7,48 → Alkalämie.',
+ st:'HCO₃⁻ 34 ↑, BE +9 → metabolische Alkalose.',
+ ko:'pCO₂ 47 ↑ → adäquate respiratorische Kompensation (Hypoventilation).',
+ al:'AG 12 normal; K 2,9 ↓↓ (Hypokaliämie) → mineralokortikoide Wirkung.',
+ ox:'pO₂ 95, SaO₂ 97 % → Oxygenierung normal.',
+ sy:'Hypokaliäme metabolische Alkalose + Hyperglykämie (168) + Hypertonie → exzessive Glukokortikoid-/Mineralokortikoidwirkung, z. B. Cushing / ektopes ACTH.',
+ dx:'Cushing-Syndrom (z. B. ektopes ACTH) — hypokaliäme metabolische Alkalose durch Cortisolexzess.',
+ ac:'Kalium substituieren, Hypertonie und Hyperglykämie behandeln; Diagnostik (Dexamethason-Hemmtest, ACTH, Cortisol im 24-h-Urin/Speichel) und Ursachensuche (Adenom, adrenal, ektopes ACTH).',
+ fa:'Sehr ausgeprägte Hypokaliämie + Alkalose + Hyperglykämie + Hypertonie spricht eher für ektopes ACTH (z. B. kleinzelliges Bronchialkarzinom) als für ein klassisches Hypophysenadenom. Cortisol wirkt in hoher Dosis mineralokortikoid.',
+ nx:'„Warum macht Cortisol eine Hypokaliämie und Alkalose? Wie sichern Sie die Diagnose?“',
+ zfw:'Cushing-Syndrom — chronischer Glukokortikoidexzess (hypophysär, adrenal oder ektopes ACTH) mit hypokaliämer metabolischer Alkalose, Hypertonie und Hyperglykämie.',
+ zfy:'In hoher Konzentration übersteigt Cortisol die inaktivierende 11β-HSD2 und wirkt am Mineralokortikoidrezeptor → renale Na⁺-Retention bei K⁺-/H⁺-Verlust → Hypokaliämie und metabolische Alkalose; zusätzlich Hyperglykämie durch Glukoneogenese.',
+ zfm:'Kalium ausgleichen, Blutdruck und Blutzucker behandeln; Diagnostik (Dexamethason-Hemmtest, ACTH, Cortisol-Tagesprofil) und kausale Therapie (Tumorresektion; bei ektopem ACTH die Grunderkrankung), ggf. Steroidsynthesehemmer.',
+ nxa:'Cortisol übersteigt in hoher Dosis die Kapazität der 11β-HSD2 und aktiviert dann den Mineralokortikoidrezeptor → Na-Retention, K- und H⁺-Verlust → Hypokaliämie + Alkalose. Diagnosesicherung: niedrig dosierter Dexamethason-Hemmtest, freies Cortisol im 24-h-Urin und spätabendliches Speichelcortisol; anschließend ACTH zur Einordnung (ACTH-abhängig vs. -unabhängig) plus Bildgebung.',
+ bank:'ext'},
+{id:42,tier:3,kat:'Gemischte Störung',
+ vig:'24 J., Typ-1-Diabetes, seit zwei Tagen Bauchschmerzen mit häufigem Erbrechen, Polyurie, Azetongeruch. Arterielle BGA.',
+ v:{pH:7.34,pCO2:38,pO2:96,HCO3:20,BE:-4,SaO2:97,lac:1.6,Na:138,K:3.4,Cl:90,glc:420},
+ ex:[{label:'Ketone (β-HB)',value:'stark erhöht',unit:'',flag:'high'}],
+ ph:'pH 7,34 → leichte Azidämie (verdächtig „mild“ für die große Anionenlücke).',
+ st:'HCO₃⁻ 20 ↓, BE −4 → metabolische Azidose; das HCO₃⁻ ist für die Anionenlücke aber zu hoch.',
+ ko:'pCO₂ 38 ↓ (Winter: 1,5×20+8 ≈ 38) → adäquate respiratorische Kompensation.',
+ al:'AG 28 ↑↑ (High-AG, Ketone +, Glukose 420). ΔAG ≈ 16, ΔHCO₃⁻ ≈ 4 → Delta-Ratio ≈ 4 (> 2) → zusätzlich metabolische Alkalose.',
+ ox:'pO₂ 96, SaO₂ 97 % → Oxygenierung normal.',
+ sy:'Gemischte Störung: High-AG-Ketoazidose (DKA) PLUS metabolische Alkalose (Erbrechen, Cl 90 ↓) — die Alkalose „versteckt“ die Schwere der Azidose.',
+ dx:'Gemischte Störung — diabetische Ketoazidose + metabolische Alkalose (Erbrechen), entlarvt über die Delta-Ratio.',
+ ac:'DKA behandeln (Volumen, Insulin-Perfusor, Kalium früh — trotz K 3,4 fällt es unter Insulin weiter!), Chlorid-/Volumenverlust mit NaCl 0,9 % ausgleichen; engmaschiges Monitoring.',
+ fa:'Der fast normale pH und das nur mäßig erniedrigte HCO₃⁻ täuschen Harmlosigkeit vor — die Delta-Ratio > 2 entlarvt die zweite Störung. Bei großer Anionenlücke immer die Delta-Ratio bilden, sonst übersieht man die Alkalose.',
+ nx:'„Berechnen Sie die Delta-Ratio und interpretieren Sie sie. Warum ist der pH hier fast normal?“',
+ zfw:'Gemischte Säure-Basen-Störung — eine High-AG-Ketoazidose (DKA) und eine metabolische Alkalose (Erbrechen) gleichzeitig; die Delta-Ratio macht die versteckte Alkalose sichtbar.',
+ zfy:'Die Ketoazidose addiert Säuren und erhöht die Anionenlücke; das gleichzeitige Erbrechen verliert Magensäure (HCl) und erzeugt eine metabolische Alkalose, die den HCO₃-Abfall teilweise ausgleicht → HCO₃ und pH wirken „zu gut“.',
+ zfm:'Beide Komponenten: DKA-Therapie (Volumen, Insulin, frühe Kaliumsubstitution, Auslöser) und Ausgleich des Chlorid-/Volumenverlusts mit NaCl 0,9 %; Verlauf von Glukose, Kalium, pH und Anionenlücke kontrollieren.',
+ nxa:'Delta-Ratio = ΔAnionenlücke / ΔHCO₃⁻ ≈ 16/4 ≈ 4. Werte > 2 bedeuten, dass das HCO₃⁻ höher liegt, als die Azidose erklärt → zusätzliche metabolische Alkalose (hier Erbrechen). Der pH ist fast normal, weil sich Azidose (senkt HCO₃) und Alkalose (hebt HCO₃) teilweise aufheben — ohne Delta-Ratio übersieht man die Alkalose.',
+ bank:'ext'},
+{id:43,tier:3,kat:'Metabolische Azidose · hohe AL',
+ vig:'42 J., obere GI-Blutung mit Hämatemesis, blass, tachykard, hypoton. Arterielle BGA unter Raumluft.',
+ v:{pH:7.32,pCO2:28,pO2:95,HCO3:14,BE:-10,SaO2:98,lac:8.0,Na:140,K:4.5,Cl:104,glc:110},
+ o:{ctHb:5.5},
+ ph:'pH 7,32 → Azidämie.',
+ st:'HCO₃⁻ 14 ↓↓, BE −10 → metabolische Azidose.',
+ ko:'pCO₂ 28 ↓ (Winter: 1,5×14+8 ≈ 29) → adäquate respiratorische Kompensation.',
+ al:'AG 22 ↑↑ (High-AG); Laktat 8,0 ↑↑ → Laktatazidose.',
+ ox:'pO₂ 95 und SaO₂ 98 % NORMAL, FO₂Hb normal — ABER ctHb 5,5 g/dl ↓↓ (Hkt ~16 %): die Sättigung stimmt, aber es ist kaum Träger da → O₂-ANGEBOT massiv reduziert.',
+ sy:'High-AG-Laktatazidose durch vermindertes O₂-Angebot bei schwerer Anämie/Blutung — nicht die Sättigung, sondern die Transportkapazität (ctHb) ist das Problem.',
+ dx:'Hämorrhagischer Schock / schwere Anämie — Laktatazidose durch niedriges O₂-Angebot (ctHb ↓) bei normaler SaO₂.',
+ ac:'Blutung stoppen (Endoskopie/Kompression/OP), Volumen und Transfusion (Erythrozytenkonzentrate, ggf. Massivtransfusion), Gerinnung managen; Ursache klären.',
+ fa:'SaO₂ und pO₂ sind NORMAL — trotzdem droht Gewebehypoxie, weil das O₂-Angebot vom Produkt aus Hb × Sättigung × Herzzeitvolumen abhängt. Eine normale Sättigung schließt eine Sauerstoffschuld nicht aus; immer ctHb und Laktat mitlesen.',
+ nx:'„Warum kann trotz normaler SaO₂ eine Gewebehypoxie bestehen? Woraus berechnet sich das O₂-Angebot?“',
+ zfw:'Laktatazidose durch vermindertes Sauerstoffangebot bei schwerer Anämie bzw. hämorrhagischem Schock — die Sättigung ist normal, die Transportkapazität (ctHb) nicht.',
+ zfy:'Blutverlust/Anämie → wenig Hämoglobin als O₂-Träger → trotz normaler Sättigung sinkt der arterielle O₂-Gehalt und damit das O₂-Angebot → Gewebehypoxie → anaerobe Glykolyse → Laktatazidose.',
+ zfm:'Blutungsquelle kontrollieren, Volumen und Erythrozytentransfusion (bei Massivblutung balancierte Gabe von EK/FFP/Thrombozyten), Gerinnungsmanagement; Laktat als Verlaufs- und Steuerparameter.',
+ nxa:'Eine normale SaO₂ sagt nur, dass das vorhandene Hämoglobin gut gesättigt ist — nichts über die Menge des Trägers oder den Fluss. Das O₂-Angebot (DO₂) = Herzzeitvolumen × arterieller O₂-Gehalt, und der O₂-Gehalt ≈ 1,34 × Hb × SaO₂ (plus gelöster Anteil). Bei niedrigem Hb (oder niedrigem HZV) ist das Angebot trotz 98 % Sättigung kritisch niedrig → Laktatanstieg.',
+ bank:'ext'}
+];
+/*DATA_END*/
+
+/* ------- state ------- */
+let deck = DATA.slice();
+let idx = 0;
+let revealed = false;
+let progress = {};   // card.id -> 'right' | 'wrong' | 'seen'  (this sitting only)
+let tierFilter = 'all';
+let katFilter = 'Alle Kategorien';
+let bankFilter = 'all';
+let showKlinik = true;
+let showFlags = true;
+let analyzerProfile = 'gen';
+
+/* ------- build deck per filters ------- */
+function buildDeck(keepOrderSeed){
+  deck = DATA.filter(c =>
+    (tierFilter==='all' || c.tier===Number(tierFilter)) &&
+    (katFilter==='Alle Kategorien' || c.kat===katFilter) &&
+    (bankFilter==='all' || (c.bank||'kern')===bankFilter)
+  );
+  idx = 0; revealed = false;
+}
+function shuffleDeck(){
+  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]];}
+  idx=0; revealed=false; render();
+}
+
+/* ------- render ------- */
+const host = document.getElementById('cardHost');
+
+function tierClass(t){return t===1?'t1':t===2?'t2':'t3';}
+
+function colRows(card, sections){
+  const P = buildPanel(card).filter(p=>sections.includes(p.sec));
+  let rows='', lastSec=null;
+  P.forEach(p=>{
+    if(p.val===null||p.val===undefined||(typeof p.val==='number'&&isNaN(p.val))) return;
+    if(p.sec!==lastSec){ rows += `<tr class="sec"><td colspan="3">${p.sec}</td></tr>`; lastSec=p.sec; }
+    let fl='norm';
+    if(!p.fixedNorm && typeof p.val==='number'){ if(p.val<p.lo) fl='low'; else if(p.val>p.hi) fl='high'; }
+    const showFl = showFlags && fl!=='norm';
+    const arrow = showFl ? (fl==='high'?'↑':'↓') : '';
+    const ab = showFl ? 'ab' : '';
+    const u = p.unit ? ` <span class="u">${p.unit}</span>` : '';
+    rows += `<tr>
+      <td class="lab">${p.label}</td>
+      <td class="val ${ab}">${fmt(p.val,p.dec,p.sign)}${u}${arrow?` <span class="flag">${arrow}</span>`:''}</td>
+      <td class="ref">${p.ref}</td></tr>`;
+  });
+  return rows;
+}
+
+function zusatzHTML(card){
+  if(!card.ex || !card.ex.length) return '';
+  let rows='';
+  card.ex.forEach(e=>{
+    const fl=e.flag||'norm';
+    const showFl = showFlags && fl!=='norm';
+    const arrow = showFl ? (fl==='high'?'↑':'↓') : '';
+    const ab = showFl ? 'ab' : '';
+    const u = e.unit ? ` <span class="u">${e.unit}</span>` : '';
+    rows += `<tr>
+      <td class="lab">${e.label}</td>
+      <td class="val ${ab}">${e.value}${u}${arrow?` <span class="flag">${arrow}</span>`:''}</td>
+      <td class="ref"></td></tr>`;
+  });
+  return `<div class="zusatz"><div class="zlabel">Zusatzbefunde</div><table class="bga">${rows}</table></div>`;
+}
+
+function agLine(card){
+  const {Na,Cl,HCO3}=card.v;
+  if(Na===undefined||Cl===undefined||HCO3===undefined) return '';
+  const ag = Na-(Cl+HCO3);
+  return `<div class="ag-calc">AG = ${Na} − (${Cl} + ${HCO3}) = ${ag} mmol/l &nbsp;·&nbsp; Norm 8–12</div>`;
+}
+
+function render(){
+  if(deck.length===0){
+    host.innerHTML = `<div class="card"><div class="empty">Keine Karten für diese Filter. Filter anpassen.</div></div>`;
+    document.getElementById('counter').textContent = '0 / 0';
+    document.getElementById('prevBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = true;
+    updateScore();
+    return;
+  }
+  const card = deck[idx];
+  const pst = progress[card.id];
+  const pill = pst==='right' ? `<span class="status-pill st-right">✓ schon richtig</span>`
+            : pst==='wrong' ? `<span class="status-pill st-wrong">✗ schon falsch</span>` : '';
+  const ans = `
+    <div class="answer" ${revealed?'':'hidden'}>
+      <div class="screen">
+        <div class="answer-head">
+          <span class="badge ${tierClass(card.tier)}">Tier ${card.tier}</span>
+          <span class="kat-reveal">${card.kat}</span>
+        </div>
+        <ol class="steps">
+          <li><span class="step-k">1 · pH</span><span class="step-v">${card.ph}</span></li>
+          <li><span class="step-k">2 · Störung</span><span class="step-v">${card.st}</span></li>
+          <li><span class="step-k">3 · Kompensation</span><span class="step-v">${card.ko}</span></li>
+          <li><span class="step-k">4 · Anionenlücke</span><span class="step-v">${card.al}${agLine(card)}</span></li>
+          <li><span class="step-k">5 · Oxygenierung</span><span class="step-v">${card.ox}</span></li>
+          <li><span class="step-k">6 · Synthese</span><span class="step-v">${card.sy}</span></li>
+        </ol>
+        <div class="block dx"><span class="bk">Diagnose</span><span class="bv">${card.dx}</span></div>
+        <div class="block act"><span class="bk">Erster Schritt</span><span class="bv">${card.ac}</span></div>
+        ${card.fa?`<div class="block falle"><span class="bk">⚠ Falle</span><span class="bv">${card.fa}</span></div>`:''}
+        ${card.zfw?`<div class="block zf"><span class="bk">Kurz erklärt</span><div class="zf-row"><span class="zf-k">Was</span><span>${card.zfw}</span></div><div class="zf-row"><span class="zf-k">Warum</span><span>${card.zfy}</span></div><div class="zf-row"><span class="zf-k">Management</span><span>${card.zfm}</span></div></div>`:''}
+        <div class="block nx"><span class="bk">Schmidmaier fragt weiter</span><span class="bv">${card.nx}</span>${card.nxa?`<div class="nxa"><span class="nxa-k">Antwort</span> ${card.nxa}</div>`:''}</div>
+        <div class="grade">
+          <button class="g-right" id="gRight">Richtig</button>
+          <button class="g-wrong" id="gWrong">Falsch</button>
+        </div>
+      </div>
+    </div>`;
+
+  host.innerHTML = `
+    <article class="card">
+      <div class="card-head">
+        <span class="idtag-l">BGA #${String(card.id).padStart(2,'0')}</span>
+        ${pill}
+        <span class="masked">Typ verdeckt — selbst bestimmen</span>
+      </div>
+      <div class="printout">
+        ${buildPrintout(card)}
+      </div>
+      <div class="prompt">Befunden Sie strukturiert: primäre Störung? Kompensation (akut/chronisch, adäquat)? Anionenlücke? Oxygenierung? Wahrscheinlichste Ursache? Erster Schritt?</div>
+      ${revealed?'':`<button class="reveal-btn" id="revealBtn">Antwort aufdecken</button>`}
+      ${ans}
+    </article>`;
+
+  document.getElementById('counter').textContent = `${idx+1} / ${deck.length}`;
+  document.getElementById('prevBtn').disabled = idx===0;
+  document.getElementById('nextBtn').disabled = idx===deck.length-1;
+
+  const rb=document.getElementById('revealBtn');
+  if(rb) rb.onclick = ()=>{revealed=true; markSeen(); render();};
+  const gr=document.getElementById('gRight'); const gw=document.getElementById('gWrong');
+  if(gr) gr.onclick = ()=>grade('right');
+  if(gw) gw.onclick = ()=>grade('wrong');
+  updateScore();
+}
+
+function updateScore(){
+  let r=0,w=0;
+  deck.forEach(c=>{ const s=progress[c.id]; if(s==='right')r++; else if(s==='wrong')w++; });
+  document.getElementById('rCount').textContent = r;
+  document.getElementById('fCount').textContent = w;
+  const dc=document.getElementById('doneCount');
+  if(dc) dc.textContent = `${r+w} / ${deck.length}`;
+  renderDots();
+}
+function grade(status){
+  if(deck.length===0) return;
+  progress[deck[idx].id] = status;   // 'right'/'wrong' overrides any earlier 'seen'
+  next();                            // advance; next() re-renders, which refreshes score + dots
+}
+function markSeen(){
+  if(deck.length===0) return;
+  const id = deck[idx].id;
+  if(!progress[id]) progress[id] = 'seen';   // never downgrade a graded card
+}
+function renderDots(){
+  const el = document.getElementById('dots');
+  if(!el) return;
+  if(deck.length===0){ el.innerHTML=''; return; }
+  const dotsHTML = deck.map((c,i)=>{
+    const s = progress[c.id] || 'none';
+    const cur = i===idx ? ' cur' : '';
+    const t = s==='right'?'richtig':s==='wrong'?'falsch':s==='seen'?'gesehen':'offen';
+    return `<button class="dot d-${s}${cur}" data-i="${i}" title="#${String(c.id).padStart(2,'0')} · ${t}"></button>`;
+  }).join('');
+  const open = deck.filter(c=>!progress[c.id]).length;
+  el.innerHTML = `<span class="dots-lab">Sitzung</span>${dotsHTML}<span class="dots-rest">${open} offen</span>`;
+  el.querySelectorAll('.dot').forEach(d=>{
+    d.onclick = ()=>{ idx=Number(d.dataset.i); revealed=false; render(); };
+  });
+}
+function next(){ if(idx<deck.length-1){idx++; revealed=false; render();} else {revealed=false; render();} }
+function prev(){ if(idx>0){idx--; revealed=false; render();} }
+function toggleReveal(){ if(deck.length===0) return; revealed=!revealed; if(revealed) markSeen(); render(); }
+
+/* ------- controls wiring ------- */
+const katSel = document.getElementById('katSel');
+KATS.forEach(k=>{const o=document.createElement('option'); o.value=k; o.textContent=k; katSel.appendChild(o);});
+katSel.onchange = ()=>{katFilter=katSel.value; buildDeck(); render();};
+const analyzerSel = document.getElementById('analyzerSel');
+function applyAnalyzer(){ if(!analyzerSel) return; analyzerProfile = analyzerSel.value; render(); }
+analyzerSel.addEventListener('change', applyAnalyzer);
+analyzerSel.addEventListener('input', applyAnalyzer);
+
+document.querySelectorAll('#tierSeg button').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#tierSeg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); tierFilter=b.dataset.tier; buildDeck(); render();
+  };
+});
+document.querySelectorAll('#bankSeg button').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#bankSeg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); bankFilter=b.dataset.bank; buildDeck(); render();
+  };
+});
+document.getElementById('klinikChk').onchange = (e)=>{showKlinik=e.target.checked; render();};
+document.getElementById('flagsChk').onchange = (e)=>{showFlags=e.target.checked; render();};
+document.getElementById('shuffleBtn').onclick = shuffleDeck;
+document.getElementById('resetBtn').onclick = ()=>{progress={}; revealed=false; render();};
+document.getElementById('prevBtn').onclick = prev;
+document.getElementById('nextBtn').onclick = next;
+
+/* schema modal */
+const modal=document.getElementById('schemaModal');
+document.getElementById('schemaBtn').onclick = ()=>modal.classList.add('open');
+document.getElementById('schemaClose').onclick = ()=>modal.classList.remove('open');
+modal.onclick = (e)=>{ if(e.target===modal) modal.classList.remove('open'); };
+
+/* keyboard */
+document.addEventListener('keydown', (e)=>{
+  const tag=(e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='select'||tag==='textarea') return;
+  if(modal.classList.contains('open')){ if(e.key==='Escape') modal.classList.remove('open'); return; }
+  if(e.code==='Space'){ e.preventDefault(); toggleReveal(); }
+  else if(e.key==='ArrowRight'){ next(); }
+  else if(e.key==='ArrowLeft'){ prev(); }
+  else if(e.key==='r'||e.key==='R'){ if(revealed) grade('right'); }
+  else if(e.key==='f'||e.key==='F'){ if(revealed) grade('wrong'); }
+});
+
+/* init */
+buildDeck();
+render();
+updateScore();
+</script>
+</body>
+</html>

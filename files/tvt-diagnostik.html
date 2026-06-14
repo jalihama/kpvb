@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVT – Diagnostikalgorithmus</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #eef5f8;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    padding: 24px 20px 40px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #08222c;
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #08222c;
+    letter-spacing: -0.4px;
+  }
+  header p {
+    color: #45697a;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+  footer {
+    max-width: 920px;
+    margin: 16px auto 0;
+    padding-top: 10px;
+    border-top: 1px solid #cddbe0;
+    color: #5e7e8a;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Tiefe Venenthrombose – Diagnostikalgorithmus</h1>
+  <p>Wells-Score &amp; Bildgebung · AWMF S2k-Leitlinie 2023 · DGA</p>
+</header>
+
+<div class="wrap">
+<svg width="920" height="790" viewBox="0 0 920 790" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#555"/>
+  </marker>
+  <style>
+    text {
+      font-family: 'Roboto Flex', system-ui, sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      fill: #08222c;
+    }
+    .tag  { font-size: 9px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    .lbl  { font-size: 10px; font-weight: 500; fill: #555; }
+    .pill { font-size: 13px; font-weight: 700; fill: #eef5f8; }
+    .title{ font-size: 12px; font-weight: 600; }
+    .cave { fill: #b02020; font-weight: 700; }
+  </style>
+</defs>
+
+<!-- ===========================================================
+     CONNECTORS — drawn first, below all boxes
+     =========================================================== -->
+
+<!-- Box1 START → Box2 Wells -->
+<line x1="450" y1="60" x2="450" y2="118" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box2 Wells → branch junction at y=214 -->
+<line x1="450" y1="178" x2="450" y2="214" stroke="#555" stroke-width="2"/>
+<circle cx="450" cy="214" r="4" fill="#555"/>
+
+<!-- Left branch (< 2) -->
+<polyline points="450,214 180,214 180,252" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="313" y="208" class="lbl" text-anchor="middle">&lt; 2 Punkte</text>
+
+<!-- Right branch (≥ 2) -->
+<polyline points="450,214 720,214 720,252" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="588" y="208" class="lbl" text-anchor="middle">≥ 2 Punkte</text>
+
+<!-- Box3 (unwahrsch.) → Box5 D-Dimer -->
+<line x1="180" y1="296" x2="180" y2="348" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box4 (wahrsch.) → Box6 KoSo sofort -->
+<line x1="720" y1="296" x2="720" y2="342" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box5 D-Dimer → junction at y=452 -->
+<line x1="180" y1="400" x2="180" y2="452" stroke="#555" stroke-width="2"/>
+<circle cx="180" cy="452" r="4" fill="#555"/>
+
+<!-- D-Dimer neg (left) → Box8 TVT aus left -->
+<polyline points="180,452 148,452 148,608" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="84" y="447" class="lbl" text-anchor="middle">Negativ</text>
+
+<!-- D-Dimer pos (right) → Box7 KoSo center -->
+<polyline points="180,452 450,452 450,488" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="316" y="447" class="lbl" text-anchor="middle">Positiv</text>
+
+<!-- Box6 KoSo (right) → junction at y=454 -->
+<line x1="720" y1="408" x2="720" y2="454" stroke="#555" stroke-width="2"/>
+<circle cx="720" cy="454" r="4" fill="#555"/>
+
+<!-- KoSo positiv (Wells ≥2) → Box9 Therapie -->
+<polyline points="720,454 524,454 524,608" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="623" y="448" class="lbl" text-anchor="middle">Positiv</text>
+
+<!-- KoSo negativ (Wells ≥2) → Box10 D-Dimer (intermediate step) -->
+<polyline points="720,454 752,454 752,608" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="798" y="448" class="lbl" text-anchor="middle">Negativ</text>
+
+<!-- Box7 KoSo (center) → junction at y=576 -->
+<line x1="450" y1="552" x2="450" y2="576" stroke="#555" stroke-width="2"/>
+<circle cx="450" cy="576" r="4" fill="#555"/>
+
+<!-- KoSo neg (center) → Box8 TVT aus left -->
+<polyline points="450,576 148,576 148,608" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="296" y="570" class="lbl" text-anchor="middle">Negativ</text>
+
+<!-- KoSo pos (center) → Box9 Therapie -->
+<polyline points="450,576 450,608" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="472" y="596" class="lbl" text-anchor="start">Positiv</text>
+
+<!-- Box10 D-Dimer (Wells≥2 KoSo-neg) → junction at y=680 -->
+<line x1="752" y1="670" x2="752" y2="690" stroke="#555" stroke-width="2"/>
+<circle cx="752" cy="690" r="4" fill="#555"/>
+
+<!-- D-Dimer neg → Box10b TVT aus (right) -->
+<polyline points="752,690 820,690 820,700" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="788" y="684" class="lbl" text-anchor="middle">Negativ</text>
+
+<!-- D-Dimer pos → Box12 Kontroll-KoSo -->
+<polyline points="752,690 640,690 640,700" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<text x="696" y="684" class="lbl" text-anchor="middle">Positiv</text>
+
+<!-- ===========================================================
+     BOXES — drawn on top of connectors
+     =========================================================== -->
+
+<!-- Box 1: START pill -->
+<rect x="294" y="18" width="312" height="42" rx="21" fill="#08222c"/>
+<text x="450" y="44" class="pill" text-anchor="middle">Verdacht auf TVT</text>
+
+<!-- Box 2: Wells-Score decision -->
+<rect x="348" y="118" width="204" height="60" rx="6" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<!-- circle badge -->
+<circle cx="543" cy="116" r="12" fill="#08222c"/>
+<text x="543" y="121" fill="#eef5f8" font-size="13" font-weight="700" text-anchor="middle">?</text>
+<text x="450" y="142" class="title" text-anchor="middle" fill="#08222c">Wells-Score</text>
+<text x="450" y="162" font-size="11" font-weight="500" text-anchor="middle" fill="#444">ermitteln (Cutoff: &lt; 2 / ≥ 2)</text>
+
+<!-- Box 3: TVT unwahrscheinlich -->
+<rect x="70" y="252" width="220" height="44" rx="6" fill="#ebebeb" stroke="#cddbe0" stroke-width="1.5"/>
+<text x="180" y="268" class="tag" fill="#555" text-anchor="middle">Wells &lt; 2</text>
+<text x="180" y="287" class="title" fill="#555" text-anchor="middle">TVT unwahrscheinlich</text>
+
+<!-- Box 4: TVT wahrscheinlich -->
+<rect x="610" y="252" width="220" height="44" rx="6" fill="#ebebeb" stroke="#cddbe0" stroke-width="1.5"/>
+<text x="720" y="268" class="tag" fill="#555" text-anchor="middle">Wells ≥ 2</text>
+<text x="720" y="287" class="title" fill="#555" text-anchor="middle">TVT wahrscheinlich</text>
+
+<!-- Box 5: D-Dimer (left, after Wells <2) -->
+<rect x="70" y="348" width="220" height="52" rx="6" fill="#d9eaf7" stroke="#7aaad4" stroke-width="1.5"/>
+<text x="180" y="366" class="tag" fill="#2a4a7f" text-anchor="middle">Labordiagnostik</text>
+<text x="180" y="385" class="title" fill="#2a4a7f" text-anchor="middle">D-Dimer bestimmen</text>
+<text x="180" y="399" font-size="10" fill="#4a7aaf" text-anchor="middle" font-style="italic">hochsensitiver Assay</text>
+
+<!-- Box 6: KoSo sofort (right, after Wells ≥2) -->
+<rect x="610" y="342" width="220" height="66" rx="6" fill="#d9eaf7" stroke="#7aaad4" stroke-width="1.5"/>
+<text x="720" y="360" class="tag" fill="#2a4a7f" text-anchor="middle">Bildgebung · sofort</text>
+<text x="720" y="378" class="title" fill="#2a4a7f" text-anchor="middle">(Farbduplex-)</text>
+<text x="720" y="395" class="title" fill="#2a4a7f" text-anchor="middle">Kompressionssonographie</text>
+
+<!-- Box 7: KoSo center (after D-Dimer pos, Wells <2) -->
+<rect x="336" y="488" width="228" height="64" rx="6" fill="#d9eaf7" stroke="#7aaad4" stroke-width="1.5"/>
+<text x="450" y="507" class="tag" fill="#2a4a7f" text-anchor="middle">Bildgebung</text>
+<text x="450" y="525" class="title" fill="#2a4a7f" text-anchor="middle">(Farbduplex-)</text>
+<text x="450" y="543" class="title" fill="#2a4a7f" text-anchor="middle">Kompressionssonographie</text>
+
+<!-- Box 8: TVT ausgeschlossen (left terminal) -->
+<rect x="58" y="608" width="180" height="48" rx="6" fill="#d4edda" stroke="#5a9a70" stroke-width="1.5"/>
+<text x="148" y="628" class="title" fill="#1e5c3a" text-anchor="middle">TVT</text>
+<text x="148" y="647" class="title" fill="#1e5c3a" text-anchor="middle">ausgeschlossen</text>
+
+<!-- Box 9: Therapie einleiten (center terminal) -->
+<rect x="338" y="608" width="200" height="48" rx="6" fill="#fddbb4" stroke="#cc8844" stroke-width="1.5"/>
+<text x="438" y="628" class="title" fill="#7a4a00" text-anchor="middle">Therapie</text>
+<text x="438" y="647" class="title" fill="#7a4a00" text-anchor="middle">einleiten</text>
+
+<!-- ─────────────────────────────────────────────
+     FACT-CORRECTED PATH: Wells ≥2 + KoSo negativ
+     Per AWMF S2k 2023: D-Dimer obligat!
+     ───────────────────────────────────────────── -->
+
+<!-- Box 10: D-Dimer (intermediate — Wells≥2 after KoSo neg) -->
+<rect x="660" y="608" width="184" height="62" rx="6" fill="#d9eaf7" stroke="#7aaad4" stroke-width="1.5"/>
+<text x="752" y="626" class="tag" fill="#2a4a7f" text-anchor="middle">Wells ≥ 2 · KoSo negativ</text>
+<text x="752" y="645" class="title" fill="#2a4a7f" text-anchor="middle">D-Dimer</text>
+<text x="752" y="661" font-size="9.5" fill="#4a6a9f" text-anchor="middle" font-style="italic">obligat vor Ausschluss!</text>
+
+<!-- Box 10b: TVT ausgeschlossen (right, D-Dimer neg) -->
+<rect x="742" y="700" width="165" height="48" rx="6" fill="#d4edda" stroke="#5a9a70" stroke-width="1.5"/>
+<text x="824" y="720" class="title" fill="#1e5c3a" text-anchor="middle">TVT</text>
+<text x="824" y="739" class="title" fill="#1e5c3a" text-anchor="middle">ausgeschlossen</text>
+
+<!-- Box 12: Kontroll-KoSo in 5–7 d (D-Dimer pos) -->
+<rect x="542" y="700" width="190" height="76" rx="6" fill="#d9eaf7" stroke="#7aaad4" stroke-width="1.5"/>
+<text x="637" y="718" class="tag" fill="#2a4a7f" text-anchor="middle">D-Dimer positiv</text>
+<text x="637" y="736" class="title" fill="#2a4a7f" text-anchor="middle">Kontroll-KoSo in 5–7 d</text>
+<line x1="558" y1="744" x2="716" y2="744" stroke="#b8cef0" stroke-width="1"/>
+<text x="558" y="758" font-size="10" fill="#2a4a7f">neg → TVT ausgeschlossen</text>
+<text x="558" y="771" font-size="10" fill="#7a4a00">pos → Therapie einleiten</text>
+
+</svg>
+</div>
+
+<footer>
+  <span>AWMF S2k-Leitlinie: Diagnostik und Therapie der Venenthrombose und Lungenembolie (2023) · DGA</span>
+  <span>TVT · Diagnostikalgorithmus</span>
+</footer>
+
+</body>
+</html>

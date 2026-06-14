@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hyperparathyreoidismus – Lernkarte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6F8;
+    --card:#FFFFFF;
+    --ink:#1E2A33;
+    --ink-soft:#566571;
+    --line:#E1E7EC;
+    --line-strong:#CDD6DD;
+
+    /* Die drei Formen – durchgängige Farbcodierung */
+    --p1:#0F756B;  --p1-bg:#E2F1EF;  --p1-soft:#0c5e56;   /* primär  – Teal   */
+    --p2:#B26A00;  --p2-bg:#FBEEDB;  --p2-soft:#8f5500;   /* sekundär – Amber  */
+    --p3:#7A4A9E;  --p3-bg:#F0E9F6;  --p3-soft:#623c80;   /* tertiär – Violett */
+
+    /* Hinweisboxen */
+    --merke:#2B6CB0;   --merke-bg:#EAF2FB;
+    --cave:#C2453C;    --cave-bg:#FBEAE6;
+    --esel:#B68309;    --esel-bg:#FCF5DC;
+
+    /* Tabellen-Pfeile */
+    --up:#C2453C; --down:#2B6CB0; --norm:#6B7884;
+
+    --radius:14px;
+    --maxw:870px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:28px 20px 80px;}
+
+  /* ---------- Kopf ---------- */
+  header.masthead{margin-bottom:8px;}
+  .eyebrow{font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:700;}
+  h1{font-size:2.05rem; line-height:1.15; margin:.15em 0 .1em; letter-spacing:-.01em;}
+  .subtitle{font-size:1.05rem; color:var(--ink-soft); margin:0 0 4px;}
+
+  /* ---------- Inhalts-/Legendenleiste ---------- */
+  nav.toc{
+    position:sticky; top:0; z-index:5;
+    background:rgba(244,246,248,.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    margin:14px -20px 26px; padding:10px 20px;
+    display:flex; flex-wrap:wrap; gap:7px; align-items:center;
+  }
+  nav.toc a{
+    text-decoration:none; color:var(--ink);
+    font-size:.82rem; font-weight:700;
+    padding:5px 11px; border:1px solid var(--line-strong); border-radius:999px;
+    background:var(--card); white-space:nowrap;
+  }
+  nav.toc a:hover,nav.toc a:focus-visible{border-color:var(--ink); }
+  .legend{display:flex; gap:12px; flex-wrap:wrap; margin-left:auto; font-size:.78rem; color:var(--ink-soft);}
+  .legend span{display:inline-flex; align-items:center; gap:5px; font-weight:700; margin-left:4px;}
+  .dot{width:11px; height:11px; border-radius:3px; display:inline-block; margin-right:5px;}
+  .arrlegend span{margin-right:6px;}
+
+  /* ---------- Sektionen ---------- */
+  section{scroll-margin-top:64px; margin-bottom:30px;}
+  h2{
+    font-size:1.35rem; margin:0 0 14px; padding-bottom:7px;
+    border-bottom:2px solid var(--line-strong); display:flex; align-items:baseline; gap:10px;
+  }
+  h2 .num{font-size:.8rem; color:var(--ink-soft); font-weight:700; letter-spacing:.05em;}
+
+  .card{
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--radius); padding:18px 20px; margin-bottom:14px;
+  }
+  .card h3{margin:0 0 9px; font-size:1.06rem;}
+  .card h3:not(:first-child){margin-top:16px;}
+  .sub{font-size:.82rem; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin:14px 0 5px;}
+
+  /* Farbig markierte Karten je Form */
+  .tint{border-left:5px solid var(--line-strong);}
+  .tint.p1{border-left-color:var(--p1);}
+  .tint.p2{border-left-color:var(--p2);}
+  .tint.p3{border-left-color:var(--p3);}
+
+  .tag{
+    display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.04em;
+    padding:3px 9px; border-radius:999px; text-transform:uppercase; margin-bottom:9px;
+  }
+  .tag.p1{background:var(--p1-bg); color:var(--p1-soft);}
+  .tag.p2{background:var(--p2-bg); color:var(--p2-soft);}
+  .tag.p3{background:var(--p3-bg); color:var(--p3-soft);}
+
+  /* Listen */
+  ul{margin:6px 0; padding-left:20px;}
+  li{margin:4px 0;}
+  li::marker{color:var(--ink-soft);}
+  ul ul{margin:3px 0;}
+  b,strong{font-weight:700;}
+  .lead{font-weight:700;}
+
+  /* Definition-Block */
+  .define{background:var(--p1-bg); border-radius:10px; padding:13px 16px; margin-bottom:14px;}
+  .define .k{font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--p1-soft);}
+
+  /* Drei-Formen-Schnellblick */
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  .mini{background:var(--card); border:1px solid var(--line); border-top:4px solid; border-radius:12px; padding:13px 14px;}
+  .mini.p1{border-top-color:var(--p1);}
+  .mini.p2{border-top-color:var(--p2);}
+  .mini.p3{border-top-color:var(--p3);}
+  .mini .nm{font-weight:700; font-size:.95rem; margin-bottom:3px;}
+  .mini.p1 .nm{color:var(--p1-soft);} .mini.p2 .nm{color:var(--p2-soft);} .mini.p3 .nm{color:var(--p3-soft);}
+  .mini p{margin:0; font-size:.9rem; color:var(--ink);}
+
+  /* Hinweisboxen */
+  .box{border-radius:11px; padding:12px 15px 12px 16px; margin:13px 0; border-left:5px solid; font-size:.97rem;}
+  .box .lbl{font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:3px;}
+  .box.merke{background:var(--merke-bg); border-left-color:var(--merke);}
+  .box.merke .lbl{color:var(--merke);}
+  .box.cave{background:var(--cave-bg); border-left-color:var(--cave);}
+  .box.cave .lbl{color:var(--cave);}
+  .box.esel{background:var(--esel-bg); border-left-color:var(--esel);}
+  .box.esel .lbl{color:var(--esel);}
+  .box.esel .quote{font-size:1.08rem; font-weight:700; font-style:italic;}
+
+  /* Tabelle */
+  .tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card);}
+  table{border-collapse:collapse; width:100%; min-width:540px; font-size:.95rem;}
+  caption{text-align:left; font-weight:700; padding:13px 16px 4px; font-size:1.02rem;}
+  th,td{padding:10px 12px; text-align:center; border-bottom:1px solid var(--line);}
+  thead th{font-size:.82rem; color:var(--ink-soft); background:#F8FAFB; border-bottom:2px solid var(--line-strong);}
+  tbody th{text-align:left; font-weight:700; white-space:nowrap;}
+  tbody tr.r1 th{border-left:5px solid var(--p1); color:var(--p1-soft);}
+  tbody tr.r2 th{border-left:5px solid var(--p2); color:var(--p2-soft);}
+  tbody tr.r3 th{border-left:5px solid var(--p3); color:var(--p3-soft);}
+  tbody tr:last-child td,tbody tr:last-child th{border-bottom:none;}
+  .ar{font-weight:700; font-size:1.1rem;}
+  .up{color:var(--up);} .down{color:var(--down);} .norm{color:var(--norm);}
+  .arrlegend{display:flex; gap:16px; flex-wrap:wrap; padding:9px 16px 13px; font-size:.8rem; color:var(--ink-soft);}
+  .arrlegend b{font-size:1rem;}
+
+  footer{margin-top:34px; padding-top:14px; border-top:1px solid var(--line); font-size:.8rem; color:var(--ink-soft);}
+
+  a.inlink{color:var(--merke); text-decoration:none; border-bottom:1px solid transparent;}
+  a.inlink:hover{border-bottom-color:var(--merke);}
+
+  @media (max-width:620px){
+    body{font-size:16px;}
+    h1{font-size:1.7rem;}
+    .grid3{grid-template-columns:1fr;}
+    .legend{width:100%; margin-left:0;}
+  }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} }
+
+  @media print{
+    :root{--bg:#fff;}
+    body{font-size:11.5pt;}
+    nav.toc{display:none;}
+    .card,.tablewrap,.mini{break-inside:avoid;}
+    section{break-inside:avoid;}
+    .box{break-inside:avoid;}
+    a.inlink{color:var(--ink);}
+  }
+</style>
+<style id="kp-brand">
+:root{--bg:#eef5f8!important;--card:#ffffff!important;--ink:#08222c!important;--ink-soft:#45697a!important;--line:#d8e6ea!important;--line-strong:#c2d4da!important;}
+body,h1,h2,h3,h4,h5,h6,p,li,td,th,span,div,a,button,input,select,caption,.nav-link,.brand-title,.eyebrow,.lesson-eyebrow{font-family:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif !important}
+code,.mono,pre,kbd{font-family:'Roboto Mono',ui-monospace,Menlo,Consolas,monospace !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Examenswissen · Lernzusammenfassung</div>
+    <h1>Hyperparathyreoidismus</h1>
+    <p class="subtitle">Nebenschilddrüsenüberfunktion · HPT</p>
+  </header>
+
+  <nav class="toc" aria-label="Inhalt">
+    <a href="#ueberblick">Überblick</a>
+    <a href="#epi">Epidemiologie</a>
+    <a href="#patho">Pathophysiologie</a>
+    <a href="#symptome">Symptomatik</a>
+    <a href="#diagnostik">Diagnostik</a>
+    <a href="#therapie">Therapie</a>
+    <div class="legend" aria-hidden="true">
+      <span><i class="dot" style="background:var(--p1)"></i>primär</span>
+      <span><i class="dot" style="background:var(--p2)"></i>sekundär</span>
+      <span><i class="dot" style="background:var(--p3)"></i>tertiär</span>
+    </div>
+  </nav>
+
+  <!-- ============ ÜBERBLICK ============ -->
+  <section id="ueberblick">
+    <h2><span class="num">01</span> Überblick</h2>
+
+    <div class="card">
+      <div class="define">
+        <span class="k">Definition</span>
+        <div>Unter <b>Hyperparathyreoidismus (HPT)</b> werden alle Erkrankungen zusammengefasst, die mit einem <b>erhöhten Parathormon‑Spiegel (PTH)</b> einhergehen. PTH wird in den <b>Nebenschilddrüsen</b> gebildet und führt zu einem <b>Anstieg des Calciumspiegels</b> im Serum.</div>
+      </div>
+
+      <ul>
+        <li>Die <b>Diagnose</b> wird <b>laborchemisch</b> gestellt; weitere Untersuchungen dienen der Differenzialdiagnostik und dem Ausschluss von Folgeschäden.</li>
+        <li><b>Primärer HPT</b> (am häufigsten): durch <b>Adenome oder Hyperplasien</b> der Nebenschilddrüsen → <b>Hyperkalzämie</b>. Symptome teils unspezifisch (Müdigkeit, Nierensteine, vermehrte Knochenbrüchigkeit, depressive Verstimmung) oder ganz asymptomatisch. Therapie der Wahl: <b>Entfernung der Nebenschilddrüsen</b>.</li>
+        <li><b>Sekundärer HPT</b>: reaktiver PTH‑Anstieg bei <b>Hypokalzämie</b> oder <b>Hyperphosphatämie</b>.</li>
+        <li><b>Tertiärer HPT</b>: bei langem Bestehen des sekundären HPT entsteht eine <b>Autonomie</b> der Nebenschilddrüsen.</li>
+        <li>Sekundärem und tertiärem HPT liegt meist eine <b>chronische Nierenkrankheit</b> zugrunde – v.a. über <b>Mangel an aktivem Vitamin&nbsp;D</b> und <b>renale Phosphatretention</b> → PTH‑Anstieg. Im Vordergrund stehen die <b>Therapie der Grunderkrankung</b> und eine <b>frühzeitige Vitamin‑D‑Substitution</b>.</li>
+      </ul>
+    </div>
+
+    <p class="sub">Die drei Formen auf einen Blick</p>
+    <div class="grid3">
+      <div class="mini p1"><div class="nm">Primär</div><p>Autonomes Adenom → <b>Hyperkalzämie</b>. Calcium ↑.</p></div>
+      <div class="mini p2"><div class="nm">Sekundär</div><p>Reaktiv bei <b>CKD</b> → kompensatorischer PTH‑Anstieg. Calcium meist ↓/normal.</p></div>
+      <div class="mini p3"><div class="nm">Tertiär</div><p>Aus langem sekundärem HPT → <b>Autonomie</b>. Calcium ↑.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ EPIDEMIOLOGIE ============ -->
+  <section id="epi">
+    <h2><span class="num">02</span> Epidemiologie</h2>
+    <div class="card tint p1">
+      <span class="tag p1">Primärer HPT</span>
+      <ul>
+        <li><b>Geschlecht:</b> ♀ &gt; ♂ (3:1)</li>
+        <li><b>Alter:</b> Häufung ab dem 50. Lebensjahr</li>
+        <li><b>Prävalenz:</b> 1–7 / 1.000 in den westlichen Industrienationen</li>
+      </ul>
+      <p style="margin:8px 0 0; font-size:.85rem; color:var(--ink-soft)">Sofern nicht anders angegeben, beziehen sich die Daten auf Deutschland.</p>
+    </div>
+  </section>
+
+  <!-- ============ PATHOPHYSIOLOGIE ============ -->
+  <section id="patho">
+    <h2><span class="num">03</span> Pathophysiologie</h2>
+
+    <div class="card">
+      <h3>Physiologische Grundlagen</h3>
+      <p class="sub">Physiologische Stimulation der PTH‑Sekretion</p>
+      <ul>
+        <li>Calcium im Serum <span class="ar down">↓</span></li>
+        <li>Phosphat im Serum <span class="ar up">↑</span></li>
+      </ul>
+      <p class="sub">Wirkung von PTH → Anstieg des Serumcalciums</p>
+      <ul>
+        <li><b>Knochen:</b> vermehrter Ausbau (Abbau) von Calcium</li>
+        <li><b>Niere:</b>
+          <ul>
+            <li>vermehrte Rückresorption von Calcium</li>
+            <li>Förderung der Calcitriol‑Bildung → vermehrte Calcium‑Aufnahme aus dem Darm</li>
+            <li>vermehrte Ausscheidung von Phosphat</li>
+          </ul>
+        </li>
+        <li><b>Serumelektrolyte:</b> Calcium <span class="ar up">↑</span> · Phosphat <span class="ar down">↓</span></li>
+      </ul>
+    </div>
+
+    <div class="card tint p1">
+      <span class="tag p1">Primärer HPT</span>
+      <ul>
+        <li><b>Autonome PTH‑Produktion</b> im Adenom</li>
+        <li>PTH‑Produktion <b>entkoppelt</b> vom Calcium‑Serumspiegel → pathologische <b>Hyperkalzämie</b></li>
+        <li><b>Symptome:</b> primär durch die Hyperkalzämie (z.B. Muskelschwäche, Übelkeit, Polyurie)</li>
+      </ul>
+    </div>
+
+    <div class="card tint p2">
+      <span class="tag p2">Sekundärer HPT</span>
+      <ul>
+        <li><b>Reaktive Erhöhung</b> der PTH‑Produktion in den Nebenschilddrüsen</li>
+        <li>Auslöser: <b>Hypokalzämie</b> und/oder <b>Hyperphosphatämie</b></li>
+        <li><b>Wichtigste Ursache:</b> chronische Nierenkrankheit
+          <ul>
+            <li>verringerte glomeruläre Filtration → Phosphatretention → ↑ PTH‑Sekretion</li>
+            <li>verminderte Vitamin‑D‑Aktivierung in der Niere → Hypokalzämie → ↑ PTH‑Sekretion</li>
+          </ul>
+        </li>
+        <li><b>Symptome:</b> hauptsächlich durch Wirkung an den Knochen — PTH ↑ → Aktivierung von Osteoklasten → Reduktion der Knochendichte</li>
+      </ul>
+    </div>
+
+    <div class="card tint p3">
+      <span class="tag p3">Tertiärer HPT</span>
+      <ul>
+        <li><b>Autonome PTH‑Produktion</b> in hyperplastischen Nebenschilddrüsen</li>
+        <li>Langjähriger, unbehandelter sekundärer HPT → <b>Hyperplasie</b> mit autonomer PTH‑Produktion → ähnliche Erscheinung und Laborkonstellation (Hyperkalzämie + PTH ↑) wie beim <b>primären HPT</b></li>
+        <li><b>Symptome:</b> v.a. durch Kombination aus Hyperphosphatämie und Hyperkalzämie → <b>Kalzifikationen</b></li>
+      </ul>
+    </div>
+
+    <div class="box merke">
+      <span class="lbl">Merke</span>
+      Beim <b>primären HPT</b> kann eine Hyperplasie der Nebenschilddrüse die <b>Ursache</b> sein. Beim <b>sekundären HPT</b> entsteht sie hingegen <b>reaktiv</b>.
+    </div>
+  </section>
+
+  <!-- ============ SYMPTOMATIK ============ -->
+  <section id="symptome">
+    <h2><span class="num">04</span> Symptomatik</h2>
+
+    <div class="card tint p1" style="border-left-color:var(--p3)">
+      <span class="tag p1">Primärer</span> <span class="tag p3">&amp; Tertiärer HPT</span>
+      <p class="lead" style="margin-top:2px">Meist asymptomatisch / unspezifisch.</p>
+
+      <p class="sub">Symptome einer Hyperkalzämie</p>
+      <ul>
+        <li><b>Niere:</b> Nephrolithiasis (selten Nephrokalzinose); Polyurie, Polydipsie</li>
+        <li><b>Gastrointestinaltrakt:</b> seltener Ulcus ventriculi/duodeni, Pankreatitis, Appetitlosigkeit, Übelkeit, Obstipation</li>
+        <li><b>Psyche:</b> depressive Verstimmung bis zur manifesten Depression; psychotische Symptomatik</li>
+        <li><b>Neuromuskulär:</b> proximale Muskelschwäche, Muskelatrophie</li>
+        <li><b>Kardiovaskulär:</b> Gefäßkalzifizierung durch erhöhte Calcium‑ und Phosphatspiegel</li>
+        <li><b>Selten:</b> hyperkalzämische Krise</li>
+      </ul>
+
+      <p class="sub">Folgen des erhöhten PTH‑Spiegels — Bewegungsapparat</p>
+      <ul>
+        <li>Knochen‑ und Gelenkschmerzen</li>
+        <li>verringerte Knochendichte (Osteopenie) mit Frakturneigung</li>
+        <li>Chondrokalzinose</li>
+        <li>Osteolysen, z.B. Akroosteolysen an den Fingerknochen</li>
+      </ul>
+
+      <p class="sub">Zusätzlich beim tertiären HPT</p>
+      <ul><li>Symptome der Grunderkrankung, insb. einer chronischen Nierenkrankheit</li></ul>
+    </div>
+
+    <div class="box esel">
+      <span class="lbl">Eselsbrücke</span>
+      <span class="quote">„Stein‑, Bein‑ und Magenpein und ein bisschen traurig sein!"</span><br>
+      <span style="font-size:.85rem; color:var(--ink-soft)">Stein = Nierensteine · Bein = Knochen/Gelenke · Magen = GI‑Trakt · traurig = Psyche</span>
+    </div>
+
+    <div class="box merke">
+      <span class="lbl">Merke</span>
+      Der Großteil der Betroffenen mit <b>pHPT</b> ist <b>asymptomatisch</b> oder hat nur unspezifische Beschwerden (Müdigkeit, verminderte Leistungsfähigkeit).
+    </div>
+
+    <div class="card tint p2">
+      <span class="tag p2">Sekundärer HPT</span>
+      <ul>
+        <li>Symptome einer möglichen Grunderkrankung (z.B. chronische Nierenkrankheit); ansonsten meist <b>asymptomatisch</b></li>
+        <li>ggf. diffuse Knochenschmerzen, Spontanfrakturen</li>
+        <li>Pruritus (Juckreiz)</li>
+      </ul>
+    </div>
+
+    <div class="box merke">
+      <span class="lbl">Merke</span>
+      Ein <b>sekundärer HPT</b> führt nur in <b>5–10 %</b> der Fälle zu Beschwerden.
+    </div>
+  </section>
+
+  <!-- ============ DIAGNOSTIK ============ -->
+  <section id="diagnostik">
+    <h2><span class="num">05</span> Diagnostik</h2>
+
+    <div class="card">
+      <h3>Labor — Indikation</h3>
+      <p>Ein (primärer) HPT sollte <b>differenzialdiagnostisch erwogen</b> werden bei:</p>
+      <ul>
+        <li>nachgewiesener oder vermuteter <b>Hyperkalzämie</b></li>
+        <li>Auftreten von <b>Nierensteinen</b></li>
+        <li><b>Fragilitätsfrakturen</b></li>
+        <li><b>Röntgen‑Auffälligkeiten</b> als Zufallsbefund:
+          <ul>
+            <li>diffuse Osteopenie, Verkalkungen des Gelenkknorpels</li>
+            <li>subperiostale Resorptionslakunen — frühzeitig an den Phalangen der Hand (Akroosteolysen)</li>
+            <li>Osteodystrophia cystica generalisata von Recklinghausen (eingeblutete Resorptionszysten = „braune Tumoren") — eher selten</li>
+            <li>Schädel: Verlust der normalen Dreischichtung der Schädelkalotte, granuläre Zeichnung („Pfeffer‑und‑Salz"‑Schädel)</li>
+          </ul>
+        </li>
+        <li>Der Verdacht auf einen <b>sekundären</b> oder <b>tertiären</b> HPT ergibt sich i.d.R. aus der Grunderkrankung.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Labor — Durchführung</h3>
+      <p class="sub">Zur Diagnosestellung</p>
+      <ul>
+        <li>Serumcalcium + Berechnung des <b>korrigierten Calciums</b></li>
+        <li><b>PTH</b></li>
+        <li>möglichst <b>mehrfache</b> Bestimmung</li>
+      </ul>
+      <p class="sub">Zur Differenzialdiagnostik</p>
+      <ul>
+        <li>Phosphat</li>
+        <li>Alkalische Phosphatase</li>
+        <li>Vitamin&nbsp;D3</li>
+        <li>Kreatinin, GFR</li>
+        <li>ggf. Calcium‑Kreatinin‑Quotient im Urin</li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Die Diagnose eines Hyperparathyreoidismus wird <b>laborchemisch</b> gestellt.
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <caption>Laborparameter im Überblick</caption>
+        <thead>
+          <tr>
+            <th scope="col">Form</th>
+            <th scope="col">Calcium<br><span style="font-weight:400">(Serum)</span></th>
+            <th scope="col">Phosphat<br><span style="font-weight:400">(Serum)</span></th>
+            <th scope="col">Alk.<br>Phosphatase</th>
+            <th scope="col">PTH</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="r1">
+            <th scope="row">Primär</th>
+            <td><span class="ar up">↑</span></td>
+            <td><span class="ar down">↓</span></td>
+            <td><span class="ar up">↑</span></td>
+            <td><span class="ar up">↑</span></td>
+          </tr>
+          <tr class="r2">
+            <th scope="row">Sekundär <span style="font-weight:400; font-size:.82rem">(z.B. CKD)</span></th>
+            <td><span class="ar norm">n</span> / <span class="ar down">↓</span></td>
+            <td><span class="ar norm">n</span> / <span class="ar up">↑</span></td>
+            <td><span class="ar up">↑</span></td>
+            <td><span class="ar up">↑</span></td>
+          </tr>
+          <tr class="r3">
+            <th scope="row">Tertiär</th>
+            <td><span class="ar up">↑</span></td>
+            <td><span class="ar up">↑</span></td>
+            <td><span class="ar up">↑</span></td>
+            <td><span class="ar up">↑</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="arrlegend">
+        <span><b class="up">↑</b>&nbsp;erhöht</span>
+        <span><b class="down">↓</b>&nbsp;erniedrigt</span>
+        <span><b class="norm">n</b>&nbsp;normal</span>
+      </div>
+    </div>
+
+    <div class="box merke">
+      <span class="lbl">Merke</span>
+      Beim <b>primären (und tertiären)</b> HPT ist eine <b>Calcium‑Erhöhung</b> zu erwarten — der <b>sekundäre</b> HPT zeichnet sich dagegen häufig durch eine <b>Hypokalzämie</b> aus.
+    </div>
+
+    <div class="card">
+      <h3>Weiterführende Diagnostik</h3>
+      <p class="sub">Beurteilung der Nebenschilddrüsen</p>
+      <ul>
+        <li><b>Indikation:</b> Adenomsuche bei pHPT mit geplanter Nebenschilddrüsen‑Resektion</li>
+        <li><b>Ziel:</b> Detektion möglicher Adenome zur fokussierteren Wahl des OP‑Zugangs</li>
+        <li><b>Verfahren:</b> Sonografie der Halsregion; ggf. nuklearmedizinisch (SPECT oder PET/CT)</li>
+      </ul>
+      <ul style="margin-top:10px">
+        <li><b>Sonografie der Nieren:</b> Ausschluss von Nierensteinen und Nephrokalzinose</li>
+        <li><b>Osteodensitometrie (DXA):</b> Beurteilung der Knochendichte, insb. bei weiteren Osteoporose‑Risikofaktoren</li>
+        <li>je nach Grunderkrankung ggf. <b>weitere Diagnostik</b> (siehe chronische Nierenkrankheit)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ THERAPIE ============ -->
+  <section id="therapie">
+    <h2><span class="num">06</span> Therapie</h2>
+
+    <div class="card tint p1">
+      <span class="tag p1">Primärer HPT</span>
+
+      <h3>Operativ</h3>
+      <ul>
+        <li><b>Ziel:</b> Entfernung der Nebenschilddrüsen (total oder nur adenomatös vergrößerte Anteile) → <b>Heilung</b></li>
+        <li><b>Indikationen:</b>
+          <ul>
+            <li>bei symptomatischem pHPT <b>immer</b> (wenn möglich)</li>
+            <li>bei asymptomatischem pHPT i.d.R. ebenfalls <b>empfohlen</b></li>
+          </ul>
+        </li>
+        <li><b>Methode:</b> partielle oder totale Parathyreoidektomie</li>
+      </ul>
+
+      <h3>Konservativ</h3>
+      <ul>
+        <li><b>Indikation:</b> i.d.R. nur bei Kontraindikationen gegen eine Operation</li>
+        <li><b>Allgemein:</b>
+          <ul>
+            <li>ausreichende Flüssigkeitszufuhr</li>
+            <li>Vermeidung von Thiaziddiuretika</li>
+            <li>ggf. Osteoporosetherapie mit Bisphosphonaten oder Denosumab</li>
+            <li>ausreichende Zufuhr von Vitamin&nbsp;D und Calcium</li>
+            <li>bei Vitamin‑D‑Mangel <b>vorsichtige</b> Substitution (max. 1.000 IE/Tag) unter regelmäßiger Laborkontrolle</li>
+          </ul>
+        </li>
+        <li><b>Spezifisch:</b> Calcimimetikum <b>Cinacalcet</b></li>
+      </ul>
+
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Die <b>operative Entfernung</b> der Nebenschilddrüsen ist die <b>einzige kurative</b> Therapieoption beim pHPT.
+      </div>
+    </div>
+
+    <div class="card tint p2" style="border-image:none">
+      <span class="tag p2">Sekundärer</span> <span class="tag p3">&amp; Tertiärer HPT</span>
+      <ul>
+        <li>Behandlung der (meist <b>renalen</b>) Grunderkrankung (siehe chronische Nierenkrankheit)</li>
+        <li><b>Frühzeitige Therapie des sHPT</b> ist entscheidend, um die Entwicklung eines tHPT zu vermeiden:
+          <ul>
+            <li>bei bekannter CKD frühzeitig <b>Vitamin&nbsp;D3 (Cholecalciferol)</b></li>
+            <li>bei stark fortgeschrittener CKD Substitution von <b>aktivem Vitamin&nbsp;D3 (Calcitriol)</b></li>
+          </ul>
+        </li>
+        <li>ggf. <b>Cinacalcet</b></li>
+        <li>ggf. <b>totale Parathyreoidektomie</b> mit Autotransplantation von Nebenschilddrüsengewebe</li>
+      </ul>
+
+      <div class="box cave" style="margin-bottom:0">
+        <span class="lbl">Cave</span>
+        Engmaschige Überwachung mit Kontrolle von <b>Calcium, Phosphat und PTH alle 2 Wochen</b> — insbesondere bei Gabe von Calcitriol.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Lernzusammenfassung zu Hyperparathyreoidismus (Nebenschilddrüsenüberfunktion). Inhaltlich entspricht sie der Vorlage; sie ersetzt keine Leitlinie und keine ärztliche Entscheidung. Eine vertonte Fassung existiert als AMBOSS‑Audio (Podcast).
+  </footer>
+
+</div>
+</body>
+</html>

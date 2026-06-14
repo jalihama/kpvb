@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osteoporose – Lernkarte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6F8; --card:#FFFFFF; --ink:#1E2A33; --ink-soft:#566571;
+    --line:#E1E7EC; --line-strong:#CDD6DD;
+
+    /* Ätiologie / Mechanismus */
+    --prim:#0F756B; --prim-bg:#E2F1EF; --prim-d:#0c5e56;   /* primär  / antiresorptiv (Teal)   */
+    --sek:#B26A00;  --sek-bg:#FBEEDB;  --sek-d:#8f5500;     /* sekundär (Amber)               */
+    --ana:#7A4A9E;  --ana-bg:#F0E9F6;  --ana-d:#623c80;     /* osteoanabol (Violett)          */
+
+    /* T-Score Schweregrad */
+    --ok:#3C8E59;  --ok-bg:#E5F2E8;
+    --mid:#B26A00; --mid-bg:#FBEEDB;
+    --bad:#C2453C; --bad-bg:#FBEAE6;
+
+    /* Hinweisboxen */
+    --merke:#2B6CB0; --merke-bg:#EAF2FB;
+    --cave:#C2453C;  --cave-bg:#FBEAE6;
+    --esel:#B68309;  --esel-bg:#FCF5DC;
+
+    --up:#C2453C; --down:#2B6CB0; --norm:#6B7884;
+    --sub:#0F756B;   /* Unterüberschriften (Gruppen) – deutlich abgesetzt */
+    --radius:14px; --maxw:880px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:28px 20px 80px;}
+
+  header.masthead{margin-bottom:6px;}
+  .eyebrow{font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:700;}
+  h1{font-size:2.05rem; line-height:1.15; margin:.15em 0 .1em; letter-spacing:-.01em;}
+  .subtitle{font-size:1.02rem; color:var(--ink-soft); margin:0;}
+
+  nav.toc{position:sticky; top:0; z-index:5; background:rgba(244,246,248,.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line); margin:14px -20px 26px; padding:10px 20px;
+    display:flex; flex-wrap:wrap; gap:7px; align-items:center;}
+  nav.toc a{text-decoration:none; color:var(--ink); font-size:.82rem; font-weight:700;
+    padding:5px 11px; border:1px solid var(--line-strong); border-radius:999px; background:var(--card); white-space:nowrap;}
+  nav.toc a:hover,nav.toc a:focus-visible{border-color:var(--ink);}
+
+  section{scroll-margin-top:64px; margin-bottom:30px;}
+  h2{font-size:1.35rem; margin:0 0 14px; padding-bottom:7px; border-bottom:2px solid var(--line-strong);
+    display:flex; align-items:baseline; gap:10px;}
+  h2 .num{font-size:.8rem; color:var(--ink-soft); font-weight:700; letter-spacing:.05em;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:14px;}
+  .card h3{margin:0 0 9px; font-size:1.06rem;}
+  .card h3:not(:first-child){margin-top:16px;}
+  .sub{font-size:.84rem; font-weight:700; color:var(--sub); text-transform:uppercase; letter-spacing:.05em; margin:16px 0 5px;}
+  .sub::before{content:""; display:inline-block; width:14px; height:3px; border-radius:2px; background:var(--sub); vertical-align:middle; margin-right:8px; position:relative; top:-1px;}
+
+  .tint{border-left:5px solid var(--line-strong);}
+  .tint.prim{border-left-color:var(--prim);}
+  .tint.sek{border-left-color:var(--sek);}
+  .tint.ana{border-left-color:var(--ana);}
+
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.04em; padding:3px 9px;
+    border-radius:999px; text-transform:uppercase; margin:0 4px 9px 0;}
+  .tag.prim{background:var(--prim-bg); color:var(--prim-d);}
+  .tag.sek{background:var(--sek-bg); color:var(--sek-d);}
+  .tag.ana{background:var(--ana-bg); color:var(--ana-d);}
+  .tag.anti{background:var(--prim-bg); color:var(--prim-d);}
+
+  ul{margin:6px 0; padding-left:20px;} li{margin:4px 0;} li::marker{color:var(--ink-soft);} ul ul{margin:3px 0;}
+  b,strong{font-weight:700;} .lead{font-weight:700;}
+  .muted{font-size:.85rem; color:var(--ink-soft);}
+
+  .define{background:var(--prim-bg); border-radius:10px; padding:13px 16px; margin-bottom:14px;}
+  .define .k{font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--prim-d);}
+
+  /* Boxen */
+  .box{border-radius:11px; padding:12px 15px 12px 16px; margin:13px 0; border-left:5px solid; font-size:.97rem;}
+  .box .lbl{font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:3px;}
+  .box.merke{background:var(--merke-bg); border-left-color:var(--merke);} .box.merke .lbl{color:var(--merke);}
+  .box.cave{background:var(--cave-bg); border-left-color:var(--cave);} .box.cave .lbl{color:var(--cave);}
+  .box.esel{background:var(--esel-bg); border-left-color:var(--esel);} .box.esel .lbl{color:var(--esel);}
+
+  /* Schweregrad-Band (T-Score) */
+  .scale{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0 4px;}
+  .step{border-radius:12px; padding:12px 14px; border:1px solid var(--line);}
+  .step .lv{font-weight:700; font-size:1rem;} .step .val{font-size:.86rem; color:var(--ink-soft); margin-top:2px;}
+  .step.ok{background:var(--ok-bg); border-color:#BFE0C9;} .step.ok .lv{color:var(--ok);}
+  .step.mid{background:var(--mid-bg); border-color:#EAD2A6;} .step.mid .lv{color:var(--mid);}
+  .step.bad{background:var(--bad-bg); border-color:#E9C2BD;} .step.bad .lv{color:var(--bad);}
+
+  /* DVO-Schwellen-Leiter */
+  .ladder{display:flex; flex-direction:column; gap:6px; margin:4px 0;}
+  .rung{display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; border:1px solid var(--line);}
+  .rung .pct{font-weight:700; min-width:64px;}
+  .rung.r1{background:#FCF5DC;} .rung.r1 .pct{color:var(--mid);}
+  .rung.r2{background:#FBEADF;} .rung.r2 .pct{color:#C2622C;}
+  .rung.r3{background:var(--bad-bg);} .rung.r3 .pct{color:var(--bad);}
+
+  /* Tabelle */
+  .tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card);}
+  table{border-collapse:collapse; width:100%; min-width:560px; font-size:.93rem;}
+  caption{text-align:left; font-weight:700; padding:13px 16px 4px; font-size:1.02rem;}
+  th,td{padding:9px 11px; text-align:center; border-bottom:1px solid var(--line);}
+  thead th{font-size:.8rem; color:var(--ink-soft); background:#F8FAFB; border-bottom:2px solid var(--line-strong);}
+  thead th.ana{color:var(--ana-d); background:var(--ana-bg);}
+  tbody th{text-align:left; font-weight:700; white-space:nowrap;}
+  td.grp{text-align:left; font-weight:700; vertical-align:middle; background:#F8FAFB; border-right:1px solid var(--line);}
+  td.grp.prim{color:var(--prim-d);} td.grp.ana{color:var(--ana-d);} td.grp.sek{color:var(--sek-d);}
+  .yes{color:var(--ok); font-weight:700; font-size:1.05rem;} .no{color:var(--norm);}
+  tbody tr:last-child td{border-bottom:none;}
+
+  .mlegend{display:flex; gap:14px; flex-wrap:wrap; font-size:.82rem; color:var(--ink-soft); margin:2px 0 12px;}
+  .mlegend span{display:inline-flex; align-items:center; gap:6px; font-weight:700;}
+  .chip{width:12px; height:12px; border-radius:3px; display:inline-block;}
+
+  footer{margin-top:34px; padding-top:14px; border-top:1px solid var(--line); font-size:.8rem; color:var(--ink-soft);}
+
+  @media (max-width:640px){
+    body{font-size:16px;} h1{font-size:1.7rem;}
+    .scale{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} }
+  @media print{
+    :root{--bg:#fff;} body{font-size:11.5pt;} nav.toc{display:none;}
+    .card,.tablewrap,.box,section,.scale,.ladder{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Examenswissen · Lernzusammenfassung</div>
+    <h1>Osteoporose</h1>
+    <p class="subtitle">Alles drin – aber in ruhige, sortierte Häppchen aufgeteilt.</p>
+  </header>
+
+  <nav class="toc" aria-label="Inhalt">
+    <a href="#ueberblick">Überblick</a>
+    <a href="#def">Definition</a>
+    <a href="#epi">Epidemiologie</a>
+    <a href="#aetio">Ätiologie</a>
+    <a href="#patho">Pathophysiologie</a>
+    <a href="#symptome">Symptomatik</a>
+    <a href="#diagnostik">Diagnostik</a>
+    <a href="#therapie">Therapie</a>
+    <a href="#medis">Medikamente</a>
+  </nav>
+
+  <!-- ÜBERBLICK -->
+  <section id="ueberblick">
+    <h2><span class="num">01</span> Überblick</h2>
+    <div class="card">
+      <div class="define">
+        <span class="k">Kurz gesagt</span>
+        <div><b>Osteoporose</b> = systemische Skeletterkrankung mit <b>verringerter Knochendichte</b> und <b>verschlechterter Mikroarchitektur</b> → erhöhte <b>Frakturanfälligkeit</b>. Betroffen v.a. <b>postmenopausale Frauen</b>.</div>
+      </div>
+      <ul>
+        <li><b>Begünstigend:</b> hohes Alter, postmenopausal niedrige Östrogenspiegel, hochdosierte Glucocorticoide, Immobilität, chronische Grunderkrankungen.</li>
+        <li><b>Deutschland:</b> ca. <b>6 Mio.</b> Betroffene · Kosten ca. <b>13,8 Mrd. €/Jahr</b>.</li>
+        <li><b>Symptomatisch meist spät</b> – durch Fragilitätsfrakturen (meist Wirbelkörper‑ und/oder Schenkelhalsfrakturen). Darum ist die <b>Basisdiagnostik</b> so wichtig (gezielte Anamnese + Frakturrisiko via DVO‑Rechner).</li>
+        <li><b>DXA (Osteodensitometrie)</b> ist wegweisend: weist die niedrige Knochendichte nach, kann aber <b>keine Ursache differenzieren</b>. Röntgen/Labor dienen v.a. dem Frakturnachweis bzw. dem Ausschluss anderer Ursachen.</li>
+        <li><b>Therapie:</b> Basis = <b>Vitamin D3 + Calcium</b> (auch prophylaktisch). Spezifisch = <b>antiresorptiv</b> (Bisphosphonate, Denosumab) und <b>osteoanabol</b> (insb. Teriparatid). Dazu Mobilität erhalten + Sturzprophylaxe.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DEFINITION -->
+  <section id="def">
+    <h2><span class="num">02</span> Definition &amp; Abgrenzung</h2>
+    <div class="card">
+      <ul>
+        <li><b>Osteoporose:</b> systemische Skeletterkrankung mit ↓ Knochenmasse + verschlechterter Mikroarchitektur → ↑ Frakturanfälligkeit.</li>
+        <li><b>Operationale WHO‑Definition:</b> T‑Score <b>≤ −2,5</b>.</li>
+        <li><b>Manifeste Osteoporose:</b> hat bereits zu Frakturen geführt.</li>
+        <li><b>Osteopenie:</b> Vorstufe – T‑Score <b>&lt; −1, aber &gt; −2,5</b>.</li>
+        <li><b>Osteomalazie:</b> isolierte Reduktion der Knochen<b>mineralisation</b>.</li>
+      </ul>
+
+      <p class="sub">T‑Score auf einen Blick</p>
+      <div class="scale">
+        <div class="step ok"><div class="lv">Normal</div><div class="val">T‑Score &gt; −1</div></div>
+        <div class="step mid"><div class="lv">Osteopenie</div><div class="val">−1 bis −2,5</div></div>
+        <div class="step bad"><div class="lv">Osteoporose</div><div class="val">T‑Score ≤ −2,5</div></div>
+      </div>
+
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Osteoporose und ihre Vorstufe Osteopenie gehen mit <b>verringerter Knochendichte</b> einher. Davon abzugrenzen ist die <b>Osteomalazie</b> – sie betrifft nur die <b>Mineralisation</b>, nicht die organischen Bestandteile des Knochens.
+      </div>
+    </div>
+  </section>
+
+  <!-- EPIDEMIOLOGIE -->
+  <section id="epi">
+    <h2><span class="num">03</span> Epidemiologie</h2>
+    <div class="card">
+      <ul>
+        <li><b>Geschlecht:</b> ♀ &gt; ♂</li>
+        <li><b>Erkrankung des höheren Lebensalters</b></li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Primär ältere Patientinnen betroffen – Prävalenz <b>&gt; 40 % bei Frauen &gt; 70 Jahre</b>. <span class="muted">(Daten beziehen sich auf Deutschland.)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ÄTIOLOGIE -->
+  <section id="aetio">
+    <h2><span class="num">04</span> Ätiologie</h2>
+
+    <div class="card tint prim">
+      <span class="tag prim">Primäre Osteoporose</span> <span class="muted">ca. 60 % weltweit</span>
+      <ul>
+        <li><b>Definition:</b> physiologischer, gradueller Verlust an Knochendichte.</li>
+        <li><b>Einteilung:</b>
+          <ul>
+            <li><b>Typ I:</b> postmenopausale Osteoporose</li>
+            <li><b>Typ II:</b> senile Osteoporose</li>
+            <li><b>Sonderform:</b> idiopathische juvenile Osteoporose (unbekannte Ursache)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card tint sek">
+      <span class="tag sek">Sekundäre Osteoporose</span> <span class="muted">ca. 40 % weltweit</span>
+      <p style="margin:2px 0 6px"><b>Definition:</b> direkte Folge anderer Erkrankungen und/oder deren Behandlung.</p>
+      <p class="sub">Einteilung nach Ursache</p>
+      <ul>
+        <li><b>Endokrine Störungen:</b> Diabetes mellitus, Hypogonadismus, Hyperthyreose, endogenes Cushing‑Syndrom, Hyperparathyreoidismus</li>
+        <li><b>Chronische Entzündungen:</b> rheumatoide Arthritis, zystische Fibrose, COPD, chronische Nierenkrankheit</li>
+        <li><b>Neuromuskuläre Erkrankungen:</b> infantile Zerebralparese, Spina bifida, progressive Muskeldystrophien, Multiple Sklerose, Morbus Parkinson, Schlaganfall</li>
+        <li><b>Gastrointestinale Krankheiten:</b> Morbus Crohn, Colitis ulcerosa, Zöliakie, chronische Lebererkrankung</li>
+        <li><b>Fehlernährung:</b> Anorexia nervosa, bariatrische Operation</li>
+        <li><b>Andere Ursachen:</b> Z.n. Transplantation, HIV, Medikamente</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Risikofaktoren für osteoporotische Frakturen</h3>
+      <p class="muted" style="margin:0 0 6px">Klinische Faktoren mit signifikant erhöhtem relativem Risiko für „Major osteoporotic Fractures".</p>
+      <ul>
+        <li><b>Höheres Alter</b></li>
+        <li><b>Weibliches Geschlecht</b></li>
+        <li><b>Anamnese:</b> Frakturvorgeschichte, multiple Stürze, proximale Femurfraktur der Eltern, Alkohol ≥ 50 g/d oder alkoholische Lebererkrankung, Rauchen &gt; 10 Zigaretten/Tag</li>
+        <li><b>Medikamente:</b> Antiepileptika, Antidepressiva, systemische Glucocorticoide, Protonenpumpeninhibitoren, Opioide</li>
+        <li><b>Andere Faktoren:</b> Immobilität (auf Gehhilfe angewiesen), verlängerter Timed‑up‑and‑go‑Test, niedriger BMI, MGUS</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PATHOPHYSIOLOGIE -->
+  <section id="patho">
+    <h2><span class="num">05</span> Pathophysiologie</h2>
+
+    <div class="card">
+      <h3>Grundlagen</h3>
+      <p class="sub">Knochenumbau (Remodeling)</p>
+      <ul>
+        <li>Gleichgewicht von <b>Anbau und Abbau</b> der Knochen</li>
+        <li>Funktion: Erhalt von Elastizität und Stärke des Knochens + Gewinnung von Calcium</li>
+      </ul>
+      <p class="sub">Peak Bone Mass</p>
+      <ul>
+        <li>Höchste Knochendichte mit <b>ca. 30 Jahren</b></li>
+        <li>Abhängig von Genetik, hormonellen Faktoren und Lebensgewohnheiten</li>
+      </ul>
+    </div>
+
+    <div class="card tint prim">
+      <span class="tag prim">Pathomechanismen der primären Osteoporose</span>
+      <p class="sub">Zunehmendes Alter</p>
+      <ul>
+        <li>Aktivität der Osteoblasten <span style="color:var(--down); font-weight:700">↓</span></li>
+        <li>Anzahl + Aktivität der Osteoklasten <span style="color:var(--up); font-weight:700">↑</span></li>
+      </ul>
+      <p class="sub">Veränderung der Sexualhormone</p>
+      <ul>
+        <li><b>Östrogen ↓:</b> multifaktoriell, insb. <b>geringere Hemmung des Knochenabbaus</b></li>
+        <li><b>FSH ↑:</b> Resorptionsfähigkeit der Osteoklasten ↑</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SYMPTOMATIK -->
+  <section id="symptome">
+    <h2><span class="num">06</span> Symptomatik</h2>
+    <div class="card">
+      <p class="sub">Insuffizienz‑ / Fragilitätsfrakturen</p>
+      <ul>
+        <li><b>Senile Osteoporose:</b> vorwiegend Schenkelhalsfraktur, subkapitale Humerusfraktur, distale Radiusfraktur</li>
+        <li><b>Postmenopausale Osteoporose:</b> vorwiegend Wirbelkörperfrakturen</li>
+      </ul>
+      <p class="sub">Wirbelsäulenveränderungen</p>
+      <ul>
+        <li>Sinterung von Wirbelkörpern → <b>Kyphosierung</b> + Verminderung der Körperhöhe</li>
+        <li><b>Tannenbaumphänomen:</b> charakteristische Hautfalten des Rückens durch die Abnahme der Körperhöhe</li>
+      </ul>
+      <p class="sub">Weiteres</p>
+      <ul>
+        <li><b>Chronisches Schmerzsyndrom</b> (insb. Rückenschmerzen)</li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Osteoporose wird v.a. über <b>osteoporotische Frakturen</b> symptomatisch. Für Frühsymptome wie diffuse Rückenschmerzen gab es in Studien <b>keinen Nachweis</b>.
+      </div>
+    </div>
+  </section>
+
+  <!-- DIAGNOSTIK -->
+  <section id="diagnostik">
+    <h2><span class="num">07</span> Diagnostik</h2>
+
+    <div class="card">
+      <h3>Wann Basisdiagnostik? (Allgemeines)</h3>
+      <p class="sub">Bei allen Personen</p>
+      <ul>
+        <li>bei Hinweis auf eine <b>sekundäre Osteoporose</b></li>
+        <li>bei <b>Fragilitätsfraktur</b></li>
+      </ul>
+      <p class="sub">Altersabhängig</p>
+      <ul>
+        <li><b>&gt; 50 J</b> bzw. postmenopausale Frauen <b>&lt; 50 J</b>: bei relevanter Frakturrisikokonstellation</li>
+        <li><b>&gt; 70 J</b>: prinzipielle Empfehlung</li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Die <b>DVO‑Leitlinie</b> empfiehlt Basisdiagnostik insb. nach einer <b>Fragilitätsfraktur</b> sowie bei postmenopausalen Frauen und Personen ab 50 Jahren mit relevanter Risikofaktorkonstellation („Case Findings").
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Basisdiagnostik — Anamnese &amp; körperliche Untersuchung</h3>
+      <p class="sub">Anamnese mit Fokus auf</p>
+      <ul>
+        <li>Risikofaktoren für osteoporotische Frakturen</li>
+        <li>Ursachen einer sekundären Osteoporose</li>
+      </ul>
+      <p class="sub">Körperliche Untersuchung – osteoporosetypische Frakturen</p>
+      <ul>
+        <li><b>Akut:</b> Rückenschmerzen + Klopfschmerz über der Wirbelsäule → Hinweis auf frische Fraktur</li>
+        <li><b>Chronisch:</b> Verringerung der Körpergröße, Tannenbaumphänomen, Rippen‑Becken‑Abstand &lt; 2 cm</li>
+        <li>Frakturen nach Bagatelltraumen in der Vorgeschichte</li>
+      </ul>
+      <ul style="margin-top:8px"><li><b>Ermittlung des Sturzrisikos</b></li></ul>
+    </div>
+
+    <div class="card">
+      <h3>Basisdiagnostik — Osteodensitometrie (DXA)</h3>
+      <ul>
+        <li><b>DXA</b> (Dual X‑ray‑Absorptiometry): Messung der Knochenflächendichte in g/cm²</li>
+        <li><b>Durchführung:</b> LWS und Femur (beidseitig)</li>
+        <li><b>T‑Score:</b> Abweichung in Standardabweichungen (SD) der gemessenen Dichte von der Referenzdichte (gesunde Kohorte um das 30. Lebensjahr)</li>
+        <li><b>Bewertung zur Frakturvorhersage:</b>
+          <ul>
+            <li>maßgeblich ist der <b>niedrigste</b> gemessene Wert</li>
+            <li>Osteoporose bei <b>T‑Score ≤ −2,5</b></li>
+            <li>Frakturvorhersage lange gültig</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Basisdiagnostik — Laboruntersuchungen</h3>
+      <p class="sub">Blutbild &amp; Entzündungsparameter</p>
+      <ul>
+        <li>Blutbild, BSG, CRP</li>
+        <li>Serumeiweißelektrophorese</li>
+      </ul>
+      <p class="sub">Elektrolyte &amp; Proteine</p>
+      <ul>
+        <li>Alkalische Phosphatase – <b>normwertig bis leicht erhöht</b></li>
+        <li>γGT</li>
+        <li>Kreatinin‑Clearance (GFR)</li>
+        <li>Serumcalcium · Serumnatrium · Serumphosphat</li>
+        <li>ggf. 25‑Hydroxycholecalciferol als Marker des Vitamin‑D‑Spiegels</li>
+      </ul>
+      <p class="sub">Hormondiagnostik</p>
+      <ul><li>TSH</li></ul>
+    </div>
+
+    <div class="card">
+      <h3>Weiterführende Bildgebung — konventionelles Röntgen</h3>
+      <ul>
+        <li><b>Durchführung:</b> konventionelles Röntgen in 2 Ebenen</li>
+        <li><b>Typischer Befund:</b>
+          <ul>
+            <li>vermehrte Strahlentransparenz</li>
+            <li><b>Wirbelkörper:</b> Rarefizierung der horizontalen Trabekel (vertikal „gestreifte" Wirbelkörper); Rahmenstruktur mit Betonung der Kortikalis</li>
+            <li>ggf. osteoporotische Wirbelkörperfraktur: <b>Fischwirbel, Keilwirbel</b> oder <b>Plattwirbel</b></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Risikomodell — DVO‑Frakturrisiko‑Score</h3>
+      <ul>
+        <li>Berechnet das <b>3‑Jahres‑Frakturrisiko</b> aus deutschen Referenzdaten und <b>33 validierten Risikofaktoren</b></li>
+        <li><b>Ziel:</b> Abschätzung des individuellen 3‑Jahres‑Frakturrisikos</li>
+        <li><b>Parameter:</b> Risikofaktoren osteoporotischer Frakturen</li>
+      </ul>
+      <p class="sub">Schwellenwerte für eine medikamentöse Therapie</p>
+      <div class="ladder">
+        <div class="rung r1"><span class="pct">3–5 %</span><span>ggf. Therapie bei starken/irreversiblen Risikofaktoren oder sehr hohem Risiko für eine unmittelbar bevorstehende Fraktur</span></div>
+        <div class="rung r2"><span class="pct">&gt; 5 %</span><span>medikamentöse Therapieempfehlung („Therapieschwelle")</span></div>
+        <div class="rung r3"><span class="pct">&gt; 10 %</span><span>Empfehlung zu <b>osteoanabol</b> wirksamen Substanzen</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Differenzialdiagnosen</h3>
+      <p class="muted" style="margin:0 0 6px">Erkrankungen mit reduzierter Knochendichte:</p>
+      <ul>
+        <li>Osteomalazie</li>
+        <li>Hyperparathyreoidismus (inkl. renaler Osteopathie)</li>
+        <li>maligne Knochentumoren, Knochenmetastasen</li>
+        <li>multiples Myelom</li>
+        <li>Hämangiom</li>
+        <li>Spondylodiszitis</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- THERAPIE -->
+  <section id="therapie">
+    <h2><span class="num">08</span> Therapie — Prophylaxe</h2>
+    <div class="card">
+      <p style="margin:0 0 4px"><b>Ziel:</b> Knochenstabilität ↑ und/oder Frakturinzidenz ↓.</p>
+
+      <p class="sub">Körperliche Aktivität steigern</p>
+      <ul>
+        <li>Mobilisation, Krankengymnastik, Muskelstärkung, Gleichgewichtstraining</li>
+        <li><b>Ziel:</b> Steigerung von Muskelkraft und Koordination</li>
+      </ul>
+
+      <p class="sub">Ernährung &amp; Lebensstil</p>
+      <ul>
+        <li><b>BMI &gt; 20 kg/m²</b> anstreben</li>
+        <li>Verzicht auf Alkohol und Nikotin</li>
+        <li>ausreichende Zufuhr von Calcium und Vitamin D:
+          <ul>
+            <li>bei Risikofaktoren oder Osteoporose <b>ohne</b> medikamentöse Therapie: <b>Vitamin‑D3‑Substitution</b>; Calcium nur, wenn die Zufuhr über die Ernährung nicht ausreicht</li>
+            <li>bei Patient:innen <b>unter antiresorptiver Therapie</b>: Calcium + Vitamin D</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p class="sub">Medikamente kritisch prüfen &amp; anpassen</p>
+      <ul>
+        <li>Vermeidung/Reduktion osteoporosebegünstigender Substanzen, insb. <b>Glucocorticoide</b></li>
+        <li>Absetzen sedierender Substanzen, insb. <b>Benzodiazepine</b></li>
+      </ul>
+
+      <p class="sub">Umfeld &amp; Hilfsmittel</p>
+      <ul>
+        <li><b>Hilfsmittel:</b> Gehstock, Rollator, Hüftprotektoren</li>
+        <li>ggf. <b>Überprüfung der Umgebung:</b> Stolperfallen, adäquate Lichtverhältnisse</li>
+      </ul>
+
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Ausreichend <b>Calcium + Vitamin D</b> ist die Basis der Therapie – <b>ohne körperliche Aktivität</b> ist die Einnahme jedoch wenig sinnvoll.
+      </div>
+    </div>
+  </section>
+
+  <!-- MEDIKAMENTE -->
+  <section id="medis">
+    <h2><span class="num">09</span> Medikamentöse Therapie</h2>
+
+    <div class="card">
+      <h3>Grundprinzip: zwei Wirkmechanismen</h3>
+      <div class="mlegend">
+        <span><i class="chip" style="background:var(--prim)"></i>antiresorptiv</span>
+        <span><i class="chip" style="background:var(--ana)"></i>osteoanabol</span>
+      </div>
+      <ul>
+        <li><span class="tag anti">Antiresorptiv</span> mindert den <b>Knochenabbau</b> – meist durch Hemmung der Osteoklasten</li>
+        <li><span class="tag ana">Osteoanabol</span> fördert den <b>Knochenaufbau</b> – meist durch Aktivierung der Osteoblasten</li>
+      </ul>
+      <p class="sub">Therapiebeginn</p>
+      <ul>
+        <li>nach Diagnosestellung anhand des individuellen Risikoprofils</li>
+        <li>bei osteoporotischer Wirbelkörper‑ oder proximaler Femurfraktur: <b>so bald wie möglich</b></li>
+      </ul>
+      <p class="sub">Therapiedauer</p>
+      <ul><li><b>3–5 Jahre</b></li></ul>
+    </div>
+
+    <div class="card">
+      <h3>Indikation zur medikamentösen Therapie</h3>
+      <ul>
+        <li>3‑Jahres‑Frakturrisiko (DVO‑Rechner) <b>oberhalb der Schwellenwerte</b></li>
+        <li><b>Fragilitätsfraktur</b> (niedrig‑/atraumatische Wirbelkörper‑ und/oder proximale Femurfraktur)</li>
+        <li>postmenopausale Frauen + Männer <b>unter Glucocorticoidtherapie</b></li>
+        <li>altersabhängig bei erniedrigtem T‑Score</li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke</span>
+        Es gibt <b>keine klare Evidenz</b>, ab welchem T‑Score therapiert werden sollte – der Beginn ist immer auch eine <b>individuelle Nutzen‑Risiko‑Entscheidung</b>.
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <caption>Zugelassene Medikamente zur spezifischen Therapie</caption>
+        <thead>
+          <tr>
+            <th scope="col" style="text-align:left">Gruppe</th>
+            <th scope="col" style="text-align:left">Präparat</th>
+            <th scope="col">♀ post‑<br>menopausal</th>
+            <th scope="col">♂ &gt; 50 J</th>
+            <th scope="col" class="ana">osteo‑<br>anabol</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="grp prim" rowspan="4">Bisphosphonat</td><th scope="row">Alendronat</th><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><th scope="row">Risedronat</th><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><th scope="row">Ibandronat</th><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><th scope="row">Zoledronat</th><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><td class="grp" rowspan="2">Biological</td><th scope="row">Denosumab</th><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><th scope="row">Romosozumab</th><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td class="grp ana" rowspan="2">Parathormon‑<br>Analoga</td><th scope="row">Teriparatid</th><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><th scope="row">Abaloparatid</th><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td class="grp sek">SERM</td><th scope="row">Raloxifen</th><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box merke">
+      <span class="lbl">Merke</span>
+      Bei <b>Männern</b> zugelassen: Alendronat, Risedronat, Zoledronat, Denosumab und Teriparatid.
+    </div>
+
+    <!-- Bisphosphonate -->
+    <div class="card tint prim">
+      <span class="tag prim">Bisphosphonate</span> <span class="tag anti">antiresorptiv</span>
+      <ul>
+        <li><b>Wirkstoffe:</b> Alendronat, Risedronat, Ibandronat, Zoledronat</li>
+        <li><b>Indikation:</b> Osteoporose bei postmenopausalen Frauen und teilweise Männern; Osteoporose bei nicht‑metastasiertem Mamma‑Ca unter hormonablativer Therapie</li>
+        <li><b>Kontraindikation:</b> z.B. Schwangerschaft/Stillzeit, Hypokalzämie; bei <b>oraler</b> Einnahme zusätzlich Ösophagus‑Anomalie/verzögerte Entleerung sowie die Unfähigkeit, mind. 30 min aufrecht zu sitzen/stehen</li>
+      </ul>
+      <div class="box merke" style="margin-bottom:0">
+        <span class="lbl">Merke · Einnahme</span>
+        Orale Bisphosphonate <b>morgens</b> und <b>mind. 30 min vor dem Essen</b> (verhindert Komplexbildung mit Calcium), mit <b>reichlich stillem Wasser</b> in <b>aufrechter Haltung</b> (verhindert Ösophagitis) einnehmen.
+      </div>
+    </div>
+
+    <!-- Biologicals -->
+    <div class="card tint ana" style="border-left-color:var(--prim)">
+      <span class="tag prim">Biologicals</span>
+      <p class="sub">Denosumab <span class="tag anti" style="margin-left:4px">antiresorptiv</span></p>
+      <ul>
+        <li><b>Indikation:</b> Osteoporose bei postmenopausalen Frauen und Männern</li>
+        <li><b>Kontraindikation:</b> z.B. Schwangerschaft/Stillzeit, Hypokalzämie, nicht verheilte Läsionen im Mundbereich</li>
+      </ul>
+      <p class="sub">Romosozumab <span class="tag anti" style="margin-left:4px">antiresorptiv</span> <span class="tag ana">osteoanabol</span></p>
+      <ul>
+        <li><b>Indikation:</b> manifeste Osteoporose mit deutlich erhöhtem Frakturrisiko bei postmenopausalen Frauen</li>
+        <li><b>Kontraindikation:</b> insb. Hypokalzämie, Z.n. Schlaganfall oder Myokardinfarkt</li>
+      </ul>
+      <div class="box cave" style="margin-bottom:0">
+        <span class="lbl">Cave · Romosozumab</span>
+        Wichtige Nebenwirkung: <b>erhöhtes kardiovaskuläres Risiko</b>.
+      </div>
+    </div>
+
+    <!-- SERM -->
+    <div class="card tint sek">
+      <span class="tag sek">SERM</span> <span class="tag anti">antiresorptiv</span>
+      <ul>
+        <li><b>Wirkstoff:</b> Raloxifen</li>
+        <li><b>Indikation:</b> Osteoporose bei postmenopausalen Frauen</li>
+        <li><b>Kontraindikation:</b> z.B. Z.n. venösen thromboembolischen Ereignissen (tiefe Beinvenenthrombose, Lungenembolie, retinale Venenthrombose), V.a. Endometriumkarzinom</li>
+        <li><b>Wirkstoff:</b> Bazedoxifen <span class="muted">(nur in der Schweiz zugelassen)</span></li>
+      </ul>
+    </div>
+
+    <!-- Parathormon-Analoga -->
+    <div class="card tint ana">
+      <span class="tag ana">Parathormon‑Analoga</span> <span class="tag ana">osteoanabol</span>
+      <p class="sub">Teriparatid</p>
+      <ul>
+        <li><b>Indikation:</b> Osteoporose bei postmenopausalen Frauen und Männern mit hohem Frakturrisiko; Osteoporose unter Langzeit‑Glucocorticoidtherapie bei gleichzeitig hohem Frakturrisiko</li>
+        <li><b>Kontraindikation:</b> z.B. Schwangerschaft/Stillzeit, Hyperkalzämie, metabolische Knochenkrankheiten, unklare Erhöhung der alkalischen Phosphatase, maligne Knochentumoren oder knöcherne Metastasen</li>
+        <li><b>Anwendung:</b> täglich subkutan, Dauer auf <b>max. 24 Monate</b> begrenzt</li>
+      </ul>
+      <p class="sub">Abaloparatid</p>
+      <ul>
+        <li><b>Indikation:</b> Osteoporose mit erhöhtem Frakturrisiko bei postmenopausalen Frauen</li>
+        <li><b>Kontraindikation:</b> z.B. Schwangerschaft/Stillzeit, schwere Nierenfunktionseinschränkung, Hyperkalzämie, unklare AP‑Erhöhung, maligne Knochentumoren oder knöcherne Metastasen</li>
+        <li><b>Anwendung:</b> täglich subkutan 80 μg, Dauer auf <b>max. 18 Monate</b> begrenzt</li>
+      </ul>
+    </div>
+
+    <!-- Östrogene -->
+    <div class="card tint sek">
+      <span class="tag sek">Östrogene</span>
+      <ul>
+        <li><b>Indikation:</b> postmenopausale Frauen mit hohem Frakturrisiko <b>und</b> Unverträglichkeit/Kontraindikationen gegenüber anderen Medikamenten</li>
+        <li><b>Kontraindikation:</b> z.B. Z.n. Mamma‑Ca, Endometrium‑Ca oder Ovarial‑Ca, erhöhtes Schlaganfallrisiko</li>
+        <li><b>Anwendung:</b> bei vorhandener Gebärmutter i.d.R. nur in Kombination mit Gestagenen</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Lernzusammenfassung zur Osteoporose. Inhaltlich entspricht sie der Vorlage; sie ersetzt keine Leitlinie und keine ärztliche Entscheidung. Eine vertonte Fassung existiert als AMBOSS‑Audio (Podcast). Medikamenten‑Kontraindikationen sind beispielhaft, nicht vollständig.
+  </footer>
+
+</div>
+</body>
+</html>

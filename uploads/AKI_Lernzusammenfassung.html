@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akute Nierenfunktionseinschränkung (AKI) — Lernzusammenfassung</title>
+<style>
+  :root {
+    --bg: #FAF7F2;
+    --bg-card: #FFFEFB;
+    --ink: #2C2C2A;
+    --ink-soft: #5F5E5A;
+    --ink-muted: #888780;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+    --teal-50: #E1F5EE; --teal-100: #9FE1CB; --teal-600: #0F6E56; --teal-800: #085041;
+    --purple-50: #EEEDFE; --purple-600: #3C3489; --purple-800: #26215C;
+    --blue-50: #E6F1FB; --blue-600: #0C447C; --blue-800: #042C53;
+    --gray-50: #F1EFE8; --gray-600: #444441; --gray-800: #2C2C2A;
+    --amber-50: #FAEEDA; --amber-600: #854F0B; --amber-800: #633806;
+    --coral-50: #FAECE7; --coral-600: #712B13; --coral-800: #4A1B0C;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+    padding: 0;
+  }
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 32px 96px;
+  }
+  header.hero {
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 0.5px solid var(--border-strong);
+  }
+  header.hero .eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  header.hero h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  header.hero .subtitle {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 18px;
+    margin: 0 0 24px;
+  }
+  header.hero .meta {
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+  nav.toc {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 56px;
+  }
+  nav.toc h2 {
+    margin: 0 0 16px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+  nav.toc ol {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    counter-reset: toc-counter;
+    columns: 2;
+    column-gap: 32px;
+  }
+  nav.toc li {
+    counter-increment: toc-counter;
+    padding: 4px 0;
+    break-inside: avoid;
+  }
+  nav.toc li::before {
+    content: counter(toc-counter) ". ";
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  nav.toc a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 0.5px solid transparent;
+    transition: border-color 0.15s;
+  }
+  nav.toc a:hover {
+    border-bottom-color: var(--ink-soft);
+  }
+  section.chapter {
+    margin-bottom: 64px;
+  }
+  section.chapter h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 12px;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    scroll-margin-top: 24px;
+  }
+  section.chapter h2 .num {
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+    margin-right: 12px;
+    font-weight: 400;
+  }
+  section.chapter .intro {
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+    max-width: 70ch;
+  }
+  section.chapter .intro strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .diagram {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    margin: 0;
+  }
+  .diagram svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+  .note {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: var(--amber-50);
+    border-radius: 8px;
+    color: var(--amber-800);
+    font-size: 14px;
+  }
+  .note strong { font-weight: 500; }
+  .note.calm {
+    background: var(--teal-50);
+    color: var(--teal-800);
+  }
+  hr.section-divider {
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 0;
+  }
+  footer.foot {
+    margin-top: 80px;
+    padding-top: 28px;
+    border-top: 0.5px solid var(--border-strong);
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  /* SVG styling helpers — match the inline diagrams */
+  svg text { font-family: inherit; fill: var(--ink); }
+  svg .t { font-size: 14px; font-weight: 400; }
+  svg .ts { font-size: 12px; font-weight: 400; fill: var(--ink-soft); }
+  svg .th { font-size: 14px; font-weight: 500; }
+  svg .arr { stroke: var(--ink-muted); stroke-width: 1.5; fill: none; }
+
+  /* color ramps — light mode only */
+  svg .c-teal rect, svg .c-teal circle, svg .c-teal ellipse { fill: var(--teal-50); stroke: var(--teal-600); }
+  svg .c-teal .th, svg .c-teal .t { fill: var(--teal-800); }
+  svg .c-teal .ts { fill: var(--teal-600); }
+
+  svg .c-purple rect, svg .c-purple circle, svg .c-purple ellipse { fill: var(--purple-50); stroke: var(--purple-600); }
+  svg .c-purple .th, svg .c-purple .t { fill: var(--purple-800); }
+  svg .c-purple .ts { fill: var(--purple-600); }
+
+  svg .c-blue rect, svg .c-blue circle, svg .c-blue ellipse { fill: var(--blue-50); stroke: var(--blue-600); }
+  svg .c-blue .th, svg .c-blue .t { fill: var(--blue-800); }
+  svg .c-blue .ts { fill: var(--blue-600); }
+
+  svg .c-gray rect, svg .c-gray circle, svg .c-gray ellipse { fill: var(--gray-50); stroke: var(--gray-600); }
+  svg .c-gray .th, svg .c-gray .t { fill: var(--gray-800); }
+  svg .c-gray .ts { fill: var(--gray-600); }
+
+  svg .c-amber rect, svg .c-amber circle, svg .c-amber ellipse { fill: var(--amber-50); stroke: var(--amber-600); }
+  svg .c-amber .th, svg .c-amber .t { fill: var(--amber-800); }
+  svg .c-amber .ts { fill: var(--amber-600); }
+
+  svg .c-coral rect, svg .c-coral circle, svg .c-coral ellipse { fill: var(--coral-50); stroke: var(--coral-600); }
+  svg .c-coral .th, svg .c-coral .t { fill: var(--coral-800); }
+  svg .c-coral .ts { fill: var(--coral-600); }
+
+  @media (max-width: 640px) {
+    .page { padding: 32px 20px 64px; }
+    header.hero h1 { font-size: 26px; }
+    header.hero .subtitle { font-size: 16px; }
+    nav.toc ol { columns: 1; }
+    .diagram { padding: 16px 12px; }
+    section.chapter h2 { font-size: 19px; }
+  }
+
+  @media print {
+    body { background: white; }
+    .page { padding: 0; max-width: none; }
+    nav.toc { page-break-after: always; }
+    section.chapter { page-break-inside: avoid; }
+    .diagram { border: 0.5px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">Nephrologie · Lernzusammenfassung</div>
+    <h1>Akute Nierenfunktionseinschränkung</h1>
+    <p class="subtitle">Acute Kidney Injury (AKI)</p>
+    <p class="meta">Visuelle Übersicht in 10 Abschnitten · Trauma-sensitiv und neurodivergent-freundlich aufbereitet</p>
+  </header>
+
+  <nav class="toc" aria-label="Inhaltsverzeichnis">
+    <h2>Inhalt</h2>
+    <ol>
+      <li><a href="#kap-1">Definition &amp; Diagnosekriterien</a></li>
+      <li><a href="#kap-2">Ätiologie — Drei Gruppen</a></li>
+      <li><a href="#kap-3">Prärenale Ursachen — Details</a></li>
+      <li><a href="#kap-4">Intrarenale Ursachen — Details</a></li>
+      <li><a href="#kap-5">Postrenale Ursachen &amp; Kontrastmittel</a></li>
+      <li><a href="#kap-6">Symptomatik — Drei Phasen</a></li>
+      <li><a href="#kap-7">KDIGO-Stadien</a></li>
+      <li><a href="#kap-8">Diagnostik — Workup</a></li>
+      <li><a href="#kap-9">Therapie</a></li>
+      <li><a href="#kap-10">Komplikationen</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-1">
+    <h2><span class="num">01</span>Definition &amp; Diagnosekriterien</h2>
+    <p class="intro">
+      Die akute Nierenfunktionseinschränkung (AKI) ist eine <strong>akut einsetzende, potenziell reversible</strong> Funktionsabnahme der Niere für maximal sieben Tage. Sie betrifft etwa <strong>jede fünfte hospitalisierte Person</strong>. Die Diagnose nach KDIGO erfolgt über drei alternative Kriterien — eines reicht.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 400" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>AKI Definition und KDIGO Diagnosekriterien</title>
+        <desc>Drei alternative KDIGO-Kriterien: Kreatininanstieg um mindestens 0,3 mg/dL in 48 h, Anstieg auf das 1,5-fache, oder Urinausscheidung unter 0,5 mL/kgKG/h für 6 h.</desc>
+        <defs><marker id="arrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+        <g class="c-teal">
+          <rect x="40" y="30" width="600" height="70" rx="12" stroke-width="0.5"/>
+          <text class="th" x="340" y="60" text-anchor="middle" dominant-baseline="central">Akute Nierenfunktionseinschränkung (AKI)</text>
+          <text class="ts" x="340" y="82" text-anchor="middle" dominant-baseline="central">Akut einsetzend, potenziell reversibel, max. 7 Tage</text>
+        </g>
+        <text class="ts" x="340" y="135" text-anchor="middle" dominant-baseline="central">Mindestens 1 Kriterium erfüllt → Diagnose AKI</text>
+        <line x1="340" y1="148" x2="340" y2="180" class="arr" marker-end="url(#arrow1)"/>
+        <g class="c-purple">
+          <rect x="40" y="190" width="190" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="135" y="218" text-anchor="middle" dominant-baseline="central">Kriterium 1</text>
+          <text class="ts" x="135" y="248" text-anchor="middle" dominant-baseline="central">Serumkreatinin</text>
+          <text class="ts" x="135" y="268" text-anchor="middle" dominant-baseline="central">Anstieg um</text>
+          <text class="th" x="135" y="293" text-anchor="middle" dominant-baseline="central">≥ 0,3 mg/dL</text>
+          <text class="ts" x="135" y="318" text-anchor="middle" dominant-baseline="central">innerhalb von 48 h</text>
+          <text class="ts" x="135" y="340" text-anchor="middle" dominant-baseline="central">(26,5 μmol/L)</text>
+        </g>
+        <g class="c-purple">
+          <rect x="245" y="190" width="190" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="218" text-anchor="middle" dominant-baseline="central">Kriterium 2</text>
+          <text class="ts" x="340" y="248" text-anchor="middle" dominant-baseline="central">Serumkreatinin</text>
+          <text class="ts" x="340" y="268" text-anchor="middle" dominant-baseline="central">Anstieg auf das</text>
+          <text class="th" x="340" y="293" text-anchor="middle" dominant-baseline="central">≥ 1,5-fache</text>
+          <text class="ts" x="340" y="318" text-anchor="middle" dominant-baseline="central">des Ausgangswerts</text>
+        </g>
+        <g class="c-purple">
+          <rect x="450" y="190" width="190" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="545" y="218" text-anchor="middle" dominant-baseline="central">Kriterium 3</text>
+          <text class="ts" x="545" y="248" text-anchor="middle" dominant-baseline="central">Urinausscheidung</text>
+          <text class="ts" x="545" y="268" text-anchor="middle" dominant-baseline="central">Reduktion auf</text>
+          <text class="th" x="545" y="293" text-anchor="middle" dominant-baseline="central">&lt; 0,5 mL/kg/h</text>
+          <text class="ts" x="545" y="318" text-anchor="middle" dominant-baseline="central">über 6 Stunden</text>
+        </g>
+      </svg>
+    </div>
+    <div class="note calm"><strong>Abgrenzung:</strong> Hält die Funktionseinschränkung 7 Tage bis 3 Monate an, spricht man von akuter Nierenkrankheit (AKD).</div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-2">
+    <h2><span class="num">02</span>Ätiologie — Drei Gruppen</h2>
+    <p class="intro">
+      Die Ursachen werden nach Lokalisation eingeteilt. Anhaltende prä- oder postrenale Probleme können sekundär zu einer <strong>intrarenalen Schädigung</strong> führen — die Übergänge sind also fließend.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 380" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Ätiologie der AKI - Drei Hauptgruppen</title>
+        <desc>Prärenal etwa 60 Prozent, intrarenal etwa 35 Prozent, postrenal etwa 5 Prozent.</desc>
+        <text class="th" x="340" y="40" text-anchor="middle" dominant-baseline="central">Wo entsteht das Problem?</text>
+        <g class="c-teal">
+          <rect x="30" y="70" width="200" height="280" rx="12" stroke-width="0.5"/>
+          <text class="th" x="130" y="100" text-anchor="middle" dominant-baseline="central">Prärenal</text>
+          <text class="th" x="130" y="125" text-anchor="middle" dominant-baseline="central">~ 60 %</text>
+          <text class="ts" x="130" y="155" text-anchor="middle" dominant-baseline="central">Vor der Niere</text>
+          <line x1="55" y1="175" x2="205" y2="175" stroke="#0F6E56" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="130" y="200" text-anchor="middle" dominant-baseline="central">Renale</text>
+          <text class="ts" x="130" y="218" text-anchor="middle" dominant-baseline="central">Minderperfusion</text>
+          <text class="ts" x="130" y="252" text-anchor="middle" dominant-baseline="central">• Hypovolämie</text>
+          <text class="ts" x="130" y="272" text-anchor="middle" dominant-baseline="central">• Niedriges HZV</text>
+          <text class="ts" x="130" y="292" text-anchor="middle" dominant-baseline="central">• Hypotonie</text>
+          <text class="ts" x="130" y="312" text-anchor="middle" dominant-baseline="central">• Medikamente</text>
+          <text class="ts" x="130" y="332" text-anchor="middle" dominant-baseline="central">(NSAR, ACEi)</text>
+        </g>
+        <g class="c-purple">
+          <rect x="240" y="70" width="200" height="280" rx="12" stroke-width="0.5"/>
+          <text class="th" x="340" y="100" text-anchor="middle" dominant-baseline="central">Intrarenal</text>
+          <text class="th" x="340" y="125" text-anchor="middle" dominant-baseline="central">~ 35 %</text>
+          <text class="ts" x="340" y="155" text-anchor="middle" dominant-baseline="central">In der Niere</text>
+          <line x1="265" y1="175" x2="415" y2="175" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="340" y="200" text-anchor="middle" dominant-baseline="central">Direkte</text>
+          <text class="ts" x="340" y="218" text-anchor="middle" dominant-baseline="central">Schädigung</text>
+          <text class="ts" x="340" y="252" text-anchor="middle" dominant-baseline="central">• Tubulointerstitiell</text>
+          <text class="ts" x="340" y="272" text-anchor="middle" dominant-baseline="central">• Vaskulär</text>
+          <text class="ts" x="340" y="292" text-anchor="middle" dominant-baseline="central">• Glomerulär</text>
+          <text class="ts" x="340" y="318" text-anchor="middle" dominant-baseline="central">85 % davon:</text>
+          <text class="ts" x="340" y="336" text-anchor="middle" dominant-baseline="central">akute Tubulusnekrose</text>
+        </g>
+        <g class="c-gray">
+          <rect x="450" y="70" width="200" height="280" rx="12" stroke-width="0.5"/>
+          <text class="th" x="550" y="100" text-anchor="middle" dominant-baseline="central">Postrenal</text>
+          <text class="th" x="550" y="125" text-anchor="middle" dominant-baseline="central">~ 5 %</text>
+          <text class="ts" x="550" y="155" text-anchor="middle" dominant-baseline="central">Nach der Niere</text>
+          <line x1="475" y1="175" x2="625" y2="175" stroke="#444441" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="550" y="200" text-anchor="middle" dominant-baseline="central">Harnabfluss-</text>
+          <text class="ts" x="550" y="218" text-anchor="middle" dominant-baseline="central">störung</text>
+          <text class="ts" x="550" y="252" text-anchor="middle" dominant-baseline="central">• Urolithiasis</text>
+          <text class="ts" x="550" y="272" text-anchor="middle" dominant-baseline="central">• Tumoren</text>
+          <text class="ts" x="550" y="292" text-anchor="middle" dominant-baseline="central">• Prostatahyperplasie</text>
+          <text class="ts" x="550" y="312" text-anchor="middle" dominant-baseline="central">• Katheterprobleme</text>
+          <text class="ts" x="550" y="332" text-anchor="middle" dominant-baseline="central">• M. Ormond</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-3">
+    <h2><span class="num">03</span>Prärenale Ursachen — Details</h2>
+    <p class="intro">
+      Drei Hauptmechanismen führen zur renalen Minderperfusion: <strong>Hypovolämie</strong>, <strong>reduziertes Herzminutenvolumen</strong> oder Hypotonie, und <strong>medikamentös-toxische</strong> Störungen der Autoregulation.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 470" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Prärenale Ursachen der AKI im Detail</title>
+        <desc>Drei Mechanismen: Hypovolämie durch Flüssigkeitsverlust, niedriges HZV oder Hypotonie, medikamentös-toxische Störung der Autoregulation.</desc>
+        <g class="c-teal">
+          <rect x="30" y="30" width="620" height="60" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="55" text-anchor="middle" dominant-baseline="central">Prärenal: Renale Minderperfusion (~ 60 %)</text>
+          <text class="ts" x="340" y="78" text-anchor="middle" dominant-baseline="central">Drei Mechanismen führen zur unzureichenden Nierendurchblutung</text>
+        </g>
+        <g class="c-teal">
+          <rect x="30" y="110" width="195" height="340" rx="10" stroke-width="0.5"/>
+          <text class="th" x="127" y="140" text-anchor="middle" dominant-baseline="central">1. Hypovolämie</text>
+          <text class="ts" x="127" y="162" text-anchor="middle" dominant-baseline="central">Vermindertes Blutvolumen</text>
+          <line x1="55" y1="180" x2="200" y2="180" stroke="#0F6E56" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="127" y="205" text-anchor="middle" dominant-baseline="central">Unzureichende</text>
+          <text class="ts" x="127" y="223" text-anchor="middle" dominant-baseline="central">Flüssigkeitszufuhr</text>
+          <text class="ts" x="127" y="255" text-anchor="middle" dominant-baseline="central">Erhöhte Verluste:</text>
+          <text class="ts" x="127" y="278" text-anchor="middle" dominant-baseline="central">• Blutungen</text>
+          <text class="ts" x="127" y="298" text-anchor="middle" dominant-baseline="central">• Erbrechen</text>
+          <text class="ts" x="127" y="318" text-anchor="middle" dominant-baseline="central">• Durchfall</text>
+          <text class="ts" x="127" y="338" text-anchor="middle" dominant-baseline="central">• Akute Pankreatitis</text>
+          <text class="ts" x="127" y="358" text-anchor="middle" dominant-baseline="central">• Diuretika</text>
+          <text class="ts" x="127" y="378" text-anchor="middle" dominant-baseline="central">• Verbrennungen</text>
+        </g>
+        <g class="c-purple">
+          <rect x="240" y="110" width="195" height="340" rx="10" stroke-width="0.5"/>
+          <text class="th" x="338" y="140" text-anchor="middle" dominant-baseline="central">2. Reduziertes HZV</text>
+          <text class="ts" x="338" y="162" text-anchor="middle" dominant-baseline="central">oder Hypotonie</text>
+          <line x1="265" y1="180" x2="410" y2="180" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="338" y="208" text-anchor="middle" dominant-baseline="central">• Herzinsuffizienz</text>
+          <text class="ts" x="338" y="228" text-anchor="middle" dominant-baseline="central">  (kardiorenales Sy.)</text>
+          <text class="ts" x="338" y="258" text-anchor="middle" dominant-baseline="central">• Leberzirrhose</text>
+          <text class="ts" x="338" y="278" text-anchor="middle" dominant-baseline="central">  (hepatorenales Sy.)</text>
+          <text class="ts" x="338" y="305" text-anchor="middle" dominant-baseline="central">• Nephrotisches Sy.</text>
+          <text class="ts" x="338" y="328" text-anchor="middle" dominant-baseline="central">• Kardiogener Schock</text>
+          <text class="ts" x="338" y="348" text-anchor="middle" dominant-baseline="central">• Sepsis</text>
+        </g>
+        <g class="c-amber">
+          <rect x="450" y="110" width="200" height="340" rx="10" stroke-width="0.5"/>
+          <text class="th" x="550" y="140" text-anchor="middle" dominant-baseline="central">3. Medikamentös</text>
+          <text class="ts" x="550" y="162" text-anchor="middle" dominant-baseline="central">Störung der Autoregulation</text>
+          <line x1="475" y1="180" x2="625" y2="180" stroke="#854F0B" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="550" y="210" text-anchor="middle" dominant-baseline="central">NSAR</text>
+          <text class="ts" x="550" y="230" text-anchor="middle" dominant-baseline="central">(z.B. Ibuprofen)</text>
+          <text class="ts" x="550" y="262" text-anchor="middle" dominant-baseline="central">ACE-Hemmer</text>
+          <text class="ts" x="550" y="282" text-anchor="middle" dominant-baseline="central">AT1-Blocker</text>
+          <text class="ts" x="550" y="314" text-anchor="middle" dominant-baseline="central">Calcineurin-</text>
+          <text class="ts" x="550" y="332" text-anchor="middle" dominant-baseline="central">inhibitoren</text>
+          <text class="ts" x="550" y="350" text-anchor="middle" dominant-baseline="central">(z.B. Ciclosporin)</text>
+        </g>
+        <text class="ts" x="340" y="430" text-anchor="middle" dominant-baseline="central">Achtung: anhaltende prärenale Genese → sekundäre Tubulusnekrose</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-4">
+    <h2><span class="num">04</span>Intrarenale Ursachen — Details</h2>
+    <p class="intro">
+      Drei Kompartimente der Niere können direkt geschädigt werden — am häufigsten ist die <strong>akute Tubulusnekrose</strong> mit etwa 85 % aller intrarenalen Fälle.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 660" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Intrarenale Ursachen der AKI</title>
+        <desc>Tubulo-interstitielle, vaskuläre und glomeruläre Schädigungen mit Detailaufschlüsselung.</desc>
+        <g class="c-purple">
+          <rect x="30" y="30" width="620" height="60" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="55" text-anchor="middle" dominant-baseline="central">Intrarenal: Direkte Nierenschädigung (~ 35 %)</text>
+          <text class="ts" x="340" y="78" text-anchor="middle" dominant-baseline="central">Tubulointerstitiell, vaskulär oder glomerulär</text>
+        </g>
+        <g class="c-purple">
+          <rect x="30" y="110" width="620" height="240" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="138" text-anchor="middle" dominant-baseline="central">Tubulo-interstitiell</text>
+          <line x1="55" y1="155" x2="625" y2="155" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="th" x="135" y="180" text-anchor="middle" dominant-baseline="central">Akute Tubulusnekrose</text>
+          <text class="ts" x="135" y="200" text-anchor="middle" dominant-baseline="central">(85 % der intrarenalen Fälle)</text>
+          <text class="ts" x="135" y="225" text-anchor="middle" dominant-baseline="central">• Sepsis</text>
+          <text class="ts" x="135" y="243" text-anchor="middle" dominant-baseline="central">• Ischämisch</text>
+          <text class="ts" x="135" y="265" text-anchor="middle" dominant-baseline="central">Toxisch:</text>
+          <text class="ts" x="135" y="285" text-anchor="middle" dominant-baseline="central">• Aminoglykoside</text>
+          <text class="ts" x="135" y="303" text-anchor="middle" dominant-baseline="central">• NSAR, ACEi</text>
+          <text class="ts" x="135" y="321" text-anchor="middle" dominant-baseline="central">• Cisplatin, Amphotericin</text>
+          <text class="ts" x="135" y="339" text-anchor="middle" dominant-baseline="central">• Kontrastmittel</text>
+          <text class="th" x="340" y="180" text-anchor="middle" dominant-baseline="central">Tubulo-interstitielle</text>
+          <text class="th" x="340" y="198" text-anchor="middle" dominant-baseline="central">Nephritis</text>
+          <text class="ts" x="340" y="225" text-anchor="middle" dominant-baseline="central">Medikamente:</text>
+          <text class="ts" x="340" y="243" text-anchor="middle" dominant-baseline="central">Penicilline, NSAR, PPI,</text>
+          <text class="ts" x="340" y="261" text-anchor="middle" dominant-baseline="central">Aciclovir, Cephalosporine</text>
+          <text class="ts" x="340" y="285" text-anchor="middle" dominant-baseline="central">Infektiös:</text>
+          <text class="ts" x="340" y="303" text-anchor="middle" dominant-baseline="central">Hantavirus, HIV, CMV,</text>
+          <text class="ts" x="340" y="321" text-anchor="middle" dominant-baseline="central">Hepatitis C, Leptospirose</text>
+          <text class="ts" x="340" y="339" text-anchor="middle" dominant-baseline="central">Infiltrativ: Sarkoidose</text>
+          <text class="th" x="540" y="180" text-anchor="middle" dominant-baseline="central">Pigment-Nephropathie</text>
+          <text class="ts" x="540" y="205" text-anchor="middle" dominant-baseline="central">• Myoglobinurie</text>
+          <text class="ts" x="540" y="223" text-anchor="middle" dominant-baseline="central">  (Rhabdomyolyse)</text>
+          <text class="ts" x="540" y="245" text-anchor="middle" dominant-baseline="central">• Hämoglobinurie</text>
+          <text class="ts" x="540" y="263" text-anchor="middle" dominant-baseline="central">  (Hämolyse)</text>
+          <text class="th" x="540" y="290" text-anchor="middle" dominant-baseline="central">Tubuläre Verstopfung</text>
+          <text class="ts" x="540" y="313" text-anchor="middle" dominant-baseline="central">• Uratnephropathie</text>
+          <text class="ts" x="540" y="331" text-anchor="middle" dominant-baseline="central">• Cast-Nephropathie</text>
+        </g>
+        <g class="c-blue">
+          <rect x="30" y="370" width="305" height="270" rx="10" stroke-width="0.5"/>
+          <text class="th" x="182" y="398" text-anchor="middle" dominant-baseline="central">Vaskulär</text>
+          <line x1="55" y1="415" x2="310" y2="415" stroke="#0C447C" stroke-width="0.5" opacity="0.4"/>
+          <text class="th" x="182" y="438" text-anchor="middle" dominant-baseline="central">Makrovaskulär</text>
+          <text class="ts" x="182" y="460" text-anchor="middle" dominant-baseline="central">• Nierenarterienstenose</text>
+          <text class="ts" x="182" y="478" text-anchor="middle" dominant-baseline="central">• Nierenvenenthrombose</text>
+          <text class="ts" x="182" y="496" text-anchor="middle" dominant-baseline="central">• Niereninfarkte</text>
+          <text class="ts" x="182" y="514" text-anchor="middle" dominant-baseline="central">• Vaskulitis</text>
+          <text class="ts" x="182" y="532" text-anchor="middle" dominant-baseline="central">• Kompartmentsyndrom</text>
+          <text class="th" x="182" y="558" text-anchor="middle" dominant-baseline="central">Mikrovaskulär</text>
+          <text class="ts" x="182" y="580" text-anchor="middle" dominant-baseline="central">• Cholesterinembolie</text>
+          <text class="ts" x="182" y="598" text-anchor="middle" dominant-baseline="central">• DIC, TTP, HUS, HELLP</text>
+          <text class="ts" x="182" y="616" text-anchor="middle" dominant-baseline="central">• Sklerodermie, Sichelzelle</text>
+        </g>
+        <g class="c-coral">
+          <rect x="345" y="370" width="305" height="270" rx="10" stroke-width="0.5"/>
+          <text class="th" x="497" y="398" text-anchor="middle" dominant-baseline="central">Glomerulär</text>
+          <line x1="370" y1="415" x2="625" y2="415" stroke="#712B13" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="497" y="448" text-anchor="middle" dominant-baseline="central">Glomerulonephritiden</text>
+          <text class="ts" x="497" y="466" text-anchor="middle" dominant-baseline="central">allgemein</text>
+          <text class="ts" x="497" y="498" text-anchor="middle" dominant-baseline="central">Rapid-progressive</text>
+          <text class="ts" x="497" y="516" text-anchor="middle" dominant-baseline="central">Glomerulonephritis</text>
+          <text class="ts" x="497" y="534" text-anchor="middle" dominant-baseline="central">(notfall-typische Form)</text>
+          <text class="ts" x="497" y="566" text-anchor="middle" dominant-baseline="central">Minimal-Change-GN</text>
+          <text class="ts" x="497" y="598" text-anchor="middle" dominant-baseline="central">HIV-assoziierte</text>
+          <text class="ts" x="497" y="616" text-anchor="middle" dominant-baseline="central">Nephropathie</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-5">
+    <h2><span class="num">05</span>Postrenale Ursachen &amp; Sonderform Kontrastmittel</h2>
+    <p class="intro">
+      Postrenale Ursachen sind mit etwa 5 % am seltensten, aber häufig mechanisch behebbar. Die kontrastmittelinduzierte Nephropathie ist als eigenständige Entität <strong>aktuell umstritten</strong>.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 470" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Postrenale Ursachen und kontrastmittelinduzierte Nephropathie</title>
+        <desc>Mechanische und funktionelle Abflussbehinderungen plus Sonderform Kontrastmittel.</desc>
+        <g class="c-gray">
+          <rect x="30" y="30" width="620" height="60" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="55" text-anchor="middle" dominant-baseline="central">Postrenal: Harnabflussstörung (~ 5 %)</text>
+          <text class="ts" x="340" y="78" text-anchor="middle" dominant-baseline="central">Mechanisch oder funktionell — angeboren oder erworben</text>
+        </g>
+        <g class="c-gray">
+          <rect x="30" y="110" width="305" height="200" rx="10" stroke-width="0.5"/>
+          <text class="th" x="182" y="140" text-anchor="middle" dominant-baseline="central">Mechanische Behinderung</text>
+          <line x1="55" y1="158" x2="310" y2="158" stroke="#444441" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="182" y="183" text-anchor="middle" dominant-baseline="central">• Urolithiasis (Steine)</text>
+          <text class="ts" x="182" y="203" text-anchor="middle" dominant-baseline="central">• Tumoren</text>
+          <text class="ts" x="182" y="223" text-anchor="middle" dominant-baseline="central">• Abszesse</text>
+          <text class="ts" x="182" y="243" text-anchor="middle" dominant-baseline="central">• Benigne Prostatahyperplasie</text>
+          <text class="ts" x="182" y="263" text-anchor="middle" dominant-baseline="central">• Urethrastrikturen</text>
+          <text class="ts" x="182" y="283" text-anchor="middle" dominant-baseline="central">• Retroperitoneale Fibrose</text>
+          <text class="ts" x="182" y="301" text-anchor="middle" dominant-baseline="central">  (Morbus Ormond)</text>
+        </g>
+        <g class="c-gray">
+          <rect x="345" y="110" width="305" height="200" rx="10" stroke-width="0.5"/>
+          <text class="th" x="497" y="140" text-anchor="middle" dominant-baseline="central">Funktionelle Störung</text>
+          <line x1="370" y1="158" x2="625" y2="158" stroke="#444441" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="497" y="190" text-anchor="middle" dominant-baseline="central">• Angeborene Fehlbildungen</text>
+          <text class="ts" x="497" y="218" text-anchor="middle" dominant-baseline="central">• Fehlplatzierte Katheter</text>
+          <text class="ts" x="497" y="246" text-anchor="middle" dominant-baseline="central">• Harnblasentamponade</text>
+          <text class="ts" x="497" y="274" text-anchor="middle" dominant-baseline="central">• Harnblasenentleerungs-</text>
+          <text class="ts" x="497" y="292" text-anchor="middle" dominant-baseline="central">  störung (z.B. neurogen)</text>
+        </g>
+        <g class="c-amber">
+          <rect x="30" y="335" width="620" height="115" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="362" text-anchor="middle" dominant-baseline="central">Sonderform: Kontrastmittelinduzierte Nephropathie</text>
+          <text class="ts" x="340" y="385" text-anchor="middle" dominant-baseline="central">Hinweis: kausaler Zusammenhang aktuell umstritten</text>
+          <text class="ts" x="170" y="410" text-anchor="middle" dominant-baseline="central">Risikofaktoren:</text>
+          <text class="ts" x="170" y="428" text-anchor="middle" dominant-baseline="central">CKD, hohes Alter, kardiovask. Erkr.</text>
+          <text class="ts" x="510" y="410" text-anchor="middle" dominant-baseline="central">Zeitfenster:</text>
+          <text class="ts" x="510" y="428" text-anchor="middle" dominant-baseline="central">Anstieg 48–72 h nach Gabe — meist Erholung in 3–5 Tagen</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-6">
+    <h2><span class="num">06</span>Symptomatik — Drei Phasen</h2>
+    <p class="intro">
+      Die AKI ist häufig <strong>asymptomatisch</strong> und wird oft erst durch ihre Komplikationen erkannt. Das Leitsymptom ist die Oligurie bzw. Anurie; der typische Verlauf erfolgt in drei Phasen.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 320" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Symptomatik der AKI in drei Phasen</title>
+        <desc>Asymptomatischer Verlauf, dann Oligurie oder Anurie, schließlich Polyurie.</desc>
+        <defs><marker id="arrow6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+        <text class="th" x="340" y="40" text-anchor="middle" dominant-baseline="central">Verlauf in drei Phasen</text>
+        <text class="ts" x="340" y="62" text-anchor="middle" dominant-baseline="central">Leitsymptom über alle Phasen: Oligurie bzw. Anurie</text>
+        <g class="c-gray">
+          <rect x="30" y="100" width="190" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="125" y="128" text-anchor="middle" dominant-baseline="central">Phase 1</text>
+          <text class="th" x="125" y="148" text-anchor="middle" dominant-baseline="central">Asymptomatisch</text>
+          <line x1="55" y1="166" x2="195" y2="166" stroke="#444441" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="125" y="190" text-anchor="middle" dominant-baseline="central">Verlauf der</text>
+          <text class="ts" x="125" y="208" text-anchor="middle" dominant-baseline="central">Grunderkrankung</text>
+          <text class="ts" x="125" y="240" text-anchor="middle" dominant-baseline="central">Häufig: nur Symptome</text>
+          <text class="ts" x="125" y="258" text-anchor="middle" dominant-baseline="central">der Grundkrankheit</text>
+        </g>
+        <line x1="225" y1="185" x2="245" y2="185" class="arr" marker-end="url(#arrow6)"/>
+        <g class="c-purple">
+          <rect x="250" y="100" width="190" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="345" y="128" text-anchor="middle" dominant-baseline="central">Phase 2</text>
+          <text class="th" x="345" y="148" text-anchor="middle" dominant-baseline="central">Oligurie / Anurie</text>
+          <line x1="275" y1="166" x2="415" y2="166" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="345" y="190" text-anchor="middle" dominant-baseline="central">Reduzierte bis fehlende</text>
+          <text class="ts" x="345" y="208" text-anchor="middle" dominant-baseline="central">Urinausscheidung</text>
+          <text class="ts" x="345" y="240" text-anchor="middle" dominant-baseline="central">Komplikationen</text>
+          <text class="ts" x="345" y="258" text-anchor="middle" dominant-baseline="central">werden hier sichtbar</text>
+        </g>
+        <line x1="445" y1="185" x2="465" y2="185" class="arr" marker-end="url(#arrow6)"/>
+        <g class="c-teal">
+          <rect x="470" y="100" width="180" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="560" y="128" text-anchor="middle" dominant-baseline="central">Phase 3</text>
+          <text class="th" x="560" y="148" text-anchor="middle" dominant-baseline="central">Polyurie</text>
+          <line x1="495" y1="166" x2="625" y2="166" stroke="#0F6E56" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="560" y="190" text-anchor="middle" dominant-baseline="central">Erhöhte</text>
+          <text class="ts" x="560" y="208" text-anchor="middle" dominant-baseline="central">Urinausscheidung</text>
+          <text class="ts" x="560" y="240" text-anchor="middle" dominant-baseline="central">Erholungsphase mit</text>
+          <text class="ts" x="560" y="258" text-anchor="middle" dominant-baseline="central">Elektrolytverlusten</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-7">
+    <h2><span class="num">07</span>KDIGO-Stadien (2012)</h2>
+    <p class="intro">
+      Die Stadien werden nach <strong>Serumkreatinin</strong> ODER <strong>Urinausscheidung</strong> bestimmt — bei Diskrepanz gilt das jeweils höhere Stadium. Die KDIGO-Klassifikation vereint die früheren RIFLE- und AKIN-Kriterien.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 540" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>KDIGO-Stadien der AKI</title>
+        <desc>Drei Stadien anhand von Serumkreatinin und Urinausscheidung.</desc>
+        <text class="th" x="340" y="38" text-anchor="middle" dominant-baseline="central">KDIGO-Klassifikation 2012</text>
+        <text class="ts" x="340" y="60" text-anchor="middle" dominant-baseline="central">Vereint frühere RIFLE- und AKIN-Kriterien</text>
+        <g class="c-teal"><rect x="30" y="90" width="200" height="60" rx="8" stroke-width="0.5"/><text class="th" x="130" y="120" text-anchor="middle" dominant-baseline="central">Stadium</text></g>
+        <g class="c-teal"><rect x="240" y="90" width="200" height="60" rx="8" stroke-width="0.5"/><text class="th" x="340" y="120" text-anchor="middle" dominant-baseline="central">Serumkreatinin</text></g>
+        <g class="c-teal"><rect x="450" y="90" width="200" height="60" rx="8" stroke-width="0.5"/><text class="th" x="550" y="120" text-anchor="middle" dominant-baseline="central">Urinausscheidung</text></g>
+        <g class="c-blue">
+          <rect x="30" y="160" width="200" height="110" rx="8" stroke-width="0.5"/>
+          <text class="th" x="130" y="200" text-anchor="middle" dominant-baseline="central">Stadium 1</text>
+          <text class="ts" x="130" y="232" text-anchor="middle" dominant-baseline="central">Leichte</text>
+          <text class="ts" x="130" y="250" text-anchor="middle" dominant-baseline="central">Einschränkung</text>
+        </g>
+        <g class="c-blue">
+          <rect x="240" y="160" width="200" height="110" rx="8" stroke-width="0.5"/>
+          <text class="ts" x="340" y="183" text-anchor="middle" dominant-baseline="central">Anstieg ≥ 0,3 mg/dL</text>
+          <text class="ts" x="340" y="201" text-anchor="middle" dominant-baseline="central">in 48 h</text>
+          <text class="ts" x="340" y="225" text-anchor="middle" dominant-baseline="central">oder</text>
+          <text class="ts" x="340" y="247" text-anchor="middle" dominant-baseline="central">1,5- bis 1,9-facher</text>
+          <text class="ts" x="340" y="265" text-anchor="middle" dominant-baseline="central">Anstieg in 7 d</text>
+        </g>
+        <g class="c-blue">
+          <rect x="450" y="160" width="200" height="110" rx="8" stroke-width="0.5"/>
+          <text class="ts" x="550" y="207" text-anchor="middle" dominant-baseline="central">&lt; 0,5 mL/kg/h</text>
+          <text class="ts" x="550" y="227" text-anchor="middle" dominant-baseline="central">für 6 bis 12 h</text>
+        </g>
+        <g class="c-purple">
+          <rect x="30" y="280" width="200" height="100" rx="8" stroke-width="0.5"/>
+          <text class="th" x="130" y="318" text-anchor="middle" dominant-baseline="central">Stadium 2</text>
+          <text class="ts" x="130" y="348" text-anchor="middle" dominant-baseline="central">Mittelschwer</text>
+        </g>
+        <g class="c-purple">
+          <rect x="240" y="280" width="200" height="100" rx="8" stroke-width="0.5"/>
+          <text class="ts" x="340" y="320" text-anchor="middle" dominant-baseline="central">2- bis 2,9-facher</text>
+          <text class="ts" x="340" y="340" text-anchor="middle" dominant-baseline="central">Kreatininanstieg</text>
+          <text class="ts" x="340" y="358" text-anchor="middle" dominant-baseline="central">innerhalb von 7 d</text>
+        </g>
+        <g class="c-purple">
+          <rect x="450" y="280" width="200" height="100" rx="8" stroke-width="0.5"/>
+          <text class="ts" x="550" y="322" text-anchor="middle" dominant-baseline="central">&lt; 0,5 mL/kg/h</text>
+          <text class="ts" x="550" y="342" text-anchor="middle" dominant-baseline="central">für ≥ 12 h</text>
+        </g>
+        <g class="c-coral">
+          <rect x="30" y="390" width="200" height="120" rx="8" stroke-width="0.5"/>
+          <text class="th" x="130" y="430" text-anchor="middle" dominant-baseline="central">Stadium 3</text>
+          <text class="ts" x="130" y="462" text-anchor="middle" dominant-baseline="central">Schwer</text>
+          <text class="ts" x="130" y="482" text-anchor="middle" dominant-baseline="central">(höchstes Stadium)</text>
+        </g>
+        <g class="c-coral">
+          <rect x="240" y="390" width="200" height="120" rx="8" stroke-width="0.5"/>
+          <text class="ts" x="340" y="412" text-anchor="middle" dominant-baseline="central">≥ 3-facher Anstieg</text>
+          <text class="ts" x="340" y="432" text-anchor="middle" dominant-baseline="central">oder ≥ 4 mg/dL</text>
+          <text class="ts" x="340" y="454" text-anchor="middle" dominant-baseline="central">oder Beginn einer</text>
+          <text class="ts" x="340" y="472" text-anchor="middle" dominant-baseline="central">Nierenersatztherapie</text>
+          <text class="ts" x="340" y="494" text-anchor="middle" dominant-baseline="central">U18: eGFR &lt; 35</text>
+        </g>
+        <g class="c-coral">
+          <rect x="450" y="390" width="200" height="120" rx="8" stroke-width="0.5"/>
+          <text class="ts" x="550" y="425" text-anchor="middle" dominant-baseline="central">&lt; 0,3 mL/kg/h</text>
+          <text class="ts" x="550" y="445" text-anchor="middle" dominant-baseline="central">für ≥ 24 h</text>
+          <text class="ts" x="550" y="467" text-anchor="middle" dominant-baseline="central">oder Anurie</text>
+          <text class="ts" x="550" y="485" text-anchor="middle" dominant-baseline="central">≥ 12 h</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-8">
+    <h2><span class="num">08</span>Diagnostik — Strukturierter Workup</h2>
+    <p class="intro">
+      Die Diagnostik gliedert sich in <strong>Diagnosesicherung</strong> (Kreatinin und Urinmenge → KDIGO-Stadium) und systematische <strong>Ursachensuche</strong> mit Anamnese, klinischer Untersuchung, Labor, Urinuntersuchung und Bildgebung.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 690" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Diagnostischer Workup bei AKI</title>
+        <desc>Diagnosesicherung, Anamnese, körperliche Untersuchung, Blutentnahme, Urinuntersuchung, Sonografie, ggf. Biopsie.</desc>
+        <defs><marker id="arrow8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+        <g class="c-teal">
+          <rect x="180" y="30" width="320" height="60" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="55" text-anchor="middle" dominant-baseline="central">Schritt 1: Diagnosesicherung</text>
+          <text class="ts" x="340" y="78" text-anchor="middle" dominant-baseline="central">Kreatinin und Urinausscheidung → KDIGO-Stadium</text>
+        </g>
+        <line x1="340" y1="100" x2="340" y2="125" class="arr" marker-end="url(#arrow8)"/>
+        <g class="c-purple">
+          <rect x="30" y="135" width="620" height="50" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="160" text-anchor="middle" dominant-baseline="central">Schritt 2: Ursache klären</text>
+        </g>
+        <g class="c-purple">
+          <rect x="30" y="200" width="195" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="127" y="225" text-anchor="middle" dominant-baseline="central">Anamnese</text>
+          <line x1="55" y1="240" x2="200" y2="240" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="127" y="265" text-anchor="middle" dominant-baseline="central">• Flüssigkeitsverlust</text>
+          <text class="ts" x="127" y="285" text-anchor="middle" dominant-baseline="central">  (Diarrhö, Erbrechen)</text>
+          <text class="ts" x="127" y="305" text-anchor="middle" dominant-baseline="central">• Hypotonie, OP, Sepsis</text>
+          <text class="ts" x="127" y="325" text-anchor="middle" dominant-baseline="central">• Medikamente</text>
+          <text class="ts" x="127" y="345" text-anchor="middle" dominant-baseline="central">• Nebendiagnosen</text>
+          <text class="ts" x="127" y="361" text-anchor="middle" dominant-baseline="central">  (Steine, Rhabdo)</text>
+        </g>
+        <g class="c-purple">
+          <rect x="240" y="200" width="200" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="225" text-anchor="middle" dominant-baseline="central">Körperl. Untersuchung</text>
+          <line x1="265" y1="240" x2="415" y2="240" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="340" y="263" text-anchor="middle" dominant-baseline="central">Vitalparameter</text>
+          <text class="ts" x="340" y="288" text-anchor="middle" dominant-baseline="central">Hypovolämie?</text>
+          <text class="ts" x="340" y="306" text-anchor="middle" dominant-baseline="central">(RR↓, Halsvenen leer)</text>
+          <text class="ts" x="340" y="332" text-anchor="middle" dominant-baseline="central">Überwässerung?</text>
+          <text class="ts" x="340" y="350" text-anchor="middle" dominant-baseline="central">(Ödeme, RR↑, Stauung)</text>
+        </g>
+        <g class="c-purple">
+          <rect x="455" y="200" width="195" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="552" y="225" text-anchor="middle" dominant-baseline="central">Blutentnahme</text>
+          <line x1="480" y1="240" x2="625" y2="240" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="552" y="263" text-anchor="middle" dominant-baseline="central">Retention: Krea, Harnstoff</text>
+          <text class="ts" x="552" y="285" text-anchor="middle" dominant-baseline="central">BGA: K↑, met. Azidose</text>
+          <text class="ts" x="552" y="307" text-anchor="middle" dominant-baseline="central">Blutbild + Ausstrich</text>
+          <text class="ts" x="552" y="327" text-anchor="middle" dominant-baseline="central">CK, LDH, Lipase</text>
+          <text class="ts" x="552" y="347" text-anchor="middle" dominant-baseline="central">Blutkultur bei Sepsis</text>
+        </g>
+        <g class="c-blue">
+          <rect x="30" y="395" width="305" height="180" rx="10" stroke-width="0.5"/>
+          <text class="th" x="182" y="420" text-anchor="middle" dominant-baseline="central">Urinuntersuchungen</text>
+          <line x1="55" y1="435" x2="310" y2="435" stroke="#0C447C" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="182" y="458" text-anchor="middle" dominant-baseline="central">U-Status: Hämaturie, Proteinurie</text>
+          <text class="ts" x="182" y="485" text-anchor="middle" dominant-baseline="central">Urinsediment — aktiv bei GN:</text>
+          <text class="ts" x="182" y="503" text-anchor="middle" dominant-baseline="central">• Akanthozyten</text>
+          <text class="ts" x="182" y="521" text-anchor="middle" dominant-baseline="central">• Erythrozytenzylinder</text>
+          <text class="ts" x="182" y="539" text-anchor="middle" dominant-baseline="central">• Leukozytenzylinder</text>
+          <text class="ts" x="182" y="563" text-anchor="middle" dominant-baseline="central">FE-Natrium: prä- vs. intrarenal</text>
+        </g>
+        <g class="c-blue">
+          <rect x="345" y="395" width="305" height="180" rx="10" stroke-width="0.5"/>
+          <text class="th" x="497" y="420" text-anchor="middle" dominant-baseline="central">Bildgebung</text>
+          <line x1="370" y1="435" x2="625" y2="435" stroke="#0C447C" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="497" y="465" text-anchor="middle" dominant-baseline="central">Sonografie:</text>
+          <text class="ts" x="497" y="490" text-anchor="middle" dominant-baseline="central">• Nieren (Stauung?)</text>
+          <text class="ts" x="497" y="510" text-anchor="middle" dominant-baseline="central">• Harnblase</text>
+          <text class="ts" x="497" y="530" text-anchor="middle" dominant-baseline="central">• Pleuraergüsse</text>
+          <text class="ts" x="497" y="550" text-anchor="middle" dominant-baseline="central">• V. cava inferior</text>
+        </g>
+        <g class="c-coral">
+          <rect x="180" y="600" width="320" height="60" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="625" text-anchor="middle" dominant-baseline="central">Biopsie</text>
+          <text class="ts" x="340" y="648" text-anchor="middle" dominant-baseline="central">Nur bei V.a. rapid-progressive Glomerulonephritis</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-9">
+    <h2><span class="num">09</span>Therapie — Allgemein und nach Genese</h2>
+    <p class="intro">
+      Die Therapie ruht auf zwei Säulen: <strong>allgemeine Maßnahmen</strong> für alle AKI-Patient:innen plus <strong>ursachenspezifische Therapie</strong>. Wichtig sind auch zwei klare „Nicht-Empfehlungen" der DGIM.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 700" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Therapie der AKI</title>
+        <desc>Allgemeine Maßnahmen plus ursachenspezifische Therapie nach prärenaler, intrarenaler oder postrenaler Genese.</desc>
+        <g class="c-teal">
+          <rect x="30" y="30" width="620" height="60" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="55" text-anchor="middle" dominant-baseline="central">Säule 1: Allgemeines klinisches Management</text>
+          <text class="ts" x="340" y="78" text-anchor="middle" dominant-baseline="central">Gilt für alle AKI-Patient:innen und Risikopersonen</text>
+        </g>
+        <g class="c-teal">
+          <rect x="30" y="100" width="305" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="182" y="128" text-anchor="middle" dominant-baseline="central">Nephrotoxische Medikamente</text>
+          <text class="th" x="182" y="146" text-anchor="middle" dominant-baseline="central">absetzen</text>
+          <line x1="55" y1="162" x2="310" y2="162" stroke="#0F6E56" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="182" y="186" text-anchor="middle" dominant-baseline="central">• ACE-Hemmer / Sartane</text>
+          <text class="ts" x="182" y="206" text-anchor="middle" dominant-baseline="central">• NSAID</text>
+          <text class="ts" x="182" y="226" text-anchor="middle" dominant-baseline="central">• Diuretika</text>
+          <text class="ts" x="182" y="246" text-anchor="middle" dominant-baseline="central">• Metformin (Lactatazidose!)</text>
+        </g>
+        <g class="c-teal">
+          <rect x="345" y="100" width="305" height="170" rx="10" stroke-width="0.5"/>
+          <text class="th" x="497" y="128" text-anchor="middle" dominant-baseline="central">Wasser-, pH- und</text>
+          <text class="th" x="497" y="146" text-anchor="middle" dominant-baseline="central">Elektrolythaushalt</text>
+          <line x1="370" y1="162" x2="625" y2="162" stroke="#0F6E56" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="497" y="186" text-anchor="middle" dominant-baseline="central">Bei Oligurie/Anurie:</text>
+          <text class="ts" x="497" y="204" text-anchor="middle" dominant-baseline="central">balancierte Volumengabe</text>
+          <text class="ts" x="497" y="226" text-anchor="middle" dominant-baseline="central">Bei Überwässerung (prä-/intra):</text>
+          <text class="ts" x="497" y="244" text-anchor="middle" dominant-baseline="central">Versuch mit Schleifendiuretika</text>
+          <text class="ts" x="497" y="262" text-anchor="middle" dominant-baseline="central">→ sonst Akutdialyse prüfen</text>
+        </g>
+        <g class="c-purple">
+          <rect x="30" y="290" width="620" height="60" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="315" text-anchor="middle" dominant-baseline="central">Säule 2: Therapie nach Genese</text>
+          <text class="ts" x="340" y="338" text-anchor="middle" dominant-baseline="central">Zusätzlich zur Säule 1, gezielt nach Ursache</text>
+        </g>
+        <g class="c-purple">
+          <rect x="30" y="360" width="200" height="220" rx="10" stroke-width="0.5"/>
+          <text class="th" x="130" y="390" text-anchor="middle" dominant-baseline="central">Prärenal</text>
+          <line x1="55" y1="408" x2="205" y2="408" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="130" y="432" text-anchor="middle" dominant-baseline="central">• Flüssigkeits-</text>
+          <text class="ts" x="130" y="450" text-anchor="middle" dominant-baseline="central">  substitution</text>
+          <text class="ts" x="130" y="478" text-anchor="middle" dominant-baseline="central">• Bilanzierung</text>
+          <text class="ts" x="130" y="496" text-anchor="middle" dominant-baseline="central">  Ein-/Ausfuhr</text>
+          <text class="ts" x="130" y="524" text-anchor="middle" dominant-baseline="central">• EK-Transfusion</text>
+          <text class="ts" x="130" y="542" text-anchor="middle" dominant-baseline="central">  bei hämorrhag.</text>
+          <text class="ts" x="130" y="560" text-anchor="middle" dominant-baseline="central">  Schock</text>
+        </g>
+        <g class="c-purple">
+          <rect x="240" y="360" width="200" height="220" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="390" text-anchor="middle" dominant-baseline="central">Renal (intrarenal)</text>
+          <line x1="265" y1="408" x2="415" y2="408" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="340" y="432" text-anchor="middle" dominant-baseline="central">GN:</text>
+          <text class="ts" x="340" y="450" text-anchor="middle" dominant-baseline="central">Immunsuppression</text>
+          <text class="ts" x="340" y="473" text-anchor="middle" dominant-baseline="central">Ischämisch:</text>
+          <text class="ts" x="340" y="491" text-anchor="middle" dominant-baseline="central">Revaskularisation</text>
+          <text class="ts" x="340" y="514" text-anchor="middle" dominant-baseline="central">Toxisch:</text>
+          <text class="ts" x="340" y="532" text-anchor="middle" dominant-baseline="central">Hydrierung, ggf. Dialyse</text>
+          <text class="ts" x="340" y="555" text-anchor="middle" dominant-baseline="central">Tumorlyse: Rasburicase</text>
+          <text class="ts" x="340" y="573" text-anchor="middle" dominant-baseline="central">Cholesterinemb.: Statine</text>
+        </g>
+        <g class="c-purple">
+          <rect x="450" y="360" width="200" height="220" rx="10" stroke-width="0.5"/>
+          <text class="th" x="550" y="390" text-anchor="middle" dominant-baseline="central">Postrenal</text>
+          <line x1="475" y1="408" x2="625" y2="408" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="550" y="438" text-anchor="middle" dominant-baseline="central">• Entfernung des</text>
+          <text class="ts" x="550" y="456" text-anchor="middle" dominant-baseline="central">  Abflusshindernisses</text>
+          <text class="ts" x="550" y="490" text-anchor="middle" dominant-baseline="central">• Ggf. künstliche</text>
+          <text class="ts" x="550" y="508" text-anchor="middle" dominant-baseline="central">  Harnableitung</text>
+          <text class="ts" x="550" y="540" text-anchor="middle" dominant-baseline="central">  (z.B. Katheter,</text>
+          <text class="ts" x="550" y="558" text-anchor="middle" dominant-baseline="central">  DJ-Schiene)</text>
+        </g>
+        <g class="c-amber">
+          <rect x="30" y="600" width="620" height="80" rx="10" stroke-width="0.5"/>
+          <text class="th" x="340" y="625" text-anchor="middle" dominant-baseline="central">Wichtige „Nicht-Empfehlungen" (DGIM Klug entscheiden)</text>
+          <text class="ts" x="340" y="650" text-anchor="middle" dominant-baseline="central">Schleifendiuretika + Flüssigkeit als „Nierenspülung" → soll NICHT erfolgen</text>
+          <text class="ts" x="340" y="668" text-anchor="middle" dominant-baseline="central">Schleifendiuretika bei oligoanurischer AKI → soll NICHT erfolgen</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section class="chapter" id="kap-10">
+    <h2><span class="num">10</span>Komplikationen</h2>
+    <p class="intro">
+      Die AKI wird oft <strong>erst durch ihre Komplikationen</strong> klinisch auffällig — daher sind engmaschige Überwachung und frühe Behandlung entscheidend. Bei unzureichender Therapie der Komplikationen müssen Nierenersatzverfahren erwogen werden.
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 680 580" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Komplikationen der AKI</title>
+        <desc>Überwässerung, Elektrolytverschiebungen, Blutungsneigung, Anämie, Infektionen, Urämie.</desc>
+        <g class="c-blue">
+          <rect x="30" y="30" width="305" height="160" rx="10" stroke-width="0.5"/>
+          <text class="th" x="182" y="58" text-anchor="middle" dominant-baseline="central">Überwässerung</text>
+          <text class="ts" x="182" y="78" text-anchor="middle" dominant-baseline="central">Verminderte Ausscheidung → Volumen↑</text>
+          <line x1="55" y1="95" x2="310" y2="95" stroke="#0C447C" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="182" y="118" text-anchor="middle" dominant-baseline="central">• Periphere Ödeme</text>
+          <text class="ts" x="182" y="138" text-anchor="middle" dominant-baseline="central">• Lungenödem („Fluid Lung")</text>
+          <text class="ts" x="182" y="158" text-anchor="middle" dominant-baseline="central">• Pleura- / Perikarderguss</text>
+          <text class="ts" x="182" y="178" text-anchor="middle" dominant-baseline="central">• Kardiale Dekompensation, Hirnödem</text>
+        </g>
+        <g class="c-amber">
+          <rect x="345" y="30" width="305" height="160" rx="10" stroke-width="0.5"/>
+          <text class="th" x="497" y="58" text-anchor="middle" dominant-baseline="central">Elektrolyte und Säure-Basen</text>
+          <text class="ts" x="497" y="78" text-anchor="middle" dominant-baseline="central">Lebensgefährliche Konstellation</text>
+          <line x1="370" y1="95" x2="625" y2="95" stroke="#854F0B" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="497" y="120" text-anchor="middle" dominant-baseline="central">Hyperkaliämie</text>
+          <text class="ts" x="497" y="138" text-anchor="middle" dominant-baseline="central">(insb. Tumorlyse, Rhabdomyolyse)</text>
+          <text class="ts" x="497" y="162" text-anchor="middle" dominant-baseline="central">Metabolische Azidose</text>
+          <text class="ts" x="497" y="180" text-anchor="middle" dominant-baseline="central">mit vergrößerter Anionenlücke</text>
+        </g>
+        <g class="c-coral">
+          <rect x="30" y="210" width="305" height="140" rx="10" stroke-width="0.5"/>
+          <text class="th" x="182" y="240" text-anchor="middle" dominant-baseline="central">Blutungsneigung</text>
+          <line x1="55" y1="260" x2="310" y2="260" stroke="#712B13" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="182" y="285" text-anchor="middle" dominant-baseline="central">Insbesondere obere</text>
+          <text class="ts" x="182" y="305" text-anchor="middle" dominant-baseline="central">gastrointestinale Blutungen</text>
+          <text class="ts" x="182" y="328" text-anchor="middle" dominant-baseline="central">(urämische Plättchenstörung)</text>
+        </g>
+        <g class="c-coral">
+          <rect x="345" y="210" width="305" height="140" rx="10" stroke-width="0.5"/>
+          <text class="th" x="497" y="240" text-anchor="middle" dominant-baseline="central">Anämie</text>
+          <line x1="370" y1="260" x2="625" y2="260" stroke="#712B13" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="497" y="288" text-anchor="middle" dominant-baseline="central">Multifaktorielle Genese:</text>
+          <text class="ts" x="497" y="310" text-anchor="middle" dominant-baseline="central">• Erythropoese vermindert</text>
+          <text class="ts" x="497" y="330" text-anchor="middle" dominant-baseline="central">• Blutungen erhöht</text>
+        </g>
+        <g class="c-purple">
+          <rect x="30" y="370" width="305" height="140" rx="10" stroke-width="0.5"/>
+          <text class="th" x="182" y="400" text-anchor="middle" dominant-baseline="central">Infektionen</text>
+          <line x1="55" y1="420" x2="310" y2="420" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="182" y="448" text-anchor="middle" dominant-baseline="central">Erhöhte Infektanfälligkeit</text>
+          <text class="ts" x="182" y="470" text-anchor="middle" dominant-baseline="central">während und nach der AKI</text>
+          <text class="ts" x="182" y="490" text-anchor="middle" dominant-baseline="central">(immunologische Dysfunktion)</text>
+        </g>
+        <g class="c-purple">
+          <rect x="345" y="370" width="305" height="140" rx="10" stroke-width="0.5"/>
+          <text class="th" x="497" y="400" text-anchor="middle" dominant-baseline="central">Urämie</text>
+          <line x1="370" y1="420" x2="625" y2="420" stroke="#3C3489" stroke-width="0.5" opacity="0.4"/>
+          <text class="ts" x="497" y="448" text-anchor="middle" dominant-baseline="central">Urämische Enzephalopathie</text>
+          <text class="ts" x="497" y="478" text-anchor="middle" dominant-baseline="central">Weitere Symptome</text>
+          <text class="ts" x="497" y="496" text-anchor="middle" dominant-baseline="central">der Urämie</text>
+        </g>
+        <g class="c-gray">
+          <rect x="30" y="530" width="620" height="40" rx="8" stroke-width="0.5"/>
+          <text class="ts" x="340" y="552" text-anchor="middle" dominant-baseline="central">Bei unzureichender Behandlung der Komplikationen → Nierenersatzverfahren erwägen</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p><strong style="color:var(--ink)">Farbsemantik:</strong> Teal = prärenal / Allgemeines · Lila = intrarenal / Anamnese · Grau = postrenal / neutrale Information · Blau = Stadium 1 / Bildgebung · Coral = Stadium 3 / kritische Komplikationen · Amber = Warnhinweise und Kontraindikationen.</p>
+    <p>Lernzusammenfassung für die Eigenarbeit · Ersetzt keine klinische Leitlinie · Quelle der Inhalte: AMBOSS / KDIGO 2012</p>
+  </footer>
+
+</div>
+</body>
+</html>

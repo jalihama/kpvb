@@ -80,7 +80,8 @@
 
       const head = el("button", "sys-head");
       head.type = "button";
-      head.setAttribute("aria-expanded", "true");
+      head.setAttribute("aria-expanded", "false");
+      section.classList.add("collapsed");
       const bodyId = "body-" + slug(sys.system);
       head.setAttribute("aria-controls", bodyId);
       head.innerHTML =
@@ -101,7 +102,8 @@
         topic.dataset.topic = tp.topic;
         const th = el("button", "topic-head");
         th.type = "button";
-        th.setAttribute("aria-expanded", "true");
+        th.setAttribute("aria-expanded", "false");
+        topic.classList.add("collapsed");
         th.innerHTML =
           '<span class="topic-dot" aria-hidden="true"></span>'
         + '<span class="topic-name"></span>'
@@ -149,7 +151,11 @@
         topicNodes.push({ wrap: topic, head: th, countEl: th.querySelector(".topic-count"), items: itemNodes });
       });
 
-      head.addEventListener("click", () => toggle(section, head));
+      head.addEventListener("click", () => {
+        const willOpen = section.classList.contains("collapsed");
+        toggle(section, head);
+        sysNodes.forEach(o => o.wrap.classList.toggle("hl", o.wrap === section && willOpen));
+      });
       section.appendChild(head);
       section.appendChild(body);
       root.appendChild(section);
@@ -171,9 +177,17 @@
         a.querySelector(".ix-name").textContent = sn.wrap.dataset.system;
         a.addEventListener("click", (e) => {
           e.preventDefault();
-          sn.wrap.classList.remove("collapsed");
-          sn.head.setAttribute("aria-expanded", "true");
+          const docEl = document.documentElement;
+          docEl.classList.add("kp-noanim");
+          sysNodes.forEach(o => {
+            const on = o === sn;
+            o.wrap.classList.toggle("collapsed", !on);
+            o.head.setAttribute("aria-expanded", String(on));
+            o.wrap.classList.toggle("hl", on);
+          });
+          void sn.wrap.offsetHeight;                       // force layout to settle
           const y = sn.wrap.getBoundingClientRect().top + window.scrollY - 84;
+          requestAnimationFrame(() => docEl.classList.remove("kp-noanim"));
           window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
           if (opts.onIndexClick) opts.onIndexClick();
         });

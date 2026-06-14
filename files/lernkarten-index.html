@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernkarten Index — Innere & Chirurgie + Amboss Cross-Ref</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf7;
+    --surface: #ffffff;
+    --border: #e5e3dd;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #2d5d4f;
+    --accent-soft: #e8f0ed;
+    --danger: #b84545;
+    --warn: #c08a3a;
+    --grundlagen: #8b7355;
+    --untersuchung: #5b8a8a;
+    --innere: #2d5d4f;
+    --chirurgie: #9a4d4d;
+    --interdisz: #6a5b8a;
+    --leitsymp: #b58b3a;
+    --highlight: #fff4cc;
+    --external: #888;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --surface: #242422;
+      --border: #3a3a37;
+      --text: #ececea;
+      --muted: #9a9a96;
+      --accent: #6db09b;
+      --accent-soft: #2a3d37;
+      --highlight: #4a3f1a;
+      --external: #777;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 80px; }
+  header { margin-bottom: 24px; }
+  h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitle { color: var(--muted); font-size: 14px; margin: 0; }
+  .stats { display: flex; gap: 16px; margin-top: 12px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  .stats span strong { color: var(--text); font-weight: 600; }
+
+  .search-wrap {
+    position: sticky; top: 0; background: var(--bg);
+    padding: 16px 0 12px; margin-bottom: 8px; z-index: 20;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-box { position: relative; }
+  .search-input {
+    width: 100%; padding: 14px 18px; font-size: 17px;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface); color: var(--text);
+    outline: none; transition: border-color 0.15s; font-family: inherit;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .suggestions {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    max-height: 420px; overflow-y: auto; display: none; z-index: 30;
+  }
+  .suggestions.open { display: block; }
+  .sug-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; cursor: pointer;
+    border-bottom: 1px solid var(--border); font-size: 14px;
+  }
+  .sug-item:last-child { border-bottom: none; }
+  .sug-item:hover, .sug-item.focused { background: var(--accent-soft); }
+  .sug-body { flex: 1; min-width: 0; }
+  .sug-name { font-weight: 500; }
+  .sug-name mark { background: var(--highlight); color: var(--text); padding: 0 1px; border-radius: 2px; }
+  .sug-refs { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .sug-meta { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .page-badge {
+    font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent);
+    background: var(--accent-soft); padding: 3px 10px; border-radius: 4px;
+    min-width: 50px; text-align: center; font-size: 13px;
+  }
+  .page-badge.crossref { color: var(--accent); }
+  .page-badge.crossref::before { content: "→ "; font-weight: 400; }
+  .page-badge.external {
+    color: var(--external); background: transparent; border: 1px dashed var(--external);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+  }
+
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-divider { width: 1px; background: var(--border); margin: 0 4px; align-self: stretch; }
+  .chip {
+    padding: 5px 12px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--muted); font-size: 12px; cursor: pointer;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .chip:hover { color: var(--text); }
+  .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .chip.active-studied { background: var(--warn); color: white; border-color: var(--warn); }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+  .btn {
+    padding: 7px 14px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text);
+    border-radius: 6px; cursor: pointer; font-size: 13px;
+    font-family: inherit; transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn-primary:hover { opacity: 0.9; color: white; }
+  .btn-danger { color: var(--danger); }
+  .btn-danger:hover { border-color: var(--danger); }
+
+  details.add-form {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 16px;
+  }
+  details.add-form summary {
+    padding: 10px 14px; cursor: pointer; font-size: 13px;
+    color: var(--muted); user-select: none;
+  }
+  details.add-form summary:hover { color: var(--text); }
+  details.add-form[open] summary { border-bottom: 1px solid var(--border); }
+  .quick-add-body { padding: 14px; }
+  .quick-add-row { display: grid; grid-template-columns: 1fr 90px 160px auto; gap: 8px; align-items: center; }
+  @media (max-width: 640px) {
+    .quick-add-row { grid-template-columns: 1fr 1fr; }
+    .quick-add-row .btn-primary { grid-column: 1 / -1; }
+  }
+  .quick-add-body input, .quick-add-body select {
+    padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--bg); color: var(--text); font-size: 14px;
+    font-family: inherit; outline: none; width: 100%;
+  }
+  .quick-add-body input:focus, .quick-add-body select:focus { border-color: var(--accent); }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  .list { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .list-header {
+    display: grid; grid-template-columns: 90px 1fr 140px 80px 70px;
+    gap: 12px; padding: 10px 14px; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--muted); background: var(--bg);
+    border-bottom: 1px solid var(--border); font-weight: 600;
+  }
+  .list-header span { cursor: pointer; user-select: none; }
+  .list-header span:hover { color: var(--text); }
+  .list-header .sort-active { color: var(--accent); }
+
+  .row {
+    display: grid; grid-template-columns: 90px 1fr 140px 80px 70px;
+    gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--border);
+    align-items: start; font-size: 14px; transition: background 0.1s;
+  }
+  .row:last-child { border-bottom: none; }
+  .row:hover { background: var(--bg); }
+  .row.studied { opacity: 0.5; }
+  .row.studied .disease-name { text-decoration: line-through; }
+
+  .row-page { padding-top: 2px; }
+  .disease-name { font-weight: 500; }
+  .disease-name mark { background: var(--highlight); color: var(--text); padding: 0 1px; border-radius: 2px; }
+  .disease-name input {
+    width: 100%; border: 1px solid var(--accent); padding: 4px 8px;
+    border-radius: 4px; background: var(--bg); color: var(--text);
+    font-size: 14px; font-family: inherit;
+  }
+  .refs-line {
+    font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4;
+  }
+  .refs-line .ref { display: inline-block; margin-right: 8px; }
+  .refs-line .ref strong { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .external-note {
+    font-size: 12px; color: var(--muted); margin-top: 4px;
+    font-style: italic;
+  }
+  .section-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; color: white;
+    text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap;
+  }
+  .badge-grundlagen { background: var(--grundlagen); }
+  .badge-untersuchung { background: var(--untersuchung); }
+  .badge-innere { background: var(--innere); }
+  .badge-chirurgie { background: var(--chirurgie); }
+  .badge-interdisz { background: var(--interdisz); }
+  .badge-leitsymp { background: var(--leitsymp); }
+
+  .studied-toggle {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--muted); cursor: pointer;
+    padding-top: 2px;
+  }
+  .studied-toggle input { cursor: pointer; }
+
+  .row-actions { display: flex; gap: 4px; justify-content: flex-end; padding-top: 2px; }
+  .icon-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    padding: 4px 6px; border-radius: 4px; font-size: 13px; font-family: inherit;
+  }
+  .icon-btn:hover { color: var(--text); background: var(--bg); }
+  .icon-btn.danger:hover { color: var(--danger); }
+
+  .empty { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: 12px; padding: 24px;
+    max-width: 640px; width: 100%; max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal h2 { margin: 0 0 6px; font-size: 18px; }
+  .modal p { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+  .modal textarea {
+    width: 100%; min-height: 240px; padding: 12px;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: var(--bg); color: var(--text);
+    font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    outline: none; resize: vertical;
+  }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+  .mobile-meta { display: none; }
+  @media (max-width: 720px) {
+    .list-header { display: none; }
+    .row {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "page actions" "name name" "refs refs" "meta meta";
+      gap: 4px; padding: 12px;
+    }
+    .row-page { grid-area: page; }
+    .disease-name { grid-area: name; }
+    .row-actions { grid-area: actions; }
+    .refs-line, .external-note { grid-area: refs; }
+    .mobile-meta {
+      grid-area: meta; display: flex; gap: 10px; align-items: center;
+      font-size: 12px; color: var(--muted); flex-wrap: wrap; margin-top: 4px;
+    }
+    .desktop-only { display: none; }
+  }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 10px 18px;
+    border-radius: 6px; font-size: 13px; z-index: 200;
+    opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    max-width: 90vw; text-align: center;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<style id="kp-brand">
+:root{--bg:#eef5f8!important;--surface:#ffffff!important;--border:#cddbe0!important;}
+@media(prefers-color-scheme:dark){:root{--bg:#061d28!important;--surface:#0f3848!important;--border:#1c4253!important;}}
+body,h1,h2,h3,h4,h5,h6,p,li,td,th,span,div,a,button,input,select,nav,label{font-family:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif !important}
+code,.mono,pre,kbd,textarea{font-family:'Roboto Mono',ui-monospace,Menlo,Consolas,monospace !important}
+</style>
+<body>
+<div class="container">
+  <header>
+    <h1>Lernkarten Index</h1>
+    <p class="subtitle">Dakovic/Exner 2. Auflage + Amboss-Querverweise</p>
+    <div class="stats">
+      <span><strong id="total-count">0</strong> Themen</span>
+      <span><strong id="primary-count">0</strong> mit eigener Karte</span>
+      <span><strong id="crossref-count">0</strong> Querverweise</span>
+      <span><strong id="external-count">0</strong> nur Amboss</span>
+      <span><strong id="studied-count">0</strong> gelernt</span>
+    </div>
+  </header>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <input type="text" class="search-input" id="search" placeholder="Krankheit suchen — z.B. Conn, Hashimoto, Phäochromozytom, Pleuraerguss…" autocomplete="off" spellcheck="false" autofocus>
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+    <div class="filters">
+      <div class="filter-group">
+        <button class="chip active" data-section="all">Alle</button>
+        <button class="chip" data-section="grundlagen">Grundlagen</button>
+        <button class="chip" data-section="untersuchung">Untersuchung</button>
+        <button class="chip" data-section="innere">Innere</button>
+        <button class="chip" data-section="chirurgie">Chirurgie</button>
+        <button class="chip" data-section="interdisz">Interdisz.</button>
+        <button class="chip" data-section="leitsymp">Leitsymptome</button>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <button class="chip active" data-type="all">Alle Typen</button>
+        <button class="chip" data-type="primary">Im Deck</button>
+        <button class="chip" data-type="crossref">Querverweise</button>
+        <button class="chip" data-type="external">Nicht im Deck</button>
+      </div>
+      <div class="filter-divider"></div>
+      <button class="chip" data-studied-filter="unstudied">Nur ungelernt</button>
+    </div>
+  </div>
+
+  <details class="add-form">
+    <summary>+ Eigenen Eintrag hinzufügen</summary>
+    <div class="quick-add-body">
+      <div class="quick-add-row">
+        <input type="text" id="qa-name" placeholder="Krankheit / Thema">
+        <input type="text" id="qa-num" placeholder="Seite #" inputmode="numeric">
+        <select id="qa-section">
+          <option value="innere">Innere</option>
+          <option value="chirurgie">Chirurgie</option>
+          <option value="interdisz">Interdisz.</option>
+          <option value="leitsymp">Leitsymptome</option>
+          <option value="untersuchung">Untersuchung</option>
+          <option value="grundlagen">Grundlagen</option>
+        </select>
+        <button class="btn btn-primary" id="qa-add">Hinzufügen</button>
+      </div>
+      <div class="hint">Für eigene Notizen / Ergänzungen. "Diabetes 30" funktioniert auch.</div>
+    </div>
+  </details>
+
+  <div class="toolbar">
+    <button class="btn" id="reset-btn">↺ Original-Daten wiederherstellen</button>
+    <button class="btn" id="export-btn">⬇ Export</button>
+    <button class="btn" id="import-btn">⬆ Import</button>
+    <button class="btn btn-danger" id="clear-btn">🗑 Alles löschen</button>
+  </div>
+
+  <div class="list" id="list">
+    <div class="list-header">
+      <span data-sort="num" class="sort-active">Seite</span>
+      <span data-sort="name">Krankheit / Thema</span>
+      <span data-sort="section">Bereich</span>
+      <span>Status</span>
+      <span></span>
+    </div>
+    <div id="rows"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="import-modal">
+  <div class="modal">
+    <h2>JSON-Import</h2>
+    <p>Füge die zuvor exportierte JSON-Datei hier ein.</p>
+    <textarea id="import-text"></textarea>
+    <div class="modal-actions">
+      <button class="btn" id="import-cancel">Abbrechen</button>
+      <button class="btn btn-primary" id="import-confirm">Importieren</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'lernkarten:entries:v3';
+const SEED_VERSION_KEY = 'lernkarten:seed-version';
+const CURRENT_SEED_VERSION = '2024-2-auflage-amboss-xref';
+
+const SECTIONS = {
+  grundlagen:   { label: 'Grundlagen',     badge: 'badge-grundlagen' },
+  untersuchung: { label: 'Untersuchung',   badge: 'badge-untersuchung' },
+  innere:       { label: 'Innere',         badge: 'badge-innere' },
+  chirurgie:    { label: 'Chirurgie',      badge: 'badge-chirurgie' },
+  interdisz:    { label: 'Interdisz.',     badge: 'badge-interdisz' },
+  leitsymp:     { label: 'Leitsymptome',   badge: 'badge-leitsymp' },
+};
+
+const SEED = [{"name":"Epikrise","type":"primary","num":1,"section":"grundlagen","aliases":[]},{"name":"Patientenvorstellung","type":"primary","num":3,"section":"grundlagen","aliases":[]},{"name":"Tipps für die mündliche Prüfung","type":"primary","num":5,"section":"grundlagen","aliases":[]},{"name":"Untersuchung Herz","type":"primary","num":6,"section":"untersuchung","aliases":[]},{"name":"Untersuchung Lunge","type":"primary","num":8,"section":"untersuchung","aliases":[]},{"name":"Untersuchung Abdomen","type":"primary","num":13,"section":"untersuchung","aliases":[]},{"name":"Hyperthyreose","type":"primary","num":18,"section":"innere","aliases":["Morbus Basedow","Basedow","Schilddrüsenüberfunktion"]},{"name":"Hypothyreose","type":"primary","num":21,"section":"innere","aliases":["Schilddrüsenunterfunktion"]},{"name":"Cushing-Syndrom","type":"primary","num":24,"section":"innere","aliases":["Cushing"]},{"name":"NNR-Insuffizienz, Morbus Addison","type":"primary","num":27,"section":"innere","aliases":["Addison","Morbus Addison","Nebenniereninsuffizienz","Nebennierenrindeninsuffizienz"]},{"name":"Diabetes mellitus","type":"primary","num":30,"section":"innere","aliases":["DM","Diabetes","Diabetes Typ 1","Diabetes Typ 2","DKA","Hyperglykämie"]},{"name":"Gicht","type":"primary","num":37,"section":"innere","aliases":["Hyperurikämie","Arthritis urica"]},{"name":"Herzinsuffizienz","type":"primary","num":40,"section":"innere","aliases":[]},{"name":"Myokardinfarkt","type":"primary","num":43,"section":"innere","aliases":["MI","STEMI","NSTEMI","Herzinfarkt"]},{"name":"Vorhofflimmern (VHF)","type":"primary","num":47,"section":"innere","aliases":["AFib","VHF","Vorhofflimmern"]},{"name":"Arterielle Hypertonie","type":"primary","num":50,"section":"innere","aliases":["Hypertonie","Bluthochdruck","RR hoch"]},{"name":"Endokarditis","type":"primary","num":53,"section":"innere","aliases":["IE","Infektiöse Endokarditis"]},{"name":"Anämie","type":"primary","num":56,"section":"innere","aliases":["Eisenmangelanämie","Eisenmangel","B12-Mangel","Vitamin-B12-Mangel"]},{"name":"Thrombozytopenie","type":"primary","num":62,"section":"innere","aliases":[]},{"name":"HIV/AIDS","type":"primary","num":65,"section":"innere","aliases":[]},{"name":"Multiples Myelom","type":"primary","num":67,"section":"innere","aliases":["MM","Plasmozytom"]},{"name":"Akute myeloische Leukämie (AML)","type":"primary","num":71,"section":"innere","aliases":["AML"]},{"name":"Akute lymphatische Leukämie (ALL)","type":"primary","num":73,"section":"innere","aliases":["ALL"]},{"name":"Chronische myeloische Leukämie (CML)","type":"primary","num":76,"section":"innere","aliases":["CML"]},{"name":"Chronische lymphatische Leukämie (CLL)","type":"primary","num":78,"section":"innere","aliases":["CLL"]},{"name":"Morbus Hodgkin, Non-Hodgkin-Lymphome (NHL)","type":"primary","num":80,"section":"innere","aliases":["Hodgkin","NHL","Non-Hodgkin","Lymphom"]},{"name":"Asthma bronchiale","type":"primary","num":82,"section":"innere","aliases":["Asthma"]},{"name":"COPD","type":"primary","num":85,"section":"innere","aliases":["Chronisch-obstruktive Lungenerkrankung","COLD"]},{"name":"Pneumonie","type":"primary","num":88,"section":"innere","aliases":[]},{"name":"Tuberkulose (Tbc)","type":"primary","num":90,"section":"innere","aliases":["TB","Tbc","Tuberkulose"]},{"name":"Hepatitis B","type":"primary","num":93,"section":"innere","aliases":[]},{"name":"Leberzirrhose","type":"primary","num":96,"section":"innere","aliases":["Zirrhose"]},{"name":"Pseudomembranöse Kolitis","type":"primary","num":99,"section":"innere","aliases":[]},{"name":"Harnwegsinfekt (HWI)","type":"primary","num":101,"section":"innere","aliases":["HWI","Zystitis","Blasenentzündung"]},{"name":"Akutes Nierenversagen","type":"primary","num":103,"section":"innere","aliases":["AKI","Akute Nierenfunktionseinschränkung","Akute Niereninsuffizienz"]},{"name":"Chronische Niereninsuffizienz","type":"primary","num":105,"section":"innere","aliases":["CKD","Chronische Nierenkrankheit"]},{"name":"Rheumatoide Arthritis","type":"primary","num":108,"section":"innere","aliases":[]},{"name":"Blutgasanalyse und Elektrolyte","type":"primary","num":111,"section":"innere","aliases":[]},{"name":"Sepsis","type":"primary","num":114,"section":"innere","aliases":["septischer Schock"]},{"name":"COVID-19","type":"primary","num":118,"section":"innere","aliases":[]},{"name":"Schädel-Hirn-Trauma (SHT)","type":"primary","num":120,"section":"chirurgie","aliases":["SHT","Schädel Hirn Trauma"]},{"name":"Polytrauma","type":"primary","num":124,"section":"chirurgie","aliases":[]},{"name":"Beckenfraktur","type":"primary","num":127,"section":"chirurgie","aliases":[]},{"name":"Pneumothorax","type":"primary","num":129,"section":"chirurgie","aliases":["PTX"]},{"name":"Milzruptur","type":"primary","num":132,"section":"chirurgie","aliases":[]},{"name":"Frakturlehre, Osteosyntheseverfahren","type":"primary","num":135,"section":"chirurgie","aliases":["Fraktur","Frakturlehre","Osteosynthese","Allgemeine Frakturlehre"]},{"name":"Scaphoidfraktur","type":"primary","num":137,"section":"chirurgie","aliases":[]},{"name":"Radiusfraktur","type":"primary","num":139,"section":"chirurgie","aliases":[]},{"name":"Schultergelenksluxation","type":"primary","num":141,"section":"chirurgie","aliases":[]},{"name":"Klavikulafraktur","type":"primary","num":144,"section":"chirurgie","aliases":[]},{"name":"AC-Gelenksprengung","type":"primary","num":145,"section":"chirurgie","aliases":[]},{"name":"Humerusfraktur","type":"primary","num":147,"section":"chirurgie","aliases":[]},{"name":"Sprunggelenksfraktur (SGF)","type":"primary","num":149,"section":"chirurgie","aliases":["OSG-Fraktur","Weber-Fraktur"]},{"name":"Vordere Kreuzbandruptur","type":"primary","num":151,"section":"chirurgie","aliases":[]},{"name":"Proximale Femurfraktur","type":"primary","num":153,"section":"chirurgie","aliases":[]},{"name":"Wirbelkörperfraktur","type":"primary","num":155,"section":"chirurgie","aliases":[]},{"name":"Osteoporose","type":"primary","num":157,"section":"chirurgie","aliases":[]},{"name":"Bandscheibenprolaps","type":"primary","num":159,"section":"chirurgie","aliases":["BSV","Bandscheibenvorfall"]},{"name":"Arthrose (Koxarthrose, Gonarthrose)","type":"primary","num":162,"section":"chirurgie","aliases":["Koxarthrose","Gonarthrose","Hüftarthrose","Knietendinose"]},{"name":"Verbrennungen","type":"primary","num":166,"section":"chirurgie","aliases":[]},{"name":"Schilddrüsenkarzinom","type":"primary","num":169,"section":"chirurgie","aliases":[]},{"name":"Mammakarzinom","type":"primary","num":172,"section":"chirurgie","aliases":[]},{"name":"Ösophaguskarzinom","type":"primary","num":177,"section":"chirurgie","aliases":[]},{"name":"Magenkarzinom","type":"primary","num":179,"section":"chirurgie","aliases":[]},{"name":"Pankreaskarzinom","type":"primary","num":181,"section":"chirurgie","aliases":[]},{"name":"Appendizitis","type":"primary","num":185,"section":"chirurgie","aliases":[]},{"name":"Aortenaneurysma","type":"primary","num":187,"section":"chirurgie","aliases":["AAA","Bauchaortenaneurysma","Aneurysma"]},{"name":"Mesenterialinfarkt","type":"primary","num":190,"section":"chirurgie","aliases":[]},{"name":"Ileus","type":"primary","num":192,"section":"chirurgie","aliases":[]},{"name":"Weichteilinfektion","type":"primary","num":194,"section":"chirurgie","aliases":[]},{"name":"Kompartmentsyndrom","type":"primary","num":197,"section":"chirurgie","aliases":[]},{"name":"Leistenhernie","type":"primary","num":199,"section":"chirurgie","aliases":[]},{"name":"Refluxkrankheit","type":"primary","num":203,"section":"chirurgie","aliases":["GERD","Gastroösophageale Refluxkrankheit","Reflux"]},{"name":"Hämorrhoiden","type":"primary","num":205,"section":"chirurgie","aliases":[]},{"name":"Karpaltunnelsyndrom","type":"primary","num":207,"section":"chirurgie","aliases":["KTS","CTS"]},{"name":"Varikosis und CVI","type":"primary","num":209,"section":"chirurgie","aliases":["CVI","Varizen","Krampfadern","Chronisch-venöse Insuffizienz"]},{"name":"Lungenembolie (LAE)","type":"primary","num":213,"section":"interdisz","aliases":["LE","LAE","Lungenembolie"]},{"name":"Tiefe Venenthrombose (TVT)","type":"primary","num":216,"section":"interdisz","aliases":["TVT","DVT","Phlebothrombose","Beinvenenthrombose"]},{"name":"Lungenkarzinom","type":"primary","num":219,"section":"interdisz","aliases":[]},{"name":"Gastrointestinale Blutung","type":"primary","num":222,"section":"interdisz","aliases":[]},{"name":"Divertikulitis","type":"primary","num":224,"section":"interdisz","aliases":[]},{"name":"Pankreatitis","type":"primary","num":227,"section":"interdisz","aliases":[]},{"name":"Cholezystitis","type":"primary","num":229,"section":"interdisz","aliases":["Gallenblasenentzündung","Cholelithiasis"]},{"name":"Morbus Crohn","type":"primary","num":232,"section":"interdisz","aliases":[]},{"name":"Colitis ulcerosa","type":"primary","num":235,"section":"interdisz","aliases":[]},{"name":"Kolorektales Karzinom","type":"primary","num":238,"section":"interdisz","aliases":[]},{"name":"Hepatozelluläres Karzinom (HCC)","type":"primary","num":241,"section":"interdisz","aliases":["HCC","Leberzellkarzinom"]},{"name":"Koronare Herzerkrankung (KHK)","type":"primary","num":244,"section":"interdisz","aliases":["KHK","Koronare Herzkrankheit","Akutes Koronarsyndrom","ACS"]},{"name":"Aortenklappenstenose","type":"primary","num":248,"section":"interdisz","aliases":["AS","Aortenstenose"]},{"name":"Periphere arterielle Verschlusskrankheit (pAVK)","type":"primary","num":251,"section":"interdisz","aliases":["pAVK","PAD","Schaufensterkrankheit"]},{"name":"DD Thoraxschmerz","type":"primary","num":255,"section":"leitsymp","aliases":["Thoraxschmerz","Brustschmerz"]},{"name":"DD Akutes Abdomen","type":"primary","num":256,"section":"leitsymp","aliases":["Akutes Abdomen"]},{"name":"DD Dyspnoe","type":"primary","num":258,"section":"leitsymp","aliases":["Dyspnoe","Atemnot","Luftnot"]},{"name":"DD Synkope","type":"primary","num":260,"section":"leitsymp","aliases":["Synkope","Ohnmacht"]},{"name":"DD Schock","type":"primary","num":263,"section":"leitsymp","aliases":["Schock","Schockformen"]},{"name":"Grundlagen der Schmerztherapie","type":"external","section":"interdisz","branch":"Basismedikation","aliases":[]},{"name":"Hyperparathyreoidismus","type":"crossref","section":"innere","refs":[{"topic":"Chronische Niereninsuffizienz","num":105,"section":"innere"},{"topic":"Blutgasanalyse und Elektrolyte","num":111,"section":"innere"},{"topic":"Osteoporose","num":157,"section":"chirurgie"},{"topic":"Schilddrüsenkarzinom","num":169,"section":"chirurgie"}],"branch":"Endokrinologie 1","aliases":[]},{"name":"Hashimoto-Thyreoiditis","type":"crossref","section":"innere","refs":[{"topic":"Hypothyreose","num":21,"section":"innere"},{"topic":"NNR-Insuffizienz, Morbus Addison","num":27,"section":"innere"}],"branch":"Endokrinologie 2","aliases":[]},{"name":"Primärer Hyperaldosteronismus","type":"crossref","section":"innere","refs":[{"topic":"Arterielle Hypertonie","num":50,"section":"innere"}],"branch":"Endokrinologie 2","aliases":["Conn-Syndrom","Conn"]},{"name":"Verfassen eines Arztbriefes","type":"external","section":"grundlagen","branch":"Entlassung und juristische Grundlagen","aliases":[]},{"name":"EKG","type":"external","section":"innere","branch":"Kardiologie & Angiologie 1","aliases":[]},{"name":"Herzschrittmacher","type":"external","section":"innere","branch":"Kardiologie & Angiologie 3","aliases":[]},{"name":"Ikterus und Cholestase","type":"external","section":"leitsymp","branch":"Leitsymptome","aliases":[]},{"name":"Ödeme","type":"crossref","section":"leitsymp","refs":[{"topic":"Untersuchung Herz","num":6,"section":"untersuchung"},{"topic":"Untersuchung Lunge","num":8,"section":"untersuchung"},{"topic":"Hypothyreose","num":21,"section":"innere"},{"topic":"Diabetes mellitus","num":30,"section":"innere"},{"topic":"Herzinsuffizienz","num":40,"section":"innere"}],"branch":"Leitsymptome","aliases":[]},{"name":"Husten","type":"crossref","section":"leitsymp","refs":[{"topic":"DD Dyspnoe","num":258,"section":"leitsymp"},{"topic":"DD Synkope","num":260,"section":"leitsymp"},{"topic":"Untersuchung Abdomen","num":13,"section":"untersuchung"},{"topic":"Asthma bronchiale","num":82,"section":"innere"},{"topic":"COPD","num":85,"section":"innere"}],"branch":"Leitsymptome","aliases":[]},{"name":"Lymphknotenschwellung","type":"crossref","section":"leitsymp","refs":[{"topic":"Multiples Myelom","num":67,"section":"innere"},{"topic":"Akute lymphatische Leukämie (ALL)","num":73,"section":"innere"},{"topic":"Chronische myeloische Leukämie (CML)","num":76,"section":"innere"},{"topic":"Chronische lymphatische Leukämie (CLL)","num":78,"section":"innere"},{"topic":"Morbus Hodgkin, Non-Hodgkin-Lymphome (NHL)","num":80,"section":"innere"}],"branch":"Leitsymptome","aliases":[]},{"name":"Nierenersatzverfahren","type":"external","section":"innere","branch":"Nephrologie Zusatz","aliases":[]},{"name":"Elektrolytstörungen Calcium","type":"external","section":"innere","branch":"Nephrologie Zusatz","aliases":[]},{"name":"Säure-Basen-Haushalt","type":"external","section":"innere","branch":"Nephrologie Zusatz","aliases":[]},{"name":"Grundlagen der Reanimation","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Akute Intoxikationen - AMBOSS-SOP","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Anaphylaxie - AMBOSS-SOP","type":"crossref","section":"interdisz","refs":[{"topic":"Anämie","num":56,"section":"innere"}],"branch":"Notfall Medicine","aliases":[]},{"name":"Hypoglykämie","type":"crossref","section":"interdisz","refs":[{"topic":"NNR-Insuffizienz, Morbus Addison","num":27,"section":"innere"},{"topic":"Diabetes mellitus","num":30,"section":"innere"},{"topic":"Polytrauma","num":124,"section":"chirurgie"},{"topic":"Magenkarzinom","num":179,"section":"chirurgie"},{"topic":"DD Synkope","num":260,"section":"leitsymp"}],"branch":"Notfall Medicine","aliases":[]},{"name":"Hyperglykämisches Koma","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Ablauf einer allgemeinen körperlichen Aufnahmeuntersuchung","type":"external","section":"grundlagen","branch":"Stationsalltag: Aufnahme","aliases":[]},{"name":"Auskultationskurs Herz","type":"external","section":"grundlagen","branch":"Stationsalltag: Aufnahme","aliases":[]},{"name":"Befunde und Techniken der internistischen und chirurgischen Untersuchung","type":"external","section":"grundlagen","branch":"Stationsalltag: Aufnahme","aliases":[]},{"name":"Befundung eines Röntgen-Thorax","type":"external","section":"grundlagen","branch":"Stationsalltag: Basisdiagnostik","aliases":[]},{"name":"Pulsoxymetrie und Blutgasanalyse","type":"external","section":"grundlagen","branch":"Stationsalltag: Basisdiagnostik","aliases":[]},{"name":"Praxistipp EKG-BefundungEKG","type":"external","section":"grundlagen","branch":"Stationsalltag: Basisdiagnostik","aliases":[]},{"name":"Lungenfunktionsuntersuchung","type":"external","section":"grundlagen","branch":"Stationsalltag: Basisdiagnostik","aliases":[]},{"name":"Urindiagnostik","type":"external","section":"grundlagen","branch":"Stationsalltag: Basisdiagnostik","aliases":[]},{"name":"Symptomkarten","type":"external","section":"leitsymp","branch":"Symptome und Blickdiagnosen","aliases":[]},{"name":"Blickdiagnosen und wegweisende Befunde bei der klinischen Untersuchung","type":"external","section":"leitsymp","branch":"Symptome und Blickdiagnosen","aliases":[]},{"name":"Blickdiagnosen an Haut, Hautanhangsgebilden und Schleimhäuten","type":"external","section":"leitsymp","branch":"Symptome und Blickdiagnosen","aliases":[]},{"name":"Portale Hypertension","type":"crossref","section":"innere","refs":[{"topic":"Leberzirrhose","num":96,"section":"innere"}],"branch":"Gastroenterologie 2","aliases":[]},{"name":"Aszites","type":"crossref","section":"innere","refs":[{"topic":"Herzinsuffizienz","num":40,"section":"innere"},{"topic":"Leberzirrhose","num":96,"section":"innere"},{"topic":"Akutes Nierenversagen","num":103,"section":"innere"},{"topic":"Untersuchung Abdomen","num":13,"section":"untersuchung"}],"branch":"Gastroenterologie 2","aliases":[]},{"name":"Herzklappenerkrangungen","type":"external","section":"innere","branch":"Kardiologie & Angiologie 1","aliases":[]},{"name":"Elektrolytstörungen Natrium","type":"external","section":"innere","branch":"Nephrologie","aliases":[]},{"name":"Elektrolytstörungen Kalium","type":"external","section":"innere","branch":"Nephrologie","aliases":[]},{"name":"Mikroskopische Urinuntersuchung","type":"external","section":"innere","branch":"Nephrologie","aliases":[]},{"name":"Reanimation - AMBOSS-SOP","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Vorgehen bei Schock","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Perioperatives Management","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 1","aliases":[]},{"name":"Akute Wunden und Wundverschluss","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 1","aliases":[]},{"name":"Chronische Wunden und Wundbehandlung","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 1","aliases":[]},{"name":"Bakterielle Infektionen von Haut und Weichgewebe","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 1","aliases":[]},{"name":"Schilddrüsenchirurgie","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 1","aliases":[]},{"name":"Mesenteriale Ischämie","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 2","aliases":[]},{"name":"Hernien","type":"crossref","section":"chirurgie","refs":[{"topic":"Ileus","num":192,"section":"chirurgie"},{"topic":"Leistenhernie","num":199,"section":"chirurgie"},{"topic":"Refluxkrankheit","num":203,"section":"chirurgie"},{"topic":"Untersuchung Abdomen","num":13,"section":"untersuchung"}],"branch":"Allgemein- und Viszeralchirurgie 2","aliases":[]},{"name":"Zwerchfellhernie","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 2","aliases":[]},{"name":"Darmchirurgie","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 3","aliases":[]},{"name":"Peritonitis","type":"crossref","section":"chirurgie","refs":[{"topic":"Beckenfraktur","num":127,"section":"chirurgie"},{"topic":"Appendizitis","num":185,"section":"chirurgie"},{"topic":"Mesenterialinfarkt","num":190,"section":"chirurgie"},{"topic":"Ileus","num":192,"section":"chirurgie"},{"topic":"Leistenhernie","num":199,"section":"chirurgie"}],"branch":"Allgemein- und Viszeralchirurgie 3","aliases":[]},{"name":"Kolonpolypen","type":"external","section":"chirurgie","branch":"Allgemein- und Viszeralchirurgie 3","aliases":[]},{"name":"Thromboseprophylaxe (Ärztliches Wissen und Medikation)","type":"crossref","section":"interdisz","refs":[{"topic":"Sepsis","num":114,"section":"innere"},{"topic":"Beckenfraktur","num":127,"section":"chirurgie"},{"topic":"Sprunggelenksfraktur (SGF)","num":149,"section":"chirurgie"},{"topic":"Vordere Kreuzbandruptur","num":151,"section":"chirurgie"},{"topic":"Proximale Femurfraktur","num":153,"section":"chirurgie"}],"branch":"Basismedikation","aliases":[]},{"name":"Allgemeine Endokrinologie","type":"external","section":"innere","branch":"Endokrinologie 1","aliases":[]},{"name":"Metabolisches Syndrom","type":"crossref","section":"innere","refs":[{"topic":"Diabetes mellitus","num":30,"section":"innere"},{"topic":"Myokardinfarkt","num":43,"section":"innere"},{"topic":"Arterielle Hypertonie","num":50,"section":"innere"},{"topic":"Koronare Herzerkrankung (KHK)","num":244,"section":"interdisz"}],"branch":"Endokrinologie 1","aliases":[]},{"name":"Struma","type":"crossref","section":"innere","refs":[{"topic":"Hyperthyreose","num":18,"section":"innere"},{"topic":"Schilddrüsenkarzinom","num":169,"section":"chirurgie"},{"topic":"Ösophaguskarzinom","num":177,"section":"chirurgie"}],"branch":"Endokrinologie 2","aliases":[]},{"name":"Arzneimittelrezept","type":"external","section":"grundlagen","branch":"Entlassung und juristische Grundlagen","aliases":[]},{"name":"Chronische Gastritis","type":"external","section":"innere","branch":"Gastroenterologie 1","aliases":[]},{"name":"Thalassämie","type":"crossref","section":"innere","refs":[{"topic":"Anämie","num":56,"section":"innere"}],"branch":"Hämatologie & Onkologie Zusatz","aliases":[]},{"name":"Allgemeine Infektiologie","type":"external","section":"innere","branch":"Infektiologie 1","aliases":[]},{"name":"Fieber und Entzündungsreaktionen","type":"external","section":"innere","branch":"Infektiologie 1","aliases":[]},{"name":"Impfungen allgemein","type":"external","section":"innere","branch":"Infektiologie 1","aliases":[]},{"name":"Impfempfehlungen der STIKO","type":"external","section":"innere","branch":"Infektiologie 1","aliases":[]},{"name":"Influenza","type":"crossref","section":"innere","refs":[{"topic":"Multiples Myelom","num":67,"section":"innere"},{"topic":"COPD","num":85,"section":"innere"},{"topic":"Milzruptur","num":132,"section":"chirurgie"}],"branch":"Infektiologie 1","aliases":[]},{"name":"HIV-Infektion","type":"crossref","section":"innere","refs":[{"topic":"HIV/AIDS","num":65,"section":"innere"}],"branch":"Infektiologie 1","aliases":[]},{"name":"Hepatitis C und HCV-Infektion","type":"external","section":"innere","branch":"Infektiologie 2","aliases":[]},{"name":"Antibiotika","type":"crossref","section":"innere","refs":[{"topic":"Pseudomembranöse Kolitis","num":99,"section":"innere"},{"topic":"Mammakarzinom","num":172,"section":"chirurgie"},{"topic":"DD Schock","num":263,"section":"leitsymp"}],"branch":"Infektiologie 2","aliases":[]},{"name":"Lyme-Borreliose","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"FSME-Virus-Infektion","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Meningitis","type":"crossref","section":"innere","refs":[{"topic":"NNR-Insuffizienz, Morbus Addison","num":27,"section":"innere"},{"topic":"Sepsis","num":114,"section":"innere"}],"branch":"Infektiologie Zusatz","aliases":[]},{"name":"Orale Antikoagulanzien","type":"external","section":"innere","branch":"Kardiologie & Angiologie 2","aliases":[]},{"name":"Herzkatheteruntersuchung","type":"crossref","section":"innere","refs":[{"topic":"Koronare Herzerkrankung (KHK)","num":244,"section":"interdisz"},{"topic":"Aortenklappenstenose","num":248,"section":"interdisz"}],"branch":"Kardiologie & Angiologie 3","aliases":[]},{"name":"Ventrikuläre Tachykardie","type":"crossref","section":"innere","refs":[{"topic":"Myokardinfarkt","num":43,"section":"innere"},{"topic":"Polytrauma","num":124,"section":"chirurgie"}],"branch":"Kardiologie & Angiologie 3","aliases":[]},{"name":"Kammerflattern und -flimmern","type":"external","section":"innere","branch":"Kardiologie & Angiologie 3","aliases":[]},{"name":"Durchfall","type":"crossref","section":"leitsymp","refs":[{"topic":"Mesenterialinfarkt","num":190,"section":"chirurgie"},{"topic":"Divertikulitis","num":224,"section":"interdisz"}],"branch":"Leitsymptome","aliases":[]},{"name":"Obstipation","type":"crossref","section":"leitsymp","refs":[{"topic":"DD Akutes Abdomen","num":256,"section":"leitsymp"},{"topic":"Hypothyreose","num":21,"section":"innere"},{"topic":"Anämie","num":56,"section":"innere"},{"topic":"Harnwegsinfekt (HWI)","num":101,"section":"innere"},{"topic":"Blutgasanalyse und Elektrolyte","num":111,"section":"innere"}],"branch":"Leitsymptome","aliases":[]},{"name":"Kopfschmerzen","type":"crossref","section":"leitsymp","refs":[{"topic":"Arterielle Hypertonie","num":50,"section":"innere"},{"topic":"Anämie","num":56,"section":"innere"},{"topic":"Chronische Niereninsuffizienz","num":105,"section":"innere"},{"topic":"Schädel-Hirn-Trauma (SHT)","num":120,"section":"chirurgie"}],"branch":"Leitsymptome","aliases":[]},{"name":"Rückenschmerzen","type":"crossref","section":"leitsymp","refs":[{"topic":"Osteoporose","num":157,"section":"chirurgie"},{"topic":"Bandscheibenprolaps","num":159,"section":"chirurgie"},{"topic":"Pankreaskarzinom","num":181,"section":"chirurgie"}],"branch":"Leitsymptome","aliases":[]},{"name":"Schwindel","type":"crossref","section":"leitsymp","refs":[{"topic":"DD Synkope","num":260,"section":"leitsymp"},{"topic":"Herzinsuffizienz","num":40,"section":"innere"},{"topic":"Vorhofflimmern (VHF)","num":47,"section":"innere"},{"topic":"Arterielle Hypertonie","num":50,"section":"innere"},{"topic":"Anämie","num":56,"section":"innere"}],"branch":"Leitsymptome","aliases":[]},{"name":"Pyelonephritis","type":"crossref","section":"innere","refs":[{"topic":"Harnwegsinfekt (HWI)","num":101,"section":"innere"},{"topic":"Akutes Nierenversagen","num":103,"section":"innere"},{"topic":"Sepsis","num":114,"section":"innere"}],"branch":"Nephrologie Zusatz","aliases":[]},{"name":"Schockraummanagement","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Transfusion von Erythrozytenkonzentraten - AMBOSS-SOP","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Perikarderguss und Perikardtamponade","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Vigilanzminderung - AMBOSS-SOP","type":"crossref","section":"interdisz","refs":[{"topic":"Gastrointestinale Blutung","num":222,"section":"interdisz"},{"topic":"NNR-Insuffizienz, Morbus Addison","num":27,"section":"innere"},{"topic":"Diabetes mellitus","num":30,"section":"innere"},{"topic":"Leberzirrhose","num":96,"section":"innere"},{"topic":"Akutes Nierenversagen","num":103,"section":"innere"}],"branch":"Notfall Medicine","aliases":[]},{"name":"Status epilepticus - AMBOSS-SOP","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Ärztliche Rechtskunde","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Schultergelenkluxation","type":"external","section":"chirurgie","branch":"Orthopädie 1","aliases":[]},{"name":"Bandverletzungen des Knies","type":"external","section":"chirurgie","branch":"Orthopädie 1","aliases":[]},{"name":"Bakterielle Arthritis","type":"crossref","section":"chirurgie","refs":[{"topic":"Gicht","num":37,"section":"innere"},{"topic":"Rheumatoide Arthritis","num":108,"section":"innere"}],"branch":"Orthopädie 1","aliases":[]},{"name":"Orthopädische Untersuchungszeichen","type":"external","section":"chirurgie","branch":"Orthopädie 2","aliases":[]},{"name":"Pleuraerguss","type":"crossref","section":"innere","refs":[{"topic":"Herzinsuffizienz","num":40,"section":"innere"},{"topic":"Untersuchung Lunge","num":8,"section":"untersuchung"},{"topic":"Polytrauma","num":124,"section":"chirurgie"},{"topic":"Lungenkarzinom","num":219,"section":"interdisz"},{"topic":"DD Dyspnoe","num":258,"section":"leitsymp"}],"branch":"Pneumologie 2","aliases":[]},{"name":"Blutkulturen","type":"crossref","section":"grundlagen","refs":[{"topic":"Endokarditis","num":53,"section":"innere"},{"topic":"Tuberkulose (Tbc)","num":90,"section":"innere"},{"topic":"Harnwegsinfekt (HWI)","num":101,"section":"innere"},{"topic":"Sepsis","num":114,"section":"innere"},{"topic":"Verbrennungen","num":166,"section":"chirurgie"}],"branch":"Praktische Fertigkeiten","aliases":[]},{"name":"Transfusionen","type":"crossref","section":"grundlagen","refs":[{"topic":"HIV/AIDS","num":65,"section":"innere"}],"branch":"Praktische Fertigkeiten","aliases":[]},{"name":"Riesenzellarteriitis","type":"external","section":"innere","branch":"Rheumatologie","aliases":[]},{"name":"Polymyalgia rheumatica","type":"external","section":"innere","branch":"Rheumatologie","aliases":[]},{"name":"Lupus erythematodes","type":"crossref","section":"innere","refs":[{"topic":"Thrombozytopenie","num":62,"section":"innere"}],"branch":"Rheumatologie","aliases":[]},{"name":"Vaskulitiden","type":"external","section":"innere","branch":"Rheumatologie","aliases":[]},{"name":"Granulomatose mit Polyangiitis","type":"external","section":"innere","branch":"Rheumatologie","aliases":[]},{"name":"Neurologische Untersuchung","type":"crossref","section":"grundlagen","refs":[{"topic":"HIV/AIDS","num":65,"section":"innere"},{"topic":"Multiples Myelom","num":67,"section":"innere"},{"topic":"Akute lymphatische Leukämie (ALL)","num":73,"section":"innere"},{"topic":"Leberzirrhose","num":96,"section":"innere"},{"topic":"Chronische Niereninsuffizienz","num":105,"section":"innere"}],"branch":"Stationsalltag: Aufnahme","aliases":[]},{"name":"Rechner und Scores für den klinischen Alltag","type":"external","section":"grundlagen","branch":"Stationsalltag: Basisdiagnostik","aliases":[]},{"name":"Ausfüllen des Totenscheins","type":"external","section":"grundlagen","branch":"Umgang mit dem Sterben","aliases":[]},{"name":"Frakturen im Kindesalter","type":"external","section":"chirurgie","branch":"Unfallchirurgie 1","aliases":[]},{"name":"Wirbelsäulenverletzungen","type":"external","section":"chirurgie","branch":"Unfallchirurgie 1","aliases":[]},{"name":"Konservative Verfahren in der Frakturversorgung","type":"external","section":"chirurgie","branch":"Unfallchirurgie 2","aliases":[]},{"name":"Phäochromozytom","type":"crossref","section":"innere","refs":[{"topic":"Hyperthyreose","num":18,"section":"innere"},{"topic":"Arterielle Hypertonie","num":50,"section":"innere"},{"topic":"Schilddrüsenkarzinom","num":169,"section":"chirurgie"}],"branch":"Endokrinologie 2","aliases":[]},{"name":"Gastroduodenale Ulkuskrankheit","type":"external","section":"innere","branch":"Gastroenterologie 1","aliases":[]},{"name":"Akute Leukämie","type":"crossref","section":"innere","refs":[{"topic":"Chronische myeloische Leukämie (CML)","num":76,"section":"innere"},{"topic":"Morbus Hodgkin, Non-Hodgkin-Lymphome (NHL)","num":80,"section":"innere"}],"branch":"Hämatologie & Onkologie 1","aliases":[]},{"name":"AV-Block","type":"crossref","section":"innere","refs":[{"topic":"DD Synkope","num":260,"section":"leitsymp"}],"branch":"Kardiologie & Angiologie 1","aliases":[]},{"name":"Atherosklerose und kardiovaskuläre Prävention","type":"external","section":"innere","branch":"Kardiologie & Angiologie 2","aliases":[]},{"name":"Dyslipidämien","type":"external","section":"innere","branch":"Kardiologie & Angiologie 2","aliases":[]},{"name":"Sick-Sinus-Syndrom","type":"external","section":"innere","branch":"Kardiologie & Angiologie 3","aliases":[]},{"name":"Diagnostik von Erkrankungen der Niere und der ableitenden Harnwege","type":"external","section":"innere","branch":"Nephrologie","aliases":[]},{"name":"Nierenwerte Labor","type":"external","section":"innere","branch":"Nephrologie","aliases":[]},{"name":"Grundlagen nephrologischer Krankheitsbilder","type":"external","section":"innere","branch":"Nephrologie","aliases":[]},{"name":"Präklinische Traumaversorgung","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Notfallmanagement - Grundlegende Prinzipien","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Akuter arterieller Extremitätenverschluss","type":"external","section":"chirurgie","branch":"Thoraxchirurgie","aliases":[]},{"name":"Thoraxtrauma","type":"crossref","section":"chirurgie","refs":[{"topic":"Milzruptur","num":132,"section":"chirurgie"}],"branch":"Thoraxchirurgie","aliases":[]},{"name":"Aortendissektion","type":"crossref","section":"chirurgie","refs":[{"topic":"Aortenaneurysma","num":187,"section":"chirurgie"},{"topic":"Arterielle Hypertonie","num":50,"section":"innere"},{"topic":"DD Thoraxschmerz","num":255,"section":"leitsymp"},{"topic":"DD Synkope","num":260,"section":"leitsymp"}],"branch":"Thoraxchirurgie","aliases":[]},{"name":"Vasopressin-assoziierte Erkrankungen (Diabetes insipidus)","type":"external","section":"innere","branch":"Endokrinologie 1","aliases":[]},{"name":"Hypophysenvorderlappeninsuffizienz","type":"crossref","section":"innere","refs":[{"topic":"Arterielle Hypertonie","num":50,"section":"innere"}],"branch":"Endokrinologie 1","aliases":[]},{"name":"Karzinoid-Syndrom","type":"external","section":"innere","branch":"Endokrinologie 1","aliases":[]},{"name":"Adrenogenitales Syndrom","type":"external","section":"innere","branch":"Endokrinologie 2","aliases":[]},{"name":"Prolaktinom","type":"external","section":"innere","branch":"Endokrinologie 2","aliases":[]},{"name":"Rehabilitation","type":"external","section":"grundlagen","branch":"Entlassung und juristische Grundlagen","aliases":[]},{"name":"Prävention","type":"crossref","section":"grundlagen","refs":[{"topic":"HIV/AIDS","num":65,"section":"innere"},{"topic":"Pneumonie","num":88,"section":"innere"},{"topic":"COVID-19","num":118,"section":"innere"},{"topic":"Wirbelkörperfraktur","num":155,"section":"chirurgie"},{"topic":"Kolorektales Karzinom","num":238,"section":"interdisz"}],"branch":"Entlassung und juristische Grundlagen","aliases":[]},{"name":"Ökonomische Aspekte von Gesundheit und Krankheit","type":"external","section":"grundlagen","branch":"Entlassung und juristische Grundlagen","aliases":[]},{"name":"Behinderung und Einschränkung der Arbeitsfähigkeit","type":"external","section":"grundlagen","branch":"Entlassung und juristische Grundlagen","aliases":[]},{"name":"Zöliakie","type":"crossref","section":"innere","refs":[{"topic":"Diabetes mellitus","num":30,"section":"innere"},{"topic":"Anämie","num":56,"section":"innere"},{"topic":"Morbus Crohn","num":232,"section":"interdisz"}],"branch":"Gastroenterologie 2","aliases":[]},{"name":"Reizdarmsyndrom","type":"crossref","section":"innere","refs":[{"topic":"Divertikulitis","num":224,"section":"interdisz"},{"topic":"Morbus Crohn","num":232,"section":"interdisz"},{"topic":"Colitis ulcerosa","num":235,"section":"interdisz"}],"branch":"Gastroenterologie 2","aliases":[]},{"name":"Prostatakarzinom","type":"external","section":"innere","branch":"Hämatologie & Onkologie 2","aliases":[]},{"name":"Myelodysplastische Syndrome","type":"external","section":"innere","branch":"Hämatologie & Onkologie Zusatz","aliases":[]},{"name":"Sichelzellkrankheit","type":"external","section":"innere","branch":"Hämatologie & Onkologie Zusatz","aliases":[]},{"name":"Malignes Melanom","type":"external","section":"innere","branch":"Hämatologie & Onkologie Zusatz","aliases":[]},{"name":"Maligne Hodentumoren","type":"external","section":"innere","branch":"Hämatologie & Onkologie Zusatz","aliases":[]},{"name":"Herpesvirus-Infektionen","type":"external","section":"innere","branch":"Infektiologie 2","aliases":[]},{"name":"Infektiöse Mononukleose","type":"external","section":"innere","branch":"Infektiologie 2","aliases":[]},{"name":"Typhus, Paratyphus","type":"external","section":"innere","branch":"Infektiologie 2","aliases":[]},{"name":"Malaria","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Leishmaniose","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Denguefieber","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Schistosomiasis","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Giardiasis","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Emerging Infectious Diseases","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Nosokomiale Infektionen","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Norovirus-Infektion","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Bakterielle Durchfallerkrankungen","type":"external","section":"innere","branch":"Infektiologie Zusatz","aliases":[]},{"name":"Rheumatisches Fieber","type":"external","section":"innere","branch":"Kardiologie & Angiologie 3","aliases":[]},{"name":"Myokarditis","type":"crossref","section":"innere","refs":[{"topic":"Herzinsuffizienz","num":40,"section":"innere"},{"topic":"Vorhofflimmern (VHF)","num":47,"section":"innere"},{"topic":"Rheumatoide Arthritis","num":108,"section":"innere"}],"branch":"Kardiologie & Angiologie 3","aliases":[]},{"name":"Polyzystische Nierenerkrankung","type":"external","section":"innere","branch":"Nephrologie Zusatz","aliases":[]},{"name":"Nierentransplantation","type":"crossref","section":"innere","refs":[{"topic":"Chronische Niereninsuffizienz","num":105,"section":"innere"}],"branch":"Nephrologie Zusatz","aliases":[]},{"name":"Hereditäre Typ-IV-Kollagen-Erkrankungen (Alport-Syndrom)","type":"external","section":"innere","branch":"Nephrologie Zusatz","aliases":[]},{"name":"IgA-Nephropathie","type":"external","section":"innere","branch":"Nephrologie Zusatz","aliases":[]},{"name":"Vorgehen bei fremdaggressivem Verhalten - AMBOSS-SOP","type":"external","section":"interdisz","branch":"Notfall Medicine","aliases":[]},{"name":"Orthopädische Untersuchung der Schulter","type":"external","section":"chirurgie","branch":"Orthopädie 2","aliases":[]},{"name":"Orthopädische Untersuchung der Wirbelsäule","type":"external","section":"chirurgie","branch":"Orthopädie 2","aliases":[]},{"name":"Orthopädische Untersuchung des Knies","type":"external","section":"chirurgie","branch":"Orthopädie 2","aliases":[]},{"name":"Orthopädische Untersuchung der Hüfte und des Iliosakralgelenkes","type":"external","section":"chirurgie","branch":"Orthopädie 2","aliases":[]},{"name":"Zystische Fibrose","type":"external","section":"innere","branch":"Pneumologie Zusatz","aliases":[]},{"name":"Sarkoidose","type":"crossref","section":"innere","refs":[{"topic":"Morbus Hodgkin, Non-Hodgkin-Lymphome (NHL)","num":80,"section":"innere"},{"topic":"Tuberkulose (Tbc)","num":90,"section":"innere"}],"branch":"Pneumologie Zusatz","aliases":[]},{"name":"Interstitielle Lungenparenchymerkrankungen","type":"external","section":"innere","branch":"Pneumologie Zusatz","aliases":[]},{"name":"Exogen-allergische Alveolitis","type":"external","section":"innere","branch":"Pneumologie Zusatz","aliases":[]},{"name":"Asbestose und Mesotheliom","type":"external","section":"innere","branch":"Pneumologie Zusatz","aliases":[]},{"name":"Pulmonale Hypertonie","type":"crossref","section":"innere","refs":[{"topic":"COPD","num":85,"section":"innere"},{"topic":"Untersuchung Lunge","num":8,"section":"untersuchung"}],"branch":"Pneumologie Zusatz","aliases":[]},{"name":"Venöse Blutentnahme","type":"external","section":"grundlagen","branch":"Praktische Fertigkeiten","aliases":[]},{"name":"Anlage eines peripheren Venenverweilkatheters","type":"external","section":"grundlagen","branch":"Praktische Fertigkeiten","aliases":[]},{"name":"Magensonde und Künstliche Ernährung","type":"external","section":"grundlagen","branch":"Praktische Fertigkeiten","aliases":[]},{"name":"Anlage eines Blasenkatheters","type":"external","section":"grundlagen","branch":"Praktische Fertigkeiten","aliases":[]},{"name":"Axiale Spondylarthritis","type":"external","section":"innere","branch":"Rheumatologie","aliases":[]},{"name":"Reaktive Arthritis","type":"external","section":"innere","branch":"Rheumatologie","aliases":[]},{"name":"Soziale Sicherung","type":"external","section":"grundlagen","branch":"Stationsalltag: Aufnahme","aliases":[]},{"name":"Breaking Bad News","type":"external","section":"grundlagen","branch":"Umgang mit dem Sterben","aliases":[]},{"name":"Palliativmedizin","type":"external","section":"grundlagen","branch":"Umgang mit dem Sterben","aliases":[]},{"name":"Luxation des Akromioklavikulargelenks","type":"external","section":"chirurgie","branch":"Unfallchirurgie 1","aliases":[]},{"name":"Beckenringfrakturen","type":"external","section":"chirurgie","branch":"Unfallchirurgie 1","aliases":[]},{"name":"Femurschaft- und distale Femurfrakturen","type":"external","section":"chirurgie","branch":"Unfallchirurgie 2","aliases":[]},{"name":"Operative Verfahren der Unfallchirurgie/Orthopädie","type":"external","section":"chirurgie","branch":"Unfallchirurgie 2","aliases":[]},{"name":"Claviculafraktur","type":"external","section":"chirurgie","branch":"Unfallchirurgie 2","aliases":[]},{"name":"Schaftfrakturen des Unterarmes","type":"external","section":"chirurgie","branch":"Unfallchirurgie 2","aliases":[]}];
+
+let entries = [];
+let sectionFilter = 'all';
+let typeFilter = 'all';
+let studiedFilter = false;
+let searchTerm = '';
+let sortBy = 'num';
+let sortAsc = true;
+let editingId = null;
+let suggestionFocusIdx = -1;
+
+// ---- Storage ----
+function loadEntries() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const seedVersion = localStorage.getItem(SEED_VERSION_KEY);
+    if (raw && seedVersion === CURRENT_SEED_VERSION) {
+      entries = JSON.parse(raw);
+    } else {
+      entries = SEED.map(e => ({ ...e, id: uid(), studied: false }));
+      localStorage.setItem(SEED_VERSION_KEY, CURRENT_SEED_VERSION);
+      saveEntries();
+    }
+  } catch (e) {
+    console.error('Load failed:', e);
+    entries = SEED.map(e => ({ ...e, id: uid(), studied: false }));
+    saveEntries();
+  }
+}
+function saveEntries() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+  catch (e) { showToast('⚠ Speichern fehlgeschlagen'); }
+}
+
+// ---- Utils ----
+function uid() { return 'e_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function normalize(s) {
+  return (s || '').toString().toLowerCase()
+    .replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+function matches(query, entry) {
+  const q = normalize(query);
+  if (!q) return true;
+  const names = [entry.name, ...(entry.aliases || [])];
+  const branch = entry.branch || '';
+  for (const n of names) {
+    const tn = normalize(n);
+    if (tn.includes(q)) return true;
+    const qWords = q.split(' ').filter(Boolean);
+    const tWords = tn.split(' ').filter(Boolean);
+    if (qWords.every(qw => tWords.some(tw => tw.startsWith(qw)))) return true;
+  }
+  if (normalize(branch).includes(q)) return true;
+  return false;
+}
+function highlight(text, query) {
+  const q = (query || '').trim();
+  if (!q) return escapeHtml(text);
+  const parts = q.split(/\s+/).filter(Boolean).map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  if (!parts.length) return escapeHtml(text);
+  const pattern = new RegExp('(' + parts.join('|') + ')', 'gi');
+  return escapeHtml(text).replace(pattern, '<mark>$1</mark>');
+}
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// ---- CRUD ----
+function addEntry(name, num, section) {
+  name = (name || '').trim();
+  if (!name) return;
+  const numVal = num ? parseInt(num, 10) : null;
+  entries.push({
+    id: uid(), name,
+    type: numVal != null ? 'primary' : 'custom',
+    num: (numVal != null && !isNaN(numVal)) ? numVal : null,
+    section: section || 'innere', studied: false, aliases: [],
+  });
+  saveEntries(); render();
+}
+function updateEntry(id, changes) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  Object.assign(e, changes);
+  saveEntries(); render();
+}
+function deleteEntry(id) {
+  entries = entries.filter(x => x.id !== id);
+  saveEntries(); render();
+}
+function clearAll() {
+  if (!confirm('Alle ' + entries.length + ' Einträge löschen?')) return;
+  entries = []; saveEntries(); render();
+  showToast('Alle Einträge gelöscht');
+}
+function restoreSeed() {
+  if (!confirm('Original-Daten wiederherstellen? Eigene Einträge und "gelernt"-Markierungen gehen verloren.')) return;
+  entries = SEED.map(e => ({ ...e, id: uid(), studied: false }));
+  localStorage.setItem(SEED_VERSION_KEY, CURRENT_SEED_VERSION);
+  saveEntries(); render();
+  showToast('Original-Daten wiederhergestellt — ' + entries.length + ' Themen');
+}
+
+// ---- Filtering / sorting ----
+function getFiltered() {
+  let filtered = entries.slice();
+  if (sectionFilter !== 'all') filtered = filtered.filter(e => e.section === sectionFilter);
+  if (typeFilter !== 'all') filtered = filtered.filter(e => e.type === typeFilter);
+  if (studiedFilter) filtered = filtered.filter(e => !e.studied);
+  if (searchTerm.trim()) filtered = filtered.filter(e => matches(searchTerm, e));
+  filtered.sort((a, b) => {
+    let av, bv;
+    if (sortBy === 'num') {
+      av = a.num ?? (a.refs?.[0]?.num ?? 99999);
+      bv = b.num ?? (b.refs?.[0]?.num ?? 99999);
+    } else if (sortBy === 'name') {
+      av = (a.name || '').toLowerCase(); bv = (b.name || '').toLowerCase();
+    } else if (sortBy === 'section') {
+      av = a.section || ''; bv = b.section || '';
+    }
+    if (av < bv) return sortAsc ? -1 : 1;
+    if (av > bv) return sortAsc ? 1 : -1;
+    return 0;
+  });
+  return filtered;
+}
+
+// ---- Rendering ----
+function render() {
+  const rowsEl = document.getElementById('rows');
+  const filtered = getFiltered();
+  document.getElementById('total-count').textContent = entries.length;
+  document.getElementById('primary-count').textContent = entries.filter(e => e.type === 'primary').length;
+  document.getElementById('crossref-count').textContent = entries.filter(e => e.type === 'crossref').length;
+  document.getElementById('external-count').textContent = entries.filter(e => e.type === 'external').length;
+  document.getElementById('studied-count').textContent = entries.filter(e => e.studied).length;
+  document.querySelectorAll('.list-header span[data-sort]').forEach(el => {
+    el.classList.toggle('sort-active', el.dataset.sort === sortBy);
+  });
+  if (filtered.length === 0) {
+    rowsEl.innerHTML = entries.length === 0
+      ? '<div class="empty">Liste ist leer. Klicke "↺ Original-Daten wiederherstellen".</div>'
+      : '<div class="empty">Keine Treffer.</div>';
+    return;
+  }
+  rowsEl.innerHTML = filtered.map(e => renderRow(e)).join('');
+  rowsEl.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', handleAction));
+  rowsEl.querySelectorAll('input[data-studied]').forEach(cb => {
+    cb.addEventListener('change', (ev) => updateEntry(cb.dataset.studied, { studied: ev.target.checked }));
+  });
+  rowsEl.querySelectorAll('input[data-edit-name]').forEach(input => {
+    input.addEventListener('blur', () => {
+      updateEntry(input.dataset.editName, { name: input.value.trim() || 'Unbenannt' });
+      editingId = null;
+    });
+    input.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') input.blur();
+      if (ev.key === 'Escape') { editingId = null; render(); }
+    });
+    input.focus(); input.select();
+  });
+}
+
+function renderPageBadge(e) {
+  if (e.type === 'primary' || e.type === 'custom') {
+    return `<span class="page-badge">${e.num ?? '—'}</span>`;
+  } else if (e.type === 'crossref') {
+    const firstNum = e.refs?.[0]?.num ?? '—';
+    return `<span class="page-badge crossref">${firstNum}</span>`;
+  } else {
+    return `<span class="page-badge external">AMBOSS</span>`;
+  }
+}
+
+function renderRow(e) {
+  const sec = SECTIONS[e.section] || SECTIONS.innere;
+  const studied = e.studied ? ' studied' : '';
+  const nameCell = editingId === e.id
+    ? `<input type="text" data-edit-name="${e.id}" value="${escapeHtml(e.name)}">`
+    : highlight(e.name, searchTerm);
+  let refsHtml = '';
+  if (e.type === 'crossref' && e.refs) {
+    const refs = e.refs.map(r => `<span class="ref">→ ${escapeHtml(r.topic)} <strong>S.${r.num}</strong></span>`).join(' ');
+    refsHtml = `<div class="refs-line">${refs}</div>`;
+  } else if (e.type === 'external') {
+    refsHtml = `<div class="external-note">nicht im Deck${e.branch ? ' — ' + escapeHtml(e.branch) : ''}</div>`;
+  }
+  return `
+    <div class="row${studied}">
+      <div class="row-page">${renderPageBadge(e)}</div>
+      <div>
+        <div class="disease-name">${nameCell}</div>
+        ${refsHtml}
+      </div>
+      <div class="desktop-only"><span class="section-badge ${sec.badge}">${sec.label}</span></div>
+      <label class="studied-toggle desktop-only">
+        <input type="checkbox" data-studied="${e.id}" ${e.studied ? 'checked' : ''}>
+        <span>gelernt</span>
+      </label>
+      <div class="row-actions">
+        <button class="icon-btn" data-action="edit" data-id="${e.id}" title="Bearbeiten">✎</button>
+        <button class="icon-btn danger" data-action="delete" data-id="${e.id}" title="Löschen">×</button>
+      </div>
+      <div class="mobile-meta">
+        <span class="section-badge ${sec.badge}">${sec.label}</span>
+        <label class="studied-toggle">
+          <input type="checkbox" data-studied="${e.id}" ${e.studied ? 'checked' : ''}>
+          <span>gelernt</span>
+        </label>
+      </div>
+    </div>`;
+}
+
+function handleAction(ev) {
+  const btn = ev.currentTarget;
+  const id = btn.dataset.id;
+  if (btn.dataset.action === 'delete') {
+    const e = entries.find(x => x.id === id);
+    if (e && confirm('"' + e.name + '" wirklich löschen?')) deleteEntry(id);
+  } else if (btn.dataset.action === 'edit') {
+    editingId = id; render();
+  }
+}
+
+// ---- Suggestions ----
+function renderSuggestions() {
+  const sugEl = document.getElementById('suggestions');
+  const q = searchTerm.trim();
+  if (!q) { sugEl.classList.remove('open'); sugEl.innerHTML = ''; return; }
+
+  const visible = entries.filter(e => {
+    if (typeFilter !== 'all' && e.type !== typeFilter) return false;
+    if (sectionFilter !== 'all' && e.section !== sectionFilter) return false;
+    return matches(q, e);
+  });
+
+  visible.sort((a, b) => {
+    const nq = normalize(q);
+    const aPrim = [a.name, ...(a.aliases||[])].some(n => normalize(n).startsWith(nq)) ? 0 : 1;
+    const bPrim = [b.name, ...(b.aliases||[])].some(n => normalize(n).startsWith(nq)) ? 0 : 1;
+    if (aPrim !== bPrim) return aPrim - bPrim;
+    // primary entries first, then crossref, then external
+    const order = { primary: 0, custom: 0, crossref: 1, external: 2 };
+    const aOrd = order[a.type] ?? 3;
+    const bOrd = order[b.type] ?? 3;
+    if (aOrd !== bOrd) return aOrd - bOrd;
+    return (a.num ?? a.refs?.[0]?.num ?? 99999) - (b.num ?? b.refs?.[0]?.num ?? 99999);
+  });
+
+  const found = visible.slice(0, 10);
+
+  if (found.length === 0) {
+    sugEl.innerHTML = '<div class="sug-item" style="cursor:default"><div class="sug-body" style="color:var(--muted)">Keine Treffer.</div></div>';
+    sugEl.classList.add('open');
+    return;
+  }
+
+  sugEl.innerHTML = found.map((e, idx) => {
+    const sec = SECTIONS[e.section] || SECTIONS.innere;
+    let refsHtml = '';
+    if (e.type === 'crossref' && e.refs) {
+      const refs = e.refs.map(r => `→ ${escapeHtml(r.topic)} (S.${r.num})`).join(' · ');
+      refsHtml = `<div class="sug-refs">${refs}</div>`;
+    } else if (e.type === 'external') {
+      refsHtml = `<div class="sug-refs">nicht im Deck${e.branch ? ' — ' + escapeHtml(e.branch) : ''}</div>`;
+    } else if (e.aliases && e.aliases.length) {
+      // show aliases that matched
+      const matchedAliases = e.aliases.filter(a => normalize(a).includes(normalize(q)));
+      if (matchedAliases.length) refsHtml = `<div class="sug-refs">alias: ${matchedAliases.map(escapeHtml).join(', ')}</div>`;
+    }
+    return `
+      <div class="sug-item" data-id="${e.id}" data-idx="${idx}">
+        <div class="sug-body">
+          <div class="sug-name">${highlight(e.name, q)}</div>
+          ${refsHtml}
+        </div>
+        <div class="sug-meta">
+          <span class="section-badge ${sec.badge}">${sec.label}</span>
+          ${renderPageBadge(e)}
+        </div>
+      </div>`;
+  }).join('');
+  sugEl.classList.add('open');
+
+  sugEl.querySelectorAll('.sug-item').forEach(el => {
+    if (!el.dataset.id) return;
+    el.addEventListener('mousedown', (ev) => {
+      ev.preventDefault();
+      const e = entries.find(x => x.id === el.dataset.id);
+      if (!e) return;
+      let msg;
+      if (e.type === 'primary' || e.type === 'custom') {
+        msg = `${e.name}  →  Seite ${e.num ?? '—'}`;
+      } else if (e.type === 'crossref') {
+        msg = `${e.name}  →  ${e.refs.map(r => `${r.topic} (S.${r.num})`).join(' · ')}`;
+      } else {
+        msg = `${e.name}  →  nicht im Deck (${e.branch || 'AMBOSS'})`;
+      }
+      showToast(msg);
+      sugEl.classList.remove('open');
+    });
+  });
+  suggestionFocusIdx = -1;
+}
+
+function moveSuggestionFocus(delta) {
+  const items = document.querySelectorAll('#suggestions .sug-item[data-id]');
+  if (!items.length) return;
+  suggestionFocusIdx = (suggestionFocusIdx + delta + items.length) % items.length;
+  items.forEach((el, i) => el.classList.toggle('focused', i === suggestionFocusIdx));
+  items[suggestionFocusIdx].scrollIntoView({ block: 'nearest' });
+}
+
+// ---- Events ----
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', (e) => {
+  searchTerm = e.target.value; render(); renderSuggestions();
+});
+searchInput.addEventListener('focus', () => { if (searchTerm.trim()) renderSuggestions(); });
+searchInput.addEventListener('blur', () => {
+  setTimeout(() => document.getElementById('suggestions').classList.remove('open'), 150);
+});
+searchInput.addEventListener('keydown', (ev) => {
+  const open = document.getElementById('suggestions').classList.contains('open');
+  if (ev.key === 'ArrowDown' && open) { ev.preventDefault(); moveSuggestionFocus(1); }
+  else if (ev.key === 'ArrowUp' && open) { ev.preventDefault(); moveSuggestionFocus(-1); }
+  else if (ev.key === 'Enter' && open && suggestionFocusIdx >= 0) {
+    ev.preventDefault();
+    const items = document.querySelectorAll('#suggestions .sug-item[data-id]');
+    if (items[suggestionFocusIdx]) items[suggestionFocusIdx].dispatchEvent(new MouseEvent('mousedown'));
+  } else if (ev.key === 'Escape') {
+    document.getElementById('suggestions').classList.remove('open');
+  }
+});
+
+document.querySelectorAll('[data-section]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    sectionFilter = chip.dataset.section;
+    document.querySelectorAll('[data-section]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    render();
+  });
+});
+document.querySelectorAll('[data-type]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    typeFilter = chip.dataset.type;
+    document.querySelectorAll('[data-type]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    render();
+  });
+});
+document.querySelector('[data-studied-filter]').addEventListener('click', (ev) => {
+  studiedFilter = !studiedFilter;
+  ev.currentTarget.classList.toggle('active-studied', studiedFilter);
+  render();
+});
+document.querySelectorAll('.list-header span[data-sort]').forEach(span => {
+  span.addEventListener('click', () => {
+    if (sortBy === span.dataset.sort) sortAsc = !sortAsc;
+    else { sortBy = span.dataset.sort; sortAsc = true; }
+    render();
+  });
+});
+
+const qaName = document.getElementById('qa-name');
+const qaNum = document.getElementById('qa-num');
+const qaSection = document.getElementById('qa-section');
+function doQuickAdd() {
+  let name = qaName.value, num = qaNum.value;
+  if (name && !num) {
+    const m = name.match(/^(.+?)\s+(\d+)\s*$/);
+    if (m) { name = m[1].trim(); num = m[2]; }
+  }
+  if (!name.trim()) { qaName.focus(); return; }
+  addEntry(name, num, qaSection.value);
+  qaName.value = ''; qaNum.value = '';
+  qaName.focus();
+  showToast('Hinzugefügt');
+}
+document.getElementById('qa-add').addEventListener('click', doQuickAdd);
+[qaName, qaNum].forEach(el => {
+  el.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') doQuickAdd(); });
+});
+
+document.getElementById('reset-btn').addEventListener('click', restoreSeed);
+document.getElementById('clear-btn').addEventListener('click', clearAll);
+document.getElementById('export-btn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lernkarten_index_' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Export erstellt');
+});
+
+const importModal = document.getElementById('import-modal');
+document.getElementById('import-btn').addEventListener('click', () => {
+  document.getElementById('import-text').value = '';
+  importModal.classList.add('open');
+});
+document.getElementById('import-cancel').addEventListener('click', () => importModal.classList.remove('open'));
+document.getElementById('import-confirm').addEventListener('click', () => {
+  try {
+    const data = JSON.parse(document.getElementById('import-text').value);
+    if (!Array.isArray(data)) throw new Error('Erwartet wird ein Array');
+    let added = 0;
+    for (const item of data) {
+      if (!item.name) continue;
+      const existing = entries.find(e => e.id === item.id);
+      if (existing) Object.assign(existing, item);
+      else entries.push({
+        id: item.id || uid(),
+        name: item.name,
+        type: item.type || 'primary',
+        num: item.num ?? null,
+        refs: item.refs || null,
+        branch: item.branch || null,
+        aliases: item.aliases || [],
+        section: SECTIONS[item.section] ? item.section : 'innere',
+        studied: !!item.studied,
+      });
+      added++;
+    }
+    saveEntries(); importModal.classList.remove('open'); render();
+    showToast(added + ' Einträge importiert');
+  } catch (e) { alert('Ungültiges JSON: ' + e.message); }
+});
+importModal.addEventListener('click', (e) => { if (e.target === importModal) importModal.classList.remove('open'); });
+
+loadEntries();
+render();
+</script>
+</body>
+</html>

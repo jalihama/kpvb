@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRK – Therapiealgorithmus</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f0ece3;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 20px 18px 28px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #1a1814;
+    max-width: 1120px;
+    margin-left: auto; margin-right: auto;
+  }
+  header h1 { font-weight: 700; font-size: 1.35rem; color: #1a1814; letter-spacing: -0.3px; }
+  header p  { color: #5a5650; font-size: 10.5px; font-weight: 500; margin-top: 5px;
+              text-transform: uppercase; letter-spacing: 2px; }
+
+  /* ── Compact clinical summary strip ── */
+  .summary-strip {
+    max-width: 1120px;
+    margin: 0 auto 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 7px;
+  }
+  .strip-card {
+    background: #fff;
+    border: 1px solid #c8c2b5;
+    border-radius: 4px;
+    padding: 7px 9px 7px 13px;
+    position: relative;
+    font-size: 10px;
+    line-height: 1.55;
+    color: #2a2820;
+  }
+  .strip-card .bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; border-radius: 4px 0 0 4px;
+  }
+  .strip-card .bar.amber  { background: #cc8800; }
+  .strip-card .bar.green  { background: #1a8a40; }
+  .strip-card .bar.gray   { background: #5a5650; }
+  .strip-card .bar.blue   { background: #2a4a7f; }
+  .strip-card .bar.red    { background: #b02020; }
+  .strip-card-title {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.4px; margin-bottom: 4px;
+  }
+  .strip-card-title.amber { color: #8a5500; }
+  .strip-card-title.green { color: #1a6b3a; }
+  .strip-card-title.gray  { color: #5a5650; }
+  .strip-card-title.blue  { color: #2a4a7f; }
+  .strip-card-title.red   { color: #b02020; }
+  .strip-card ul { list-style: none; }
+  .strip-card ul li { padding-left: 10px; position: relative; margin-bottom: 1px; }
+  .strip-card ul li::before { content: '–'; position: absolute; left: 0; color: #bbb; }
+  .cave  { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+
+  /* ── SVG wrap ── */
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+  .wrap svg { max-width: 100%; height: auto; }
+
+  /* ── Notes ── */
+  .notes { max-width: 1120px; margin: 16px auto 0; border-top: 2px solid #1a1814; padding-top: 12px; }
+  .notes-title { font-weight: 700; font-size: 0.82rem; color: #1a1814; margin-bottom: 2px; }
+  .notes-subtitle { font-size: 9px; font-weight: 500; color: #5a5650; text-transform: uppercase;
+                    letter-spacing: 1.8px; margin-bottom: 8px; }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 7px; }
+  .note-card { background: #fff; border: 1px solid #c8c2b5; border-radius: 3px;
+               padding: 6px 9px 6px 13px; position: relative; }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .note-card .bar.blue   { background: #2a4a7f; }
+  .note-card .bar.amber  { background: #7a4a00; }
+  .note-card .bar.red    { background: #b02020; }
+  .note-card .bar.green  { background: #1a6b3a; }
+  .note-card .bar.muted  { background: #5a5650; }
+  .note-card-label { font-size: 8px; font-weight: 600; text-transform: uppercase;
+                     letter-spacing: 1.5px; color: #7a7468; margin-bottom: 1px; }
+  .note-card-title { font-weight: 600; font-size: 0.75rem; color: #1a1814; margin-bottom: 3px; }
+  .note-card-body  { font-size: 10px; color: #2a2820; line-height: 1.55; }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 10px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  /* ── Disclaimer + Footer ── */
+  .disclaimer {
+    max-width: 1120px; margin: 10px auto 0;
+    background: #fff8ec; border: 1px solid #e0c870; border-radius: 3px;
+    padding: 6px 11px; font-size: 9.5px; color: #7a5800; font-weight: 500;
+  }
+  footer {
+    max-width: 1120px; margin: 10px auto 0; padding-top: 10px;
+    border-top: 1px solid #c8c2b5; color: #7a7468; font-size: 9.5px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1.3px;
+    display: flex; justify-content: space-between;
+  }
+
+  /* ════════════════════════════════
+     PRINT STYLES
+     ════════════════════════════════ */
+  @media print {
+    @page { size: A3 landscape; margin: 8mm; }
+
+    body {
+      background: #fff !important;
+      padding: 0;
+      font-size: 9pt;
+    }
+    header, .summary-strip, .wrap, .notes, .disclaimer, footer {
+      max-width: 100% !important;
+    }
+    .wrap { overflow: visible; }
+    .wrap svg { width: 100% !important; max-width: 100% !important; height: auto !important; }
+
+    /* Keep strip cards white on print */
+    .strip-card, .note-card { background: #fff !important; border-color: #ccc !important; }
+
+    /* Notes onto new page after SVG */
+    .notes { page-break-before: always; padding-top: 8mm; }
+    .disclaimer { background: #fff8ec !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* Preserve colored bars */
+    .bar, .strip-card .bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* Preserve SVG fills */
+    svg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    footer { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+     ══════════════════════════════════════════════ -->
+<header>
+  <h1>Kolorektales Karzinom (KRK) – Therapiealgorithmus</h1>
+  <p>AMBOSS-basiert · S3-Leitlinie Kolorektales Karzinom · AWMF / DKG · Stand 2023</p>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     COMPACT CLINICAL SUMMARY STRIP (5 columns)
+     ══════════════════════════════════════════════ -->
+<div class="summary-strip">
+
+  <div class="strip-card">
+    <div class="bar amber"></div>
+    <div class="strip-card-title amber">Epidemiologie &amp; Lokalisation</div>
+    <ul>
+      <li>~60.000 Neuerkrankungen / Jahr</li>
+      <li>90% nach dem 55. Lebensjahr</li>
+      <li>Rektum 50% · Sigma 30%</li>
+      <li>Transversum + Descendens 10% · Zäkum/Asc. 10%</li>
+      <li>Lokalisation nimmt <strong>nach aboral</strong> zu</li>
+    </ul>
+  </div>
+
+  <div class="strip-card">
+    <div class="bar amber"></div>
+    <div class="strip-card-title amber">Risikofaktoren &amp; Pathologie</div>
+    <ul>
+      <li>FAP · Peutz-Jeghers · HNPCC/Lynch · Familienanamnese</li>
+      <li>Colitis ulcerosa · MC · PSC · DM2 · Alter &gt;40 J.</li>
+      <li>Rauchen · Adipositas · rotes Fleisch · Ballaststoffmangel</li>
+      <li>Protektiv: körperl. Aktivität · Ballaststoffe · schnelle Stuhlpassage</li>
+      <li>90% Adenokarzinom — Adenom-Karzinom-Sequenz (+ serrat. Weg)</li>
+      <li>„Je villöser, desto böser!"</li>
+    </ul>
+  </div>
+
+  <div class="strip-card">
+    <div class="bar gray"></div>
+    <div class="strip-card-title gray">Symptome</div>
+    <ul>
+      <li><span class="cave">Keine</span> Frühsymptome!</li>
+      <li>Stuhlveränderung · Blutabgang (okkult/sichtbar)</li>
+      <li>„Bleistiftstühle" · falsche Freunde</li>
+      <li>B-Symptomatik · Blutungsanämie</li>
+      <li>Spät: Ileus · tastbare Raumforderung</li>
+      <li><span class="cave">Cave:</span> ~50% gleichzeitig Hämorrhoiden!</li>
+    </ul>
+  </div>
+
+  <div class="strip-card">
+    <div class="bar blue"></div>
+    <div class="strip-card-title blue">Diagnostik &amp; Staging</div>
+    <ul>
+      <li>DRU + <strong>Koloskopie + Biopsie</strong> (GS)</li>
+      <li>CEA (Ausgangswert) · Sono Abdomen · Rö-Thorax</li>
+      <li>CT Abd./Becken/Thorax bei Metastasen-V.a. · PET-CT möglich</li>
+      <li>Adenokarzinom in 5% multipel → weitere Tumoren suchen!</li>
+      <li>Rektum: starre Rektoskopie · MRT Becken · Endosonografie</li>
+      <li>Rektum: Gyn./Urol. Konsil bei V.a. Organinfiltration</li>
+      <li>≥12 LK histologisch für N-Staging</li>
+    </ul>
+  </div>
+
+  <div class="strip-card">
+    <div class="bar red"></div>
+    <div class="strip-card-title red">Metastasierung &amp; Prognose</div>
+    <ul>
+      <li><span class="cave">¼ Pat. Lebermetastasen bei Diagnose!</span></li>
+      <li>Hämatogen (Portalsystem): Leber → Lunge → Skelett → Hirn</li>
+      <li>Per continuitatem: Harnblase · Dünndarm · Adnexe</li>
+      <li>Unt. Rektum → V. cava → direkte Lungenmet. (kein Leberumweg)</li>
+      <li>5-JÜR gesamt ~62% · Stad. IV &lt;15%</li>
+      <li>Operative Qualität = entsch. Prognosefaktor</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     THERAPIEALGORITHMUS SVG
+     ══════════════════════════════════════════════ -->
+<div class="wrap">
+<svg width="1120" height="720" viewBox="0 0 1120 720" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr"   markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#555"/></marker>
+  <marker id="arr-g" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#1a8a40"/></marker>
+  <marker id="arr-b" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#2a4a7f"/></marker>
+  <marker id="arr-r" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#b02020"/></marker>
+  <marker id="arr-p" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#5a2a7f"/></marker>
+  <style>
+    text  { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: 400; fill: #1a1814; }
+    .tag  { font-size: 9px;   font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+    .ttl  { font-size: 12.5px; font-weight: 700; }
+    .sub  { font-size: 11px;  font-weight: 700; }
+    .body { font-size: 10.5px; font-weight: 400; fill: #2a2820; }
+    .sm   { font-size: 9.5px;  font-weight: 400; fill: #666; }
+    .lbl  { font-size: 10px;   font-weight: 600; fill: #444; }
+  </style>
+</defs>
+
+<!-- ══════════════════════════════════════════════════
+     ROW 1: START + TUMORKONFERENZ
+     ══════════════════════════════════════════════════ -->
+<!-- START pill -->
+<rect x="285" y="12" width="550" height="36" rx="18" fill="#1a1814"/>
+<text x="560" y="35" font-size="13.5" font-weight="700" text-anchor="middle" style="fill:white;">KRK gesichert – Vollständiges Staging abgeschlossen</text>
+
+<!-- ↓ -->
+<line x1="560" y1="48" x2="560" y2="62" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Tumorkonferenz -->
+<rect x="160" y="62" width="800" height="56" rx="5" fill="#fff" stroke="#1a1814" stroke-width="2"/>
+<text x="180" y="80" class="tag" fill="#555">Schritt 1 · Interdisziplinäre Tumorkonferenz</text>
+<text x="560" y="99" class="ttl" text-anchor="middle" fill="#1a1814">Beurteilung: Lokalisation · Ausdehnung · Allgemeinzustand · Molekularbiologie</text>
+<text x="560" y="114" font-size="10" text-anchor="middle" fill="#666">→ Kuratives vs. palliatives Therapieziel · Resektabilität · Neoadjuvanz-Indikation</text>
+
+<!-- ↓ trunk -->
+<line x1="560" y1="118" x2="560" y2="138" stroke="#555" stroke-width="2"/>
+
+<!-- Branch left →  Kolon -->
+<polyline points="560,138 186,138 186,154" fill="none" stroke="#1a8a40" stroke-width="2" marker-end="url(#arr-g)"/>
+<!-- Branch center → Metastasiert -->
+<line x1="560" y1="138" x2="560" y2="154" stroke="#b02020" stroke-width="2" marker-end="url(#arr-r)"/>
+<!-- Branch right → Rektum -->
+<polyline points="560,138 934,138 934,154" fill="none" stroke="#2a4a7f" stroke-width="2" marker-end="url(#arr-b)"/>
+<circle cx="560" cy="138" r="4" fill="#555"/>
+
+<!-- Branch labels -->
+<text x="370" y="133" class="lbl" text-anchor="middle" fill="#1a6b3a">Nicht-metastasiert · Kolon</text>
+<text x="560" y="150" class="lbl" text-anchor="middle" fill="#b02020">Stadium IV · Metastasiert</text>
+<text x="752" y="133" class="lbl" text-anchor="middle" fill="#2a4a7f">Nicht-metastasiert · Rektum</text>
+
+<!-- ══════════════════════════════════════════════════
+     COLUMN HEADERS  (y=154)
+     ══════════════════════════════════════════════════ -->
+<rect x="14"  y="154" width="344" height="26" rx="4" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="186" y="172" class="tag" fill="#1a6b3a" text-anchor="middle">Kolonkarzinom · Stadium I – III</text>
+
+<rect x="388" y="154" width="344" height="26" rx="4" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="560" y="172" class="tag" fill="#b02020" text-anchor="middle">Metastasiertes KRK · Stadium IV</text>
+
+<rect x="762" y="154" width="344" height="26" rx="4" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="934" y="172" class="tag" fill="#2a4a7f" text-anchor="middle">Rektumkarzinom · Stadium I – III</text>
+
+
+<!-- ══════════════════════════════════════════════════
+     COLUMN 1: KOLONKARZINOM   x=14  w=344
+     ══════════════════════════════════════════════════ -->
+<line x1="186" y1="180" x2="186" y2="190" stroke="#1a8a40" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+<!-- BOX K1: Stad I + II -->
+<rect x="14" y="190" width="344" height="136" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.8"/>
+<text x="32" y="208" class="tag" fill="#1a6b3a">Stadium I · II</text>
+<text x="32" y="226" class="sub" fill="#1a1814">Primäre OP — kurative Intention</text>
+<line x1="32" y1="233" x2="346" y2="233" stroke="#cde8d5" stroke-width="1"/>
+<text x="32" y="249" class="body">· En-bloc-Resektion des Darmabschnitts</text>
+<text x="32" y="264" class="body">· Lymphadenektomie (≥ 12 LK histolog.!)</text>
+<text x="32" y="279" class="body">· OP-Technik je nach Tumorlokalisation</text>
+<line x1="32" y1="287" x2="346" y2="287" stroke="#cde8d5" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="32" y="302" font-size="10.5" font-weight="700" fill="#1a6b3a">Adjuvante Chemotherapie</text>
+<text x="32" y="317" class="body">· Stad. I: Keine Chemotherapie</text>
+<text x="32" y="331" class="body">· Stad. II: Bei Risikofaktoren + MSI-stabil (MSS)</text>
+
+<!-- ↓ -->
+<line x1="186" y1="326" x2="186" y2="338" stroke="#1a8a40" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+<!-- BOX K2: Stad III -->
+<rect x="14" y="338" width="344" height="130" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="32" y="356" class="tag" fill="#8a5500">Stadium III · Lymphknotenbefall (N+)</text>
+<text x="32" y="374" class="sub" fill="#1a1814">OP + adjuvante Chemotherapie — immer</text>
+<line x1="32" y1="381" x2="346" y2="381" stroke="#f0ddb0" stroke-width="1"/>
+<text x="32" y="397" class="body">· OP wie Stadium I / II</text>
+<text x="32" y="412" font-size="10.5" font-weight="700" fill="#8a5500">Dann: Kombitherapie mit Oxaliplatin (6 Mon.)</text>
+<text x="32" y="427" class="body">· FOLFOX: Folinsäure + 5-FU + Oxaliplatin</text>
+<text x="32" y="442" class="body">· XELOX (CAPOX): Capecitabin + Oxaliplatin</text>
+<text x="32" y="457" class="sm">Stadium II mono: Fluoropyrimidine allein</text>
+
+<!-- ↓ -->
+<line x1="186" y1="468" x2="186" y2="478" stroke="#b02020" stroke-width="1.8" marker-end="url(#arr-r)"/>
+
+<!-- BOX K3: Cave -->
+<rect x="14" y="478" width="344" height="46" rx="5" fill="#fdeaea" stroke="#b02020" stroke-width="1.8"/>
+<text x="32" y="496" font-size="10.5" font-weight="700" fill="#b02020">⚠  Keine Radiatio am Kolonkarzinom!</text>
+<text x="32" y="511" class="sm" style="fill:#555">Kolonkarzinome sind relativ strahlenresistent — nur Rektum erhält Radiatio.</text>
+
+<!-- BOX K4: Chirurg. Prinzipien -->
+<rect x="14" y="534" width="344" height="60" rx="5" fill="#f5f0e8" stroke="#5a5650" stroke-width="1.5"/>
+<text x="32" y="550" font-size="8.5" font-weight="700" fill="#5a5650" letter-spacing="1px">CHIRURGISCHE PRINZIPIEN (ALLE KRK)</text>
+<text x="32" y="565" class="sm">· Hemikolektomie re / li · Sigmaresektion je nach Lage</text>
+<text x="32" y="579" class="sm">· En-bloc: Darmabschnitt + Mesorektum + Lymphknoten</text>
+<text x="32" y="593" class="sm">· Inoperabel: Stoma / Bypass zur Passageerhaltung</text>
+
+
+<!-- ══════════════════════════════════════════════════
+     COLUMN 2: METASTASIERTES KRK   x=388  w=344
+     ══════════════════════════════════════════════════ -->
+<line x1="560" y1="180" x2="560" y2="190" stroke="#b02020" stroke-width="1.8" marker-end="url(#arr-r)"/>
+
+<!-- BOX M1: Molekulare Diagnostik -->
+<rect x="388" y="190" width="344" height="120" rx="5" fill="#f5f0e8" stroke="#5a2a7f" stroke-width="2"/>
+<text x="406" y="208" class="tag" fill="#5a2a7f">Schritt 1 · Molekulare Diagnostik — zwingend vor Therapie</text>
+<text x="406" y="226" class="sub" fill="#1a1814">RAS · BRAF · MSI-Status bestimmen</text>
+<line x1="406" y1="233" x2="720" y2="233" stroke="#c0b0e0" stroke-width="1"/>
+<text x="406" y="249" class="body">· <tspan font-weight="700">RAS-Mutation</tspan>: kein Anti-EGFR (Cetuximab/Panitumumab)!</text>
+<text x="406" y="264" class="body">· <tspan font-weight="700">BRAF-V600</tspan>: schlechtere Prognose → intensive CTx früh</text>
+<text x="406" y="279" class="body">· <tspan font-weight="700">MSI-H / dMMR</tspan>: Checkpoint-Inhibitor (Pembrolizumab)</text>
+<text x="406" y="298" class="sm">Tumorlokalisation: links vs. rechts beeinflusst Biologika-Wahl</text>
+
+<!-- ↓ -->
+<line x1="560" y1="310" x2="560" y2="320" stroke="#b02020" stroke-width="1.8" marker-end="url(#arr-r)"/>
+
+<!-- BOX M2: Guter AZ -->
+<rect x="388" y="320" width="344" height="148" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.8"/>
+<text x="406" y="338" class="tag" fill="#1a6b3a">Guter Allgemeinzustand (ECOG 0–1)</text>
+<text x="406" y="356" class="sub" fill="#1a1814">Ziel: Maximale Tumorreduktion</text>
+<line x1="406" y1="363" x2="720" y2="363" stroke="#cde8d5" stroke-width="1"/>
+<text x="406" y="379" font-size="10.5" font-weight="700" fill="#1a6b3a">Resektable Metastasen (z.B. Leber):</text>
+<text x="406" y="394" class="body">→ Primäre Metastasenresektion (kurativ möglich!)</text>
+<text x="406" y="409" class="body">→ Alternativ: Systemtherapie → Rebeurteilung → OP</text>
+<line x1="406" y1="417" x2="720" y2="417" stroke="#cde8d5" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="406" y="432" font-size="10.5" font-weight="700" fill="#1a6b3a">Nicht-resektable Metastasen:</text>
+<text x="406" y="447" class="body">→ FOLFOX / FOLFIRI ± Bevacizumab / Anti-EGFR</text>
+<text x="406" y="461" class="sm">RAS-WT + links: + Anti-EGFR  ·  RAS-mut: ± Bevacizumab</text>
+
+<!-- ↓ -->
+<line x1="560" y1="468" x2="560" y2="478" stroke="#b02020" stroke-width="1.8" marker-end="url(#arr-r)"/>
+
+<!-- BOX M3: Reduzierter AZ -->
+<rect x="388" y="478" width="344" height="116" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="1.8"/>
+<text x="406" y="496" class="tag" fill="#8a5500">Reduzierter Allgemeinzustand (ECOG 2)</text>
+<text x="406" y="514" class="sub" fill="#1a1814">Therapiefähigkeit wiederherstellen</text>
+<line x1="406" y1="521" x2="720" y2="521" stroke="#f0ddb0" stroke-width="1"/>
+<text x="406" y="537" class="body">· Nebenwirkungsarme Bridging-Therapie</text>
+<text x="406" y="552" class="body">· Fluoropyrimidine ± Bevacizumab</text>
+<text x="406" y="567" class="body">· Anti-EGFR-Mono erwägen bei RAS-Wildtyp</text>
+<text x="406" y="580" class="body">· Resektabilität alle ~8 Wochen re-evaluieren</text>
+<line x1="406" y1="587" x2="720" y2="587" stroke="#f0ddb0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="406" y="600" font-size="10.5" font-weight="700" fill="#b02020">ECOG 3–4 → primär palliativ / supportiv</text>
+
+<!-- BOX M4: Schemata -->
+<rect x="388" y="604" width="344" height="55" rx="5" fill="#f5f0e8" stroke="#5a5650" stroke-width="1.5"/>
+<text x="406" y="619" font-size="8.5" font-weight="700" fill="#5a5650" letter-spacing="1px">SYSTEMTHERAPIE-SCHEMATA</text>
+<text x="406" y="633" class="sm">FOLFOX · FOLFIRI · FOLFOXIRI · XELOX / CAPOX</text>
+<text x="406" y="647" class="sm">Anti-VEGF: Bevacizumab  ·  Anti-EGFR: Cetuximab, Panitumumab</text>
+<text x="406" y="659" class="sm">MSI-H / dMMR: Pembrolizumab (Immuntherapie)</text>
+
+
+<!-- ══════════════════════════════════════════════════
+     COLUMN 3: REKTUMKARZINOM   x=762  w=344
+     ══════════════════════════════════════════════════ -->
+<line x1="934" y1="180" x2="934" y2="190" stroke="#2a4a7f" stroke-width="1.8" marker-end="url(#arr-b)"/>
+
+<!-- BOX R1: Oberes Drittel -->
+<rect x="762" y="190" width="344" height="100" rx="5" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="1.8"/>
+<text x="780" y="208" class="tag" fill="#2a4a7f">Oberes Drittel  (&gt;12 cm ab Anokutanlinie)</text>
+<text x="780" y="226" class="sub" fill="#1a1814">Behandlung wie Kolonkarzinom</text>
+<line x1="780" y1="233" x2="1094" y2="233" stroke="#b8c8f0" stroke-width="1"/>
+<text x="780" y="249" class="body">· Primäre anteriore Rektumresektion (PME)</text>
+<text x="780" y="264" class="body">· Stad. I + R0: <tspan font-weight="700">keine</tspan> adj. Therapie empfohlen</text>
+<text x="780" y="279" class="body">· Stad. III: adjuvante Chemo wie Kolon</text>
+<text x="780" y="291" class="sm">Neoadjuvanz nur bei hohem Lokalrezidivrisiko (rel. Indikation)</text>
+
+<!-- ↓ -->
+<line x1="934" y1="290" x2="934" y2="300" stroke="#2a4a7f" stroke-width="1.8" marker-end="url(#arr-b)"/>
+
+<!-- BOX R2: Mittleres / Unteres Drittel -->
+<rect x="762" y="300" width="344" height="168" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="780" y="318" class="tag" fill="#8a5500">⚠  Mittleres / Unteres Drittel (≤ 12 cm)</text>
+<text x="780" y="336" class="sub" fill="#1a1814">Stadium II + III: Neoadjuvanz obligat</text>
+<line x1="780" y1="343" x2="1094" y2="343" stroke="#f0ddb0" stroke-width="1"/>
+<text x="780" y="359" font-size="10.5" font-weight="700" fill="#8a5500">① Neoadjuvante Therapie (vor OP)</text>
+<text x="780" y="374" class="body">· Kurzzeitbestrahlung → OP (innerhalb 10 Tage)</text>
+<text x="780" y="389" class="body">· Radiochemotherapie → OP nach 6–8 Wochen</text>
+<text x="780" y="404" class="body">· TNT: Bestrahlung + prä-OP Chemo → OP oder</text>
+<text x="780" y="419" class="body">        „Watch &amp; Wait" bei kompletter Remission</text>
+<line x1="780" y1="426" x2="1094" y2="426" stroke="#f0ddb0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="780" y="442" font-size="10.5" font-weight="700" fill="#8a5500">② Operative Therapie</text>
+<text x="780" y="457" class="body">· (Tiefe) anteriore Rektumresektion</text>
+<text x="780" y="468" class="body">· Abdominoperineale Exstirpation (bei tiefem Ca.)</text>
+
+<!-- ↓ -->
+<line x1="934" y1="468" x2="934" y2="478" stroke="#2a4a7f" stroke-width="1.8" marker-end="url(#arr-b)"/>
+
+<!-- BOX R3: TME + Adj -->
+<rect x="762" y="478" width="344" height="116" rx="5" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="780" y="496" class="tag" fill="#2a4a7f">③ OP-Standard: TME + adj. Chemotherapie</text>
+<text x="780" y="514" class="sub" fill="#1a1814">Totale Mesorektale Exzision (Goldstandard)</text>
+<line x1="780" y1="521" x2="1094" y2="521" stroke="#b8c8f0" stroke-width="1"/>
+<text x="780" y="537" class="body">· Vollständige Entfernung inkl. Mesorektum</text>
+<text x="780" y="552" class="body">· Senkt Lokalrezidivrate signifikant</text>
+<text x="780" y="567" class="body">· Adjuvante Chemo bei Stad. II / III (wie Kolon)</text>
+<line x1="780" y1="575" x2="1094" y2="575" stroke="#b8c8f0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="780" y="590" font-size="10" font-weight="700" fill="#b02020">Adj. RCTx bei: R1 · pN2 · pT3 unt. Drittel · pT4 sonst</text>
+
+<!-- BOX R4: Kontinenz -->
+<rect x="762" y="604" width="344" height="55" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="780" y="619" font-size="8.5" font-weight="700" fill="#1a6b3a" letter-spacing="1px">KONTINENZERHALT ANSTREBEN</text>
+<text x="780" y="634" class="sm">Intersphinktäre Resektion wenn möglich bevorzugen</text>
+<text x="780" y="648" class="sm">Passageres Deviationsstoma bei tiefer Anastomose empfohlen</text>
+<text x="780" y="660" class="sm">PME bei ob. Drittel · TME bei mitt./unt. Drittel</text>
+
+<!-- ══════════════════════════════════════════════════
+     BOTTOM: NACHSORGE (shared)
+     ══════════════════════════════════════════════════ -->
+<line x1="186" y1="594" x2="186" y2="685" stroke="#555" stroke-width="1.5"/>
+<line x1="560" y1="659" x2="560" y2="685" stroke="#555" stroke-width="1.5"/>
+<line x1="934" y1="659" x2="934" y2="685" stroke="#555" stroke-width="1.5"/>
+<polyline points="186,685 560,685 934,685" fill="none" stroke="#555" stroke-width="1.5"/>
+<line x1="560" y1="685" x2="560" y2="694" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<rect x="60" y="694" width="1000" height="22" rx="4" fill="#f5f0e8" stroke="#1a1814" stroke-width="1.5"/>
+<text x="560" y="709" font-size="10" font-weight="600" text-anchor="middle" fill="#1a1814">Nachsorge: Stad. I → Koloskopie  ·  Stad. II–III → alle 6 Mon. (2 J.) dann 12 Mon. (3 J.): Anamnese · KU · CEA · CA-19-9 · Abdomensonografie · CT · Koloskopie</text>
+
+</svg>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     ERGÄNZENDE HINWEISE
+     ══════════════════════════════════════════════ -->
+<div class="notes">
+  <div class="notes-title">Ergänzende Klinische Hinweise</div>
+  <div class="notes-subtitle">Aus dem AMBOSS-Artikel · Nicht direkt im Algorithmus abgebildet</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Klinische Falle</div>
+      <div class="note-card-title">Rektale Blutung ≠ Hämorrhoiden</div>
+      <div class="note-card-body">
+        <ul>
+          <li>~50% der KRK-Pat. haben gleichzeitig Hämorrhoiden</li>
+          <li>Rektale Blutung <span class="cave">immer</span> als Karzinom werten bis Beweis d. Gegenteils</li>
+          <li>¼ der Patienten: Lebermetastasen bereits bei Erstdiagnose!</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Chirurgische Qualität</div>
+      <div class="note-card-title">TME &amp; Lymphknotenresektion</div>
+      <div class="note-card-body">
+        <ul>
+          <li><span class="first">TME</span> = Goldstandard Rektumkarzinom → Lokalrezidiv ↓↓</li>
+          <li><strong>≥12 Lymphknoten</strong> histologisch für sicheres N-Staging</li>
+          <li>Operative Qualität = entscheidender Prognosefaktor</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Molekulare Marker</div>
+      <div class="note-card-title">RAS · BRAF · MSI</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>RAS-Mut. ~40–50%:</strong> <span class="cave">kein Anti-EGFR</span></li>
+          <li><strong>BRAF-V600:</strong> ungünstig → früh intensive CTx</li>
+          <li><strong>MSI-H / dMMR:</strong> Pembrolizumab wirksam</li>
+          <li>Rechtsseitiger Tumor: schlechteres EGFR-Ansprechen</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Adjuvante Therapie Kolon</div>
+      <div class="note-card-title">Wann welche Chemotherapie?</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Stad. I: <span class="cave">Keine</span> Chemotherapie</li>
+          <li>Stad. II: Nur bei Risikofaktoren (T4, &lt;12 LK, R1) + <strong>MSI-stabil (MSS)</strong></li>
+          <li>Stad. III: <span class="first">Immer</span> — Oxaliplatin-Kombination, 6 Monate</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Hereditäre Syndrome</div>
+      <div class="note-card-title">FAP &amp; HNPCC / Lynch</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>FAP:</strong> 100% KRK-Risiko → prophylakt. Kolektomie</li>
+          <li><strong>Lynch:</strong> MLH1/MSH2 → KRK + Endometrium-Ca</li>
+          <li>Verwandte 1. Grades: Koloskopie 10 J. vor Indexalter</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">CEA · Nachsorge</div>
+      <div class="note-card-title">Tumormarker &amp; Kontrollintervalle</div>
+      <div class="note-card-body">
+        <ul>
+          <li>CEA <strong>vor OP</strong> als Ausgangswert — nicht zur Diagnose!</li>
+          <li>CEA-Anstieg im Verlauf → Rezidiv / Metastasen</li>
+          <li>80% der Rezidive in den ersten 2 Jahren nach OP</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Vorsorge</div>
+      <div class="note-card-title">Screening ab 50 J. (GKV)</div>
+      <div class="note-card-body">
+        <ul>
+          <li><span class="first">Bevorzugt:</span> Koloskopie alle 10 Jahre</li>
+          <li>Alternativ: FOBT alle 2 J. + Sigmoidoskopie alle 5 J.</li>
+          <li>Positiver FOBT → <span class="cave">immer</span> vollst. Koloskopie!</li>
+          <li>ASS · COX2-Hemmer · Statine sollen <span class="cave">nicht</span> zur Prävention eingesetzt werden (Leitlinie)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Metastasen · Prognose</div>
+      <div class="note-card-title">Kurativ vs. palliativ bei Stad. IV</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Bei <span class="first">resektablen</span> Lebermetastasen: Heilung möglich!</li>
+          <li>5-JÜR gesamt ~62% · Stad. IV ohne Resektion &lt;15%</li>
+          <li>Unt. Rektum → V. cava → direkte Lungenmet. (kein Leberfiliae-Umweg)</li>
+          <li>Per continuitatem: Harnblase · Dünndarm · Adnexe · Nachbarorgane</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="disclaimer">
+  ⚠ Selbst erstelltes Dokument auf Basis von AMBOSS-Inhalten. Fehler und Auslassungen sind möglich. Klinische Entscheidungen immer anhand aktueller Leitlinien und im individuellen klinischen Kontext treffen.
+</div>
+
+<footer>
+  <span>S3-Leitlinie Kolorektales Karzinom (AWMF 021-007OL, 2023) · AMBOSS „Kolorektales Karzinom"</span>
+  <span>KRK · Therapiealgorithmus · Druckversion</span>
+</footer>
+
+</body>
+</html>

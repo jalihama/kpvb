@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opportunistische Infektionen nach CD4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-background-primary:#ffffff; --color-background-secondary:#e4eef1;
+  --color-text-primary:#08222c; --color-text-secondary:#45697a;
+  --color-text-danger:#b02020; --color-text-success:#0f6e56; --color-text-warning:#854f0b;
+  --color-border-tertiary:#cddbe0; --color-border-secondary:#b9cdd4;
+  --color-background-info:#dcf0f6; --color-text-info:#0a6b86; --color-border-info:#7fcfe2;
+  --border-radius-md:10px; --border-radius-lg:14px; --page-bg:#eef5f8;
+}
+@media(prefers-color-scheme:dark){:root{
+  --color-background-primary:#0f3848; --color-background-secondary:#0c2f3d;
+  --color-text-primary:#e3eef2; --color-text-secondary:#9fc0cc;
+  --color-text-danger:#f08a82; --color-text-success:#3fbf9f; --color-text-warning:#d6a23e;
+  --color-border-tertiary:#1c4253; --color-border-secondary:#25515f;
+  --color-background-info:#0e3c4a; --color-text-info:#7fdcef; --color-border-info:#1f6f86;
+  --page-bg:#0a2733;
+}}
+html{background:var(--page-bg)}
+body{margin:0;background:var(--page-bg);color:var(--color-text-primary);font-family:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;padding:26px 20px 42px}
+.kp-wrap{max-width:940px;margin:0 auto}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1.kp-title{text-align:center;font-size:1.4rem;font-weight:700;letter-spacing:-.3px;color:var(--color-text-primary);border-bottom:2px solid var(--color-text-primary);padding-bottom:16px;margin:0 0 20px}
+</style>
+</head>
+<body><div class="kp-wrap">
+<h1 class="kp-title">Opportunistische Infektionen nach CD4</h1>
+
+<style>
+* { box-sizing: border-box; margin: 0; }
+.chart { padding: 1.5rem 0; }
+.row { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+.cd4-badge { min-width: 72px; text-align: right; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); padding-top: 6px; flex-shrink: 0; }
+.bar-track { flex: 1; }
+.bar { height: 36px; border-radius: 8px; display: flex; align-items: center; padding: 0 14px; font-size: 13px; font-weight: 500; position: relative; }
+.infections { font-size: 12px; color: var(--color-text-secondary); margin-top: 5px; line-height: 1.6; }
+.axis-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 10px; display: flex; justify-content: space-between; padding-left: 86px; }
+</style>
+
+<div class="chart">
+  <div class="axis-label"><span>CD4 count →</span><span>← more immunosuppressed</span></div>
+
+  <div class="row">
+    <div class="cd4-badge">any CD4</div>
+    <div class="bar-track">
+      <div class="bar" style="width:100%; background:#E6F1FB; color:#0C447C">TB · Herpes zoster</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cd4-badge">&lt; 400</div>
+    <div class="bar-track">
+      <div class="bar" style="width:80%; background:#E1F5EE; color:#085041">Oral candidiasis</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cd4-badge">&lt; 200</div>
+    <div class="bar-track">
+      <div class="bar" style="width:40%; background:#FAEEDA; color:#633806">PCP · Oesophageal candidiasis · Kaposi sarcoma · PML</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cd4-badge">&lt; 100</div>
+    <div class="bar-track">
+      <div class="bar" style="width:24%; background:#FBEAF0; color:#72243E">Toxoplasmosis · Cryptococcal meningitis</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cd4-badge">&lt; 50</div>
+    <div class="bar-track">
+      <div class="bar" style="width:12%; background:#F7C1C1; color:#501313">MAC · CMV · Aspergillosis</div>
+    </div>
+  </div>
+
+  <div style="padding-left:86px; margin-top:18px; display:flex; gap:16px; flex-wrap:wrap; font-size:11px; color:var(--color-text-secondary)">
+    <span>🔵 Bacterial</span>
+    <span>🟢 Fungal</span>
+    <span>🟠 Mixed</span>
+    <span>🔴 Viral/Disseminated</span>
+  </div>
+</div>
+
+</div></body></html>

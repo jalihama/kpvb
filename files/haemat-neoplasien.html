@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hämatologische Neoplasien – DGHO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#080c18;font-family:'Roboto Mono',monospace;color:#e8eaf6;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+input::placeholder{color:#445566;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#080c18;}
+::-webkit-scrollbar-thumb{background:#243060;border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const data = {
+  id:"root",
+  de:{label:"Hämatologische\nNeoplasien"},
+  en:{label:"Haematological\nNeoplasms"},
+  children:[
+    {
+      id:"leukaemie",
+      de:{label:"LEUKÄMIEN",desc:"Klonale\nLeukozyten",full:"Leukämien — Überblick",details:["Klonale Proliferation maligner Leukozyten-Vorläufer im Knochenmark","Einteilung: akut (ALL, AML) vs. chronisch (CLL, CML, HCL) + Zellreihe (lymphatisch vs. myeloisch)","Akute Leukämien: Reifungsblockade → Blastenakkumulation; chronische: Zellen reifen (meist) aus","Leitsymptome: Anämie, Infektneigung, Blutungszeichen = Verdrängung der normalen Hämatopoese","Diagnoseschlüssel: Blastenanteil im Knochenmark (>20% AML; >25% ALL)","Leukozytenzahl kein sicheres Kriterium — aleukämische Verläufe möglich!","Häufigste Leukämieform insgesamt: CLL (Erwachsene); ALL (Kinder)","Gemeinsame Risikofaktoren: ionisierende Strahlung, Benzol, Zytostatika, Trisomie 21","Transformation: MPN/MDS können in akute Leukämie übergehen (z.B. Blastenkrise bei CML)"]},
+      en:{label:"LEUKAEMIAS",desc:"Clonal\nleucocytes",full:"Leukaemias — Overview",details:["Clonal proliferation of malignant leucocyte precursors in the bone marrow","Classification: acute (ALL, AML) vs chronic (CLL, CML, HCL) + cell lineage (lymphoid vs myeloid)","Acute leukaemias: maturation block → blast accumulation; chronic: cells mostly mature normally","Cardinal symptoms: anaemia, susceptibility to infection, bleeding = displacement of normal haematopoiesis","Diagnostic key: blast count in bone marrow (>20% AML; >25% ALL)","White cell count is NOT a reliable criterion — aleukaemic courses are possible!","Most common leukaemia overall: CLL (adults); ALL (children)","Shared risk factors: ionising radiation, benzene, cytostatics, trisomy 21","Transformation: MPN/MDS can progress to acute leukaemia (e.g. blast crisis in CML)"]},
+      color:"#e05252",
+      children:[
+        {id:"akut",
+         de:{label:"Akut",full:"Akute Leukämien — Überblick",details:["Definiert durch ≥20% Blasten im KM (AML) bzw. ≥25% (ALL) — WHO 2022","Reifungsblockade führt zur Akkumulation nicht-funktionstüchtiger Blasten","Rasch lebensbedrohlich ohne Therapie — medizinischer Notfall!","Grundprinzip: intensive Induktionstherapie → Remission → Konsolidierung → ggf. Erhaltung","Stammzelltransplantation je nach Risikoprofil und Remissionsstatus","Wichtigste Unterscheidung: ALL (lymphatisch, häufig Kinder) vs. AML (myeloisch, häufig Erwachsene)","APL (Sonderform der AML): hämatologischer Notfall wegen Blutungsneigung — ATRA sofort!"]},
+         en:{label:"Acute",full:"Acute Leukaemias — Overview",details:["Defined by ≥20% blasts in BM (AML) or ≥25% (ALL) — WHO 2022","Maturation block leads to accumulation of non-functional blasts","Rapidly life-threatening without treatment — medical emergency!","Core principle: intensive induction therapy → remission → consolidation → ± maintenance","Stem cell transplantation depending on risk profile and remission status","Key distinction: ALL (lymphoid, often children) vs AML (myeloid, often adults)","APL (special form of AML): haematological emergency due to haemorrhagic tendency — ATRA immediately!"]},
+         children:[
+          {id:"all",
+           de:{label:"ALL",full:"Akute Lymphatische Leukämie",details:["Häufigste maligne Tumorerkrankung des Kindesalters (Häufigkeitsgipfel ~5 J)","B-ALL (häufigste Form), T-ALL; Klassifikation: FAB + WHO + EGIL (immunologisch)","Diagnosekriterium: >25% Blasten im Knochenmark","Ph+ ALL: BCR-ABL1 t(9;22) → TKI + Chemo, ggf. alloSZT","Klinik: Anämie, Infektneigung, Blutungszeichen (Verdrängung d. normalen Hämatopoese)","Therapie (GMALL-Protokoll): Induktion → Konsolidierung → Erhaltung","ZNS-Prophylaxe: fester Bestandteil jeder ALL-Therapie (intrathekale Chemo ± 24 Gy Schädelbestrahlung)","Blinatumomab (BiTE) bei MRD+ oder r/r B-ALL","Inotuzumab Ozogamicin bei r/r B-ALL","Trisomie 21 und exogene KM-Noxen (Benzol, Strahlung, Zytostatika) als Risikofaktoren","Leitlinie: DGHO / GMALL"]},
+           en:{label:"ALL",full:"Acute Lymphoblastic Leukaemia",details:["Most common childhood cancer (peak age ~5 yrs); also 2nd peak in elderly","B-ALL (most common), T-ALL; classification: FAB + WHO + EGIL (immunological)","Diagnostic criterion: >25% blasts in bone marrow","Ph+ ALL: BCR-ABL1 t(9;22) → TKI + chemo, consider alloSCT","Clinical: anaemia, susceptibility to infection, bleeding (displacement of normal haematopoiesis)","Therapy (GMALL protocol): Induction → Consolidation → Maintenance","CNS prophylaxis: integral part of all ALL therapy (intrathecal chemo ± 24 Gy cranial irradiation)","Blinatumomab (BiTE) for MRD+ or r/r B-ALL","Inotuzumab ozogamicin for r/r B-ALL","Trisomy 21 and exogenous BM toxins (benzene, radiation, cytostatics) as risk factors","Guideline: DGHO / GMALL"],pearls_de:["Blastengrenze: >25% im KM (ALL) — anders als AML (>20%)!","ZNS-Prophylaxe ist IMMER Bestandteil — auch ohne ZNS-Befall!","Ph+ ALL (BCR-ABL+): TKI obligat zusätzlich zur Chemo","Blinatumomab (BiTE) bei MRD-Positivität oder r/r"],pearls_en:["Blast threshold: >25% in BM (ALL) — different from AML (>20%)!","CNS prophylaxis is ALWAYS included — even without CNS involvement!","Ph+ ALL (BCR-ABL+): TKI mandatory in addition to chemo","Blinatumomab (BiTE) for MRD positivity or r/r"]},
+           children:[
+            {id:"ball",
+             de:{label:"B-ALL",full:"B-Zell Akute Lymphatische Leukämie",details:["Häufigste ALL-Form (~85% aller ALL); Ursprung: B-Vorläuferzellen verschiedener Reifungsstufen","Ph+ B-ALL: t(9;22) BCR-ABL1 — häufigste Zytogenetik bei Erwachsenen (~30%); TKI obligat!","Ph-like B-ALL: ähnliches Genexpressionsmuster wie Ph+ ALL, ohne BCR-ABL1; ungünstige Prognose","ETV6-RUNX1 t(12;21): häufigste Translokation bei Kindern (~25%), günstige Prognose","KMT2A-Rearrangement (11q23): Säuglinge, sehr schlechte Prognose","Hyperdiploidy (>50 Chr.): gute Prognose; Hypodiploidy (<44): sehr schlechte Prognose","Immunphänotyp: CD19+, CD22+, CD79a+, TdT+; reife B-ALL = surface IgM+","Blinatumomab (CD19×CD3 BiTE): bei MRD+ oder r/r; Inotuzumab Ozogamicin: r/r","CAR-T: Tisagenlecleucel (Kymriah) für Kinder/junge Erwachsene r/r B-ALL","Leitlinie: DGHO / GMALL"],pearls_de:["Ph+ B-ALL (t9;22): TKI IMMER hinzufügen — auch ohne CML-Anamnese!","ETV6-RUNX1 Kinder: häufigste Translokation + günstige Prognose","Blinatumomab BiTE: wirkt noch bei minimaler Resterkrankung (MRD)","Reife B-ALL ≠ klassische ALL: Therapie wie Burkitt-Lymphom!"],pearls_en:["Ph+ B-ALL (t9;22): ALWAYS add TKI — even without CML history!","ETV6-RUNX1 children: most common translocation + favourable prognosis","Blinatumomab BiTE: active even at minimal residual disease level","Mature B-ALL ≠ classic ALL: treat like Burkitt lymphoma!"]},
+             en:{label:"B-ALL",full:"B-Cell Acute Lymphoblastic Leukaemia",details:["Most common ALL subtype (~85%); origin: B-cell precursors at various maturation stages","Ph+ B-ALL: t(9;22) BCR-ABL1 — most common cytogenetics in adults (~30%); TKI mandatory!","Ph-like B-ALL: similar gene expression to Ph+ ALL but without BCR-ABL1; poor prognosis","ETV6-RUNX1 t(12;21): most common translocation in children (~25%), favourable prognosis","KMT2A rearrangement (11q23): infants, very poor prognosis","Hyperdiploidy (>50 chr): good prognosis; hypodiploidy (<44): very poor prognosis","Immunophenotype: CD19+, CD22+, CD79a+, TdT+; mature B-ALL = surface IgM+","Blinatumomab (CD19×CD3 BiTE): for MRD+ or r/r; inotuzumab ozogamicin: r/r","CAR-T: tisagenlecleucel (Kymriah) for children/young adults r/r B-ALL","Guideline: DGHO / GMALL"]}},
+            {id:"tall",
+             de:{label:"T-ALL",full:"T-Zell Akute Lymphatische Leukämie",details:["Seltener als B-ALL (~15% aller ALL); häufiger bei älteren Kindern; ♂>>♀","Ursprung: T-Vorläuferzellen im Thymus → häufig Mediastinaltumor (70%)!","Immunphänotyp: CD3+ (zytopl.), CD7+, TdT+; Subtypen: ETP-ALL, kortikal, reife T-ALL","ETP-ALL (Early T-Cell Precursor): CD1a−, CD8−, schwaches CD5 — schlechteste Prognose","NOTCH1-Mutation: häufigste Mutation (~60%), targetierbar (γ-Sekretase-Inhibitoren)","CDKN2A-Deletion: häufig, G1/S-Checkpoint-Verlust","Klinik: Mediastinaltumor, ausgeprägte Leukozytose, ZNS-Befall möglich","Therapie: intensivierte GMALL-Protokolle; ZNS-Prophylaxe obligat","Nelarabin: Purinanalogon, zugelassen für r/r T-ALL/T-LBL","Prognose insgesamt schlechter als Kinder-B-ALL","Leitlinie: DGHO / GMALL"],pearls_de:["Mediastinaltumor bei T-ALL: ~70% — immer dran denken!","ETP-ALL = schlechteste Prognose aller ALL-Subtypen","NOTCH1-Mutation ~60% — häufigste Mutation bei T-ALL","Nelarabin: einzige spezifisch für T-ALL zugelassene Substanz"],pearls_en:["Mediastinal tumour in T-ALL: ~70% — always consider!","ETP-ALL = worst prognosis of all ALL subtypes","NOTCH1 mutation ~60% — most common mutation in T-ALL","Nelarabine: only agent specifically approved for T-ALL"]},
+             en:{label:"T-ALL",full:"T-Cell Acute Lymphoblastic Leukaemia",details:["Less common than B-ALL (~15%); more common in older children; ♂>>♀","Origin: T-cell precursors in thymus → often mediastinal tumour (70%)!","Immunophenotype: CD3+ (cytoplasmic), CD7+, TdT+; subtypes: ETP-ALL, cortical, mature T-ALL","ETP-ALL: most immature subtype, CD1a−, CD8−, weak CD5 — worst prognosis","NOTCH1 mutation: most common mutation (~60%); targetable (γ-secretase inhibitors)","CDKN2A deletion: common, G1/S checkpoint loss","Clinical: mediastinal tumour, marked leukocytosis, possible CNS involvement","Therapy: intensified GMALL protocols; CNS prophylaxis mandatory","Nelarabine: purine analogue, approved for r/r T-ALL/T-LBL","Overall worse prognosis than childhood B-ALL","Guideline: DGHO / GMALL"]}},
+           ]},
+          {id:"aml",
+           de:{label:"AML",full:"Akute Myeloische Leukämie",details:["Häufigkeitsgipfel >70 Jahre; Medianes Erkrankungsalter: ca. 70 J","Klassifikation: WHO 2022 (molekulargenetisch) + FAB (morphologisch)","Diagnosekriterium: >20% Blasten im Knochenmark (Auer-Stäbchen = pathognomonisch bei AML)","APL (M3): t(15;17) PML-RARA — hämatologischer NOTFALL wegen foudroyanter Blutungsneigung!","APL: ATRA sofort einleiten — bereits bei klinischem V.a., NOCH VOR genetischer Bestätigung!","Mutationen: FLT3-ITD, NPM1, CEBPA, IDH1/2, TP53","ELN-Risikoklassifikation 2022 (günstig / intermediär / ungünstig)","Standard-Induktion: 7+3 (Cytarabin 7d + Daunorubicin/Idarubicin 3d)","FLT3+: Midostaurin (RATIFY); IDH1+: Ivosidenib; IDH2+: Enasidenib","APL: ATRA + Arsentrioxid (ATO); bei Hochrisiko: + Anthrazyklin","Venetoclax + Azacitidin: Standard für nicht-intensiv behandelbare Patienten","Konsolidierung: alloSZT bei intermediärem/ungünstigem Risiko","Leitlinie: DGHO / ELN 2022"]},
+           en:{label:"AML",full:"Acute Myeloid Leukaemia",details:["Peak incidence >70 years; median age at diagnosis: ~70 yrs","Classification: WHO 2022 (molecular genetics) + FAB (morphological)","Diagnostic criterion: >20% blasts in bone marrow (Auer rods = pathognomonic in AML)","APL (M3): t(15;17) PML-RARA — haematological EMERGENCY due to rapid haemorrhagic course!","APL: start ATRA immediately — at clinical suspicion, BEFORE genetic confirmation!","Mutations: FLT3-ITD, NPM1, CEBPA, IDH1/2, TP53","ELN risk classification 2022 (favourable / intermediate / adverse)","Standard induction: 7+3 (cytarabine 7d + daunorubicin/idarubicin 3d)","FLT3+: midostaurin (RATIFY); IDH1+: ivosidenib; IDH2+: enasidenib","APL: ATRA + arsenic trioxide (ATO); high risk: + anthracycline","Venetoclax + azacitidine: standard for unfit patients","Consolidation: alloSCT for intermediate/adverse risk","Guideline: DGHO / ELN 2022"],pearls_de:["APL (M3): ATRA sofort einleiten — NOCH VOR Zytogenetik! Jede Stunde zählt","Auer-Stäbchen = pathognomonisch für AML — niemals bei MDS oder Lymphomen!","ELN-Risiko (günstig/intermediär/ungünstig) bestimmt alloSZT-Indikation","7+3-Schema auswendig: Cytarabin 7 Tage + Anthrazyklin 3 Tage"],pearls_en:["APL (M3): start ATRA immediately — BEFORE cytogenetics! Every hour counts","Auer rods = pathognomonic for AML — never seen in MDS or lymphomas!","ELN risk (favourable/intermediate/adverse) determines alloSCT indication","7+3 regimen: cytarabine 7 days + anthracycline 3 days"],relations:[{chain:["MDS (>20% Blasten)","Sekundäre AML"],arrows:["Klonale Blastenakkumulation"],note:"MDS → sekundäre AML: häufigste Ursache therapiebedingter AML; schlechtere Prognose als de novo"},{chain:["MPN (CML/MF/PV/ET)","AML-Blastenkrise"],arrows:["Transformation (5–20% Risiko)"],note:"MPN-Transformation: CML-Blastenkrise = AML/ALL; MF hat höchstes Transformationsrisiko"},{chain:["De-novo-AML","CR nach Induktion","Konsolidierung / alloSZT"],arrows:["Induktion 7+3","Risikoadaptiert"],note:"Standardpfad de-novo AML: Risiko (ELN) bestimmt alloSZT-Indikation"}]},
+           children:[
+            {id:"apl",
+             de:{label:"APL\n(M3)",full:"Akute Promyelozyten-Leukämie (APL, AML M3)",details:["t(15;17)(q22;q12) → PML-RARA-Fusion — definiert APL diagnostisch!","Hämatologischer NOTFALL: foudroyante Koagulopathie (DIC) → lebensbedrohliche Blutungen","ATRA sofort einleiten: bereits bei klinischem Verdacht, NOCH VOR genetischer Bestätigung!","ATRA + ATO (Arsentrioxid): Standardtherapie niedrig-/intermediär-Risiko (≤10.000 WBC)","Hochrisiko (WBC >10.000): ATRA + ATO + Anthrazyklin (Idarubicin)","Differenzierungssyndrom: Fieber, Dyspnoe, Gewichtszunahme unter ATRA → sofort Dexamethason!","Prognose: beste unter allen AML-Subtypen — >90% Langzeitremission bei konsequenter Therapie","Kein alloSZT in 1. CR nötig — nur bei Rezidiv","WBC-Zahl bei Diagnose = wichtigster Risikoparameter (Sanz-Score)","Leitlinie: DGHO / ELN 2022"],pearls_de:["ATRA SOFORT — vor Zytogenetik! Jede Stunde zählt bei Blutungsrisiko","t(15;17) PML-RARA = pathognomonsich — Schnelltest: FISH oder RT-PCR","Differenzierungssyndrom unter ATRA: sofort Dexamethason 10 mg 2x/d","Beste Prognose aller AML-Subtypen: >90% bei konsequenter ATRA+ATO-Therapie"],pearls_en:["ATRA IMMEDIATELY — before cytogenetics! Every hour counts with bleeding risk","t(15;17) PML-RARA = pathognomonic — rapid test: FISH or RT-PCR","Differentiation syndrome on ATRA: immediately dexamethasone 10 mg twice daily","Best prognosis of all AML subtypes: >90% with consistent ATRA+ATO therapy"]},
+             en:{label:"APL\n(M3)",full:"Acute Promyelocytic Leukaemia (APL, AML M3)",details:["t(15;17)(q22;q12) → PML-RARA fusion — defines APL diagnostically!","Haematological EMERGENCY: rapidly progressive coagulopathy (DIC) → life-threatening haemorrhage","Start ATRA immediately: at clinical suspicion, BEFORE genetic confirmation!","ATRA + ATO (arsenic trioxide): standard for low/intermediate risk (WBC ≤10,000)","High risk (WBC >10,000): ATRA + ATO + anthracycline (idarubicin)","Differentiation syndrome: fever, dyspnoea, weight gain on ATRA → immediately dexamethasone!","Prognosis: best of all AML subtypes — >90% long-term remission with consistent therapy","No alloSCT needed in 1st CR — only at relapse","WBC at diagnosis = most important risk parameter (Sanz score)","Guideline: DGHO / ELN 2022"]}},
+            {id:"aml_denovo",
+             de:{label:"De-novo\nAML",full:"De-novo AML (Molekulargenetische Subtypen)",details:["Häufigste AML-Form; keine vorangehende Hämatopathie oder Therapie","ELN-Risikoklassifikation 2022: Günstig / Intermediär / Ungünstig","Günstig: NPM1 mut. ohne FLT3-ITD, CEBPAbizallelisch, t(8;21), inv(16)","Intermediär: FLT3-ITD ohne NPM1mut, NPM1wt, andere nicht klassifizierte","Ungünstig: TP53, RUNX1, ASXL1-Mutation; del(17p); komplexer Karyotyp","FLT3-ITD: häufigste Mutation (~30%), Midostaurin (RATIFY) als Standard in FLT3+","NPM1-Mutation: ~30%, günstige Prognose; MRD-Monitoring via NPM1-PCR","IDH1+: Ivosidenib; IDH2+: Enasidenib — oral zielgerichtete Therapien","Standard-Induktion: 7+3 (Cytarabin d1-7 + Anthrazyklin d1-3)","Venetoclax + Azacitidin: für nicht-intensiv therapierbare Patienten","Leitlinie: DGHO / ELN 2022"],pearls_de:["ELN-Risiko bestimmt alloSZT-Indikation in CR1 — auswendig lernen!","FLT3-ITD: ungünstiger Faktor, aber Midostaurin verbessert Überleben signifikant","NPM1-Mutation: MRD-Monitoring via PCR — molekulare Remission ist Therapieziel","Venetoclax+Aza: Standard bei Unfit-Patienten (>75 J. oder Komorbiditäten)"],pearls_en:["ELN risk determines alloSCT indication in CR1 — memorise!","FLT3-ITD: adverse factor, but midostaurin significantly improves survival","NPM1 mutation: MRD monitoring via PCR — molecular remission is treatment goal","Venetoclax+Aza: standard for unfit patients (>75 yrs or comorbidities)"]},
+             en:{label:"De-novo\nAML",full:"De-novo AML (Molecular Genetic Subtypes)",details:["Most common AML form; no preceding haematological disease or prior therapy","ELN risk classification 2022: Favourable / Intermediate / Adverse","Favourable: NPM1 mut. without FLT3-ITD, biallelic CEBPA, t(8;21), inv(16)","Intermediate: FLT3-ITD without NPM1mut, NPM1wt, other unclassified","Adverse: TP53, RUNX1, ASXL1 mutation; del(17p); complex karyotype","FLT3-ITD: most common mutation (~30%), midostaurin (RATIFY) standard in FLT3+","NPM1 mutation: ~30%, favourable prognosis; MRD monitoring via NPM1-PCR","IDH1+: ivosidenib; IDH2+: enasidenib — oral targeted therapies","Standard induction: 7+3 (cytarabine d1-7 + anthracycline d1-3)","Venetoclax + azacitidine: for unfit patients","Guideline: DGHO / ELN 2022"]}},
+            {id:"aml_sek",
+             de:{label:"Sekundäre\nAML",full:"Sekundäre / Therapieassoziierte AML",details:["Entsteht aus MDS, MPN oder nach Chemo-/Strahlentherapie","Therapieassoziierte AML (t-AML): nach Topoisomerase-II-Hemmern oder Alkylantien","t-AML nach Topoisomerase-II: MLL-Rearrangements (11q23), kurze Latenz (1-3 J.)","t-AML nach Alkylantien: komplexer Karyotyp, TP53-Mutation, lange Latenz (5-10 J.)","Sekundäre AML aus MDS: SF3B1, TET2, ASXL1, TP53 — schlechtere Prognose als de novo","Venetoclax + Azacitidin: bevorzugt für ältere / ungeeignete Patienten","Enasidenib (IDH2+) / Ivosidenib (IDH1+): auch bei sekundärer AML wirksam","AlloSZT anstreben bei geeigneten Patienten — einzige kurative Option","Prognose deutlich schlechter als de-novo-AML","Leitlinie: DGHO / ELN 2022"],pearls_de:["t-AML nach Topoisomerase-II: kurze Latenz + 11q23 MLL — merken!","t-AML nach Alkylantien: lange Latenz + TP53 + komplexer Karyotyp — merken!","Sekundäre AML: schlechtere Prognose als de-novo → AlloSZT wenn möglich","Venetoclax+Aza auch bei sekundärer AML wirksam (TP53wt besser)"],pearls_en:["t-AML after topoisomerase-II: short latency + 11q23 MLL — memorise!","t-AML after alkylating agents: long latency + TP53 + complex karyotype — memorise!","Secondary AML: worse prognosis than de-novo → alloSCT if possible","Venetoclax+Aza also effective in secondary AML (TP53wt better)"]},
+             en:{label:"Secondary\nAML",full:"Secondary / Therapy-Related AML",details:["Arises from MDS, MPN or after chemotherapy/radiotherapy","Therapy-related AML (t-AML): after topoisomerase-II inhibitors or alkylating agents","t-AML after topoisomerase-II: MLL rearrangements (11q23), short latency (1-3 yrs)","t-AML after alkylating agents: complex karyotype, TP53 mutation, long latency (5-10 yrs)","Secondary AML from MDS: SF3B1, TET2, ASXL1, TP53 — worse prognosis than de novo","Venetoclax + azacitidine: preferred for older/unfit patients","Enasidenib (IDH2+) / ivosidenib (IDH1+): also active in secondary AML","AlloSCT for eligible patients — only curative option","Prognosis significantly worse than de-novo AML","Guideline: DGHO / ELN 2022"]}},
+           ]},
+        ]},
+        {id:"chronisch",
+         de:{label:"Chronisch",full:"Chronische Leukämien — Überblick",details:["Chronische Leukämien verlaufen über Jahre bis Jahrzehnte — häufig Zufallsbefund!","Zellen reifen in der Regel aus (anders als akute Leukämien) → oft lange keine Symptome","Einteilung: lymphatisch (CLL) vs. myeloisch (CML, HCL)","CLL: häufigste Leukämie des Erwachsenen in Deutschland; indolentes B-Zell-Lymphom","CML: Philadelphia-Chromosom t(9;22) = Markenzeichen; durch TKI revolutionäre Prognose","HCL: sehr seltene B-Zell-Erkrankung, BRAF V600E-Mutation, exzellentes Therapieansprechen","Therapiezeitpunkt oft abhängig von Symptomen und Stadien — Watch & Wait möglich","Transformation in akute Leukämie möglich (v.a. bei CML: Blastenkrise)"]},
+         en:{label:"Chronic",full:"Chronic Leukaemias — Overview",details:["Chronic leukaemias progress over years to decades — often an incidental finding!","Cells generally mature normally (unlike acute leukaemias) → often asymptomatic for long periods","Classification: lymphoid (CLL) vs myeloid (CML, HCL)","CLL: most common leukaemia in adults in Germany; indolent B-cell lymphoma","CML: Philadelphia chromosome t(9;22) = hallmark; prognosis revolutionised by TKI therapy","HCL: very rare B-cell disorder, BRAF V600E mutation, excellent treatment response","Timing of treatment often depends on symptoms and stage — watch & wait possible","Transformation to acute leukaemia possible (especially CML: blast crisis)"]},
+         children:[
+          {id:"cll",
+           de:{label:"CLL",full:"Chronische Lymphatische Leukämie",details:["Häufigste Leukämie des Erwachsenen in Deutschland (Median: 70-72 Jahre); ♂>♀ (2:1)","WHO-Klassifikation: niedrig-malignes B-Zell-Lymphom (CD5+, CD19+, CD23+, CD20 schwach)","Gumprecht-Kernschatten im Blutausstrich (nicht beweisend, aber typisch!)","Binet-Klassifikation: A (<3 Regionen, Hb >10 g/dl) → medianes Überleben >10 Jahre","Binet B (≥3 Regionen) → 5 Jahre; Binet C (Hb <10 g/dl od. Thrombozyten <100.000) → <3 Jahre","Prognosemarker: IGHV-Status, del(17p), TP53-Mutation, del(11q) — del17p → Alemtuzumab!","Stadium A: Therapie nur in Einzelfällen; Stadium B: symptomatische Pat.; Stadium C: alle","TP53-Störung → BTK-Inhibitor (kein Fludarabin!); Erstlinie: Venetoclax+Obinutuzumab oder Ibrutinib","Medikamentös NICHT kurativ — einzig alloSZT ist potenziell kurativ!","Richter-Transformation → aggressive NHL-Therapie","Leitlinie: DGHO / ESMO / iwCLL 2018"]},
+           en:{label:"CLL",full:"Chronic Lymphocytic Leukaemia",details:["Most common adult leukaemia in Germany (median: 70-72 yrs); ♂>♀ (2:1)","WHO classification: low-grade B-cell lymphoma (CD5+, CD19+, CD23+, CD20 dim)","Gumprecht smear shadows (not diagnostic alone, but characteristic!)","Binet A (<3 regions, Hb >10 g/dL) → median survival >10 years","Binet B (≥3 regions) → 5 years; Binet C (Hb <10 g/dL or platelets <100,000) → <3 years","Prognostic markers: IGHV status, del(17p), TP53, del(11q) — del17p → alemtuzumab!","Stage A: treat only exceptionally; Stage B: symptomatic patients; Stage C: all","TP53 disruption → BTK inhibitor (no fludarabine!); first line: venetoclax+obinutuzumab or ibrutinib","Not curable with drug therapy — only alloSCT is potentially curative!","Richter transformation → aggressive NHL therapy","Guideline: DGHO / ESMO / iwCLL 2018"],pearls_de:["Gumprecht-Kernschatten = typisch im Blutausstrich (nicht beweisend)","del17p / TP53-Mutation → kein Fludarabin! → BTK-Inhibitor (Ibrutinib/Acalabrutinib) oder Venetoclax","Medikamentös NIE kurativ — nur alloSZT ist potenziell kurativ","Binet C = immer behandeln (Hb <10 g/dl oder Thrombozyten <100.000)"],pearls_en:["Gumprecht smear shadows = characteristic (not pathognomonic)","del17p / TP53 mutation → no fludarabine! → BTK inhibitor (ibrutinib/acalabrutinib) or venetoclax","Never curable with drugs — only alloSCT is potentially curative","Binet C = always treat (Hb <10 g/dL or platelets <100,000)"],
+           children:[
+            {id:"cll_binet_a",
+             de:{label:"Binet A",full:"CLL Binet-Stadium A",details:["<3 Lymphknotenregionen betroffen; Hb ≥10 g/dl; Thrombozyten ≥100.000/µl","Medianes Überleben >10 Jahre — weitgehend normales Leben möglich","Watch & Wait ist Standard — keine Therapie ohne Symptome oder Progression","Erste Kontrolluntersuchung nach 3-6 Monaten; danach jährlich bei Stabilität","Ausnahme: autoimmunhämolytische Anämie (AIHA) oder ITP → Steroid/Rituximab","IGHV-Status und Zytogenetik (del17p, del11q) bestimmen Prognose","Leitlinie: DGHO / iwCLL 2018"],pearls_de:["Binet A = beobachten! Keine Therapie bei asymptomatischem Befund","Medianes OS >10 J. — Patient kann normal alt werden","Ausnahme: AIHA oder ITP unter CLL → dann behandeln"],pearls_en:["Binet A = observe! No treatment for asymptomatic disease","Median OS >10 yrs — patient can have near-normal lifespan","Exception: AIHA or ITP from CLL → then treat"]},
+             en:{label:"Binet A",full:"CLL Binet Stage A",details:["<3 lymph node regions involved; Hb ≥10 g/dL; platelets ≥100,000/µL","Median survival >10 years — largely normal life possible","Watch & wait is standard — no treatment without symptoms or progression","First review 3-6 months; annually thereafter if stable","Exception: autoimmune haemolytic anaemia (AIHA) or ITP → steroids/rituximab","IGHV status and cytogenetics (del17p, del11q) determine prognosis","Guideline: DGHO / iwCLL 2018"]}},
+            {id:"cll_binet_b",
+             de:{label:"Binet B",full:"CLL Binet-Stadium B",details:["≥3 Lymphknotenregionen betroffen; Hb ≥10 g/dl; Thrombozyten ≥100.000/µl","Medianes Überleben ~5 Jahre","Therapie nur bei Symptomen: B-Symptomatik, rascher Lymphozytenanstieg (Verdopplungszeit <6 Mo.), Zytopenie","Watch & Wait bei asymptomatischen Patienten weiterhin möglich","IGHV-Mutationsstatus und Zytogenetik (del17p) entscheiden über Therapiewahl","Erstlinie: Venetoclax+Obinutuzumab ODER Ibrutinib/Acalabrutinib (BTK-Inhibitor)","del17p/TP53: kein Fludarabin → BTK-Inhibitor obligat","Leitlinie: DGHO / iwCLL 2018"],pearls_de:["Binet B = nur bei Symptomen behandeln! Watch & Wait weiter möglich","del17p/TP53: BTK-Inhibitor — kein Fludarabin (Chemoimmuntherapie versagt)","Venetoclax+Obin. oder Ibrutinib: gleichwertige Erstlinienoptionen"],pearls_en:["Binet B = treat only when symptomatic! Watch & wait still possible","del17p/TP53: BTK inhibitor — no fludarabine (chemoimmunotherapy fails)","Venetoclax+Obin. or ibrutinib: equivalent first-line options"]},
+             en:{label:"Binet B",full:"CLL Binet Stage B",details:["≥3 lymph node regions involved; Hb ≥10 g/dL; platelets ≥100,000/µL","Median survival ~5 years","Treat only when symptomatic: B symptoms, rapid lymphocyte doubling time (<6 mo), cytopenias","Watch & wait still possible in asymptomatic patients","IGHV status and cytogenetics (del17p) determine treatment choice","First line: venetoclax+obinutuzumab OR ibrutinib/acalabrutinib (BTK inhibitor)","del17p/TP53: no fludarabine → BTK inhibitor mandatory","Guideline: DGHO / iwCLL 2018"]}},
+            {id:"cll_binet_c",
+             de:{label:"Binet C",full:"CLL Binet-Stadium C",details:["Hb <10 g/dl UND/ODER Thrombozyten <100.000/µl — unabhängig von Lymphknotenbefall","Alle Binet-C-Patienten werden behandelt — kein Watch & Wait!","Medianes Überleben <3 Jahre ohne adäquate Therapie","Therapie: Venetoclax+Obinutuzumab (1. Wahl) oder BTK-Inhibitor (Ibrutinib/Acalabrutinib)","del17p/TP53: BTK-Inhibitor obligat — kein Fludarabin!","Ältere/komorbide Patienten: Reduktion oder Anpassung der Therapieintensität","Richter-Transformation (~5%): Übergang in aggressives NHL → dann NHL-Therapie","AlloSZT: nur bei jungen Hochrisikopatienten mit Therapieversagen erwägen","Leitlinie: DGHO / iwCLL 2018"],pearls_de:["Binet C = IMMER behandeln (Hb <10 g/dl ODER Thrombozyten <100.000)","del17p/TP53 → KEIN Fludarabin, BTK-Inhibitor oder Venetoclax","Richter-Transformation: Biopsie bei plötzlicher klinischer Verschlechterung!","Medikamentös nicht kurativ — alloSZT nur individuell erwägen"],pearls_en:["Binet C = ALWAYS treat (Hb <10 g/dL OR platelets <100,000)","del17p/TP53 → NO fludarabine, BTK inhibitor or venetoclax","Richter transformation: biopsy on sudden clinical deterioration!","Not curable with drugs — alloSCT only individually considered"]},
+             en:{label:"Binet C",full:"CLL Binet Stage C",details:["Hb <10 g/dL AND/OR platelets <100,000/µL — regardless of lymph node involvement","All Binet C patients are treated — no watch & wait!","Median survival <3 years without adequate therapy","Therapy: venetoclax+obinutuzumab (1st choice) or BTK inhibitor (ibrutinib/acalabrutinib)","del17p/TP53: BTK inhibitor mandatory — no fludarabine!","Elderly/comorbid patients: reduce or adapt therapy intensity","Richter transformation (~5%): progression to aggressive NHL → then NHL therapy","AlloSCT: consider only in young high-risk patients with treatment failure","Guideline: DGHO / iwCLL 2018"]}},
+           ]}},
+          {id:"cml",
+           de:{label:"CML",full:"Chronische Myeloische Leukämie",details:["Philadelphia-Chromosom t(9;22)(q34;q11) → BCR-ABL1-Fusionsgen → unkontrollierte Tyrosinkinase-Aktivität","Inzidenz: 1,2-1,5/100.000/Jahr; Häufigkeitsgipfel 6. Lebensjahrzehnt","Verlauf: Chronische Phase (bis 10 J) → Akzelerationsphase → Blastenkrise (= akute Leukämie)","WICHTIG: In der chronischen Phase KEINE gesteigerte Infektanfälligkeit — Granulozyten reifen aus!","Diagnose oft als Zufallsbefund; ausgeprägte Leukozytose, Basophilie, extreme Splenomegalie","Erstlinie: Imatinib 400mg/d ODER Nilotinib/Dasatinib/Bosutinib (2G-TKI) je nach ELTS-Score","T315I-Mutation: Ponatinib oder Asciminib (STAMP-Inhibitor)","TFR (Treatment-Free Remission): bei tiefem molekularem Ansprechen möglich (Ziel: MR4.5)","Prognose: Bei optimalem TKI-Ansprechen fast NORMALE Lebenserwartung!","Haupttodesursache: Komorbiditäten, nicht die CML selbst","Blastenkrise: Chemo + TKI + alloSZT anstreben","Leitlinie: DGHO / ELN 2020"]},
+           en:{label:"CML",full:"Chronic Myeloid Leukaemia",details:["Philadelphia chromosome t(9;22)(q34;q11) → BCR-ABL1 fusion gene → constitutive tyrosine kinase activity","Incidence: 1.2-1.5/100,000/yr; peak in 6th decade","Course: chronic phase (up to 10 yrs) → accelerated phase → blast crisis (= acute leukaemia)","KEY: In chronic phase, NO increased susceptibility to infection — granulocytes mature normally!","Often diagnosed incidentally; marked leukocytosis, basophilia, extreme splenomegaly","First line: imatinib 400mg/d OR nilotinib/dasatinib/bosutinib (2G-TKI) depending on ELTS score","T315I mutation: ponatinib or asciminib (STAMP inhibitor)","TFR (treatment-free remission): possible with deep molecular response (target: MR4.5)","Prognosis: NEAR-NORMAL life expectancy with optimal TKI response!","Main cause of death: comorbidities, not CML itself","Blast crisis: chemo + TKI + alloSCT","Guideline: DGHO / ELN 2020"],pearls_de:["Chronische Phase: KEINE erhöhte Infektanfälligkeit — Granulozyten reifen aus!","t(9;22) = Philadelphia-Chromosom → BCR-ABL1-Fusionsgen","Haupttodesursache: Komorbiditäten, NICHT die CML selbst","TFR (therapiefreie Remission) möglich bei tiefem molekularem Ansprechen (MR4.5)"],pearls_en:["Chronic phase: NO increased infection risk — granulocytes mature normally!","t(9;22) = Philadelphia chromosome → BCR-ABL1 fusion gene","Main cause of death: comorbidities, NOT CML itself","TFR (treatment-free remission) possible with deep molecular response (MR4.5)"],relations:[{chain:["Chronische Phase","Akzelerationsphase","Blastenkrise (= AML/ALL)"],arrows:["Monate bis Jahre","Rasch, ohne TKI"],note:"CML-Verlauf ohne adäquate Therapie — TKI verhindert Progression"}],
+           children:[
+            {id:"cml_1g",
+             de:{label:"1G-TKI\n(Imatinib)",full:"CML: 1. Generation TKI (Imatinib)",details:["Imatinib 400 mg/d: erster BCR-ABL1-TKI, revolutionierte CML-Prognose (IRIS-Studie)","Therapieziele: CHR nach 3 Mo., CCyR nach 12 Mo., MMR (BCR-ABL1 ≤0,1%) nach 18 Mo.","ELN-Meilensteine: BCR-ABL1-Monitoring alle 3 Monate via qRT-PCR (IS-Skala)","Nebenwirkungen: Ödeme, Übelkeit, Muskelkrämpfe, Leberenzymerhöhung","ELTS-Score: Niedrigrisiko → Imatinib als valide Alternative zu 2G-TKI","TFR möglich bei anhaltender MR4.5 (>2 J.) → Behandlungsfreie Remission als Therapieziel","T315I-Mutation: Imatinib NICHT wirksam → Ponatinib oder Asciminib","Leitlinie: DGHO / ELN 2020"],pearls_de:["Imatinib = historischer Durchbruch; heute oft 2G-TKI bevorzugt bei Hochrisiko","ELTS-Niedrigrisiko: Imatinib weiterhin Standard (ELN 2020)","T315I = Gatekeeper-Mutation: resistent gegen alle TKI außer Ponatinib/Asciminib","TFR Ziel: MR4.5 für mind. 2 Jahre unter Imatinib"],pearls_en:["Imatinib = historic breakthrough; 2G-TKI often preferred in high-risk today","ELTS low-risk: imatinib still standard (ELN 2020)","T315I = gatekeeper mutation: resistant to all TKI except ponatinib/asciminib","TFR goal: MR4.5 for at least 2 years on imatinib"]},
+             en:{label:"1G-TKI\n(Imatinib)",full:"CML: 1st Generation TKI (Imatinib)",details:["Imatinib 400 mg/d: first BCR-ABL1 TKI, revolutionised CML prognosis (IRIS trial)","Therapy goals: CHR at 3 mo, CCyR at 12 mo, MMR (BCR-ABL1 ≤0.1%) at 18 mo","ELN milestones: BCR-ABL1 monitoring every 3 months by qRT-PCR (IS scale)","Side effects: oedema, nausea, muscle cramps, elevated liver enzymes","ELTS score: low risk → imatinib as valid alternative to 2G-TKI","TFR possible with sustained MR4.5 (>2 yrs) → treatment-free remission as therapy goal","T315I mutation: imatinib NOT effective → ponatinib or asciminib","Guideline: DGHO / ELN 2020"]}},
+            {id:"cml_2g",
+             de:{label:"2G-TKI\n(Nilotinib etc.)",full:"CML: 2. Generation TKI (Nilotinib, Dasatinib, Bosutinib)",details:["Schnelleres und tieferes Ansprechen als Imatinib; bevorzugt bei Hochrisiko-CML (ELTS)","Nilotinib: potenter ABL-Inhibitor; NW: QTc-Verlängerung, periphere art. Verschlusskrankheit","Dasatinib: ZNS-gängig; NW: Pleuraerguss, pulmonale Hypertonie; auch bei T315I nicht wirksam","Bosutinib: Src/ABL-Inhibitor; NW: Diarrhoe; günstigeres kardiovaskuläres Profil","ELTS-Hochrisiko: 2G-TKI als bevorzugte Erstlinie","Molekulares Monitoring alle 3 Monate; Therapiewechsel bei Versagen oder Intoleranz","Tieferes Ansprechen → höhere TFR-Rate möglich","T315I-Mutation: alle 2G-TKI unwirksam → Ponatinib / Asciminib","Leitlinie: DGHO / ELN 2020"],pearls_de:["Dasatinib: ZNS-gängig — wichtig bei ZNS-Beteiligung oder T-Zell-ALL-Komponente","Nilotinib: Kontraindikation bei pAVK oder kardiovaskulären Risikofaktoren!","Bosutinib: günstigstes kardiovaskuläres Profil der 2G-TKI","2G-TKI → tieferes Ansprechen → mehr TFR-Kandidaten"],pearls_en:["Dasatinib: CNS-penetrant — important for CNS involvement or T-ALL component","Nilotinib: contraindicated with PAD or cardiovascular risk factors!","Bosutinib: most favourable cardiovascular profile of 2G-TKI","2G-TKI → deeper response → more TFR candidates"]},
+             en:{label:"2G-TKI\n(Nilotinib etc.)",full:"CML: 2nd Generation TKI (Nilotinib, Dasatinib, Bosutinib)",details:["Faster and deeper responses than imatinib; preferred in high-risk CML (ELTS)","Nilotinib: potent ABL inhibitor; AE: QTc prolongation, peripheral arterial disease","Dasatinib: CNS-penetrant; AE: pleural effusion, pulmonary hypertension; ineffective against T315I","Bosutinib: Src/ABL inhibitor; AE: diarrhoea; more favourable cardiovascular profile","ELTS high risk: 2G-TKI as preferred first line","Molecular monitoring every 3 months; switch therapy on failure or intolerance","Deeper response → higher TFR rate possible","T315I mutation: all 2G-TKI ineffective → ponatinib / asciminib","Guideline: DGHO / ELN 2020"]}},
+            {id:"cml_blast",
+             de:{label:"Blasten-\nkrise",full:"CML Blastenkrise",details:["Definition: ≥20% Blasten im KM oder Blut (= akute Leukämie-Schwelle)","Myeloische Blastenkrise (~70%): AML-Bild; lymphatische Blastenkrise (~30%): ALL-Bild","Medianes Überleben ohne alloSZT: <6 Monate — medizinischer Notfall!","Therapie: TKI + AML-/ALL-Induktionschemotherapie → CR anstreben → alloSZT!","T315I-Mutation in Blastenkrise häufig → Ponatinib oder Asciminib bevorzugen","Prognose: sehr schlecht; alloSZT in 2. CR einzige potenziell kurative Option","Dasatinib: ZNS-gängig, besonders bei lymphatischer Blastenkrise","Leitlinie: DGHO / ELN 2020"],pearls_de:["Blastenkrise = medizinischer Notfall → sofort TKI + Induktionschemotherapie","AlloSZT MUSS in CR angestrebt werden — ohne SZT keine kurative Chance","Lymphatische Blastenkrise: wie Ph+ ALL behandeln + TKI","T315I in Blastenkrise: Ponatinib oder Asciminib (kein normaler TKI wirksam!)"],pearls_en:["Blast crisis = medical emergency → immediately TKI + induction chemotherapy","AlloSCT MUST be aimed for in CR — no curative chance without SCT","Lymphoid blast crisis: treat as Ph+ ALL + TKI","T315I in blast crisis: ponatinib or asciminib (no standard TKI effective!)"]},
+             en:{label:"Blast\nCrisis",full:"CML Blast Crisis",details:["Definition: ≥20% blasts in BM or blood (= acute leukaemia threshold)","Myeloid blast crisis (~70%): AML picture; lymphoid blast crisis (~30%): ALL picture","Median survival without alloSCT: <6 months — medical emergency!","Therapy: TKI + AML/ALL induction chemotherapy → achieve CR → alloSCT!","T315I mutation frequent in blast crisis → prefer ponatinib or asciminib","Prognosis: very poor; alloSCT in 2nd CR only potentially curative option","Dasatinib: CNS-penetrant, especially useful in lymphoid blast crisis","Guideline: DGHO / ELN 2020"]}},
+           ]}},
+          {id:"hcl",
+           de:{label:"HCL",full:"Haarzell-Leukämie",details:["BRAF V600E-Mutation in >90%","Klinik: Panzytopenie, Splenomegalie, keine Lymphadenopathie (TRAP-positiv)","Immunphänotyp: CD11c+, CD25+, CD103+, CD123+, Annexin A1+","1. Wahl: Cladribin (2-CdA) ODER Pentostatin (Purinanaloga) — hohe CR-Rate","2. Wahl: Rituximab oder Interferon-alpha (Immuntherapie)","Bei Therapieresistenz oder Rückfall: Kombination Chemo + Immuntherapie","In Ausnahmefällen: Splenektomie","r/r HCL: Vemurafenib (bei BRAF V600E) oder Moxetumomab Pasudotox","Leitlinie: DGHO"]},
+           en:{label:"HCL",full:"Hairy Cell Leukaemia",details:["BRAF V600E mutation in >90%","Clinical: pancytopenia, splenomegaly, no lymphadenopathy (TRAP positive)","Immunophenotype: CD11c+, CD25+, CD103+, CD123+, Annexin A1+","1st choice: cladribine (2-CdA) OR pentostatin (purine analogues) — high CR rate","2nd choice: rituximab or interferon-alpha (immunotherapy)","Therapy-resistant or relapsed: combination chemo + immunotherapy","Exceptionally: splenectomy","r/r HCL: vemurafenib (BRAF V600E) or moxetumomab pasudotox","Guideline: DGHO"],pearls_de:["BRAF V600E in >95% — diagnostisch wegweisend (und therapeutisch: Vemurafenib)","1. Wahl: Cladribin (2-CdA) ODER Pentostatin — merken!","TRAP-positiv im Blutausstrich (Tartrat-resistente saure Phosphatase)","Typisch: Panzytopenie + Splenomegalie, KEINE Lymphadenopathie"],pearls_en:["BRAF V600E in >95% — diagnostically decisive (and therapeutic: vemurafenib)","1st choice: cladribine (2-CdA) OR pentostatin — memorise!","TRAP positive on blood smear (tartrate-resistant acid phosphatase)","Typical: pancytopenia + splenomegaly, NO lymphadenopathy"]}},
+        ]},
+      ],
+    },
+    {
+      id:"lymphom",
+      de:{label:"LYMPHOME",desc:"B- und\nT-Zell-NHL",full:"Lymphome — Überblick",details:["Maligne Erkrankungen des lymphatischen Systems: B-Zellen, T-Zellen, NK-Zellen","Hauptunterscheidung: Hodgkin-Lymphom (HL) vs. Non-Hodgkin-Lymphome (NHL)","NHL weiter: indolent (langsam, oft nicht kurativ) vs. aggressiv (kurativ behandelbar!)","Paradox: indolente NHL = schlechtere Kurierbarkeit bei Systembefall; aggressive NHL = prinzipiell heilbar","Häufigstes NHL: DLBZL (aggressiv); follikuläres Lymphom (indolent)","Staging: Ann-Arbor-Klassifikation I-IV; PET-CT ist Standard","B-Symptome: Fieber >38°C, Nachtschweiß (Wechsel der Nachtwäsche!), Gewichtsverlust >10% in 6 Monaten","Ätiologie NHL: EBV (Burkitt), H. pylori (MALT), HIV (aggressive B-Zell-NHL), Immunsuppression","Histologie ist obligat zur Diagnosestellung — keine Feinnadelaspiration!"]},
+      en:{label:"LYMPHOMAS",desc:"B- and\nT-cell NHL",full:"Lymphomas — Overview",details:["Malignant diseases of the lymphatic system: B-cells, T-cells, NK-cells","Main distinction: Hodgkin lymphoma (HL) vs non-Hodgkin lymphomas (NHL)","NHL further: indolent (slow, often not curable) vs aggressive (curably treatable!)","Paradox: indolent NHL = poor curability with systemic involvement; aggressive NHL = principally curable","Most common NHL: DLBCL (aggressive); follicular lymphoma (indolent)","Staging: Ann-Arbor classification I-IV; PET-CT is standard","B symptoms: fever >38°C, night sweats (requiring change of nightwear!), weight loss >10% in 6 months","NHL aetiology: EBV (Burkitt), H. pylori (MALT), HIV (aggressive B-cell NHL), immunosuppression","Histology mandatory for diagnosis — no fine needle aspiration!"]},
+      color:"#5b8dee",
+      children:[
+        {id:"hl",
+         de:{label:"Hodgkin-\nLymphom",full:"Hodgkin-Lymphome — Überblick",details:["Zwei klar abgrenzbare Entitäten mit sehr unterschiedlichem Immunphänotyp und Prognose","Klassisches HL (95%): Reed-Sternberg-Zellen; CD15+, CD30+, CD20−","NLPHL (5%): LP-Zellen (Popcorn-Zellen); CD20+, CD15−, CD30− — indolenter, bessere Prognose","Beide: häufig junge Erwachsene; kurativ behandelbar in den meisten Stadien","Staging mit PET-CT obligat — therapieentscheidend (Interim-PET nach 2 Zyklen)","EBV-Assoziation beim klassischen HL","Gemeinsam: Lymphknotenmanifestation, B-Symptome, Pruritus möglich"]},
+         en:{label:"Hodgkin\nLymphoma",full:"Hodgkin Lymphomas — Overview",details:["Two clearly distinct entities with very different immunophenotype and prognosis","Classical HL (95%): Reed-Sternberg cells; CD15+, CD30+, CD20−","NLPHL (5%): LP cells (popcorn cells); CD20+, CD15−, CD30− — more indolent, better prognosis","Both: common in young adults; curatively treatable in most stages","PET-CT staging mandatory — determines therapy (interim PET after 2 cycles)","EBV association in classical HL","In common: lymph node involvement, B symptoms, pruritus possible"]},
+         children:[
+          {id:"khl",
+           de:{label:"Klassisches\nHodgkin-L.",full:"Klassisches Hodgkin-Lymphom",details:["B-Zell-Lymphom; 2 Altersgipfel: 20.-30. LJ + >55. LJ; ♂>♀ (3:2)","Reed-Sternberg-Zellen (mehrkernig) + Hodgkin-Zellen (einkernig): CD15+, CD30+, CD20-, EBV assoz.","Subtypen: Nodulär-sklerosierend (70%, häufigste), Gemischtzellulär, Lymphozytenreich/-arm","Klinik: indolente LK-Pakete zervikal (70%) + mediastinal (60%); B-Symptomatik","Charakteristisch: Alkoholschmerz (Schmerz in befallenen LK nach Alkohol) + Pel-Ebstein-Fieber","Staging: Ann-Arbor-Klassifikation + PET-CT obligat für Therapieplanung","GHSG-Risikofaktoren: Bulky, Extranodalbefall, BSG hoch, ≥3 Regionen","Frühstadium günstig: 2x ABVD + 20 Gy Involved Site","Intermediär (18-60 J): 2+2-Schema (2x eBEACOPP eskl. + 2x ABVD) + PET-adaptiert","Fortgeschritten: 4-6x BrECADD (Brentuximab+ECADD), PET-adaptiert — kurativ!","r/r: Brentuximab Vedotin + ASZT; dann Nivolumab/Pembrolizumab","Leitlinie: DGHO / GHSG"]},
+           en:{label:"Classical\nHodgkin L.",full:"Classical Hodgkin Lymphoma",details:["B-cell lymphoma; 2 age peaks: 20-30 yrs + >55 yrs; ♂>♀ (3:2)","Reed-Sternberg cells (multinuclear) + Hodgkin cells (mononuclear): CD15+, CD30+, CD20-, EBV associated","Subtypes: nodular sclerosis (70%, most common), mixed cellularity, lymphocyte-rich/-depleted","Clinical: indolent LN packages cervical (70%) + mediastinal (60%); B symptoms","Characteristic: alcohol pain (pain in involved LN after alcohol) + Pel-Ebstein fever","Staging: Ann-Arbor + PET-CT mandatory for treatment planning","GHSG risk factors: bulky, extranodal, high ESR, ≥3 regions","Early stage favourable: 2x ABVD + 20 Gy involved site","Intermediate (18-60 yrs): 2+2-scheme (2x eBEACOPP esc. + 2x ABVD), PET-adapted","Advanced: 4-6x BrECADD (brentuximab+ECADD), PET-adapted — curative!","r/r: brentuximab vedotin + ASCT; then nivolumab/pembrolizumab","Guideline: DGHO / GHSG"],pearls_de:["Reed-Sternberg-Zellen: CD15+, CD30+, CD20− (auswendig lernen!)","Alkoholschmerz = pathognomonisch für Hodgkin-Lymphom","Pel-Ebstein-Fieber: wellenförmig, tage- bis wochenlang","PET-CT obligat — Interim-PET nach 2 Zyklen ist therapieentscheidend!"],pearls_en:["Reed-Sternberg cells: CD15+, CD30+, CD20− (memorise!)","Alcohol pain = pathognomonic for Hodgkin lymphoma","Pel-Ebstein fever: undulating, lasting days to weeks","PET-CT mandatory — interim PET after 2 cycles determines further therapy!"]}},
+          {id:"nlphl",
+           de:{label:"Noduläres LP-\nHodgkin-L.",full:"Noduläres lymphozytenprädominantes Hodgkin-Lymphom",details:["Sehr selten; LP-Zellen (Popcorn-Zellen): CD20+, CD45+, CD79a+, CD15-, CD30-","Indolenter Verlauf, exzellente Prognose; Histologie obligat zur Diagnosestellung (keine FNA!)","Staging: Ann-Arbor + PET-CT","Stadium IA OHNE Risikofaktoren: ausschliesslich 30 Gy Involved Site Radiatio möglich","Fortgeschritten: Rituximab ± Chemo (R-ABVD oder R-CHOP)","Transformationsrisiko in aggressives B-Zell-Lymphom (~5%)","Leitlinie: DGHO / GHSG"]},
+           en:{label:"Nodular LP\nHodgkin L.",full:"Nodular Lymphocyte-Predominant Hodgkin Lymphoma",details:["Very rare; LP cells (popcorn cells): CD20+, CD45+, CD79a+, CD15-, CD30-","Indolent course, excellent prognosis; histology mandatory for diagnosis (no FNA!)","Staging: Ann-Arbor + PET-CT","Stage IA WITHOUT risk factors: 30 Gy involved site radiotherapy alone is sufficient","Advanced: rituximab ± chemo (R-ABVD or R-CHOP)","Risk of transformation to aggressive B-cell lymphoma (~5%)","Guideline: DGHO / GHSG"],pearls_de:["LP-Zellen: CD20+, CD15−, CD30− — GEGENTEIL vom klassischen HL!","Stadium IA ohne Risikofaktoren: 30 Gy Involved Site ALLEIN ausreichend","Keine FNA zur Diagnosestellung — immer Biopsie mit Exstirpation","Transformationsrisiko in aggressives B-Zell-Lymphom: ~5%"],pearls_en:["LP cells: CD20+, CD15−, CD30− — OPPOSITE of classical HL!","Stage IA without risk factors: 30 Gy involved site ALONE is sufficient","No FNA for diagnosis — always excisional biopsy","Transformation risk to aggressive B-cell lymphoma: ~5%"]}},
+        ]},
+        {id:"nhl",
+         de:{label:"Non-Hodgkin-\nLymphome",full:"Non-Hodgkin-Lymphome — Überblick",details:["Heterogene Gruppe maligner Erkrankungen von B- und T-Zellen des lymphatischen Systems","Historisch: alles, was KEIN Hodgkin-Lymphom ist — heute präzise molekulargenetisch klassifizierbar","Klinische Einteilung: indolent (niedrigmaligne) vs. aggressiv (hochmaligne)","Indolent = langsames Wachstum, niedrige Teilungsrate → zytostatisch schwer angreifbar, oft palliativ","Aggressiv = schnelles Wachstum → hohe Sensitivität auf Chemotherapie, oft kurativ!","Häufigste Ätiologien: EBV, H. pylori, HIV, Immunsuppression, aromatische Kohlenwasserstoffe","Allgemeinsymptome: B-Symptomatik, schmerzlose persistierende Lymphknoten, Splenomegalie","Diagnostik: immer Lymphknotenbiopsie (komplette Exstirpation) — keine FNA!","Standard-Staging: Ann-Arbor + PET-CT / CT"]},
+         en:{label:"Non-Hodgkin\nLymphomas",full:"Non-Hodgkin Lymphomas — Overview",details:["Heterogeneous group of malignant diseases of B- and T-cells of the lymphatic system","Historically: anything that is NOT a Hodgkin lymphoma — today precisely classifiable by molecular genetics","Clinical classification: indolent (low-grade) vs aggressive (high-grade)","Indolent = slow growth, low proliferation rate → hard to target with cytostatics, often palliative","Aggressive = rapid growth → high chemotherapy sensitivity, often curable!","Common aetiologies: EBV, H. pylori, HIV, immunosuppression, aromatic hydrocarbons","General symptoms: B symptoms, painless persistent lymph nodes, splenomegaly","Diagnostics: always lymph node biopsy (complete excision) — no FNA!","Standard staging: Ann-Arbor + PET-CT / CT"]},
+         children:[
+          {id:"bzell",
+           de:{label:"B-Zell-NHL",full:"B-Zell Non-Hodgkin-Lymphome — Überblick",details:["Häufigste NHL-Gruppe (~85%); Ursprung: klonale B-Lymphozyten verschiedener Reifungsstadien","Immunphänotyp-Grundgerüst: CD19+, CD20+, CD79a+; weitere Marker je nach Subtyp","Wichtige Unterscheidung: indolent (CLL, follikulär, MZL, HCL) vs. aggressiv (DLBZL, Burkitt, MCL)","Rituximab (anti-CD20) ist Rückgrat der Therapie fast aller B-Zell-NHL","Häufigstes aggressives NHL: DLBZL → R-CHOP ist Standard","Häufigstes indolentes NHL: follikuläres Lymphom","Translokationen als genetische Marker: t(14;18) FL, t(11;14) MCL, t(8;14) Burkitt","Transformation indolenter in aggressive Lymphome möglich (z.B. FL → DLBZL: ~2-3%/Jahr)","MYC-Rearrangement = Hochrisiko-Konstellation (Double-/Triple-Hit)"]},
+           en:{label:"B-cell NHL",full:"B-Cell Non-Hodgkin Lymphomas — Overview",details:["Most common NHL group (~85%); origin: clonal B-lymphocytes at various maturation stages","Basic immunophenotype: CD19+, CD20+, CD79a+; additional markers vary by subtype","Key distinction: indolent (CLL, follicular, MZL, HCL) vs aggressive (DLBCL, Burkitt, MCL)","Rituximab (anti-CD20) is the backbone of therapy for nearly all B-cell NHL","Most common aggressive NHL: DLBCL → R-CHOP is standard","Most common indolent NHL: follicular lymphoma","Translocations as genetic markers: t(14;18) FL, t(11;14) MCL, t(8;14) Burkitt","Transformation of indolent to aggressive lymphomas possible (e.g. FL → DLBCL: ~2-3%/year)","MYC rearrangement = high-risk constellation (double-/triple-hit)"]},
+           children:[
+            {id:"dlbzl",
+             de:{label:"DLBZL",full:"Diffus großzelliges B-Zell-Lymphom",details:["Häufigstes NHL in Deutschland","Subtypen: GCB vs. ABC (non-GCB) - Hans-Algorithmus","Double-Hit: MYC + BCL2 ± BCL6 → High-Grade B-Zell-Lymphom","Stadieneinteilung: Lugano (PET-CT); IPI-Score","Standard: R-CHOP-21 (6 Zyklen)","r/r: R-DHAP/R-ICE → ASZT; CAR-T nach 2. Linie","Polatuzumab Vedotin + R-CHP: zunehmend Erstlinie (POLARIX)","Leitlinie: DGHO / ESMO"]},
+             en:{label:"DLBCL",full:"Diffuse Large B-Cell Lymphoma",details:["Most common NHL in Germany","Subtypes: GCB vs ABC (non-GCB) - Hans algorithm","Double-hit: MYC + BCL2 ± BCL6 → high-grade B-cell lymphoma","Staging: Lugano (PET-CT); IPI score","Standard: R-CHOP-21 (6 cycles)","r/r: R-DHAP/R-ICE → ASCT; CAR-T after 2nd line","Polatuzumab vedotin + R-CHP: increasing 1st line use (POLARIX)","Guideline: DGHO / ESMO"],
+             children:[
+              {id:"dlbcl_gcb",
+               de:{label:"GCB-\nDLBZL",full:"DLBZL GCB-Subtyp (Keimzentrums-B-Zell)",details:["GCB (Germinal Centre B-cell): ~50% aller DLBZL; Hans-Algorithmus: CD10+, BCL6+, MUM1−","Günstigere Prognose als ABC-Subtyp","BCL2-Überexpression durch t(14;18) möglich (ähnlich FL)","PI3K/PTEN-Pathway häufig verändert; EZH2-Mutationen charakteristisch","Therapie: R-CHOP-21 oder Pola-R-CHP (POLARIX-Studie)","Double-Hit (MYC+BCL2 ± BCL6): überwiegend GCB-Ursprung → High-Grade B-Zell-Lymphom","Double-Hit: R-CHOP nicht ausreichend → DA-EPOCH-R bevorzugt","Leitlinie: DGHO / ESMO"],pearls_de:["GCB = Hans CD10+/BCL6+/MUM1− — günstigere Prognose","Double-Hit meist GCB-Ursprung → DA-EPOCH-R statt R-CHOP!","EZH2-Mutation: targetierbar mit Tazemetostat (r/r Indikation)"],pearls_en:["GCB = Hans CD10+/BCL6+/MUM1− — more favourable prognosis","Double-hit mostly GCB origin → DA-EPOCH-R instead of R-CHOP!","EZH2 mutation: targetable with tazemetostat (r/r indication)"]},
+               en:{label:"GCB\nDLBCL",full:"DLBCL GCB Subtype (Germinal Centre B-Cell)",details:["GCB: ~50% of all DLBCL; Hans algorithm: CD10+, BCL6+, MUM1−","More favourable prognosis than ABC subtype","BCL2 overexpression via t(14;18) possible (similar to FL)","PI3K/PTEN pathway frequently altered; EZH2 mutations characteristic","Therapy: R-CHOP-21 or pola-R-CHP (POLARIX trial)","Double-hit (MYC+BCL2 ± BCL6): predominantly GCB origin → high-grade B-cell lymphoma","Double-hit: R-CHOP insufficient → DA-EPOCH-R preferred","Guideline: DGHO / ESMO"]}},
+              {id:"dlbcl_abc",
+               de:{label:"ABC-\nDLBZL",full:"DLBZL ABC-Subtyp (Aktivierte B-Zell)",details:["ABC (Activated B-Cell): ~35% aller DLBZL; Hans-Algorithmus: MUM1+, CD10−","Schlechtere Prognose als GCB; NF-κB-Aktivierung ist Treiber","MYD88 L265P + CD79B-Mutation: häufig in ABC — bildet 'MCD'-Subgruppe","BTK-Inhibitor (Ibrutinib): Wirkung v.a. bei MYD88mut/CD79Bmut ABC-DLBZL","Ibrutinib + R-CHOP: kein Gesamtüberlebensvorteil in unselektierten Patienten","Therapie: R-CHOP-21 Standard; Pola-R-CHP zunehmend","r/r: Selinexor, CAR-T (Axi-cel, Tisa-cel), Loncastuximab","Leitlinie: DGHO / ESMO"],pearls_de:["ABC = Hans MUM1+, CD10− — schlechtere Prognose als GCB","MYD88 L265P + CD79B = MCD-Subgruppe → BTK-Inhibitor in Studien","NF-κB als Haupttreiber des ABC-Subtyps"],pearls_en:["ABC = Hans MUM1+, CD10− — worse prognosis than GCB","MYD88 L265P + CD79B = MCD subgroup → BTK inhibitor in trials","NF-κB as main driver of ABC subtype"]},
+               en:{label:"ABC\nDLBCL",full:"DLBCL ABC Subtype (Activated B-Cell)",details:["ABC: ~35% of all DLBCL; Hans algorithm: MUM1+, CD10−","Worse prognosis than GCB; NF-κB activation is the driver","MYD88 L265P + CD79B mutation: common in ABC — forms 'MCD' subgroup","BTK inhibitor (ibrutinib): activity mainly in MYD88mut/CD79Bmut ABC-DLBCL","Ibrutinib + R-CHOP: no OS benefit in unselected patients","Therapy: R-CHOP-21 standard; pola-R-CHP increasing","r/r: selinexor, CAR-T (axi-cel, tisa-cel), loncastuximab","Guideline: DGHO / ESMO"]}},
+              {id:"dlbcl_dh",
+               de:{label:"Double-Hit\nLymphom",full:"High-Grade B-Zell-Lymphom / Double-Hit Lymphom",details:["MYC-Rearrangement + BCL2 ± BCL6 (Double-/Triple-Hit); meist GCB-Ursprung","Ki-67 sehr hoch; aggressivster B-Zell-Lymphom-Typ jenseits Burkitt","R-CHOP nicht ausreichend — DA-EPOCH-R ist Standard (keine randomisierte Überlegenheit, aber konsensbasiert)","Konsolidierung mit ASZT in 1. CR bei geeigneten Patienten","Prognose: schlechter als konventionelle DLBZL; PFS ~50% nach 2 Jahren","ZNS-Prophylaxe: obligat wegen hohem ZNS-Rezidivrisiko","r/r: CAR-T-Zell-Therapie (Axi-cel, Tisa-cel, Liso-cel) nach 2. Linie","Leitlinie: DGHO / ESMO"],pearls_de:["Double-Hit = MYC + BCL2 (±BCL6) Rearrangement — nicht R-CHOP!","DA-EPOCH-R: Standard bei Double-Hit DLBZL","ZNS-Prophylaxe obligat — hohes ZNS-Rezidivrisiko","CAR-T nach 2 Vorlinien: kurativ möglich bei r/r"],pearls_en:["Double-hit = MYC + BCL2 (±BCL6) rearrangement — NOT R-CHOP!","DA-EPOCH-R: standard for double-hit DLBCL","CNS prophylaxis mandatory — high CNS relapse risk","CAR-T after 2 prior lines: curative possible in r/r"]},
+               en:{label:"Double-Hit\nLymphoma",full:"High-Grade B-Cell Lymphoma / Double-Hit Lymphoma",details:["MYC rearrangement + BCL2 ± BCL6 (double-/triple-hit); mostly GCB origin","Ki-67 very high; most aggressive B-cell lymphoma beyond Burkitt","R-CHOP insufficient — DA-EPOCH-R is standard (consensus-based, not randomised superiority)","Consolidation with ASCT in 1st CR for eligible patients","Prognosis: worse than conventional DLBCL; PFS ~50% at 2 years","CNS prophylaxis: mandatory due to high CNS relapse risk","r/r: CAR-T (axi-cel, tisa-cel, liso-cel) after 2nd line","Guideline: DGHO / ESMO"]}},
+             ]}},
+            {id:"follikulaer",
+             de:{label:"Follikulär\nLymphom",full:"Follikuläres Lymphom",details:["t(14;18) → BCL2-Überexpression; CD10+, BCL2+, BCL6+","Grad 1-2 und 3A: indolent; Grad 3B: aggressiv (wie DLBZL behandeln)","Häufigstes indolentes NHL; FLIPI-Score für Risikoabschätzung","Stadium I/II (lokalisiert): Bestrahlung; alternativ Watch & Wait bei asymptomatischen Pat. mit eingeschränkter Lebenserwartung","Stadium III/IV asymptomatisch: Watch & Wait möglich","Erstlinie symptomatisch: Obinutuzumab + Bendamustin → Rituximab-Erhaltung (GALLIUM)","Alternativ: R-CHOP / R-Bendamustin + Rituximab-Erhaltung","r/r: Lenalidomid + Rituximab (R2); CAR-T nach 2 Vorlinien","Transformation in DLBZL: ~2-3%/Jahr","Leitlinie: DGHO / ESMO"]},
+             en:{label:"Follicular\nLymphoma",full:"Follicular Lymphoma",details:["t(14;18) → BCL2 overexpression; CD10+, BCL2+, BCL6+","Grade 1-2 and 3A: indolent; grade 3B: aggressive (treat as DLBCL)","Most common indolent NHL; FLIPI score for risk assessment","Stage I/II (localised): radiotherapy; alternatively watch & wait for asymptomatic patients with limited life expectancy","Stage III/IV asymptomatic: watch & wait possible","First line symptomatic: obinutuzumab + bendamustine → rituximab maintenance (GALLIUM)","Alternative: R-CHOP / R-bendamustine + rituximab maintenance","r/r: lenalidomide + rituximab (R2); CAR-T after 2 prior lines","Transformation to DLBCL: ~2-3%/year","Guideline: DGHO / ESMO"],pearls_de:["FL Grad 3B → wie DLBZL behandeln (NICHT indolent!)","FLIPI-Score: 5 Faktoren — Alter, Stadium, Hb, LDH, Lymphknoten >4","Watch & Wait bei asymptomatisch Stadium III/IV — kein Überlebensnachteil!","Transformation FL→DLBZL: ~2-3%/Jahr — bei Klinik immer Re-Biopsie"],pearls_en:["FL grade 3B → treat as DLBCL (NOT indolent!)","FLIPI score: 5 factors — age, stage, Hb, LDH, lymph nodes >4","Watch & wait for asymptomatic stage III/IV — no survival disadvantage!","Transformation FL→DLBCL: ~2-3%/year — always re-biopsy at clinical change"],relations:[{chain:["Follikuläres Lymphom (indolent)","Histologische Transformation","DLBZL (aggressiv)"],arrows:["~2-3%/Jahr","Klonale Evolution"],note:"Transformation verändert Prognose und Therapiestrategie grundlegend"}]}},
+            {id:"mzl",
+             de:{label:"Marginalzonen-\nLymphom",full:"Marginalzonen-Lymphom",details:["MALT-Lymphom (extranodal): Magen - H. pylori assoz.","H.-pylori-Eradikation → CR in 75% (wenn t(11;18) negativ)","t(11;18): Eradikationsresistenz → Strahlentherapie","Splenisches MZL: Splenektomie oder Rituximab","Nodales MZL: Rituximab ± Chemo; indolent","Leitlinie: DGHO"]},
+             en:{label:"Marginal Zone\nLymphoma",full:"Marginal Zone Lymphoma",details:["MALT lymphoma (extranodal): stomach - H. pylori associated","H. pylori eradication → CR in 75% (if t(11;18) negative)","t(11;18): eradication resistance → radiotherapy","Splenic MZL: splenectomy or rituximab","Nodal MZL: rituximab ± chemo; indolent","Guideline: DGHO"]}},
+            {id:"mcl",
+             de:{label:"Mantelzell-\nLymphom",full:"Mantelzell-Lymphom",details:["t(11;14) → Cyclin D1+; SOX11+; MIPI-Score","CD5+, CD20+, Cyclin D1+, CD10-, CD23-","Indolente Variante: IGHV mutiert, SOX11-","Fitpatienten: R-CHOP/R-DHAP → ASZT + Rituximab-Erhaltung","Ibrutinib: Erstlinie (SHINE-Studie, ältere Patienten)","r/r: Ibrutinib, Acalabrutinib; Venetoclax bei BTK-Versagen","CAR-T: Brexucabtagen autoleucel nach BTK-Inhibitor","Leitlinie: DGHO / ESMO"]},
+             en:{label:"Mantle Cell\nLymphoma",full:"Mantle Cell Lymphoma",details:["t(11;14) → Cyclin D1+; SOX11+; MIPI score","CD5+, CD20+, Cyclin D1+, CD10-, CD23-","Indolent variant: IGHV mutated, SOX11-","Fit patients: R-CHOP/R-DHAP → ASCT + rituximab maintenance","Ibrutinib: first line (SHINE trial, older patients)","r/r: ibrutinib, acalabrutinib; venetoclax after BTK failure","CAR-T: brexucabtagene autoleucel post BTK inhibitor","Guideline: DGHO / ESMO"]}},
+            {id:"burkitt",
+             de:{label:"Burkitt-\nLymphom",full:"Burkitt-Lymphom",details:["MYC-Translokation: t(8;14)(q24;q32), auch t(8;22), t(2;8)","Ki-67 ~100%, Sternhimmelmuster; hochaggressiv — aber prinzipiell kurativ!","Formen: Endemisch (EBV+, Afrika), Sporadisch, HIV-assoziiert","Therapie: Aufgrund der hohen Blastenrate wie eine ALL behandeln (intensive Kurzzeitchemo)","GMALL B-ALL/NHL 2002-Protokoll; Rituximab + DA-EPOCH-R oder CODOX-M/IVAC","ZNS-Prophylaxe obligat; intrathekale Therapie","Leitlinie: DGHO / GMALL"]},
+             en:{label:"Burkitt\nLymphoma",full:"Burkitt Lymphoma",details:["MYC translocation: t(8;14)(q24;q32), also t(8;22), t(2;8)","Ki-67 ~100%, starry sky; highly aggressive — but principally curable!","Forms: endemic (EBV+, Africa), sporadic, HIV-associated","Therapy: due to high blast rate, treated similarly to ALL (intensive short-duration chemotherapy)","GMALL B-ALL/NHL 2002 protocol; rituximab + DA-EPOCH-R or CODOX-M/IVAC","CNS prophylaxis mandatory; intrathecal therapy","Guideline: DGHO / GMALL"],pearls_de:["Ki-67 ~100% = höchste Proliferationsrate aller bekannten Lymphome","t(8;14)(q24;q32) → MYC-Überexpression","Behandlung WIE ALL: intensive Kurzzeitchemo (kein CHOP!)","Prinzipiell kurativ — trotz extremer Aggressivität!"],pearls_en:["Ki-67 ~100% = highest proliferation rate of all known lymphomas","t(8;14)(q24;q32) → MYC overexpression","Treat LIKE ALL: intensive short-course chemo (not CHOP!)","Principally curable — despite extreme aggressiveness!"]}},
+          ]},
+          {id:"tzell",
+           de:{label:"T/NK-\nNHL",full:"T-Zell / NK-Zell Non-Hodgkin-Lymphome — Überblick",details:["Seltener als B-Zell-NHL (~15% aller NHL); biologisch heterogen, oft aggressiver Verlauf","Ursprung: reife T-Lymphozyten oder NK-Zellen verschiedener Kompartimente","Wichtige Entitäten: PTCL-NOS, AITL, ALCL (ALK+/−), CTCL (Mycosis fungoides, Sézary)","PTCL-NOS: häufigstes reifes T-Zell-Lymphom in Deutschland — ungünstige Prognose","Kutane T-Zell-Lymphome (CTCL): Haut ist primäres Manifestationsorgan — oft jahrelanger Verlauf","AITL: TFH-Zell-Ursprung, autoimmune Phänomene, EBV-positive B-Zellen im Hintergrund","ALCL: CD30+ obligat; ALK+ = bessere Prognose; BV-CHP als Erstlinie","Therapie: meist CHOP-basiert; Konsolidierung mit ASZT in 1. CR angestrebt","CAR-T und neue Substanzen (Romidepsin, Pralatrexat, Mogamulizumab) für r/r"]},
+           en:{label:"T/NK-\nNHL",full:"T-Cell / NK-Cell Non-Hodgkin Lymphomas — Overview",details:["Less common than B-cell NHL (~15% of all NHL); biologically heterogeneous, often aggressive course","Origin: mature T-lymphocytes or NK-cells from various compartments","Key entities: PTCL-NOS, AITL, ALCL (ALK+/−), CTCL (mycosis fungoides, Sézary)","PTCL-NOS: most common mature T-cell lymphoma in Germany — poor prognosis","Cutaneous T-cell lymphomas (CTCL): skin is primary site of manifestation — often protracted course","AITL: TFH-cell origin, autoimmune phenomena, EBV-positive B-cells in background","ALCL: CD30+ mandatory; ALK+ = better prognosis; BV-CHP as first line","Therapy: mostly CHOP-based; consolidation with ASCT in 1st CR as goal","CAR-T and novel agents (romidepsin, pralatrexate, mogamulizumab) for r/r"]},
+           children:[
+            {id:"ptcl",
+             de:{label:"Periph. T-Zell-\nLymphom NOS",full:"Peripheres T-Zell-Lymphom NOS",details:["Häufigstes reifes T-Zell-Lymphom in Deutschland","Heterogen, ungünstige Prognose; CD3+, CD4+, CD5+","Therapie: CHOP-basiert, + Etoposid (CHOEP) bei Jüngeren","Konsolidierung mit ASZT in 1. CR angestrebt","r/r: Pralatrexat (Antifolat); Romidepsin, Belinostat (HDAC-Inhibitoren)","Leitlinie: DGHO"]},
+             en:{label:"Periph. T-Cell\nLymphoma NOS",full:"Peripheral T-Cell Lymphoma NOS",details:["Most common mature T-cell lymphoma in Germany","Heterogeneous, poor prognosis; CD3+, CD4+, CD5+","Therapy: CHOP-based, + etoposide (CHOEP) in younger patients","Consolidation with ASCT in 1st CR sought","r/r: pralatrexate (antifolate); romidepsin, belinostat (HDAC inhibitors)","Guideline: DGHO"]}},
+            {id:"alcl",
+             de:{label:"Anaplast.\nGroßzell-L.",full:"Anaplastisch großzelliges Lymphom",details:["CD30+ obligat; ALK+ (bessere Prognose) oder ALK-","ALK+ t(2;5)(p23;q35): NPM-ALK-Fusion; Hallmark-Zellen","Systemisches vs. primär kutanes ALCL unterscheiden!","Therapie ALK+: CHOP/CHOEP → ASZT; Crizotinib bei r/r","BV-CHP: Erstlinie bei CD30+ PTCL (Brentuximab+CHP)","Leitlinie: DGHO / ESMO"]},
+             en:{label:"Anaplastic\nLarge Cell L.",full:"Anaplastic Large Cell Lymphoma",details:["CD30+ mandatory; ALK+ (better prognosis) or ALK-","ALK+ t(2;5)(p23;q35): NPM-ALK fusion; hallmark cells","Distinguish systemic from primary cutaneous ALCL!","Therapy ALK+: CHOP/CHOEP → ASCT; crizotinib for r/r","BV-CHP: first line for CD30+ PTCL (brentuximab+CHP)","Guideline: DGHO / ESMO"]}},
+            {id:"ctcl",
+             de:{label:"Kutanes\nT-Zell-Lymphom",full:"Kutanes T-Zell-Lymphom",details:["Mycosis fungoides (MF): Patches → Plaques → Tumoren","Sézary-Syndrom: leukämische Variante, CD4+, CD7-, CD26-","Stadieneinteilung: ISCL/EORTC-Klassifikation","Frühstadien: Steroide, PUVA, lokale Bestrahlung","Fortgeschritten: Bexaroten, Interferon-alpha, HDAC-Inhibitoren","Mogamulizumab (anti-CCR4): zugelassen bei r/r MF/Sézary","Leitlinie: DGHO / EORTC"]},
+             en:{label:"Cutaneous\nT-Cell Lymph.",full:"Cutaneous T-Cell Lymphoma",details:["Mycosis fungoides (MF): patches → plaques → tumours","Sézary syndrome: leukaemic variant, CD4+, CD7-, CD26-","Staging: ISCL/EORTC classification","Early stages: steroids, PUVA, local radiotherapy","Advanced: bexarotene, interferon-alpha, HDAC inhibitors","Mogamulizumab (anti-CCR4): approved for r/r MF/Sézary","Guideline: DGHO / EORTC"]}},
+            {id:"aitl",
+             de:{label:"Angioimmunobl.\nT-Zell-L.",full:"Angioimmunoblastisches T-Zell-Lymphom",details:["TFH-Zell-Ursprung; TET2, DNMT3A, IDH2, RHOA G17V","EBV-positive B-Zellen im Hintergrund","Klinik: LAP, Splenomegalie, Hypergammaglobulinämie, Autoimmunphänomene","Therapie: CHOP oder CHOEP; ggf. ASZT in 1. CR","Romidepsin / Azacitidin: bei r/r oder epigenetisch-sensitiv","Leitlinie: DGHO"]},
+             en:{label:"Angioimmunoblastic\nT-Cell L.",full:"Angioimmunoblastic T-Cell Lymphoma",details:["TFH cell origin; TET2, DNMT3A, IDH2, RHOA G17V","EBV-positive B-cells in background","Clinical: LAP, splenomegaly, hypergammaglobulinaemia, autoimmune phenomena","Therapy: CHOP or CHOEP; ASCT in 1st CR if fit","Romidepsin / azacitidine: for r/r or epigenetically sensitive disease","Guideline: DGHO"]}},
+          ]},
+        ]},
+      ],
+    },
+    {
+      id:"plasma",
+      de:{label:"PLASMA-\nZELL-\nNEOPLASIEN",desc:"Monoklonale\nGammopathien",full:"Plasmazellneoplasien — Überblick",details:[
+        "Klonale Proliferation terminal differenzierter B-Zellen (Plasmazellen) → monoklonale Immunglobuline (Paraproteine)",
+        "Spektrum: MGUS (gutartig, keine Therapie) → SMM (schwelend) → MM (behandlungsbedürftig) → AL-Amyloidose (Organschäden durch Ablagerung)",
+        "Waldenström-Makroglobulinämie: Sonderform mit IgM-Paraprotein + lymphoplasmozytischem Lymphom",
+        "Gemeinsames Kennzeichen: monoklonaler Peak in der Serumelektrophorese (M-Gradient) + klonale KM-Infiltration",
+        "CRAB-Kriterien definieren behandlungsbedürftiges MM: Hyperkalzämie, Niereninsuffizienz, Anämie, Knochenläsionen",
+        "SLiM-Kriterien ergänzen CRAB (IMWG 2014): KM-Plasmazellen ≥60%, FLC-Ratio ≥100, >1 MRT-Herd",
+        "Progressionsrisiko von MGUS zu MM: ~1%/Jahr — kumulative Lebenszeitwahrscheinlichkeit beachten!",
+        "Diagnostik: Serumelektrophorese, Immunfixation, freie Leichtketten, KM-Biopsie, Ganzkörper-CT oder MRT",
+        "Zytogenetik (FISH) bei MM essenziell: del(17p), t(4;14), t(14;16) = Hochrisiko — beeinflusst Therapiewahl"
+      ]},
+      en:{label:"PLASMA\nCELL\nNEOPLASMS",desc:"Monoclonal\ngammopathies",full:"Plasma Cell Neoplasms — Overview",details:[
+        "Clonal proliferation of terminally differentiated B-cells (plasma cells) → monoclonal immunoglobulins (paraproteins)",
+        "Spectrum: MGUS (benign, no therapy) → SMM (smouldering) → MM (requires treatment) → AL amyloidosis (organ damage from deposition)",
+        "Waldenström macroglobulinaemia: special form with IgM paraprotein + lymphoplasmacytic lymphoma",
+        "Common hallmark: monoclonal peak on serum electrophoresis (M-gradient) + clonal BM infiltration",
+        "CRAB criteria define treatment-requiring MM: hypercalcaemia, renal failure, anaemia, bone lesions",
+        "SLiM criteria supplement CRAB (IMWG 2014): BM plasma cells ≥60%, FLC ratio ≥100, >1 MRI focal lesion",
+        "Progression risk from MGUS to MM: ~1%/year — cumulative lifetime probability must be considered!",
+        "Diagnostics: serum electrophoresis, immunofixation, free light chains, BM biopsy, whole-body CT or MRI",
+        "Cytogenetics (FISH) essential in MM: del(17p), t(4;14), t(14;16) = high risk — influences treatment choice"
+      ]},
+      color:"#b06be3",
+      children:[
+        {id:"mgus",
+         de:{label:"MGUS",full:"Monoklonale Gammopathie unklarer Signifikanz",details:["Definition: Paraprotein im Serum/Urin + KM-Plasmazellen <10% + KEINE Endorganschäden + kein Therapiebedarf","Häufig laborchemischer Zufallsbefund; Prävalenz zwischen 45. und 75. LJ: ca. 3%","Progressionsrisiko: ~1%/Jahr → Plasmazellneoplasie (am häufigsten) oder B-Zell-Lymphom (z.B. Waldenström)","Kein Behandlungsbedarf — Watch & Wait; erste Kontrolluntersuchung nach 6 Monaten","Regelmässige Kontrollen: SPEP, FLC, Nierenfunktion (Ziel: Ausschluss behandlungsbedürftiger Grunderkrankung)","Leitlinie: DGHO / IMWG"]},
+         en:{label:"MGUS",full:"Monoclonal Gammopathy of Undetermined Significance",details:["Definition: paraprotein in serum/urine + BM plasma cells <10% + NO end-organ damage + no therapy needed","Commonly an incidental laboratory finding; prevalence between 45-75 yrs: ~3%","Progression risk: ~1%/year → plasma cell neoplasm (most common) or B-cell lymphoma (e.g. Waldenström)","No treatment needed — watch & wait; first review at 6 months","Regular monitoring: SPEP, FLC, renal function (goal: exclude treatable underlying disease)","Guideline: DGHO / IMWG"],pearls_de:["Progressionsrisiko ~1%/Jahr — lebenslange Kontrolle notwendig!","Erste Kontrolle nach 6 Monaten, danach jährlich (falls stabil)","KEINE Therapie bei MGUS — ausschliesslich Watch & Wait","KM-Plasmazellen <10% + kein CRAB + kein SLiM = MGUS-Definitionskriterien"],pearls_en:["Progression risk ~1%/year — lifelong monitoring required!","First review at 6 months, then annually (if stable)","NO treatment for MGUS — watch & wait only","BM plasma cells <10% + no CRAB + no SLiM = MGUS definition"],relations:[{chain:["MGUS","Schwelendes MM (SMM)","Multiples Myelom (MM)"],arrows:["~1%/Jahr","Endorganschäden (CRAB/SLiM)"],note:"Progressionsspektrum — nicht alle MGUS entwickeln ein MM"}]}},
+        {id:"smm",
+         de:{label:"Schwelendes\nMyelom",full:"Schwelendes Multiples Myelom",details:["Synonyme: Asymptomatisches Myelom, schwelendes Myelom","Abgrenzung zu MGUS: höhere Plasmazellinfiltration im KM bzw. höhere Paraproteinproduktion","Abgrenzung zu MM: KEINE Endorganschäden und keine myelomdefinierende Biomarker (SLiM-CRAB-Kriterien)","M-Protein ≥3 g/dl ODER KM-Plasmazellen 10-60% — OHNE CRAB/SLiM","Regelmässige Kontrollen zur Prüfung des Übergangs in ein Multiples Myelom","Hochrisiko (Mayo 20/2/20): frühzeitige Therapie erwägen (AQUILA-Studie)","Niedrig-/Intermediärrisiko: Watch & Wait, ggf. Einschluss in klinische Studie","Leitlinie: DGHO / IMWG"]},
+         en:{label:"Smouldering\nMyeloma",full:"Smouldering Multiple Myeloma",details:["Synonyms: asymptomatic myeloma, smouldering myeloma","Distinction from MGUS: higher plasma cell infiltration in BM or higher paraprotein production","Distinction from MM: NO end-organ damage and no myeloma-defining biomarkers (SLiM-CRAB criteria)","M-protein ≥3 g/dL OR BM plasma cells 10-60% — WITHOUT CRAB/SLiM","Regular monitoring to check for progression to multiple myeloma","High risk (Mayo 20/2/20): consider early therapy (AQUILA trial)","Low/intermediate risk: watch & wait, consider clinical trial enrolment","Guideline: DGHO / IMWG"],pearls_de:["Abgrenzung zu MGUS: höhere M-Protein-Last ODER KM-Plasmazellen 10-60%","Abgrenzung zu MM: KEINE CRAB- oder SLiM-Kriterien erfüllt","Hochrisiko-SMM (Mayo 20/2/20): frühzeitige Therapie erwägen","Watch & Wait ist Standard — ausser klinische Studie"],pearls_en:["Distinction from MGUS: higher M-protein burden OR BM plasma cells 10-60%","Distinction from MM: NO CRAB or SLiM criteria met","High-risk SMM (Mayo 20/2/20): consider early therapy","Watch & wait is standard — unless clinical trial"],relations:[{chain:["MGUS","Schwelendes MM","Multiples Myelom"],arrows:["~1%/Jahr","SLiM/CRAB erfüllt"],note:"SMM ist die Zwischenstufe — Monitoring auf Progression"}]}},
+        {id:"mm",
+         de:{label:"Multiples\nMyelom",full:"Multiples Myelom",details:["Plasmazellneoplasie mit monoklonalen Immunglobulinen (Paraproteine); Serumelektrophorese: M-Gradient","Neuerkrankungen häufigste zwischen 70-79 Jahren; ♂>♀; Rezidive häufig → Prävalenz hoch!","Diagnose: Klonale Plasmazellen ≥10% + CRAB oder SLiM (IMWG 2014)","CRAB: Hyperkalzämie, Niereninsuffizienz, Anämie, Knochenläsionen","SLiM: KM-Plasmazellen ≥60%, FLC-Ratio ≥100, >1 MRT-Herd","R-ISS Stadium I (β2M ≤3,5 + Albumin ≥3,5 + Standardrisiko-Zytogenetik): ca. 80% 5-JÜR","Zytogenetik: del(17p), t(4;14), t(14;16) = Hochrisiko; beeinflusst Verlauf + Prognose!","Transplantationsgeeignet: Induktion (VRd) → ASZT → Konsolidierung → Lenalidomid-Erhaltung","Transpl.-ungeeignet: Dara-Rd (MAIA) oder Dara-VRd (CEPHEUS)","r/r: Daratumumab, Isatuximab, Carfilzomib, Pomalidomid, Belantamab","CAR-T: Abecma / Carvykti nach ≥4 Vortherapien","Leitlinie: DGHO / IMWG / ESMO"]},
+         en:{label:"Multiple\nMyeloma",full:"Multiple Myeloma",details:["Plasma cell neoplasm producing monoclonal immunoglobulins (paraproteins); serum electrophoresis: M-gradient","New diagnoses most common 70-79 years; ♂>♀; relapses frequent → high prevalence!","Diagnosis: clonal plasma cells ≥10% + CRAB or SLiM (IMWG 2014)","CRAB: hypercalcaemia, renal failure, anaemia, bone lesions","SLiM: BM plasma cells ≥60%, FLC ratio ≥100, >1 MRI focal lesion","R-ISS Stage I (β2M ≤3.5 + albumin ≥3.5 + standard-risk cytogenetics): ~80% 5-year OS","Cytogenetics: del(17p), t(4;14), t(14;16) = high risk; influences course + prognosis!","Transplant eligible: induction (VRd) → ASCT → consolidation → lenalidomide maintenance","Transplant ineligible: Dara-Rd (MAIA) or Dara-VRd (CEPHEUS)","r/r: daratumumab, isatuximab, carfilzomib, pomalidomide, belantamab","CAR-T: Abecma / Carvykti after ≥4 prior lines","Guideline: DGHO / IMWG / ESMO"],pearls_de:["CRAB auswendig: Calcium↑, Renal↓, Anämie, Bone (Knochenläsionen)","R-ISS Stadium I: ~80% 5-Jahres-Überleben","Vollständiger Standardpfad: Induktion (VRd) → ASZT → Konsolidierung → Erhaltung (Lenalidomid)","del(17p), t(4;14), t(14;16) = Hochrisiko-Zytogenetik — beeinflusst Therapiewahl!"],pearls_en:["CRAB by heart: Calcium↑, Renal↓, Anaemia, Bone lesions","R-ISS Stage I: ~80% 5-year overall survival","Full standard pathway: induction (VRd) → ASCT → consolidation → maintenance (lenalidomide)","del(17p), t(4;14), t(14;16) = high-risk cytogenetics — influences treatment choice!"],relations:[{chain:["MGUS","Schwelendes MM (SMM)","Multiples Myelom (MM)","Rezidiv/refraktäres MM"],arrows:["~1%/Jahr","SLiM/CRAB erfüllt","Therapieversagen"],note:"Klonale Evolution der Plasmazellerkrankungen"}]}},
+        {id:"wm",
+         de:{label:"Morbus\nWaldenström",full:"Morbus Waldenström / LPL",details:["Lymphoplasmozytisches Lymphom + IgM-Paraprotein (niedrigmalignes NHL nach WHO)","MGUS kann Vorläufer sein; MYD88 L265P >90%; CXCR4-Mutation → mögliche Ibrutinib-Resistenz","Klinik: Hyperviskositätssyndrom, periphere Neuropathie, Kältehämagglutinine","Therapiebeginn NUR bei Symptomen: Hb <10 g/dl, Hyperviskosität, B-Symptome, Organbefall","Asymptomatisch: Watch & Wait; KM-Aspirat und -Biopsie für Diagnosestellung obligat","Symptomatisch: Anti-CD20-Antikörper Rituximab oder Kombinationstherapie (palliativ)","MYD88mut/CXCR4wt: Ibrutinib oder Zanubrutinib bevorzugt","Alternativ: DRC (Dexamethason + Rituximab + Cyclophosphamid)","Hyperviskositätskrise: Plasmapherese zur Senkung der IgM-Spiegel","Leitlinie: DGHO / ESMO / iwWM"]},
+         en:{label:"Waldenström's\nMacroglobulin.",full:"Waldenström's Macroglobulinaemia / LPL",details:["Lymphoplasmacytic lymphoma + IgM paraprotein (low-grade NHL per WHO)","MGUS can be precursor; MYD88 L265P >90%; CXCR4 mutation → possible ibrutinib resistance","Clinical: hyperviscosity syndrome, peripheral neuropathy, cold agglutinins","Start treatment ONLY when symptomatic: Hb <10 g/dL, hyperviscosity, B symptoms, organ involvement","Asymptomatic: watch & wait; BM aspirate + biopsy mandatory for diagnosis","Symptomatic: anti-CD20 antibody rituximab or combination therapy (palliative)","MYD88mut/CXCR4wt: ibrutinib or zanubrutinib preferred","Alternative: DRC (dexamethasone + rituximab + cyclophosphamide)","Hyperviscosity crisis: plasmapheresis to reduce IgM levels","Guideline: DGHO / ESMO / iwWM"]}},
+        {id:"plasmozytom",
+         de:{label:"Plasmo-\nzytom",full:"Solitäres Plasmozytom",details:[
+           "Definition: solitärer Herd klonaler Plasmazellen OHNE systemische Erkrankung — kein CRAB, keine weiteren Läsionen",
+           "Zwei Entitäten: Ossäres Plasmozytom (Knochen, häufiger) vs. Extramedulläres Plasmozytom (Weichgewebe)",
+           "Ossäres Plasmozytom: häufigste Lokalisation Wirbelsäule, Becken, Schädel; Leitsymptom Knochenschmerz",
+           "Extramedulläres Plasmozytom: häufig obere Atemwege (Nasopharynx, Tonsille) und GI-Trakt",
+           "Diagnose: Biopsie + KM-Biopsie (Ausschluss MM: Plasmazellen <10%) + Ganzkörper-MRT obligat",
+           "PET-CT zum Ausschluss weiterer Herde — jeder zusätzliche Herd = MM-Diagnose!",
+           "Therapie ossär: kurative Strahlentherapie 40-50 Gy Involved Field — keine systemische Chemo nötig",
+           "Therapie extramedulläres: Strahlentherapie ± Resektion; sehr gute Prognose",
+           "Progressionsrisiko zu MM: ossär ~50-60% nach 10 Jahren; extramedulläres <30%",
+           "Nachsorge: SPEP, Immunfixation, Ganzkörper-MRT alle 6-12 Monate",
+           "Leitlinie: DGHO / IMWG"
+         ],
+         pearls_de:[
+           "Kein CRAB + kein SLiM + einzelner Herd = Plasmozytom — nicht gleich MM!",
+           "Ossäres Plasmozytom: ~50% Progression zu MM in 10 Jahren — Nachsorge lebenslang!",
+           "Therapie der Wahl: Strahlentherapie 40-50 Gy (kurativ!) — kein CHOP, keine Chemo",
+           "Ganzkörper-MRT obligat: weitere okkulte Läsionen → MM-Diagnose statt Plasmozytom!"
+         ],
+         relations:[{chain:["Solitäres Plasmozytom","Multiples Myelom (MM)"],arrows:["~50% ossär / <30% extramedulläres in 10 J."],note:"Progressionsrisiko abhängig von Lokalisation — engmaschige Nachsorge entscheidend"}]
+         },
+         en:{label:"Plasma-\ncytoma",full:"Solitary Plasmacytoma",details:[
+           "Definition: solitary focus of clonal plasma cells WITHOUT systemic disease — no CRAB, no additional lesions",
+           "Two entities: osseous plasmacytoma (bone, more common) vs extramedullary plasmacytoma (soft tissue)",
+           "Osseous plasmacytoma: most common sites — spine, pelvis, skull; leading symptom bone pain",
+           "Extramedullary plasmacytoma: commonly upper respiratory tract (nasopharynx, tonsil) and GI tract",
+           "Diagnosis: biopsy + BM biopsy (exclude MM: plasma cells <10%) + whole-body MRI mandatory",
+           "PET-CT to exclude additional lesions — any extra lesion = MM diagnosis!",
+           "Therapy osseous: curative radiotherapy 40-50 Gy involved field — no systemic chemo needed",
+           "Therapy extramedullary: radiotherapy ± resection; very good prognosis",
+           "Progression risk to MM: osseous ~50-60% at 10 years; extramedullary <30%",
+           "Follow-up: SPEP, immunofixation, whole-body MRI every 6-12 months",
+           "Guideline: DGHO / IMWG"
+         ],
+         pearls_en:[
+           "No CRAB + no SLiM + single lesion = plasmacytoma — not MM!",
+           "Osseous plasmacytoma: ~50% progression to MM at 10 years — lifelong follow-up!",
+           "Treatment of choice: radiotherapy 40-50 Gy (curative!) — no chemo needed",
+           "Whole-body MRI mandatory: additional occult lesions → MM diagnosis instead!"
+         ],
+         relations:[{chain:["Solitary Plasmacytoma","Multiple Myeloma"],arrows:["~50% osseous / <30% extramedullary at 10 yrs"],note:"Progression risk depends on site — close surveillance is critical"}]
+         }},
+        {id:"al",
+         de:{label:"AL-\nAmyloidose",full:"AL-Amyloidose (Leichtketten-Amyloidose)",details:["Fehlfaltung monoklonaler Leichtketten → Organablagerung","Organe: Herz (häufigste Todesursache), Niere, Leber, Nerven","Diagnose: Kongorot-Färbung (apfelgrüne Doppelbrechung) + LC-MS","Staging: Mayo-Klinik-Score 2012 (NT-proBNP, Troponin T, dFLC)","Standard: Dara-VCd (Daratumumab+Bortezomib+Cycloph.+Dex) - ANDROMEDA","Transplantationsgeeignet (selten, Herz-Stad. I/II): HDT + ASZT","Leitlinie: DGHO / ESC / ISA"]},
+         en:{label:"AL\nAmyloidosis",full:"AL Amyloidosis (Light Chain Amyloidosis)",details:["Misfolded monoclonal light chains → organ deposition","Organs: heart (leading cause of death), kidney, liver, nerves","Diagnosis: Congo red staining (apple-green birefringence) + LC-MS","Staging: Mayo Clinic score 2012 (NT-proBNP, troponin T, dFLC)","Standard: Dara-VCd (daratumumab+bortezomib+cyclophos.+dex) - ANDROMEDA","Transplant eligible (rare, cardiac stage I/II): HDT + ASCT","Guideline: DGHO / ESC / ISA"]}},
+      ],
+    },
+    {
+      id:"mpn",
+      de:{label:"MPN",desc:"JAK2/CALR\nMPL-Mutation",full:"Myeloproliferative Neoplasien — Überblick",details:[
+        "Klonale myeloische Erkrankungen: unkontrollierte Proliferation einer oder mehrerer Blutzellreihen — Zellen reifen aber aus (anders als AML)!",
+        "Klassische BCR-ABL1-negative MPN: Polycythaemia Vera (PV), Essentielle Thrombozythämie (ET), Primäre Myelofibrose (PMF)",
+        "CML (BCR-ABL1-positiv) = eigene Kategorie, historisch zu MPN gezählt",
+        "Treibermutationen der klassischen MPN: JAK2 V617F (PV: >97%, ET/PMF: ~55%), CALR (ET/PMF: ~25%), MPL (ET/PMF: ~3%)",
+        "JAK2/CALR/MPL-Mutationen aktivieren den JAK-STAT-Signalweg → unkontrollierte Zellproliferation",
+        "Hauptrisiken: Thrombose + Blutung (Paradoxon durch Thrombozytenfunktionsstörung), Transformation in Myelofibrose oder AML",
+        "Systemische Mastozytose: KIT D816V-Mutation, separate Entität mit spezifischer Therapie (Midostaurin, Avapritinib)",
+        "Diagnose: Blutbild, KM-Biopsie, molekulargenetik (JAK2/CALR/MPL), Ausschluss reaktiver Ursachen!",
+        "Ruxolitinib (JAK1/2-Inhibitor): Standardtherapie bei Hochrisiko-PV und MF (COMFORT-/RESPONSE-Studien)"
+      ]},
+      en:{label:"MPN",desc:"JAK2/CALR\nMPL mutations",full:"Myeloproliferative Neoplasms — Overview",details:[
+        "Clonal myeloid disorders: uncontrolled proliferation of one or more blood cell lineages — but cells do mature (unlike AML)!",
+        "Classic BCR-ABL1-negative MPN: polycythaemia vera (PV), essential thrombocythaemia (ET), primary myelofibrosis (PMF)",
+        "CML (BCR-ABL1-positive) = its own category, historically grouped with MPN",
+        "Driver mutations of classic MPN: JAK2 V617F (PV: >97%, ET/PMF: ~55%), CALR (ET/PMF: ~25%), MPL (ET/PMF: ~3%)",
+        "JAK2/CALR/MPL mutations activate the JAK-STAT signalling pathway → uncontrolled cell proliferation",
+        "Main risks: thrombosis + bleeding (paradox via platelet dysfunction), transformation to myelofibrosis or AML",
+        "Systemic mastocytosis: KIT D816V mutation, separate entity with specific therapy (midostaurin, avapritinib)",
+        "Diagnosis: blood count, BM biopsy, molecular genetics (JAK2/CALR/MPL), exclusion of reactive causes!",
+        "Ruxolitinib (JAK1/2 inhibitor): standard therapy for high-risk PV and MF (COMFORT/RESPONSE trials)"
+      ]},
+      color:"#e8a030",
+      children:[
+        {id:"pv",
+         de:{label:"Polycythaemia\nVera",full:"Polycythaemia Vera",details:["JAK2 V617F in >97%; JAK2 Exon-12 bei übrigen","WHO 2022: Hb ≥16,5 g/dl (m) / ≥16 g/dl (f) + KM + JAK2","Risiken: Thrombose, Blutung, Transformation in MF/AML","Stratifikation: Niedrig- vs. Hochrisiko (Alter >60 J. oder VTE)","Alle Patienten: Niedrigdosis-ASS + Zielwert Hkt <45% (CYTO-PV)","Hochrisiko: Hydroxycarbamid als Erstlinie","Ruxolitinib: bei Hydroxyurea-Versagen (RESPONSE-Studie)","Leitlinie: DGHO / ELN / ESMO"]},
+         en:{label:"Polycythaemia\nVera",full:"Polycythaemia Vera",details:["JAK2 V617F in >97%; JAK2 exon-12 in remaining","WHO 2022: Hb ≥16.5 g/dL (m) / ≥16 g/dL (f) + BM + JAK2","Risks: thrombosis, bleeding, transformation to MF/AML","Stratification: low vs high risk (age >60 or prior VTE)","All patients: low-dose aspirin + target Hct <45% (CYTO-PV)","High risk: hydroxycarbamide first line","Ruxolitinib: for hydroxycarbamide failure (RESPONSE trial)","Guideline: DGHO / ELN / ESMO"],pearls_de:["JAK2 V617F in >97% — Screening-Mutation der Wahl","Zielwert Hämatokrit <45% (CYTO-PV-Studie) für alle Patienten","ASS für ALLE Patienten (ausser Kontraindikation)","Ruxolitinib bei Hydroxyurea-Versagen oder Unverträglichkeit"],pearls_en:["JAK2 V617F in >97% — screening mutation of choice","Target haematocrit <45% (CYTO-PV trial) for all patients","Aspirin for ALL patients (unless contraindicated)","Ruxolitinib for hydroxycarbamide failure or intolerance"],relations:[{chain:["Polycythaemia Vera","Sekundäre Myelofibrose","AML-Transformation"],arrows:["Jahre bis Jahrzehnte","~5-10% Risiko"],note:"Natürlicher Verlauf der MPN — durch JAK2-Inhibition verlangsamt"}]}},
+        {id:"et",
+         de:{label:"Essentielle\nThrombozyt.",full:"Essentielle Thrombozythämie",details:["Thrombozyten >450 × 10⁹/l persistierend","Mutationen: JAK2 V617F (55%), CALR (25%), MPL (3%), Triple-neg. (17%)","CALR-mutiert: geringeres Thromboserisiko als JAK2","Risikoklassifikation: IPSET-Thrombose (revidiert)","Niedrigrisiko: Beobachtung oder ASS","Hochrisiko: ASS + Hydroxycarbamid (Erstlinie)","Schwangerschaft: ASS ± NMH; Interferon-alpha bevorzugen","Leitlinie: DGHO / ELN"]},
+         en:{label:"Essential\nThrombocythaem.",full:"Essential Thrombocythaemia",details:["Platelets >450 × 10⁹/L persistent","Mutations: JAK2 V617F (55%), CALR (25%), MPL (3%), triple-neg (17%)","CALR-mutated: lower thrombosis risk than JAK2","Risk classification: revised IPSET-thrombosis","Low risk: observation or aspirin","High risk: aspirin + hydroxycarbamide (first line)","Pregnancy: aspirin ± LMWH; prefer interferon-alpha","Guideline: DGHO / ELN"],pearls_de:["JAK2 V617F (55%) vs. CALR (25%): CALR = geringeres Thromboserisiko!","Ziel: Thrombozyten <600 × 10⁹/l bei Hochrisiko","Schwangerschaft: Interferon bevorzugen (kein Hydroxyurea!)","Richter: ET kann in Myelofibrose oder selten AML transformieren"],pearls_en:["JAK2 V617F (55%) vs CALR (25%): CALR = lower thrombosis risk!","Target: platelets <600 × 10⁹/L in high risk","Pregnancy: prefer interferon (no hydroxycarbamide!)","Note: ET can transform to myelofibrosis or rarely AML"],relations:[{chain:["Essentielle Thrombozythämie","Post-ET-Myelofibrose","AML-Transformation"],arrows:["~1–2%/Jahr","Selten, ~1%"],note:"ET hat niedrigstes Transformationsrisiko aller klassischen MPN"}]}},
+        {id:"mf",
+         de:{label:"Primäre\nMyelofibrose",full:"Primäre Myelofibrose",details:["Mutationen: JAK2 V617F (60%), CALR (25%), MPL (8%)","Hochrisiko: ASXL1, EZH2, IDH1/2, SRSF2 (MIPSS70)","Klinik: Splenomegalie, konst. Symptome, Tränentropfenerythrozyten","Prognose-Score: DIPSS-Plus oder MIPSS70+v2","Ruxolitinib: Standard bei Splenomegalie (COMFORT-I/II)","Fedratinib, Pacritinib: bei Ruxolitinib-Versagen / Thrombozytopenie","Momelotinib: bei Anämie + Splenomegalie (MOMENTUM)","AlloSZT: einzige kurative Option bei Hochrisikopatienten","Leitlinie: DGHO / ELN"]},
+         en:{label:"Primary\nMyelofibrosis",full:"Primary Myelofibrosis",details:["Mutations: JAK2 V617F (60%), CALR (25%), MPL (8%)","High-risk: ASXL1, EZH2, IDH1/2, SRSF2 (MIPSS70)","Clinical: splenomegaly, constitutional symptoms, teardrop erythrocytes","Prognosis score: DIPSS-Plus or MIPSS70+v2","Ruxolitinib: standard for splenomegaly (COMFORT-I/II)","Fedratinib, pacritinib: for ruxolitinib failure / thrombocytopenia","Momelotinib: for anaemia + splenomegaly (MOMENTUM)","AlloSCT: only potentially curative option in high-risk patients","Guideline: DGHO / ELN"],pearls_de:["Tränentropfenerythrozyten im Blutausstrich = klassischer Befund","AlloSZT = EINZIGE kurative Option — Ruxolitinib ist palliativ!","Ruxolitinib verbessert Symptome/Milzgröße, verlängert Überleben aber NICHT kurativ","Hochrisiko-Mutationen (ASXL1, EZH2, IDH, SRSF2) verschlechtern Prognose deutlich"],pearls_en:["Teardrop erythrocytes on blood smear = classic finding","AlloSCT = ONLY curative option — ruxolitinib is palliative!","Ruxolitinib improves symptoms/spleen size but is NOT curative","High-risk mutations (ASXL1, EZH2, IDH, SRSF2) worsen prognosis significantly"],relations:[{chain:["Primäre Myelofibrose","Akzelerationsphase (Blasten 10-19%)","AML-Transformation (Blasten ≥20%)"],arrows:["Klonale Evolution","~10-20% Risiko"],note:"MF hat das höchste AML-Transformationsrisiko aller klassischen MPN"},{chain:["PV / ET","Post-PV- / Post-ET-Myelofibrose","AML"],arrows:["Sekundäre MF","Blastenakkumulation"],note:"MF kann de novo entstehen ODER aus PV/ET transformieren"}]}},
+        {id:"sm_mpn",
+         de:{label:"Systemische\nMastozytose",full:"Systemische Mastozytose",details:["KIT D816V-Mutation in >95%","WHO: Indolente SM, Smouldering SM, Aggressive SM, SM-AHN, Mastzellleukämie","Tryptase erhöht (>20 ng/ml); KM-Biopsie mit Mastzellinfiltration","ISM: Antihistaminika, Epinephrin-Pen, Bisphosphonate","Fortgeschrittene SM: Avapritinib (KIT D816V-Inhibitor, PATHFINDER)","Midostaurin: ältere Zulassung, auch bei Hochrisiko","Leitlinie: DGHO / EuRRECa"]},
+         en:{label:"Systemic\nMastocytosis",full:"Systemic Mastocytosis",details:["KIT D816V mutation in >95%","WHO: indolent SM, smouldering SM, aggressive SM, SM-AHN, mast cell leukaemia","Tryptase elevated (>20 ng/mL); BM biopsy with mast cell infiltration","ISM: antihistamines, epinephrine auto-injector, bisphosphonates","Advanced SM: avapritinib (KIT D816V inhibitor, PATHFINDER)","Midostaurin: older approval, also for high-risk disease","Guideline: DGHO / EuRRECa"]}},
+      ],
+    },
+    {
+      id:"mds",
+      de:{label:"MDS",desc:"Ineffektive\nHämatopoese",full:"Myelodysplastische Syndrome — Überblick",details:[
+        "Klonale Stammzellerkrankung: Dysplasie + ineffektive Hämatopoese → Zytopenie(n) trotz normaler oder hyperzellulärer KM-Zellularität",
+        "Kernpathophysiologie: exzessive Apoptose dysplastischer Zellen im KM — dadurch Paradox 'viel im KM, wenig im Blut'",
+        "MDS ≠ akute Leukämie: Blastenanteil <20% (WHO 2022); Übergang möglich (MDS-EB → AML)",
+        "Häufige somatische Mutationen: SF3B1 (Spliceosom), TET2, ASXL1, DNMT3A (Epigenetik), TP53, RUNX1",
+        "Risikostratifizierung IPSS-R: Very Low / Low / Intermediate / High / Very High → bestimmt Therapieintensität",
+        "Molekularer IPSS-M (2022): ergänzt IPSS-R um 31 Gene, präzisere Prognose",
+        "Einzige kurative Option: allogene Stammzelltransplantation (alloSZT) — nur für geeignete Patienten",
+        "Niedrigrisiko: symptomorientiert (Luspatercept, ESA, Lenalidomid bei del5q, Transfusionen)",
+        "Hochrisiko: Azacitidin-Standard (AZA-001); Venetoclax-Kombination in Studien/Zulassung",
+        "Sekundäres MDS (nach Chemo/Strahlung): TP53-Mutationen häufig, sehr schlechte Prognose"
+      ]},
+      en:{label:"MDS",desc:"Ineffective\nhaematopoiesis",full:"Myelodysplastic Syndromes — Overview",details:[
+        "Clonal stem cell disorder: dysplasia + ineffective haematopoiesis → cytopenia(s) despite normal or hypercellular BM",
+        "Core pathophysiology: excessive apoptosis of dysplastic cells in BM — paradox: 'full BM, empty blood'",
+        "MDS ≠ acute leukaemia: blast count <20% (WHO 2022); progression possible (MDS-EB → AML)",
+        "Common somatic mutations: SF3B1 (spliceosome), TET2, ASXL1, DNMT3A (epigenetics), TP53, RUNX1",
+        "Risk stratification IPSS-R: Very Low / Low / Intermediate / High / Very High → determines treatment intensity",
+        "Molecular IPSS-M (2022): supplements IPSS-R with 31 genes for more precise prognosis",
+        "Only curative option: allogeneic stem cell transplantation (alloSCT) — for eligible patients only",
+        "Low risk: symptom-oriented (luspatercept, ESA, lenalidomide for del5q, transfusions)",
+        "High risk: azacitidine standard (AZA-001); venetoclax combinations in trials/approval",
+        "Secondary MDS (post-chemo/radiation): TP53 mutations frequent, very poor prognosis"
+      ]},
+      color:"#3dbf9e",
+      children:[
+        {id:"mds_ueber",
+         de:{label:"Übersicht",full:"Myelodysplastische Syndrome (MDS)",details:["Klonale Erkrankung hämatopoetischer Stammzellen; primär (90%) vs. sekundär/therapieassoziiert (10%)","Gesamtinzidenz: ~4/100.000/Jahr; bei >70-Jährigen: >30/100.000/Jahr!","Medianes Erkrankungsalter: ca. 75 Jahre; ♂ ≅ ♀","Pathophysiologie: chromosomale/genetische Aberrationen → klonale Proliferation dysplastischer Zellen → Apoptoseneigung → Zytopenie(n) + ggf. Blasten","20% der Fälle asymptomatisch (Zufallsbefund bei Routineuntersuchung)","Symptome: Anämie (70-80%), Leukozytopenie (Infektneigung), Thrombozytopenie (Blutungszeichen)","Häufige Mutationen: SF3B1, TET2, ASXL1, DNMT3A, SRSF2, RUNX1, TP53","Klassifikation: WHO 2022; Risikostratifizierung: IPSS-R oder IPSS-M (molekular)","AlloSZT = EINZIGE kurative Therapieoption des MDS!","Niedrigrisiko: Watch & Wait, ESA, Luspatercept, Lenalidomid (del5q)","Hochrisiko: Azacitidin (HMA) — Standard (AZA-001); alloSZT bei fitten Patienten","Leitlinie: DGHO / ELN"]},
+         en:{label:"Overview",full:"Myelodysplastic Syndromes (MDS)",details:["Clonal disorder of haematopoietic stem cells; primary (90%) vs secondary/therapy-related (10%)","Total incidence: ~4/100,000/yr; in >70-year-olds: >30/100,000/yr!","Median age at diagnosis: ~75 years; ♂ ≅ ♀","Pathophysiology: chromosomal/genetic aberrations → clonal proliferation of dysplastic cells → apoptosis tendency → cytopenia(s) ± blasts","20% of cases asymptomatic (incidental finding at routine check)","Symptoms: anaemia (70-80%), leukocytopenia (infection risk), thrombocytopenia (bleeding)","Common mutations: SF3B1, TET2, ASXL1, DNMT3A, SRSF2, RUNX1, TP53","Classification: WHO 2022; risk stratification: IPSS-R or IPSS-M (molecular)","AlloSCT = THE ONLY curative treatment option for MDS!","Low risk: watch & wait, ESA, luspatercept, lenalidomide (del5q)","High risk: azacitidine (HMA) — standard (AZA-001); alloSCT for fit patients","Guideline: DGHO / ELN"],pearls_de:["AlloSZT = EINZIGE kurative Option beim MDS!","IPSS-R bestimmt Therapiestrategie (Niedrigrisiko vs. Hochrisiko)","Paradox: KM hyperzellulär (voller Zellen) aber Blut zytopen (exzessive Apoptose)","20% der Patienten bei Diagnose asymptomatisch (Zufallsbefund)"],pearls_en:["AlloSCT = THE ONLY curative option in MDS!","IPSS-R determines treatment strategy (low-risk vs high-risk)","Paradox: BM hypercellular (full of cells) but blood cytopenic (excessive apoptosis)","20% of patients asymptomatic at diagnosis (incidental finding)"],relations:[{chain:["MDS Niedrigrisiko (IPSS-R ≤3.5)","MDS Hochrisiko (IPSS-R >3.5)","AML (Blasten >20%)"],arrows:["Klonale Evolution","Transformation"],note:"MDS-Progression — nicht alle MDS transformieren in AML"}]}},
+        {id:"mds_sf3b1",
+         de:{label:"MDS mit\nSF3B1-Mut.",full:"MDS mit SF3B1-Mutation / Ringsideroblasten",details:["SF3B1-Mutation in >80% der Ringsideroblasten-MDS","Ringsideroblasten ≥15% (oder ≥5% bei SF3B1) im KM","Indolenter Verlauf, niedriges Transformationsrisiko","ESA als Erstlinie (EPO <500 U/l, niedrige Transfusionslast)","Luspatercept: Erstlinie oder nach ESA-Versagen (COMMANDS)","Leitlinie: DGHO"]},
+         en:{label:"MDS with\nSF3B1 Mut.",full:"MDS with SF3B1 Mutation / Ring Sideroblasts",details:["SF3B1 mutation in >80% of ring sideroblast MDS","Ring sideroblasts ≥15% (or ≥5% with SF3B1) in BM","Indolent course, low transformation risk","ESA first line (EPO <500 U/L, low transfusion burden)","Luspatercept: first line or after ESA failure (COMMANDS)","Guideline: DGHO"]}},
+        {id:"mds_eb",
+         de:{label:"MDS erhöhte\nBlasten",full:"MDS mit erhöhtem Blastenanteil",details:["MDS-EB-1: 5-9% Blasten im KM","MDS-EB-2: 10-19% Blasten (früher AML-Grenze 20%)","Hohes AML-Transformationsrisiko","Standard: Azacitidin 75 mg/m2 s.c. d1-7, alle 4 Wochen (AZA-001)","AlloSZT: bei fitten Hochrisikopatienten anstreben","Venetoclax + Azacitidin: bei TP53-wt oder IDH1/2-Mutation","Leitlinie: DGHO / ELN"]},
+         en:{label:"MDS Excess\nBlasts",full:"MDS with Excess Blasts",details:["MDS-EB-1: 5-9% blasts in BM","MDS-EB-2: 10-19% blasts (former AML threshold was 20%)","High risk of AML transformation","Standard: azacitidine 75 mg/m2 s.c. d1-7 every 4 weeks (AZA-001)","AlloSCT: aim for fit high-risk patients","Venetoclax + azacitidine: for TP53-wt or IDH1/2 mutated","Guideline: DGHO / ELN"],pearls_de:["MDS-EB-2: bis 19% Blasten — Azacitidin-Standard (nicht AML!)","AML-Schwelle: 20% Blasten (WHO 2022) — EB-2 ist KEIN AML","Hohes Transformationsrisiko → nicht zuwarten!","AlloSZT anstreben bei fitten Hochrisikopatienten"],pearls_en:["MDS-EB-2: up to 19% blasts — azacitidine standard (not AML!)","AML threshold: 20% blasts (WHO 2022) — EB-2 is NOT AML","High transformation risk → do not delay!","Aim for alloSCT in fit high-risk patients"],relations:[{chain:["MDS-EB-1 (5-9% Blasten)","MDS-EB-2 (10-19% Blasten)","AML (≥20% Blasten)"],arrows:["Blastenanstieg","Blastenanstieg"],note:"Kontinuum der Blastenakkumulation — Schwelle bestimmt Therapie"}]}},
+        {id:"mds_del5q",
+         de:{label:"MDS\nisoliert del(5q)",full:"MDS mit isolierter del(5q)",details:["Isolierte del(5q)(q31-q33)","Überwiegend Frauen, makrozytäre Anämie, normale/hohe Thrombozyten","Sehr indolenter Verlauf","Lenalidomid: exzellentes Ansprechen (Transfusionsunabh. >65%)","Bei TP53-Mutation: engmaschige KM-Kontrollen unter Lenalidomid","Leitlinie: DGHO"]},
+         en:{label:"MDS isolated\ndel(5q)",full:"MDS with Isolated del(5q)",details:["Isolated del(5q)(q31-q33)","Predominantly female, macrocytic anaemia, normal/elevated platelets","Very indolent course","Lenalidomide: excellent response (transfusion independence >65%)","If TP53 mutation: close BM monitoring on lenalidomide","Guideline: DGHO"]}},
+        {id:"mds_tp53",
+         de:{label:"MDS biallelisch\nTP53",full:"MDS mit biallelischem TP53-Verlust",details:["Biallelische TP53-Inaktivierung: äußerst ungünstige Prognose","Häufig therapiebedingtes MDS (nach Chemo-/Strahlentherapie)","Azacitidin ± Venetoclax: begrenzte Wirksamkeit","Eprenetapopt (APR-246): in Studien (p53-Reaktivierung)","AlloSZT: hohe Rückfallrate, individuelle Entscheidung","Leitlinie: DGHO"]},
+         en:{label:"MDS biallelic\nTP53",full:"MDS with Biallelic TP53 Loss",details:["Biallelic TP53 inactivation: extremely poor prognosis","Often therapy-related MDS (after chemo-/radiotherapy)","Azacitidine ± venetoclax: limited efficacy","Eprenetapopt (APR-246): in trials (p53 reactivation)","AlloSCT: high relapse rate, individual decision","Guideline: DGHO"]}},
+      ],
+    },
+    {
+      id:"sonstige",
+      de:{label:"SONSTIGES",desc:"Seltene &\nÜberlappende",full:"Sonstige hämatologische Neoplasien — Überblick",details:[
+        "Sammelkategorie seltener und nosologisch schwer einzuordnender Entitäten",
+        "MDS/MPN-Überlappungssyndrome: klinische Merkmale beider Kategorien gleichzeitig (z.B. CMML, aCML, JMML)",
+        "CMML (Chronische Myelomonozytäre Leukämie): häufigste Überlappungsentität; Monozytose ≥0,5 × 10⁹/l ist Schlüsselmerkmal",
+        "Histiozytäre Neoplasien: Langerhans-Zell-Histiozytose (LZH), Erdheim-Chester, histiozytäres Sarkom — BRAF V600E in ~50-60%",
+        "BPDCN (Blastäre plasmazytoide dendritische Zellneoplasie): aggressiv, CD123+; Tagraxofusp (CD123-Toxin) zugelassen",
+        "Aplastische Anämie: KEINE maligne Erkrankung — immunvermittelte Stammzellzerstörung (T-Zell-mediiert)",
+        "AA Therapie: AlloSZT (1. Wahl <40 J.) oder IST (Cyclosporin + ATG + Eltrombopag)",
+        "Differenzialdiagnostik entscheidend: AA vs. MDS vs. PNH — häufige Überschneidungen und Übergänge!",
+        "PNH (Paroxysmale nächtliche Hämoglobinurie): GPI-Anker-Defekt; Eculizumab/Ravulizumab als Standard"
+      ]},
+      en:{label:"OTHER",desc:"Rare &\nOverlapping",full:"Other Haematological Neoplasms — Overview",details:[
+        "Collective category of rare and nosologically difficult-to-classify entities",
+        "MDS/MPN overlap syndromes: clinical features of both categories simultaneously (e.g. CMML, aCML, JMML)",
+        "CMML (chronic myelomonocytic leukaemia): most common overlap entity; monocytosis ≥0.5 × 10⁹/L is the key feature",
+        "Histiocytic neoplasms: Langerhans cell histiocytosis (LCH), Erdheim-Chester, histiocytic sarcoma — BRAF V600E in ~50-60%",
+        "BPDCN (blastic plasmacytoid dendritic cell neoplasm): aggressive, CD123+; tagraxofusp (CD123-toxin) approved",
+        "Aplastic anaemia: NOT a malignant disease — immune-mediated stem cell destruction (T-cell mediated)",
+        "AA therapy: alloSCT (1st choice <40 yrs) or IST (ciclosporin + ATG + eltrombopag)",
+        "Differential diagnosis crucial: AA vs MDS vs PNH — frequent overlap and transitions!",
+        "PNH (paroxysmal nocturnal haemoglobinuria): GPI anchor defect; eculizumab/ravulizumab as standard"
+      ]},
+      color:"#f06292",
+      children:[
+        {id:"mds_mpn",
+         de:{label:"MDS/MPN-\nÜberlappung",full:"MDS/MPN-Überlappungssyndrome",details:["CMML: persistierende Monozytose ≥0,5 × 10⁹/l (WHO 2022), TET2/SRSF2-Mutationen","CMML-0/1/2 (Blastenanteil); CMML-MD vs. CMML-MP","aCML (atypische CML, BCR-ABL1-negativ): selten, schlechte Prognose","JMML: Kinder, RAS-Pathway-Mutationen (NRAS, KRAS, PTPN11)","MDS/MPN-RS-T: SF3B1 + Thrombozytose","Therapie CMML: Azacitidin bei Hochrisiko; AlloSZT","Leitlinie: DGHO / ELN"]},
+         en:{label:"MDS/MPN\nOverlap Syndr.",full:"MDS/MPN Overlap Syndromes",details:["CMML: persistent monocytosis ≥0.5 × 10⁹/L (WHO 2022), TET2/SRSF2 mutations","CMML-0/1/2 (blast count); CMML-MD vs CMML-MP","aCML (atypical CML, BCR-ABL1-negative): rare, poor prognosis","JMML: children, RAS pathway mutations (NRAS, KRAS, PTPN11)","MDS/MPN-RS-T: SF3B1 + thrombocytosis","CMML therapy: azacitidine for high-risk; alloSCT","Guideline: DGHO / ELN"]}},
+        {id:"histiozyt",
+         de:{label:"Histiozytäre\nNeoplasien",full:"Histiozytäre und dendritische Zellneoplasien",details:["Langerhans-Zell-Histiozytose (LZH): CD1a+, Langerin+, S100+","LZH: unifokal / multifokale Knochen / multisystemisch","BRAF V600E in ~50-60% der LZH","Erdheim-Chester-Erkrankung: Non-Langerhans, BRAF V600E häufig","Vemurafenib / Cobimetinib: bei BRAF V600E-positiver LZH und ECD","Histiozytäres Sarkom: sehr selten, aggressiv","Leitlinie: DGHO / Histio Society"]},
+         en:{label:"Histiocytic\nNeoplasms",full:"Histiocytic and Dendritic Cell Neoplasms",details:["Langerhans cell histiocytosis (LCH): CD1a+, Langerin+, S100+","LCH: unifocal / multifocal bone / multisystem","BRAF V600E in ~50-60% of LCH","Erdheim-Chester disease: non-Langerhans, BRAF V600E common","Vemurafenib / cobimetinib: for BRAF V600E-positive LCH and ECD","Histiocytic sarcoma: very rare, aggressive","Guideline: DGHO / Histio Society"]}},
+        {id:"bpdcn",
+         de:{label:"Blastäre\nPlasmaz. DN",full:"Blastoide plasmazytoide dendritische Zellneoplasie",details:["CD123+, CD4+, CD56+, TCL1+, CD303+","Typisch: kutane Läsionen → leukämische Phase","Sehr aggressiv, ungünstige Prognose","Tagraxofusp (SL-401, CD123-targeted): FDA-zugelassen (kein EMA-Zulassung; in DE: Einzelfallentscheidung)","AlloSZT in 1. CR anstreben","Leitlinie: DGHO"]},
+         en:{label:"Blastic Plasmac.\nDendritic CN",full:"Blastic Plasmacytoid Dendritic Cell Neoplasm",details:["CD123+, CD4+, CD56+, TCL1+, CD303+","Typical: cutaneous lesions → leukaemic phase","Highly aggressive, poor prognosis","Tagraxofusp (SL-401, CD123-targeted): FDA approved (no EMA approval; in Germany: compassionate use)","AlloSCT in 1st CR as goal","Guideline: DGHO"]}},
+        {id:"aplnos",
+         de:{label:"Aplastische\nAnämie",full:"Aplastische Anämie (schwere / sehr schwere)",details:["Nicht-malignes KM-Versagen - wichtige Differenzialdiagnose!","Panzytopenie + hypoplastisches KM (SAA: <0,5 × 10⁹/l Neutrophile)","Ursache: zumeist autoimmun (T-Zell-vermittelt); selten kongenital","Junge Patienten + MSD: sofortige AlloSZT","Ohne Spender: ATG + Ciclosporin + Eltrombopag","Telomerkrankheiten / Fanconi ausschließen","Leitlinie: DGHO / EBMT"]},
+         en:{label:"Aplastic\nAnaemia",full:"Aplastic Anaemia (Severe / Very Severe)",details:["Non-malignant BM failure - important differential diagnosis!","Pancytopenia + hypoplastic BM (SAA: <0.5 × 10⁹/L neutrophils)","Cause: mostly autoimmune (T-cell mediated); rarely congenital","Young patients + MSD: immediate alloSCT","Without donor: ATG + ciclosporin + eltrombopag","Exclude telomere disorders / Fanconi anaemia","Guideline: DGHO / EBMT"]}},
+      ],
+    },
+  ],
+};
+
+const COLORS={leukaemie:"#e05252",lymphom:"#5b8dee",plasma:"#b06be3",mpn:"#e8a030",mds:"#3dbf9e",sonstige:"#f06292"};
+// Nodes covered by uploaded AMBOSS articles
+// Nodes covered by the 7 uploaded AMBOSS articles:
+// AL.docx→all,aml | CLL.docx→cll | CML.docx→cml | HL.docx→khl,nlphl
+// MDS.docx→mds,mds_ueber,mds_eb,mds_del5q,mds_tp53,mds_sf3b1
+// MM.docx→mgus,smm,mm | NHL.docx→hcl,follikulaer,burkitt,wm
+const AMBOSS_IDS=new Set(["all","aml","cll","cml","khl","nlphl","mds","mds_ueber","mds_sf3b1","mds_eb","mds_del5q","mds_tp53","mgus","smm","mm","hcl","follikulaer","burkitt","wm"]);
+
+function flattenNodes(node,parent=null){const r=[{...node,parent}];if(node.children)for(const c of node.children)r.push(...flattenNodes(c,node.id));return r;}
+function computeLayout(node,cx,cy,sa,ea,depth=0,px=null,py=null){
+  const radii=[0,155,290,400,488];
+  const r=radii[Math.min(depth,radii.length-1)];
+  const angle=(sa+ea)/2;
+  const x=depth===0?cx:cx+r*Math.cos(angle);
+  const y=depth===0?cy:cy+r*Math.sin(angle);
+  const result=[{node,x,y,angle,depth,parentX:px??cx,parentY:py??cy}];
+  if(node.children?.length){const n=node.children.length,span=ea-sa,step=span/n;node.children.forEach((c,i)=>{const cs=sa+i*step;result.push(...computeLayout(c,cx,cy,cs,cs+step,depth+1,x,y));});}
+  return result;
+}
+function buildParentMap(nodes){const map={};nodes.forEach(item=>{item.node.children?.forEach(c=>{map[c.id]=item.node.id;});});return map;}
+function getColor(id,pm){let cur=id;for(let i=0;i<10;i++){if(COLORS[cur])return COLORS[cur];cur=pm[cur];if(!cur)break;}return "#7788aa";}
+function gl(node,lang,field){return(node[lang]&&node[lang][field])?node[lang][field]:(node.de&&node.de[field])?node.de[field]:"";}
+
+// Abbreviation expansion: applied to each detail bullet at render time
+// Pattern: standalone abbr (not preceded/followed by alnum or open-paren) → full text (ABBR)
+function expandAbbr(text,lang){
+  const DE=[
+    // Process longer/complex patterns first to avoid partial matches
+    ["IPSS-R","Revidiertes Internationales Prognose-Scoring-System (IPSS-R)"],
+    ["IPSS-M","Molekulares Internationales Prognose-Scoring-System (IPSS-M)"],
+    ["R-ISS","Revised International Staging System (R-ISS)"],
+    ["CAR-T","CAR-T-Zell-Therapie (CAR-T)"],
+    ["r/r","rezidiviert/refraktär (r/r)"],
+    ["alloSZT","allogene Stammzelltransplantation (alloSZT)"],
+    ["ASZT","autologe Stammzelltransplantation (ASZT)"],
+    // Therapy abbreviations
+    ["ATRA","All-trans-Retinsäure (ATRA)"],
+    ["ATO","Arsentrioxid (ATO)"],
+    ["TKI","Tyrosinkinaseinhibitor (TKI)"],
+    ["BTK","Bruton-Tyrosinkinase (BTK)"],
+    ["HMA","Hypomethylierungsagenzien (HMA)"],
+    ["ESA","Erythropoese-stimulierendes Agens (ESA)"],
+    ["PUVA","Psoralen + UV-A-Bestrahlung (PUVA)"],
+    // Clinical/lab abbreviations
+    ["KM","Knochenmark (KM)"],
+    ["ZNS","Zentralnervensystem (ZNS)"],
+    ["LK","Lymphknoten (LK)"],
+    ["MRD","minimale Resterkrankung (MRD)"],
+    ["CR","komplette Remission (CR)"],
+    ["LAP","Lymphadenopathie (LAP)"],
+    ["BSG","Blutsenkungsgeschwindigkeit (BSG)"],
+    ["SPEP","Serumelektrophorese (SPEP)"],
+    ["FLC","freie Leichtketten (FLC)"],
+    ["FNA","Feinnadelaspiration (FNA)"],
+    ["TRAP","Tartrat-resistente saure Phosphatase (TRAP)"],
+    ["EBV","Epstein-Barr-Virus (EBV)"],
+    // Prognostic scores / guidelines
+    ["FLIPI","Follikuläres-Lymphom-Internationaler-Prognoseindex (FLIPI)"],
+    ["MIPI","Mantelzell-Lymphom-Internationaler-Prognoseindex (MIPI)"],
+    ["IPI","Internationaler Prognoseindex (IPI)"],
+    ["ELN","European LeukemiaNet (ELN)"],
+    ["GHSG","Deutsche Hodgkin-Studiengruppe (GHSG)"],
+    ["IMWG","International Myeloma Working Group (IMWG)"],
+    ["DGHO","Dt. Gesellschaft für Hämatologie u. Med. Onkologie (DGHO)"],
+    // Disease abbreviations (when referencing other entities)
+    ["APL","Akute Promyelozytenleukämie (APL)"],
+    ["ALL","Akute Lymphatische Leukämie (ALL)"],
+    ["AML","Akute Myeloische Leukämie (AML)"],
+    ["CLL","Chronische Lymphatische Leukämie (CLL)"],
+    ["CML","Chronische Myeloische Leukämie (CML)"],
+    ["HCL","Haarzell-Leukämie (HCL)"],
+    ["DLBZL","Diffus-großzelliges B-Zell-Lymphom (DLBZL)"],
+    ["NLPHL","Noduläres lymphozytenprädominantes Hodgkin-Lymphom (NLPHL)"],
+    ["ALCL","Anaplastisch-großzelliges Lymphom (ALCL)"],
+    ["PTCL","Peripheres T-Zell-Lymphom (PTCL)"],
+    ["CTCL","Kutanes T-Zell-Lymphom (CTCL)"],
+    ["AITL","Angioimmunoblastisches T-Zell-Lymphom (AITL)"],
+    ["MCL","Mantelzell-Lymphom (MCL)"],
+    ["MZL","Marginalzonen-Lymphom (MZL)"],
+    ["NHL","Non-Hodgkin-Lymphom (NHL)"],
+    ["MDS","Myelodysplastisches Syndrom (MDS)"],
+    ["MPN","Myeloproliferative Neoplasie (MPN)"],
+    ["MGUS","Monoklonale Gammopathie unklarer Signifikanz (MGUS)"],
+    ["SMM","Schwelendes Multiples Myelom (SMM)"],
+    ["MM","Multiples Myelom (MM)"],
+  ];
+  const EN=[
+    ["IPSS-R","Revised International Prognostic Scoring System (IPSS-R)"],
+    ["IPSS-M","Molecular International Prognostic Scoring System (IPSS-M)"],
+    ["R-ISS","Revised International Staging System (R-ISS)"],
+    ["CAR-T","CAR-T cell therapy (CAR-T)"],
+    ["r/r","relapsed/refractory (r/r)"],
+    ["alloSCT","allogeneic stem cell transplantation (alloSCT)"],
+    ["ASCT","autologous stem cell transplantation (ASCT)"],
+    ["ATRA","all-trans retinoic acid (ATRA)"],
+    ["ATO","arsenic trioxide (ATO)"],
+    ["TKI","tyrosine kinase inhibitor (TKI)"],
+    ["BTK","Bruton tyrosine kinase (BTK)"],
+    ["HMA","hypomethylating agent (HMA)"],
+    ["ESA","erythropoiesis-stimulating agent (ESA)"],
+    ["PUVA","psoralen + UVA phototherapy (PUVA)"],
+    ["BM","bone marrow (BM)"],
+    ["CNS","central nervous system (CNS)"],
+    ["LN","lymph node (LN)"],
+    ["MRD","minimal residual disease (MRD)"],
+    ["CR","complete remission (CR)"],
+    ["BSG","erythrocyte sedimentation rate (ESR/BSG)"],
+    ["SPEP","serum protein electrophoresis (SPEP)"],
+    ["FLC","free light chains (FLC)"],
+    ["FNA","fine needle aspiration (FNA)"],
+    ["TRAP","tartrate-resistant acid phosphatase (TRAP)"],
+    ["EBV","Epstein-Barr virus (EBV)"],
+    ["FLIPI","Follicular Lymphoma International Prognostic Index (FLIPI)"],
+    ["MIPI","Mantle Cell Lymphoma International Prognostic Index (MIPI)"],
+    ["IPI","International Prognostic Index (IPI)"],
+    ["ELN","European LeukemiaNet (ELN)"],
+    ["GHSG","German Hodgkin Study Group (GHSG)"],
+    ["IMWG","International Myeloma Working Group (IMWG)"],
+    ["DGHO","German Society for Haematology and Med. Oncology (DGHO)"],
+    ["APL","acute promyelocytic leukaemia (APL)"],
+    ["ALL","acute lymphoblastic leukaemia (ALL)"],
+    ["AML","acute myeloid leukaemia (AML)"],
+    ["CLL","chronic lymphocytic leukaemia (CLL)"],
+    ["CML","chronic myeloid leukaemia (CML)"],
+    ["HCL","hairy cell leukaemia (HCL)"],
+    ["DLBCL","diffuse large B-cell lymphoma (DLBCL)"],
+    ["NLPHL","nodular lymphocyte-predominant Hodgkin lymphoma (NLPHL)"],
+    ["ALCL","anaplastic large cell lymphoma (ALCL)"],
+    ["PTCL","peripheral T-cell lymphoma (PTCL)"],
+    ["CTCL","cutaneous T-cell lymphoma (CTCL)"],
+    ["AITL","angioimmunoblastic T-cell lymphoma (AITL)"],
+    ["MCL","mantle cell lymphoma (MCL)"],
+    ["MZL","marginal zone lymphoma (MZL)"],
+    ["NHL","non-Hodgkin lymphoma (NHL)"],
+    ["MDS","myelodysplastic syndrome (MDS)"],
+    ["MPN","myeloproliferative neoplasm (MPN)"],
+    ["MGUS","monoclonal gammopathy of undetermined significance (MGUS)"],
+    ["SMM","smouldering multiple myeloma (SMM)"],
+    ["MM","multiple myeloma (MM)"],
+  ];
+  const map=lang==="de"?DE:EN;
+  let s=text;
+  for(const[abbr,full]of map){
+    const esc=abbr.replace(/[-\/\\^$*+?.()|[\]{}]/g,"\\$&");
+    // Match abbr not preceded by alnum/( and not followed by alnum/( [to avoid re-expanding]
+    try{
+      const rx=new RegExp(`(?<![\\w(])${esc}(?![\\w(])`, "g");
+      s=s.replace(rx,full);
+    }catch(e){}
+  }
+  return s;
+}
+
+function App(){
+  const [lang,setLang]=useState("de");
+  const [selected,setSelected]=useState(null);
+  const [hovered,setHovered]=useState(null);
+  const [search,setSearch]=useState("");
+  const [zoom,setZoom]=useState(1);
+  const [pan,setPan]=useState({x:0,y:0});
+  const [dragging,setDragging]=useState(false);
+  const [dragStart,setDragStart]=useState(null);
+  // highlights: {nodeId: Set of bullet indices}
+  const [highlights,setHighlights]=useState({});
+  // custom bullets: {nodeId: [string, ...]}  — added to both DE and EN
+  const [customBullets,setCustomBullets]=useState({});
+  const [addInput,setAddInput]=useState("");
+  const [editMode,setEditMode]=useState(false);
+
+  const W=1440,H=1100,cx=720,cy=550;
+  const layoutNodes=computeLayout(data,cx,cy,-Math.PI,Math.PI);
+  const parentMap=buildParentMap(layoutNodes);
+  const allFlat=flattenNodes(data);
+
+  const searchResults=search.trim().length>1?allFlat.filter(n=>{const q=search.toLowerCase();return gl(n,lang,"label")?.toLowerCase().includes(q)||gl(n,lang,"full")?.toLowerCase().includes(q)||(gl(n,lang,"details")||[]).some(d=>d.toLowerCase().includes(q));})
+  :[];
+  const highlightIds=new Set(searchResults.map(n=>n.id));
+
+  function onMD(e){setDragging(true);setDragStart({x:e.clientX-pan.x,y:e.clientY-pan.y});}
+  function onMM(e){if(!dragging)return;setPan({x:e.clientX-dragStart.x,y:e.clientY-dragStart.y});}
+  function onMU(){setDragging(false);}
+  function onW(e){e.preventDefault();setZoom(z=>Math.max(0.3,Math.min(3,z-e.deltaY*0.001)));}
+
+  const selNode=selected?allFlat.find(n=>n.id===selected):null;
+  const ui=lang==="de"
+    ?{title:"Hämatologische Neoplasien",sub:"DGHO-Leitlinien · Übersicht",ph:"Suche: Diagnose, Mutation, Therapie …",hint:"Ziehen = Pan · Scrollen = Zoom · Klicken = Details",diagLbl:"Diagnose",noRes:"Keine Treffer",resLbl:n=>n===1?"ERGEBNIS":"ERGEBNISSE"}
+    :{title:"Haematological Neoplasms",sub:"DGHO Guidelines · Overview",ph:"Search: diagnosis, mutation, drug …",hint:"Drag = pan · Scroll = zoom · Click = details",diagLbl:"Diagnosis",noRes:"No results",resLbl:n=>n===1?"RESULT":"RESULTS"};
+  const legend=lang==="de"?[["leukaemie","Leukämien"],["lymphom","Lymphome"],["plasma","Plasmazellen"],["mpn","MPN"],["mds","MDS"],["sonstige","Sonstiges"]]:[["leukaemie","Leukaemias"],["lymphom","Lymphomas"],["plasma","Plasma Cell"],["mpn","MPN"],["mds","MDS"],["sonstige","Other"]];
+
+  return(
+    <div style={{background:"#080c18",height:"100vh",fontFamily:"'Roboto Mono',monospace",color:"#e8eaf6",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      {/* HEADER */}
+      <div style={{padding:"10px 20px",borderBottom:"1px solid #1a2040",display:"flex",alignItems:"center",gap:14,flexWrap:"wrap",background:"rgba(8,12,24,0.97)",zIndex:10}}>
+        <div>
+          <div style={{fontSize:9,letterSpacing:"0.28em",color:"#4455aa",textTransform:"uppercase"}}>{ui.sub}</div>
+          <div style={{fontSize:17,fontWeight:700,color:"#c8d8ff",letterSpacing:"0.04em"}}>{ui.title}</div>
+        </div>
+        <div style={{flex:1}}/>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder={ui.ph}
+          style={{background:"#101520",border:"1px solid #243060",borderRadius:6,color:"#c8d8ff",padding:"6px 12px",fontSize:12,width:255,outline:"none",fontFamily:"inherit"}}/>
+        <div style={{display:"flex",gap:2,background:"#0a1020",border:"1px solid #243060",borderRadius:6,padding:2}}>
+          {["de","en"].map(l=>(
+            <button key={l} onClick={()=>setLang(l)}
+              style={{background:lang===l?"#1a2848":"transparent",border:lang===l?"1px solid #5b8dee":"1px solid transparent",color:lang===l?"#c8d8ff":"#556688",borderRadius:4,padding:"3px 10px",cursor:"pointer",fontSize:11,fontFamily:"inherit",fontWeight:lang===l?700:400}}>
+              {l.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        <div style={{display:"flex",gap:3}}>
+          {[["＋",()=>setZoom(z=>Math.min(3,z+0.15))],["－",()=>setZoom(z=>Math.max(0.3,z-0.15))],["⌂",()=>{setZoom(1);setPan({x:0,y:0});}]].map(([l,f])=>(
+            <button key={l} onClick={f} style={{background:"#101520",border:"1px solid #243060",color:"#7788aa",borderRadius:5,padding:"4px 10px",cursor:"pointer",fontSize:12,fontFamily:"inherit"}}>{l}</button>
+          ))}
+        </div>
+      </div>
+      {/* LEGEND */}
+      <div style={{display:"flex",gap:12,padding:"5px 20px",borderBottom:"1px solid #141930",fontSize:10,flexWrap:"wrap",alignItems:"center"}}>
+        {legend.map(([k,v])=>(
+          <div key={k} style={{display:"flex",alignItems:"center",gap:4}}>
+            <div style={{width:8,height:8,borderRadius:2,background:COLORS[k]}}/>
+            <span style={{color:"#6677aa"}}>{v}</span>
+          </div>
+        ))}
+        <div style={{marginLeft:"auto",color:"#2a3460",fontSize:9}}>{ui.hint}</div>
+        <div style={{display:"flex",alignItems:"center",gap:4,marginLeft:8,paddingLeft:12,borderLeft:"1px solid #1a2040"}}>
+          <div style={{width:13,height:13,borderRadius:"50%",background:"#f59e0b",display:"flex",alignItems:"center",justifyContent:"center",fontSize:7,fontWeight:800,color:"#0a0f20"}}>A</div>
+          <span style={{color:"#7788bb",fontSize:9}}>AMBOSS-Artikel vorhanden (7 Artikel)</span>
+        </div>
+      </div>
+      {/* SEARCH OVERLAY */}
+      {search.trim().length>1&&(
+        <div style={{position:"fixed",top:90,right:20,background:"#0e1425",border:"1px solid #243060",borderRadius:8,padding:10,zIndex:20,maxWidth:295,maxHeight:295,overflowY:"auto",fontSize:11}}>
+          <div style={{color:"#4455aa",marginBottom:6,letterSpacing:"0.1em"}}>{searchResults.length} {ui.resLbl(searchResults.length)}</div>
+          {searchResults.map(n=>(
+            <div key={n.id} onClick={()=>{setSelected(n.id);setSearch("");}}
+              style={{padding:"5px 7px",cursor:"pointer",borderRadius:4,marginBottom:2,background:"#1a2040",color:"#c8d8ff"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#253060"}
+              onMouseLeave={e=>e.currentTarget.style.background="#1a2040"}>
+              <span style={{color:getColor(n.id,parentMap)}}>■ </span>
+              {gl(n,lang,"full")||gl(n,lang,"label")?.replace("\n"," ")}
+            </div>
+          ))}
+          {searchResults.length===0&&<div style={{color:"#334"}}>{ui.noRes}</div>}
+        </div>
+      )}
+      {/* MAP */}
+      <div style={{flex:1,overflow:"hidden",cursor:dragging?"grabbing":"grab"}} onMouseDown={onMD} onMouseMove={onMM} onMouseUp={onMU} onMouseLeave={onMU} onWheel={onW}>
+        <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} style={{transform:`translate(${pan.x}px,${pan.y}px) scale(${zoom})`,transformOrigin:"center",transition:dragging?"none":"transform 0.1s"}}>
+          <defs>
+            {Object.entries(COLORS).map(([k,v])=>(
+              <radialGradient key={k} id={`g_${k}`} cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor={v} stopOpacity="0.2"/><stop offset="100%" stopColor={v} stopOpacity="0.02"/>
+              </radialGradient>
+            ))}
+            <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+
+          </defs>
+          {/* EDGES */}
+          {layoutNodes.filter(i=>i.depth>0).map((item,i)=>{
+            const color=getColor(item.node.id,parentMap);
+            const hl=highlightIds.size>0?highlightIds.has(item.node.id):true;
+            return <line key={i} x1={item.parentX} y1={item.parentY} x2={item.x} y2={item.y} stroke={color} strokeWidth={item.depth===1?2:1} strokeOpacity={hl?(item.depth===1?0.65:0.35):0.06} strokeDasharray={item.depth>2?"4 3":"none"}/>;
+          })}
+          {/* NODES */}
+          {layoutNodes.map((item,i)=>{
+            const {node,x,y,depth,angle}=item;
+            const color=depth===0?"#c8d8ff":getColor(node.id,parentMap);
+            const isSel=selected===node.id,isHov=hovered===node.id;
+            const isAmboss=AMBOSS_IDS.has(node.id);
+            const hl=highlightIds.size>0?highlightIds.has(node.id):true;
+            const sz=[54,41,30,24,20][Math.min(depth,4)];
+            const label=gl(node,lang,"label")||"";
+            const desc=depth===1?gl(node,lang,"desc"):null;
+            const lines=label.split("\n");
+            const descLines=desc?desc.split("\n"):[];
+            const hasClick = depth > 0;
+
+            // Labels always inside circles
+            const labelOutside = false;
+            const anchor = "middle";
+            const fs = [12,9,8,7.2,6.8][Math.min(depth,4)];
+            const lineH = fs + 2.5;
+
+            // Depth-1 label shift when descriptor present
+            const labelShift = depth===1&&descLines.length>0 ? -(descLines.length*3.5) : 0;
+
+            return(
+              <g key={i} transform={`translate(${x},${y})`} style={{cursor:hasClick?"pointer":"default"}}
+                onClick={()=>hasClick&&setSelected(isSel?null:node.id)}
+                onMouseEnter={()=>setHovered(node.id)} onMouseLeave={()=>setHovered(null)}>
+                {isSel&&<circle r={sz+11} fill="none" stroke={color} strokeWidth="1.5" strokeOpacity="0.45" filter="url(#glow)"/>}
+                {isAmboss&&depth>0&&<circle r={sz+4} fill="none" stroke="#f59e0b" strokeWidth={depth===1?"1.2":"0.8"} strokeOpacity={hl?0.55:0.1} strokeDasharray="3 2"/>}
+                {depth===1&&<circle r={sz+5} fill={`url(#g_${node.id})`} stroke={color} strokeWidth="0.5" strokeOpacity={hl?0.28:0.04}/>}
+                <circle r={sz}
+                  fill={depth===0?"#151d38":isSel?`${color}22`:isHov?`${color}18`:"#0b1020"}
+                  stroke={color} strokeWidth={isSel?2.5:isHov?1.8:depth===0?2.5:depth===1?1.5:0.8}
+                  strokeOpacity={hl?1:0.12} fillOpacity={hl?1:0.2}/>
+
+                {/* Label inside circle */}
+                <g>
+                    {lines.map((line,li)=>(
+                      <text key={li} textAnchor="middle" dominantBaseline="middle"
+                        y={labelShift+(lines.length>1?(li-(lines.length-1)/2)*lineH:0)}
+                        fontSize={fs} fontWeight={depth<=1?700:600}
+                        fill={color} fillOpacity={hl?1:0.18}
+                        style={{userSelect:"none",fontFamily:"inherit"}}>
+                        {line}
+                      </text>
+                    ))}
+                    {depth===1&&descLines.map((dl,dli)=>(
+                      <text key={`d${dli}`} textAnchor="middle" dominantBaseline="middle"
+                        y={labelShift+(lines.length>1?(lines.length/2)*lineH:fs*0.7)+dli*7.5}
+                        fontSize={6} fontWeight={400}
+                        fill={color} fillOpacity={hl?0.55:0.08}
+                        style={{userSelect:"none",fontFamily:"inherit"}}>
+                        {dl}
+                      </text>
+                    ))}
+                </g>
+
+
+
+                {/* AMBOSS badge */}
+                {isAmboss&&depth>0&&<g transform={`translate(${(sz*0.68).toFixed(1)},${(-sz*0.68).toFixed(1)})`}>
+                  <circle r={(Math.max(sz*0.30,4.5)).toFixed(1)} fill="#f59e0b" stroke="#0a0f20" strokeWidth="0.8" fillOpacity={hl?0.95:0.25}/>
+                  <text textAnchor="middle" dominantBaseline="middle" fontSize={(Math.max(sz*0.21,3.2)).toFixed(1)} fontWeight="800" fill="#0a0f20" fillOpacity={hl?1:0.5} style={{userSelect:"none",fontFamily:"inherit"}}>A</text>
+                </g>}
+
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+      {/* DETAIL PANEL */}
+      {selNode&&(()=>{
+        const color=getColor(selNode.id,parentMap);
+        const baseBullets=gl(selNode,lang,"details")||[];
+        const extras=customBullets[selNode.id]||[];
+        const nodeHighlights=highlights[selNode.id]||new Set();
+        // depth of selected node
+        const selDepth=(layoutNodes.find(n=>n.node.id===selNode.id)||{depth:1}).depth;
+        // immediate children for group-overview display
+        const children=selNode.children||[];
+        // pearls and relations (injected into en:{} block, so live at selNode.en.*)
+        const pearls=lang==="de"
+          ?(selNode.en?.pearls_de||selNode.de?.pearls_de||[])
+          :(selNode.en?.pearls_en||[]);
+        const relations=selNode.en?.relations||selNode.relations||[];
+
+        function toggleHighlight(key){
+          setHighlights(h=>{
+            const prev=h[selNode.id]||new Set();
+            const next=new Set(prev);
+            next.has(key)?next.delete(key):next.add(key);
+            return {...h,[selNode.id]:next};
+          });
+        }
+        function removeBullet(key){
+          const idx=parseInt(key.replace("custom_",""));
+          setCustomBullets(cb=>{
+            const arr=[...(cb[selNode.id]||[])];
+            arr.splice(idx,1);
+            return {...cb,[selNode.id]:arr};
+          });
+          setHighlights(h=>{
+            const prev=h[selNode.id]||new Set();
+            const next=new Set(prev);
+            next.delete(key);
+            return {...h,[selNode.id]:next};
+          });
+        }
+        function addBullet(){
+          const txt=addInput.trim();
+          if(!txt)return;
+          setCustomBullets(cb=>({...cb,[selNode.id]:[...(cb[selNode.id]||[]),txt]}));
+          setAddInput("");
+        }
+
+        const allBullets=[
+          ...baseBullets.map((d,i)=>({key:`base_${i}`,text:d,isCustom:false})),
+          ...extras.map((d,i)=>({key:`custom_${i}`,text:d,isCustom:true})),
+        ];
+
+        const typeLabel=selDepth===1
+          ?(lang==="de"?"GRUPPE":"GROUP")
+          :selDepth===2
+          ?(lang==="de"?"KATEGORIE":"CATEGORY")
+          :(lang==="de"?"DIAGNOSE":"DIAGNOSIS");
+
+        return(
+        <div style={{position:"fixed",right:0,top:0,bottom:0,width:370,background:"#0a0f1e",borderLeft:"1px solid #1a2448",padding:"20px 17px",overflowY:"auto",zIndex:30,boxShadow:"-12px 0 50px rgba(0,0,0,0.65)"}}>
+          {/* top bar */}
+          <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12}}>
+            <button onClick={()=>setEditMode(m=>!m)}
+              style={{background:editMode?"#1a2848":"#111827",border:`1px solid ${editMode?"#5b8dee":"#243060"}`,color:editMode?"#c8d8ff":"#7788aa",borderRadius:5,padding:"3px 9px",cursor:"pointer",fontFamily:"inherit",fontSize:11}}>
+              ✎ {lang==="de"?"Bearbeiten":"Edit"}
+            </button>
+            <div style={{flex:1}}/>
+            <button onClick={()=>{setSelected(null);setEditMode(false);}} style={{background:"#111827",border:"1px solid #243060",color:"#7788aa",borderRadius:5,padding:"3px 9px",cursor:"pointer",fontFamily:"inherit",fontSize:13}}>✕</button>
+          </div>
+
+          {/* type badge */}
+          <div style={{fontSize:9,letterSpacing:"0.22em",color,textTransform:"uppercase",marginBottom:5}}>{typeLabel}</div>
+          <div style={{fontSize:15,fontWeight:700,color:"#e8eaf6",marginBottom:5,lineHeight:1.35}}>
+            {gl(selNode,lang,"full")||gl(selNode,lang,"label")?.replace(/\n/g," ")}
+          </div>
+          {gl(selNode,lang,"full")&&(
+            <div style={{display:"inline-block",background:`${color}18`,border:`1px solid ${color}40`,borderRadius:4,padding:"2px 7px",fontSize:10,color,marginBottom:12}}>
+              {gl(selNode,lang,"label")?.replace(/\n/g," ")}
+            </div>
+          )}
+
+          {/* children chip list for group/category nodes */}
+          {children.length>0&&(
+            <div style={{marginBottom:14}}>
+              <div style={{fontSize:9,letterSpacing:"0.18em",color:"#445588",marginBottom:6}}>
+                {lang==="de"?"ENTHÄLT":"CONTAINS"} · {children.length}
+              </div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                {children.map(c=>(
+                  <button key={c.id} onClick={()=>setSelected(c.id)}
+                    style={{background:`${color}12`,border:`1px solid ${color}35`,borderRadius:4,padding:"3px 8px",fontSize:10,color,cursor:"pointer",fontFamily:"inherit",textAlign:"left",lineHeight:1.3}}>
+                    {(gl(c,lang,"full")||gl(c,lang,"label")||"").replace(/\n/g," ")}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* DISEASE RELATIONS */}
+          {relations.length>0&&(
+            <div style={{marginBottom:14}}>
+              <div style={{fontSize:9,letterSpacing:"0.18em",color:"#3a6655",marginBottom:8,display:"flex",alignItems:"center",gap:5}}>
+                <span style={{fontSize:12}}>🔗</span>
+                {lang==="de"?"KRANKHEITSVERLAUF":"DISEASE PROGRESSION"}
+              </div>
+              {relations.map((rel,ri)=>(
+                <div key={ri} style={{marginBottom:10}}>
+                  {/* chain */}
+                  <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:0}}>
+                    {rel.chain.map((step,si)=>(
+                      <React.Fragment key={si}>
+                        <div style={{
+                          background:si===0?"#0e2218":si===rel.chain.length-1?"#1a0e2a":"#0e1a28",
+                          border:`1px solid ${si===0?"#3dbf9e":si===rel.chain.length-1?"#b06be3":color}55`,
+                          borderRadius:5,padding:"4px 8px",fontSize:10,lineHeight:1.3,
+                          color:si===0?"#6ee7b7":si===rel.chain.length-1?"#c4b5fd":"#93c5fd",
+                          fontWeight:600,maxWidth:100,textAlign:"center"}}>
+                          {step}
+                        </div>
+                        {si<rel.chain.length-1&&(
+                          <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"0 3px",minWidth:36}}>
+                            <div style={{fontSize:9,color:"#445566",textAlign:"center",lineHeight:1.2,marginBottom:1}}>{rel.arrows[si]}</div>
+                            <div style={{fontSize:14,color:"#445566",lineHeight:1}}>→</div>
+                          </div>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  {/* note */}
+                  <div style={{fontSize:10,color:"#4a6670",marginTop:5,fontStyle:"italic"}}>{rel.note}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* EXAM PEARLS */}
+          {pearls.length>0&&(
+            <div style={{marginBottom:14}}>
+              <div style={{fontSize:9,letterSpacing:"0.18em",color:"#cc4444",marginBottom:7,display:"flex",alignItems:"center",gap:5}}>
+                <span style={{fontSize:12}}>🚨</span>
+                {lang==="de"?"PRÜFUNGSRELEVANT":"EXAM PEARLS"}
+              </div>
+              {pearls.map((p,pi)=>(
+                <div key={pi} style={{marginBottom:5,padding:"6px 10px",
+                  background:"rgba(220,50,50,0.07)",
+                  border:"1px solid rgba(220,50,50,0.25)",
+                  borderLeft:"3px solid #dc3232",
+                  borderRadius:"0 5px 5px 0",fontSize:11,lineHeight:1.5,
+                  color:"#fca5a5",fontWeight:500}}>
+                  {p}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* bullets */}
+          {allBullets.length>0&&(
+            <div style={{fontSize:9,letterSpacing:"0.18em",color:"#445588",marginBottom:8}}>
+              {lang==="de"?"ÜBERBLICK":"OVERVIEW"}
+            </div>
+          )}
+          {allBullets.map(({key,text,isCustom})=>{
+            const expanded=expandAbbr(text,lang);
+            const isT=/(Therapie|Standard|Erstlinie|First line|Treatment|Alle Patienten|All patient|Leitlinie|Guideline)/.test(expanded);
+            const hl=nodeHighlights.has(key);
+            return(
+              <div key={key} style={{marginBottom:6,position:"relative",display:"flex",alignItems:"flex-start",gap:5}}>
+                <button onClick={()=>toggleHighlight(key)}
+                  title="Markieren"
+                  style={{flexShrink:0,marginTop:6,background:hl?"#f59e0b":"transparent",border:`1px solid ${hl?"#f59e0b":"#2a3460"}`,borderRadius:3,width:14,height:14,cursor:"pointer",padding:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,color:hl?"#0a0f20":"#3a4480"}}>
+                  {hl?"★":"☆"}
+                </button>
+                <div style={{flex:1,padding:"7px 10px",
+                  background:hl?"rgba(245,158,11,0.12)":isCustom?"rgba(91,141,238,0.08)":isT?`${color}10`:"#0f1628",
+                  borderLeft:`2px solid ${hl?"#f59e0b":isCustom?"#5b8dee":isT?color:"#1e2848"}`,
+                  borderRadius:"0 4px 4px 0",fontSize:11,lineHeight:1.55,
+                  color:hl?"#fde68a":isCustom?"#93c5fd":isT?"#ddeeff":"#aabbd4",
+                  boxShadow:hl?"0 0 8px rgba(245,158,11,0.15)":"none"}}>
+                  {expanded}
+                  {isCustom&&<span style={{fontSize:9,color:"#5b8dee",marginLeft:6,opacity:0.7}}>[custom]</span>}
+                </div>
+                {editMode&&isCustom&&(
+                  <button onClick={()=>removeBullet(key)} title="Löschen"
+                    style={{flexShrink:0,marginTop:6,background:"transparent",border:"1px solid #3a1a2a",borderRadius:3,width:14,height:14,cursor:"pointer",padding:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,color:"#cc4455"}}>
+                    ×
+                  </button>
+                )}
+                {editMode&&!isCustom&&(
+                  <button onClick={()=>removeBullet(key)} title="Ausblenden"
+                    style={{flexShrink:0,marginTop:6,background:"transparent",border:"1px solid #2a2a40",borderRadius:3,width:14,height:14,cursor:"pointer",padding:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,color:"#556688",opacity:0.6}}>
+                    –
+                  </button>
+                )}
+              </div>
+            );
+          })}
+
+          {/* add bullet UI */}
+          {editMode&&(
+            <div style={{marginTop:14,borderTop:"1px solid #1a2448",paddingTop:12}}>
+              <div style={{fontSize:9,letterSpacing:"0.18em",color:"#4466aa",marginBottom:6}}>NOTIZ HINZUFÜGEN · ADD NOTE</div>
+              <div style={{fontSize:9,color:"#334466",marginBottom:6}}>{lang==="de"?"Wird zu DE + EN hinzugefügt (ohne Übersetzung)":"Added to both DE and EN without translation"}</div>
+              <textarea
+                value={addInput}
+                onChange={e=>setAddInput(e.target.value)}
+                onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addBullet();}}}
+                placeholder={lang==="de"?"Text eingeben … (Enter = speichern)":"Enter text … (Enter = save)"}
+                rows={2}
+                style={{width:"100%",boxSizing:"border-box",background:"#0d1424",border:"1px solid #243060",borderRadius:5,color:"#c8d8ff",padding:"6px 8px",fontSize:11,fontFamily:"inherit",resize:"vertical",outline:"none"}}
+              />
+              <button onClick={addBullet}
+                style={{marginTop:6,background:"#1a2848",border:"1px solid #5b8dee",color:"#c8d8ff",borderRadius:5,padding:"4px 14px",cursor:"pointer",fontFamily:"inherit",fontSize:11}}>
+                + {lang==="de"?"Hinzufügen":"Add"}
+              </button>
+            </div>
+          )}
+
+          {/* highlight summary */}
+          {nodeHighlights.size>0&&(
+            <div style={{marginTop:14,borderTop:"1px solid #2a2000",paddingTop:10}}>
+              <div style={{fontSize:9,letterSpacing:"0.18em",color:"#b87a00",marginBottom:6}}>
+                {lang==="de"?"MARKIERUNGEN":"HIGHLIGHTS"} · {nodeHighlights.size}
+              </div>
+              {allBullets.filter(b=>nodeHighlights.has(b.key)).map(b=>(
+                <div key={b.key} style={{fontSize:10,color:"#fde68a",padding:"4px 0",borderBottom:"1px solid #2a2000",lineHeight:1.4}}>
+                  · {expandAbbr(b.text,lang).slice(0,80)}{expandAbbr(b.text,lang).length>80?"…":""}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        );
+      })()}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

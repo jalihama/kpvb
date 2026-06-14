@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akuttoxikologie — KP-Lernreferenz</title>
+<meta name="description" content="Lernreferenz zur Akuttoxikologie für die Kenntnisprüfung: Toxidrome, BGA, Antidote mit Dosierung, primäre & sekundäre Giftelimination, Fallen.">
+<style>
+  :root{
+    --ink:#1f2933; --muted:#5a6772; --line:#e2e8ed; --hair:#eef2f5;
+    --teal:#0e7c86; --teal-d:#0a5c64; --red:#c0392b; --red-d:#8f2a1a;
+    --box:#f5f7f8; --redbox:#fcefec; --mio:#5a3aa6; --myd:#9a5306;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#fff; color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:16px; line-height:1.6;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:0 22px;}
+  .mono{font-family:"SFMono-Regular",ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace; font-size:.9em;}
+
+  header{padding:40px 0 18px; border-bottom:2px solid var(--ink);}
+  header h1{font-size:clamp(26px,5vw,36px); line-height:1.1; margin:0; font-weight:800; letter-spacing:-.4px;}
+  header p{margin:10px 0 0; color:var(--muted); font-size:16px;}
+
+  .disclaimer{background:var(--box); border-left:3px solid var(--red); padding:12px 16px; margin:18px 0 0; font-size:13.5px; line-height:1.5; border-radius:0 6px 6px 0;}
+  .disclaimer b{font-weight:700;}
+
+  .toc{font-size:14px; color:var(--muted); margin:22px 0 4px; line-height:1.9;}
+  .toc a{color:var(--teal-d); text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+
+  main{padding:6px 0 50px;}
+  section{border-top:1px solid var(--line); padding-top:26px; margin-top:30px;}
+  .part{font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--teal); margin:0 0 -6px;}
+  h2{font-size:23px; font-weight:800; letter-spacing:-.3px; margin:14px 0 4px;}
+  h2 .n{color:var(--teal); opacity:.6; margin-right:6px;}
+  h3{font-size:17px; font-weight:700; margin:22px 0 8px;}
+  .lead{color:var(--muted); margin:0 0 14px;}
+  p{margin:0 0 12px;} section>*:last-child{margin-bottom:0;}
+  ul,ol{margin:0 0 12px; padding-left:22px;} li{margin-bottom:6px;}
+  ul.sub{margin:6px 0 10px;} ul.sub li{margin-bottom:3px; font-size:14.5px;}
+  b,strong{font-weight:700;}
+
+  blockquote.first{margin:0 0 16px; padding:14px 18px; background:var(--ink); color:#fff; border-radius:8px; font-size:16px; line-height:1.5;}
+  blockquote.first em{color:#ffe08a; font-style:italic; font-weight:600;}
+
+  .note{background:var(--box); border-left:3px solid #c9d2d9; padding:11px 15px; margin:14px 0; font-size:14.5px; line-height:1.5; border-radius:0 6px 6px 0;}
+  .note.cave{background:var(--redbox); border-left-color:var(--red);}
+  .note .lbl{font-weight:700;}
+  .note.cave .lbl{color:var(--red-d);}
+
+  .table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 14px;}
+  table{width:100%; border-collapse:collapse; font-size:14.5px; min-width:480px;}
+  caption{caption-side:top; text-align:left; font-size:13px; color:var(--muted); padding-bottom:6px;}
+  th{text-align:left; font-size:11.5px; letter-spacing:.4px; text-transform:uppercase; color:var(--muted); font-weight:700; padding:6px 9px; border-bottom:2px solid var(--line);}
+  td{padding:6px 9px; border-bottom:1px solid var(--hair); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+
+  .pill{display:inline-block; font-size:11px; font-weight:700; padding:1px 7px; border-radius:20px; margin-right:3px;}
+  .pill.mio{background:#efe7fb; color:var(--mio);} .pill.myd{background:#fde9d6; color:var(--myd);}
+  .doit{color:var(--teal-d); font-weight:700;}
+  .cause{color:var(--muted); font-size:13.5px;}
+  .none{color:var(--red); font-weight:700; font-style:italic;}
+  .cave{color:var(--red); font-weight:600;}
+
+  /* compact antidote table */
+  table.anti{font-size:14px;}
+  table.anti td{padding:4px 9px;}
+  table.anti td:nth-child(1){font-weight:700;}
+  table.anti td:nth-child(2){color:var(--teal-d);}
+  table.anti td:nth-child(3){font-size:13.5px;}
+  .star{color:var(--teal); font-weight:800;}
+
+  footer{border-top:1px solid var(--line); margin-top:30px; padding:18px 0 40px; font-size:13px; color:var(--muted);}
+
+  @media (max-width:560px){ body{font-size:15px;} .table-wrap table{font-size:13.5px;} }
+  @media print{ .toc{display:none;} section{break-inside:avoid;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Akuttoxikologie — KP-Lernreferenz</h1>
+    <p>Erkennen → behandeln → Fallen vermeiden. Toxidrome, BGA, Antidote mit Dosierung, Giftelimination. Safety-Tier, Lerntiefe 3/5 — Headline zuerst, Details auf Nachfrage.</p>
+    <div class="disclaimer"><b>Hinweis:</b> Lern- und Prüfungsvorbereitungs-Ressource, kein klinischer Verordnungsstandard. Dosierungen sind Lernanker und vor jeder Anwendung gegen aktuelle Leitlinien, Fachinformation und das Rote-Liste-Antidotarium zu prüfen. Bei realen Vergiftungen: Giftnotrufzentrale kontaktieren.</div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <p class="toc">
+      <b style="color:var(--ink);">Inhalt:</b>
+      <a href="#ueberblick">Überblick</a> ·
+      <a href="#grundhaltung">Grundhaltung</a> ·
+      <a href="#erstmassnahmen">Erstmaßnahmen</a> ·
+      <a href="#toxidrome">Toxidrome</a> ·
+      <a href="#bga">BGA &amp; Labor</a> ·
+      <a href="#antidote">Antidote</a> ·
+      <a href="#koma">Koma-Cocktail</a> ·
+      <a href="#primaere">Primäre Elimination</a> ·
+      <a href="#sekundaere">Sekundäre Elimination</a> ·
+      <a href="#asservierung">Asservierung</a> ·
+      <a href="#fallen">Fallen</a> ·
+      <a href="#cluster">Anschluss</a>
+    </p>
+
+    <!-- ===== TEIL A ===== -->
+    <section id="ueberblick" style="border-top:none;">
+      <p class="part">Teil A · Erkennen</p>
+      <h2>Überblick &amp; Soforthilfe</h2>
+      <blockquote class="first"><em>„Jede Vergiftung ist ein Notfall — ich sichere zuerst die Vitalfunktionen nach cABCDE, beende die Exposition unter Eigenschutz und kontaktiere bei Bedarf den Giftnotruf.“</em></blockquote>
+      <p>Wenn der Kopf leer wird, kommen diese fünf Schritte zuerst:</p>
+      <ol>
+        <li><b>cABCDE zuerst</b> — die Atmung tötet am schnellsten.</li>
+        <li><b>Exposition stoppen</b> — und Eigenschutz.</li>
+        <li><b>Giftnotruf</b> — bei Unsicherheit anrufen.</li>
+        <li><b>Toxidrom suchen</b> — Pupillen, Temperatur, Darm, Haut.</li>
+        <li><b>Antidot nur bei bekannter Noxe</b> — sonst Symptome behandeln + Support.</li>
+      </ol>
+    </section>
+
+    <section id="grundhaltung">
+      <h2><span class="n">1</span>Grundhaltung — drei Fakten</h2>
+      <ul>
+        <li><b>Immer ein Notfall:</b> jede akute Vergiftung — auch schon der Verdacht — gilt als medizinischer Notfall. Das ist der Satz, den er zuerst hören will.</li>
+        <li><b>Die Zahlen:</b> ~80 % der relevanten Vergiftungen sind Arzneimittel, Letalität &lt;1 %, aber <b>dynamisch</b> — ein stabiler Patient kann schnell dekompensieren. (5–10 % der Notarzteinsätze, 1–2 % der stationären Aufnahmen.)</li>
+        <li><b>Häufigste Todesursache:</b> die akute <b>Ateminsuffizienz</b>. Das ist der Grund, warum Atemweg/Atmung vor allem anderen kommt.</li>
+      </ul>
+    </section>
+
+    <section id="erstmassnahmen">
+      <h2><span class="n">2</span>Erstmaßnahmen bei jeder Vergiftung</h2>
+      <p class="lead">Reihenfolge = das Gerüst der ganzen Antwort.</p>
+      <ol>
+        <li><b>cABCDE</b> — Vitalfunktionen sichern; Atemwege frei machen, Atmung &amp; Kreislauf stützen.</li>
+        <li><b>Exposition stoppen</b> — Patient/Quelle entfernen, kontaminierte Kleidung weg. <b>Eigenschutz!</b> Gefahrenzone (Brand/Chemie) zuerst durch die Feuerwehr sichern.</li>
+        <li><b>Giftnotruf</b> — zuständige Zentrale; leitet Dosis &amp; Dekontaminationsentscheidung.</li>
+        <li><b>Akutanamnese</b> — die W-Fragen (siehe unten); Laienangaben als vorläufig einstufen.</li>
+        <li><b>Basisdiagnostik</b> — GCS, Blutzucker, BGA, EKG, Tox-Screening, Blutalkohol; Toxidrom zuordnen.</li>
+        <li><b>Antidot / empirisch</b> — spezifisches Antidot bei bekannter Noxe, sonst Koma-Cocktail.</li>
+      </ol>
+
+      <h3>Akutanamnese — die W-Fragen</h3>
+      <p>Wer? · Wo? · Welche Ursache? · Welche Substanz? · Welche Menge? · Wann? · Wie (Expositionspfad)? · Welche Symptome? · Welche Risikofaktoren/Begleiterkrankungen? · Welche Maßnahmen wurden bereits getroffen?</p>
+
+      <h3>Gefährdung einschätzen — Poisoning Severity Score (PSS)</h3>
+      <div class="table-wrap">
+        <table>
+          <caption>Der Score dient dem Patienten — er darf akut gebotene Maßnahmen nie verzögern.</caption>
+          <thead><tr><th>Grad</th><th>Symptome</th><th>Handlungsempfehlung</th></tr></thead>
+          <tbody>
+            <tr><td><b>0</b></td><td>keine</td><td>keine</td></tr>
+            <tr><td><b>1</b></td><td>mild / transient, spontan sistierend</td><td>nicht-ärztliche Überwachung zu Hause</td></tr>
+            <tr><td><b>2</b></td><td>ausgeprägt / lang anhaltend</td><td>ambulante Vorstellung</td></tr>
+            <tr><td><b>3</b></td><td><b>schwer / vital bedrohlich</b></td><td><b>Notarzt + stationäre Einweisung</b></td></tr>
+            <tr><td><b>4</b></td><td>fatal</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="toxidrome">
+      <h2><span class="n">3</span>Toxidrome — Mustererkennung</h2>
+      <p class="lead">Du brauchst nicht das exakte Medikament, sondern das Muster. Schnellster Hinweis: die Pupillen — <span class="pill mio">Miosis</span> → Opioid/cholinerg, <span class="pill myd">Mydriasis</span> → anticholinerg/sympathomimetisch.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Toxidrom</th><th>Erkennen an</th><th>Auslöser</th><th>Erster Schritt</th></tr></thead>
+          <tbody>
+            <tr><td><b>Opioid</b></td><td><span class="pill mio">Miosis</span> Atemdepression · ↓Bewusstsein · Bradykardie</td><td class="cause">Morphin, Heroin, Fentanyl</td><td><span class="doit">Naloxon</span></td></tr>
+            <tr><td><b>Sedativa/Hypnotika</b></td><td>Sedierung→Koma · Ataxie · Muskelrelaxation</td><td class="cause">Benzodiazepine, Barbiturate, GHB</td><td>Support · <span class="doit">Flumazenil</span> (reine Benzo)</td></tr>
+            <tr><td><b>Anticholinerg</b></td><td><span class="pill myd">Mydriasis</span> trocken/heiß/rot · Tachykardie · Delir · Harnverhalt</td><td class="cause">Atropin, Trizyklika, Antihistaminika, Tollkirsche</td><td><span class="doit">Physostigmin</span></td></tr>
+            <tr><td><b>Cholinerg</b></td><td><span class="pill mio">Miosis</span> Sekret↑ · Bronchokonstriktion · Bradykardie · Peristaltik↑</td><td class="cause">Organophosphate (E605), Physostigmin</td><td><span class="doit">Atropin</span> (+ Obidoxim bei OP)</td></tr>
+            <tr><td><b>Sympathomimetisch</b></td><td><span class="pill myd">Mydriasis</span> Hypertonie · Tachykardie · Tonus↑ · Peristaltik↓</td><td class="cause">Kokain, Amphetamine, (Nor)Adrenalin</td><td>Benzodiazepine / supportiv</td></tr>
+            <tr><td><b>Serotonin-Syndrom</b></td><td>Temperatur↑ · Hypertonie · Diarrhö · Ataxie/Klonus · ↓Bewusstsein</td><td class="cause">SSRI+MAO-Hemmer, Tramadol, MDMA</td><td>Auslöser stoppen · supportiv</td></tr>
+            <tr><td><b>Malignes neurolept. Syndrom</b></td><td>hohes Fieber · Rigor · Tachykardie · Tachypnoe · Bewusstseinsstörung</td><td class="cause">Antipsychotika (Haloperidol), Lithium, Carbamazepin</td><td>Auslöser stoppen · supportiv</td></tr>
+            <tr><td><b>Halluzinogen</b></td><td>Halluzinationen · Zeit-/Raum gestört · Angst/Panik</td><td class="cause">LSD, Phencyclidin, Psilocybin</td><td>reizarmes Umfeld · supportiv</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note cave"><span class="lbl">Falle:</span> cholinerg ↔ anticholinerg sind Gegenteile. Cholinerg = <b>nass</b>, kleine Pupillen, langsamer Puls. Anticholinerg = <b>trocken</b>, große Pupillen, schneller Puls.</p>
+    </section>
+
+    <section id="bga">
+      <h2><span class="n">4</span>BGA &amp; Labor</h2>
+      <p class="lead">Hier trifft Toxikologie deinen täglichen BGA-Drill. Drei „Lücken“ machen die BGA zum Gift-Detektor.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Lücke</th><th>Erhöht bei Intoxikation mit</th><th>Merke</th></tr></thead>
+          <tbody>
+            <tr><td><b>Anionenlücke ↑</b> / metab. Azidose</td><td>Salicylate, Paraldehyd; + Methanol, Ethylenglykol, Ethanol, Paracetamol (sehr hoch), NSAIDs, Ketamin, CO</td><td class="cause">tox. Alkohole + Salicylate = HAGMA</td></tr>
+            <tr><td><b>Osmolale Lücke ↑</b></td><td>Ethanol, Methanol, Ethylenglykol, Isopropanol, Aceton</td><td class="cause">die Alkohole &amp; Glykole</td></tr>
+            <tr><td><b>O₂-Sättigungsdefizit ↑</b></td><td>CO, Methämoglobin-Bildner (Nitrate), Zyanide, H₂S</td><td class="cause">O₂ nicht transportiert/genutzt</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="sub">
+        <li><b>Anionenlücke ↓</b> → an Lithium (akut) denken.</li>
+        <li><b>EKG:</b> Trizyklika → QRS-Verbreiterung / Arrhythmien.</li>
+        <li><b>Tox-Screening:</b> Speicheltest (schnell, präklinisch) · Urintest (klinischer Standard) · Bluttest (forensisch oder für nicht im Urin erfasste Stoffe wie Paracetamol, Digoxin, Lithium).</li>
+      </ul>
+      <p class="note"><span class="lbl">Sag-zuerst:</span> „Bei unklarer Intoxikation hilft mir die BGA: Anionenlücke, osmolale Lücke und Sättigungsdefizit.“</p>
+    </section>
+
+    <!-- ===== TEIL B ===== -->
+    <section id="antidote">
+      <p class="part">Teil B · Behandeln</p>
+      <h2><span class="n">5</span>Antidote &amp; Dosierung</h2>
+      <p class="lead">Schnell Gift → Antidot → Dosis. <span class="star">★</span> = absolute Must-knows. Dosen = Lernanker (titrieren, nicht herunterbeten). Wichtige Vorsichtshinweise stehen gesammelt unter der Tabelle.</p>
+      <div class="table-wrap">
+        <table class="anti">
+          <thead><tr><th>Gift</th><th>Antidot</th><th>Dosis</th></tr></thead>
+          <tbody>
+            <tr><td><span class="star">★</span> Paracetamol</td><td>N-Acetylcystein</td><td><span class="mono">150 → 50 → 100 mg/kg (21-h-Schema i.v.)</span></td></tr>
+            <tr><td><span class="star">★</span> Opioide</td><td>Naloxon</td><td><span class="mono">0,2–0,4 mg i.v., titrieren bis 10 mg</span></td></tr>
+            <tr><td><span class="star">★</span> Benzodiazepine</td><td>Flumazenil</td><td><span class="mono">0,2 mg i.v. über 30 s</span></td></tr>
+            <tr><td><span class="star">★</span> Methanol / Ethylenglykol</td><td>Fomepizol (alt. Ethanol)</td><td><span class="mono">15 mg/kg, dann 10 mg/kg/12 h · Ethanol-Ziel ~1‰</span></td></tr>
+            <tr><td><span class="star">★</span> CO (Inhalation)</td><td>Sauerstoff</td><td><span class="mono">FiO₂ 1,0 bis COHb &lt;3 % (schwer: hyperbar)</span></td></tr>
+            <tr><td><span class="star">★</span> Cumarine</td><td>Vitamin K</td><td><span class="mono">5–10 mg i.v. langsam (schwer: PPSB)</span></td></tr>
+            <tr><td><span class="star">★</span> Heparine</td><td>Protamin</td><td><span class="mono">1 mg / 100 IE Heparin</span></td></tr>
+            <tr><td>Anticholinergika / Trizyklika</td><td>Physostigmin</td><td><span class="mono">0,5–2 mg i.v.; TZA + NaBic 1–2 mmol/kg</span></td></tr>
+            <tr><td>Organophosphate (E605)</td><td>Atropin + Obidoxim</td><td><span class="mono">Atropin 2 mg, verdoppeln bis trocken; Obidoxim 250 mg</span></td></tr>
+            <tr><td>Zyanide (Inhalation)</td><td>Hydroxocobalamin</td><td><span class="mono">5 g i.v. über 15 min</span></td></tr>
+            <tr><td>Zyanide (Ingestion)</td><td>4-DMAP + Na-Thiosulfat</td><td><span class="mono">4-DMAP 3–4 mg/kg; Thiosulfat ~100 mg/kg</span></td></tr>
+            <tr><td>Digitalis (Digoxin)</td><td>Digitalis-Antitoxin (Fab)</td><td><span class="mono">nach Serumspiegel / Menge</span></td></tr>
+            <tr><td>Eisen</td><td>Deferoxamin</td><td><span class="mono">15 mg/kg/h i.v.</span></td></tr>
+            <tr><td>Methämoglobin-Bildner</td><td>Methylenblau</td><td><span class="mono">1–2 mg/kg i.v. über 5 min (max ~7 mg/kg)</span></td></tr>
+            <tr><td>Barbiturate</td><td>Natriumbicarbonat</td><td><span class="mono">Harnalkalisierung (pH ~7,5–8)</span></td></tr>
+            <tr><td>Psychostimulanzien (Amphetamin, Kokain)</td><td>Lorazepam (Phentolamin in DE n.v.)</td><td><span class="mono">Benzodiazepin titriert</span></td></tr>
+            <tr><td>Flusssäure</td><td>Calcium-Gluconat</td><td><span class="mono">10 % topisch / Infiltration / i.v.</span></td></tr>
+            <tr><td>Schwermetalle</td><td>DMPS</td><td><span class="mono">~3–5 mg/kg i.v.</span></td></tr>
+            <tr><td>Tenside</td><td>Dimeticon</td><td><span class="mono">Entschäumer (Fachinfo)</span></td></tr>
+            <tr><td>Knollenblätterpilz</td><td>Silibinin (± NAC)</td><td><span class="mono">~20 mg/kg/24 h i.v.</span></td></tr>
+            <tr><td>Tollkirsche / Alraune</td><td>Physostigmin</td><td><span class="mono">wie Anticholinergika</span></td></tr>
+            <tr><td>Kreuzotter (Vipera berus)</td><td>Fab-Antikörper-Fragmente</td><td><span class="mono">nach Schweregrad</span></td></tr>
+            <tr><td>Fliegen-/Pantherpilz</td><td class="none">kein Antidot</td><td><span class="mono">symptomatisch</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note cave">
+        <span class="lbl">Antidot-Fallen:</span>
+        <b>Flumazenil</b> nur bei reiner Benzo — bei Mischintox Krampfrisiko.
+        <b>Hydroxocobalamin</b> = inhalatives Zyanid; bei Ingestion unwirksam.
+        Bei Rauchgas <b>keine Methämoglobin-Bildner (4-DMAP)</b>.
+        <b>Protamin</b> neutralisiert NMH nur ~50 %.
+        <b>Atropin (OP)</b> = eskalierend bis Atropinisierung, nicht die Bradykardie-Dosis.
+        <b>Methylenblau</b> kontraindiziert bei G6PD-Mangel (Hämolyse) und ist MAO-Hemmer (Serotonin-Syndrom-Risiko).
+      </p>
+    </section>
+
+    <section id="koma">
+      <h2><span class="n">6</span>Empirische Therapie — „Koma-Cocktail“</h2>
+      <p class="lead">Bewusstseinseingeschränkter Patient, Ursache unklar, keine wirksamere spezifische Maßnahme verfügbar.</p>
+      <ul>
+        <li><b>Glucose</b> <span class="mono">25 g i.v.</span> — außer Hypoglykämie ausgeschlossen.</li>
+        <li><b>Thiamin</b> <span class="mono">~100 mg i.v.</span> — prophylaktisch.</li>
+        <li><b>Naloxon</b> <span class="mono">0,2–0,4 mg i.v.</span> — bei Atemdepression, titrieren.</li>
+        <li><b>Flumazenil</b> <span class="mono">0,2 mg über 30 s</span> — nur bei reiner Benzo-Vergiftung.</li>
+      </ul>
+      <p class="note"><span class="lbl">Merksatz:</span> Zucker · Vitamin · Opioid-aus · (vorsichtig) Benzo-aus.</p>
+    </section>
+
+    <section id="primaere">
+      <h2><span class="n">7</span>Primäre Giftelimination</h2>
+      <p class="lead">Ziel: Aufnahme mindern bzw. Gift inaktivieren — gegliedert nach Expositionspfad.</p>
+
+      <h3>Nach äußerer Exposition (Haut / Augen)</h3>
+      <ul>
+        <li>Spülen mit reichlich lauwarmem Wasser oder isotoner NaCl, <b>mind. 15 min</b>; Patienten vor Auskühlung schützen.</li>
+        <li><b>Haut:</b> bei lipophilen Noxen Seife / Lösungsvermittler — <b>nie Benzin oder Alkohol</b>; Wunden danach steril abdecken.</li>
+        <li><b>Augen:</b> Lider spreizen, Spülrichtung medial → lateral, kein Druck.</li>
+      </ul>
+      <p class="note cave"><span class="lbl">Regel:</span> Ätzende Substanzen <b>nicht neutralisieren</b> (außer mit spezifischen medizinischen Spülflüssigkeiten).</p>
+
+      <h3>Nach Ingestion — Aktivkohle (das Arbeitspferd)</h3>
+      <p><b>Prinzip:</b> Adsorption des Gifts; unterbricht entero-hepatische/-enterische Kreisläufe.</p>
+      <ul>
+        <li><b>Indikation:</b> adsorbierbares Gift, i. d. R. innerhalb <b>1–2 h</b>.</li>
+        <li><b>Dosis:</b> bekannte Menge <span class="mono">≥ 10-facher Überschuss</span>; unbekannt <span class="mono">0,5–1 g/kg</span> (Einmaldosis max <span class="mono">50 g</span>).</li>
+        <li><b>Wiederholt:</b> alle <b>4 h über 24 h</b> (Intervalle bis 1 h, dann verdünnen); Darmmotilität sicherstellen.</li>
+      </ul>
+      <p class="note"><span class="lbl">Kohle bindet NICHT:</span> Metalle · Zyanide · Alkohole/Glykole · Säuren/Laugen · anorganische Salze · organische Lösungsmittel (z. B. Aceton). <i>Hook: greift große organische Moleküle, nicht klein/ionisch/metallisch.</i></p>
+      <p class="note cave"><span class="lbl">Kontraindikationen Kohle:</span> Aspirationsgefahr · rezidivierendes Erbrechen · Krampfgefahr · Blutungs-/Perforationsgefahr · Schluck- oder Passagestörung.</p>
+
+      <h3>Weitere Verfahren nach Ingestion</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Methode</th><th>Indikation</th><th>Durchführung / Dosis</th><th>Kontraindikationen</th></tr></thead>
+          <tbody>
+            <tr><td><b>Induziertes Erbrechen</b></td><td>lebensgefährlich, wenn Kohle nicht ausreicht</td><td><span class="mono">15–30 mL Ipecacuanha-Sirup</span> + 250 mL Wasser; Wirkung 20–30 min → Nachbeobachtung bis 4 h</td><td>Aspirations-/Krampfgefahr · nach Ätzendem. Nur nach Giftnotruf-Rücksprache.</td></tr>
+            <tr><td><b>Magenspülung</b></td><td>innerhalb <b>max. 1 h</b>; Kohle reicht nicht</td><td>Linksseiten-/Kopftieflage; Schlauch <span class="mono">36–40 Ch</span>; Portionen <span class="mono">200–300 mL</span> bis klar; danach Kohle</td><td>Krampfgefahr · Ätzendes / großstückig / organisch. Bei ↓Bewusstsein nur mit Intubationsschutz.</td></tr>
+            <tr><td><b>Anterograde Darmspülung</b></td><td>nicht adsorbierende / verklumpende Gifte, Retardpräparate, verpackte Drogen</td><td>Kopfhochlage ≥45°; PEG-Elektrolytlösung <span class="mono">1500–2000 mL/h</span> bis rektal klar (max <span class="mono">10 L</span>)</td><td>instabile Vitalfunktionen · Erbrechen · Perforation/Ileus. Bei ↓Bewusstsein nur mit Intubationsschutz.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note cave"><span class="lbl">Am Ereignisort:</span> erlaubt sind Aktivkohle, Antidote, Sauerstoff. <b>Nicht</b> am Ereignisort: induziertes Erbrechen, Magenspülung.</p>
+
+      <h3>Nach Inhalation</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Inhalierte Noxe</th><th>Maßnahmen</th></tr></thead>
+          <tbody>
+            <tr><td><b>Reizgas Soforttyp</b></td><td>Frischluft; bei Atemnot O₂, Bronchospasmolytikum, Antitussivum, ± NaCl-/NaHCO₃-Inhalation</td></tr>
+            <tr><td><b>Reizgas Latenztyp</b></td><td>Frischluft + <b>Glucocorticoide</b> — Cave verzögertes Lungenödem; supportiv wie oben</td></tr>
+            <tr><td><b>Kohlenstoffmonoxid</b></td><td><span class="mono">FiO₂ = 1</span> bis Symptomfreiheit &amp; COHb &lt;3 %; schwer: hyperbare O₂</td></tr>
+            <tr><td><b>Kohlenstoffdioxid</b></td><td>O₂ (primär nicht-invasiv, ggf. Intubation); respiratorische Azidose behandeln</td></tr>
+            <tr><td><b>Blausäure / Zyanid</b></td><td>Hydroxocobalamin i.v.; bei Rauchgas <b>keine Methämoglobin-Bildner (4-DMAP)</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Bei schweren Fällen <b>früh intubieren &amp; beatmen</b>. Hydroxocobalamin bindet Cyanid → ungiftiges, renal eliminiertes Cyanocobalamin.</p>
+    </section>
+
+    <section id="sekundaere">
+      <h2><span class="n">8</span>Sekundäre Giftelimination</h2>
+      <p class="lead">Ziel: Giftabgabe aus dem bereits resorbierten Bestand steigern.</p>
+      <ul>
+        <li><b>Forcierte Diurese</b> &amp; <b>Urin-Alkalisierung</b> (z. B. Salicylate, Barbiturate).</li>
+        <li><b>Hämodialyse</b> · <b>Hämoperfusion</b> · <b>Peritonealdialyse</b>.</li>
+        <li><b>Plasmapherese</b> / Austauschtransfusion.</li>
+        <li><b>Forcierte Ventilation</b> (pulmonal eliminierte Stoffe) · <b>hyperbare Oxygenierung</b>.</li>
+      </ul>
+      <p class="note"><span class="lbl">Anschluss:</span> Dialyse ist Brücke zum Nieren-Cluster — Vergiftungstherapie und Lieblingsthema (Dialyse-Indikationen) zugleich.</p>
+    </section>
+
+    <section id="asservierung">
+      <h2><span class="n">9</span>Asservierung &amp; Transport</h2>
+      <ul>
+        <li><b>Material sichern:</b> Urin <span class="mono">50–100 mL</span> · Erbrochenes/Mageninhalt <span class="mono">50 mL</span> · Blut <span class="mono">10 mL</span> (Vollblut bei V. a. Schwermetalle); exakt beschriften, bei Erwachsenen Blutalkohol.</li>
+        <li><b>Transport:</b> Monitoring sicherstellen, Kapazität der Zielklinik beachten; bei Instabilität/Distanz früh Luftrettung erwägen.</li>
+      </ul>
+    </section>
+
+    <!-- ===== TEIL C ===== -->
+    <section id="fallen">
+      <p class="part">Teil C · Sicherheit &amp; Anschluss</p>
+      <h2><span class="n">10</span>Fallen — beim ersten Mal richtig sagen</h2>
+      <ul>
+        <li><b>Ätzendes nicht neutralisieren</b> — mit Wasser/NaCl spülen.</li>
+        <li><b>Kein Erbrechen</b> am Ereignisort, nie nach Ätzendem.</li>
+        <li><b>Aktivkohle</b> bindet keine Metalle, Zyanide, Alkohole/Glykole, Säuren/Laugen.</li>
+        <li><b>Hydroxocobalamin</b> = nur inhalatives Zyanid, oral nutzlos.</li>
+        <li><b>Kein 4-DMAP</b> bei Rauchgas (Methämoglobin-Bildner kontraindiziert).</li>
+        <li><b>Flumazenil</b> bei Mischintox → Krampfrisiko; nur reine Benzo.</li>
+        <li><b>Magenspülung</b> nur &lt;1 h und mit Atemwegsschutz bei ↓Bewusstsein.</li>
+        <li><b>Atropin (OP)</b> = eskalierend bis Atropinisierung, nicht die Bradykardie-Dosis.</li>
+        <li><b>Nie einen Befund dokumentieren, den du nicht selbst erhoben hast</b> — Ehrlichkeit schlägt Bluffen.</li>
+      </ul>
+    </section>
+
+    <section id="cluster">
+      <h2>Andockstellen an die KP-Cluster</h2>
+      <ul>
+        <li><b>BGA / Säure-Basen</b> — die drei Lücken, täglicher Drill.</li>
+        <li><b>Pharmakologie</b> — Antidote + Klassiker (Metamizol → Agranulozytose, Metformin → Laktatazidose).</li>
+        <li><b>Reanimation / ABCDE</b> — gleicher Erstschritt, Safety-Floor.</li>
+        <li><b>Niere / Dialyse</b> — sekundäre Elimination, Köder für Co-Prüfer.</li>
+      </ul>
+      <p class="note"><span class="lbl">Fazit fürs Gespräch:</span> Einstieg „Vergiftung = Notfall, cABCDE zuerst“ → Toxidrom erkennen → BGA greifen → Antidot nennen, falls Noxe bekannt. Diese Struktur besteht — auch ohne jedes Detail.</p>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">Akuttoxikologie — KP-Lernreferenz · zusammengefasst aus AMBOSS-Artikeln zur Akuttoxikologie · Lernhilfe, kein klinischer Verordnungsstandard.</div>
+</footer>
+
+</body>
+</html>

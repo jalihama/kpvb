@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antidiabetika nach Wirkort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-background-primary:#ffffff; --color-background-secondary:#e4eef1;
+  --color-text-primary:#08222c; --color-text-secondary:#45697a;
+  --color-text-danger:#b02020; --color-text-success:#0f6e56; --color-text-warning:#854f0b;
+  --color-border-tertiary:#cddbe0; --color-border-secondary:#b9cdd4;
+  --color-background-info:#dcf0f6; --color-text-info:#0a6b86; --color-border-info:#7fcfe2;
+  --border-radius-md:10px; --border-radius-lg:14px; --page-bg:#eef5f8;
+}
+@media(prefers-color-scheme:dark){:root{
+  --color-background-primary:#0f3848; --color-background-secondary:#0c2f3d;
+  --color-text-primary:#e3eef2; --color-text-secondary:#9fc0cc;
+  --color-text-danger:#f08a82; --color-text-success:#3fbf9f; --color-text-warning:#d6a23e;
+  --color-border-tertiary:#1c4253; --color-border-secondary:#25515f;
+  --color-background-info:#0e3c4a; --color-text-info:#7fdcef; --color-border-info:#1f6f86;
+  --page-bg:#0a2733;
+}}
+html{background:var(--page-bg)}
+body{margin:0;background:var(--page-bg);color:var(--color-text-primary);font-family:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;padding:26px 20px 42px}
+.kp-wrap{max-width:940px;margin:0 auto}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1.kp-title{text-align:center;font-size:1.4rem;font-weight:700;letter-spacing:-.3px;color:var(--color-text-primary);border-bottom:2px solid var(--color-text-primary);padding-bottom:16px;margin:0 0 20px}
+</style>
+</head>
+<body><div class="kp-wrap">
+<h1 class="kp-title">Antidiabetika nach Wirkort</h1>
+<h2 class="sr-only">Master diagram of antidiabetic drug classes grouped by site of action, with key clinical data for each.</h2>
+
+<style>
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.lead{font-size:13px;color:var(--color-text-secondary);line-height:1.6;padding:0 0 14px;margin-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.lead b{color:var(--color-text-primary);font-weight:500}
+.sec{display:flex;align-items:baseline;gap:12px;margin:22px 0 10px;padding:10px 0 8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec h3{margin:0;font-size:17px;font-weight:500}
+.sec .sub{font-size:12px;color:var(--color-text-secondary);margin-left:auto;font-style:italic}
+.sec .dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px 16px;margin-bottom:10px}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.head .d{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.head h4{margin:0;font-size:15px;font-weight:500}
+.head .role{margin-left:auto;font-size:11px;padding:2px 10px;border-radius:999px;background:var(--color-background-secondary);color:var(--color-text-secondary);font-weight:500;letter-spacing:0.3px}
+.drugs{font-size:12px;color:var(--color-text-secondary);margin:0 0 8px;line-height:1.5}
+.moa{font-size:13px;margin:0 0 10px;line-height:1.5}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
+.m{background:var(--color-background-secondary);border-radius:6px;padding:7px 4px;text-align:center;min-width:0}
+.m-l{font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
+.m-v{font-size:12px;font-weight:500}
+.warn{color:var(--color-text-danger)}
+.good{color:var(--color-text-success)}
+.note{color:var(--color-text-warning)}
+.pearl{font-size:12px;line-height:1.55;padding:9px 11px;background:var(--color-background-secondary);border-radius:6px;color:var(--color-text-secondary)}
+.pearl b{color:var(--color-text-primary);font-weight:500;margin-right:4px}
+.foot{margin-top:18px;padding:12px 14px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.foot b{color:var(--color-text-primary);font-weight:500}
+</style>
+
+<p class="lead"><b>How to read this.</b> Drugs are grouped by the organ they act on — pancreas, liver &amp; periphery, kidney, gut, brain, and direct replacement. Every card uses the same 5-slot metric strip (<b>A1c</b> reduction · <b>Wt</b> weight · <b>Hypo</b> hypoglycemia risk · <b>CV</b> cardiovascular effect · <b>K</b> renal effect). Green means benefit, red means risk or avoid. The pearl is the one line a clinician should remember.</p>
+
+<div class="sec">
+  <span class="dot" style="background:#D85A30"></span>
+  <h3>Pancreas — β-cell</h3>
+  <span class="sub">Stimulate insulin or amplify incretin effect</span>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#D85A30"></span><h4>Sulfonylureas</h4><span class="role">Cheap · effective</span></div>
+  <p class="drugs">Glimepiride · glipizide · glyburide &nbsp;·&nbsp; (older: chlorpropamide, tolbutamide)</p>
+  <p class="moa">Bind SUR1 → close β-cell K-ATP channel → depolarization → insulin release. <em>Glucose-independent</em>.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 1–2%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v">↑</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v warn">High</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v">Neutral</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v">Adjust</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Avoid glyburide in elderly or CKD — longest half-life, worst hypo. Glipizide preferred if renal impairment. β-cell durability poor (secondary failure over years).</div>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#D85A30"></span><h4>Meglitinides (glinides)</h4><span class="role">Prandial</span></div>
+  <p class="drugs">Repaglinide · nateglinide</p>
+  <p class="moa">Close K-ATP channel at a different site, faster on/off → short-acting prandial insulin release.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 0.5–1%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v">↑</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v note">Moderate</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v">Neutral</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v">Repag OK</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Take with meals; skip the dose if skipping the meal. Useful for irregular eaters. Repaglinide safer than nateglinide in CKD.</div>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#D85A30"></span><h4>DPP-4 inhibitors (gliptins)</h4><span class="role">Well-tolerated</span></div>
+  <p class="drugs">Sitagliptin · saxagliptin · linagliptin · alogliptin</p>
+  <p class="moa">Inhibit DPP-4 → slow degradation of endogenous GLP-1 and GIP → glucose-dependent insulin ↑, glucagon ↓.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 0.5–0.8%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v">→</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v good">Low</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v">Neutral*</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v">Adjust</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Modest efficacy, very clean tolerability. Linagliptin is the only one that needs no renal dose adjustment. Watch for pancreatitis, joint pain, bullous pemphigoid. *Saxagliptin has a heart-failure signal.</div>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#D85A30"></span><h4>GLP-1 receptor agonists (± GIP)</h4><span class="role">Outcome drug</span></div>
+  <p class="drugs">Semaglutide (Ozempic/Wegovy, oral Rybelsus) · dulaglutide · liraglutide · exenatide · lixisenatide &nbsp;·&nbsp; tirzepatide (dual GIP/GLP-1 — Mounjaro/Zepbound)</p>
+  <p class="moa">GLP-1R agonism → glucose-dependent insulin ↑, glucagon ↓, slow gastric emptying, central satiety. Tirzepatide adds GIP.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 1–2.5%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v good">↓↓</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v good">Low</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v good">Benefit</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v good">Benefit</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> First-choice add-on with ASCVD or obesity. Titrate slowly for GI tolerability. <span class="warn">Contraindicated in personal/family MTC or MEN-2.</span> Hold before procedures requiring empty stomach (gastroparesis). Expensive.</div>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#D85A30"></span><h4>Amylin analog</h4><span class="role">Adjunct</span></div>
+  <p class="drugs">Pramlintide</p>
+  <p class="moa">Synthetic amylin (co-secreted with insulin) → slow gastric emptying, glucagon ↓, central satiety.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 0.5%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v good">↓</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v note">Mod*</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v">Neutral</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v">Caution</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Mealtime injection; <b>must</b> be given in a separate syringe from insulin. Reduce prandial insulin by 50% when starting. *Severe hypoglycemia when combined with insulin (boxed warning). Nausea common.</div>
+</div>
+
+<div class="sec">
+  <span class="dot" style="background:#7F77DD"></span>
+  <h3>Liver &amp; peripheral tissue</h3>
+  <span class="sub">Insulin sensitizers — act where insulin lands</span>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#7F77DD"></span><h4>Biguanides</h4><span class="role">First-line</span></div>
+  <p class="drugs">Metformin (IR, XR)</p>
+  <p class="moa">↓ hepatic gluconeogenesis (AMPK-mediated, mitochondrial complex I inhibition); mild ↑ peripheral insulin sensitivity; gut-axis effects.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 1–2%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v good">→ / ↓</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v good">Very low</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v good">Neutral+</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v">Adjust</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Cornerstone of T2D for decades. <span class="warn">Avoid if eGFR &lt; 30</span>; dose-reduce 30–45. Hold for contrast, sepsis, acute illness. Check B12 yearly. Lactic acidosis rare. GI side effects → start low, XR helps.</div>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#7F77DD"></span><h4>Thiazolidinediones (TZDs)</h4><span class="role">Sensitizer</span></div>
+  <p class="drugs">Pioglitazone · rosiglitazone</p>
+  <p class="moa">PPAR-γ agonist → ↑ adipocyte differentiation → ↑ insulin sensitivity in muscle, fat, liver. Effect is <em>slow</em> (weeks).</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 0.5–1.4%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v warn">↑↑</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v good">Very low</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v">Pio ↓ stroke</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v good">No adjust</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> <span class="warn">Contraindicated in heart failure</span> (fluid retention). ↑ fracture risk (women). Possible bladder-cancer signal with pioglitazone (debated). Upside: benefits MASH/NASH and insulin resistance phenotypes; cheap as generic pioglitazone.</div>
+</div>
+
+<div class="sec">
+  <span class="dot" style="background:#1D9E75"></span>
+  <h3>Kidney</h3>
+  <span class="sub">Dump glucose in the urine</span>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#1D9E75"></span><h4>SGLT2 inhibitors (gliflozins)</h4><span class="role">Outcome drug</span></div>
+  <p class="drugs">Empagliflozin · dapagliflozin · canagliflozin · ertugliflozin</p>
+  <p class="moa">Block SGLT2 in proximal tubule → ~80 g/day glucosuria; secondary natriuresis → preload/afterload reduction; tubuloglomerular feedback restored.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 0.5–1%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v good">↓</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v good">Very low</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v good">HF benefit</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v good">Benefit</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> First-choice add-on with HF (HFrEF <em>and</em> HFpEF) or CKD — indicated even without diabetes. <span class="warn">Euglycemic DKA</span> — hold 3 days before surgery / with acute illness. Genital mycotic infections, volume depletion, Fournier's gangrene (rare). Canagliflozin has an amputation signal.</div>
+</div>
+
+<div class="sec">
+  <span class="dot" style="background:#BA7517"></span>
+  <h3>Gut</h3>
+  <span class="sub">Alter absorption and enteroendocrine signaling</span>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#BA7517"></span><h4>α-glucosidase inhibitors</h4><span class="role">Postprandial</span></div>
+  <p class="drugs">Acarbose · miglitol</p>
+  <p class="moa">Inhibit brush-border α-glucosidases → delay complex-carb breakdown → flatten postprandial glucose peak.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 0.5–0.8%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v">→</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v good">Low*</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v">Neutral</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v">Avoid severe</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Good for high-carb diets and postprandial spikes. Flatulence and bloating limit adherence. *If hypoglycemia occurs on combo therapy, treat with <b>glucose</b> — disaccharides like sucrose won't be absorbed. Check LFTs with acarbose.</div>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#BA7517"></span><h4>Bile acid sequestrant</h4><span class="role">Niche</span></div>
+  <p class="drugs">Colesevelam</p>
+  <p class="moa">Binds intestinal bile acids → mechanism for glucose lowering unclear (FXR/TGR5 signaling, incretin modulation).</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 0.3–0.5%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v">→</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v good">Very low</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v good">↓ LDL</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v good">No adjust</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Dual use when LDL also needs lowering. Constipation common; raises triglycerides; binds many other drugs (take 4 h apart). Rarely chosen on glucose merits alone.</div>
+</div>
+
+<div class="sec">
+  <span class="dot" style="background:#D4537E"></span>
+  <h3>Brain</h3>
+  <span class="sub">Central metabolic set-point</span>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#D4537E"></span><h4>Dopamine-2 agonist (quick-release)</h4><span class="role">Niche</span></div>
+  <p class="drugs">Bromocriptine QR (Cycloset)</p>
+  <p class="moa">Morning hypothalamic D2 stimulation resets circadian neuroendocrine signaling → ↓ hepatic glucose output, ↑ insulin sensitivity.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">↓ 0.5%</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v">→</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v good">Very low</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v good">Possible ↓</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v good">No adjust</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Must be taken within 2 hours of waking. Somnolence, orthostasis, nausea. Rarely used in practice; unique mechanism, modest efficacy. CYCLE-SET trial suggested CV benefit.</div>
+</div>
+
+<div class="sec">
+  <span class="dot" style="background:#378ADD"></span>
+  <h3>Direct replacement</h3>
+  <span class="sub">When endogenous production fails</span>
+</div>
+
+<div class="card">
+  <div class="head"><span class="d" style="background:#378ADD"></span><h4>Insulin</h4><span class="role">Replacement</span></div>
+  <p class="drugs"><b style="color:var(--color-text-primary);font-weight:500">Ultra-rapid:</b> inhaled (Afrezza), faster aspart &nbsp;·&nbsp; <b style="color:var(--color-text-primary);font-weight:500">Rapid:</b> lispro, aspart, glulisine &nbsp;·&nbsp; <b style="color:var(--color-text-primary);font-weight:500">Short:</b> regular &nbsp;·&nbsp; <b style="color:var(--color-text-primary);font-weight:500">Intermediate:</b> NPH &nbsp;·&nbsp; <b style="color:var(--color-text-primary);font-weight:500">Long (basal):</b> glargine U100 / U300, detemir, degludec &nbsp;·&nbsp; <b style="color:var(--color-text-primary);font-weight:500">Premixed:</b> 70/30, 75/25</p>
+  <p class="moa">Exogenous insulin → activates insulin receptor across all tissues. Only agent with <em>no ceiling</em> of efficacy.</p>
+  <div class="metrics">
+    <div class="m"><div class="m-l">A1c</div><div class="m-v">Unlimited</div></div>
+    <div class="m"><div class="m-l">Wt</div><div class="m-v warn">↑</div></div>
+    <div class="m"><div class="m-l">Hypo</div><div class="m-v warn">High</div></div>
+    <div class="m"><div class="m-l">CV</div><div class="m-v">Neutral</div></div>
+    <div class="m"><div class="m-l">K</div><div class="m-v">Dose ↓ as eGFR ↓</div></div>
+  </div>
+  <div class="pearl"><b>Pearl.</b> Required in T1D, advanced T2D, pregnancy, hospitalized patients. Degludec and glargine U300 have the flattest profile and lowest nocturnal hypoglycemia. Basal-first intensification; add prandial if postprandial targets missed. Patient education and SMBG/CGM are the intervention, not the needle.</div>
+</div>
+
+<div class="foot">
+  <b>Pipeline &amp; honorable mentions.</b> Orforglipron (oral small-molecule GLP-1 RA), retatrutide (triple GLP-1/GIP/glucagon), survodutide (GLP-1/glucagon), and cagrilintide + semaglutide (CagriSema) are in late-stage trials — not in this map because none are approved yet. Fixed-dose combinations (metformin + gliptin, basal + GLP-1 RA, etc.) are formulations, not classes.
+</div>
+</div></body></html>

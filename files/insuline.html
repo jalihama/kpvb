@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insulintherapie – Klinische Übersicht</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #eef5f8;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #08222c;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #08222c;
+    letter-spacing: -0.4px;
+  }
+  header p {
+    color: #45697a;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    max-width: 1060px;
+    margin: 0 auto 6px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #5e7e8a;
+  }
+
+  /* ── PK curve ── */
+  .pk-wrap {
+    max-width: 1060px;
+    margin: 0 auto 20px;
+  }
+
+  /* ── Table ── */
+  .table-wrap {
+    max-width: 1060px;
+    margin: 0 auto 0;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #cddbe0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  thead th {
+    background: #08222c;
+    color: #fff;
+    font-weight: 600;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    padding: 8px 10px;
+    text-align: left;
+    border-right: 1px solid #333;
+  }
+  thead th:last-child { border-right: none; }
+
+  /* Category rows */
+  .cat-row td {
+    padding: 5px 10px;
+    font-weight: 700;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    border-bottom: 1px solid;
+    border-top: 2px solid;
+  }
+  .cat-row.green td  { background: #edf7f0; color: #1a6b3a; border-color: #1a8a40; border-left: 4px solid #1a8a40; }
+  .cat-row.blue td   { background: #eef2ff; color: #2a4a7f; border-color: #2a4a7f; border-left: 4px solid #2a4a7f; }
+  .cat-row.amber td  { background: #fff8ec; color: #7a4a00; border-color: #cc8800; border-left: 4px solid #cc8800; }
+  .cat-row.red td    { background: #fff5f5; color: #b02020; border-color: #b02020; border-left: 4px solid #b02020; }
+  .cat-row.muted td  { background: #eaf1f3; color: #45697a; border-color: #8a8478; border-left: 4px solid #8a8478; }
+
+  /* Data rows */
+  tbody tr.data-row { border-bottom: 1px solid #e8e2d8; }
+  tbody tr.data-row:last-child { border-bottom: none; }
+  tbody tr.data-row td {
+    padding: 7px 10px;
+    vertical-align: top;
+    font-size: 10.5px;
+    color: #13323d;
+    border-right: 1px solid #e8e2d8;
+    line-height: 1.55;
+  }
+  tbody tr.data-row td:last-child { border-right: none; }
+
+  .data-row.green td:first-child { border-left: 4px solid #1a8a40; }
+  .data-row.blue td:first-child   { border-left: 4px solid #2a4a7f; }
+  .data-row.amber td:first-child  { border-left: 4px solid #cc8800; }
+  .data-row.red td:first-child    { border-left: 4px solid #b02020; }
+  .data-row.muted td:first-child  { border-left: 4px solid #8a8478; }
+
+  .drug-name  { font-weight: 600; font-size: 11px; color: #08222c; }
+  .trade-name { font-size: 9.5px; color: #5e7e8a; font-style: italic; margin-top: 1px; }
+
+  .tag-pill {
+    display: inline-block;
+    font-size: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    margin-top: 3px;
+  }
+  .tag-pill.green { background: #edf7f0; color: #1a6b3a; }
+  .tag-pill.blue  { background: #eef2ff; color: #2a4a7f; }
+  .tag-pill.amber { background: #fff8ec; color: #7a4a00; }
+  .tag-pill.muted { background: #eef5f8; color: #45697a; }
+
+  .val-num { font-weight: 600; color: #08222c; font-size: 11px; }
+  .val-sub { font-size: 9.5px; color: #5e7e8a; display: block; margin-top: 1px; }
+
+  .cave  { color: #b02020; font-weight: 600; }
+  .ki    { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+  .neg   { color: #b02020; font-weight: 600; }
+
+  /* ── Notes section ── */
+  .notes {
+    max-width: 1060px;
+    margin: 20px auto 0;
+    border-top: 2px solid #08222c;
+    padding-top: 14px;
+  }
+  .notes-title {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #08222c;
+    margin-bottom: 2px;
+    letter-spacing: -0.1px;
+  }
+  .notes-subtitle {
+    font-size: 9px;
+    font-weight: 500;
+    color: #45697a;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+  }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .note-card {
+    background: #fff;
+    border: 1px solid #cddbe0;
+    border-radius: 3px;
+    padding: 7px 10px 7px 14px;
+    position: relative;
+  }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .note-card .bar.blue  { background: #2a4a7f; }
+  .note-card .bar.amber { background: #7a4a00; }
+  .note-card .bar.red   { background: #b02020; }
+  .note-card .bar.muted { background: #45697a; }
+  .note-card .bar.green { background: #1a6b3a; }
+
+  .note-card-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #5e7e8a;
+    margin-bottom: 1px;
+  }
+  .note-card-title {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #08222c;
+    margin-bottom: 4px;
+    letter-spacing: -0.1px;
+  }
+  .note-card-body {
+    font-size: 10.5px;
+    font-weight: 400;
+    color: #13323d;
+    line-height: 1.6;
+  }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  footer {
+    max-width: 1100px;
+    margin: 14px auto 0;
+    padding-top: 12px;
+    border-top: 1px solid #cddbe0;
+    color: #5e7e8a;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Insulintherapie – Klinische Übersicht</h1>
+  <p>NVL Typ-2-Diabetes 2023 · DDG-Praxisempfehlung · AWMF</p>
+</header>
+
+<!-- ============================================================
+     PHARMACOKINETIC CURVES
+     ============================================================ -->
+<div class="section-label">Wirkprofile im Vergleich (schematisch)</div>
+<div class="pk-wrap">
+<svg width="1060" height="195" viewBox="0 0 1060 195" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <style>
+    text { font-family: 'Roboto Flex', system-ui, sans-serif; font-size: 10.5px; fill: #08222c; }
+    .ax  { font-size: 9.5px; fill: #5e7e8a; font-weight: 500; }
+    .lg  { font-size: 9.5px; fill: #08222c; font-weight: 500; }
+  </style>
+</defs>
+
+<!-- Card background -->
+<rect width="1060" height="195" fill="#fff" stroke="#cddbe0" stroke-width="1" rx="4"/>
+
+<!-- Chart area: x 80–990 (910px = 24h), y 30–155 (125px height) -->
+<!-- x(h) = 80 + (h/24)*910; y(i) = 155 - i*125 -->
+
+<!-- Light gridlines -->
+<line x1="80" y1="155" x2="990" y2="155" stroke="#e8e2d8" stroke-width="1"/>
+<line x1="80" y1="30"  x2="80"  y2="155" stroke="#e8e2d8" stroke-width="1"/>
+<!-- Hour tick marks at 2h intervals: 2h=156, 4h=231, 6h=307, 8h=383, 10h=459, 12h=535, 14h=611, 16h=687, 18h=762, 20h=838, 22h=914 -->
+<line x1="156" y1="150" x2="156" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="231" y1="150" x2="231" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="307" y1="150" x2="307" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="383" y1="150" x2="383" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="459" y1="150" x2="459" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="535" y1="150" x2="535" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="611" y1="150" x2="611" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="687" y1="150" x2="687" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="762" y1="150" x2="762" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="838" y1="150" x2="838" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="914" y1="150" x2="914" y2="155" stroke="#cddbe0" stroke-width="1"/>
+<line x1="990" y1="150" x2="990" y2="155" stroke="#cddbe0" stroke-width="1"/>
+
+<!-- X axis labels -->
+<text x="80"  y="171" class="ax" text-anchor="middle">0</text>
+<text x="156" y="171" class="ax" text-anchor="middle">2</text>
+<text x="231" y="171" class="ax" text-anchor="middle">4</text>
+<text x="307" y="171" class="ax" text-anchor="middle">6</text>
+<text x="383" y="171" class="ax" text-anchor="middle">8</text>
+<text x="459" y="171" class="ax" text-anchor="middle">10</text>
+<text x="535" y="171" class="ax" text-anchor="middle">12</text>
+<text x="611" y="171" class="ax" text-anchor="middle">14</text>
+<text x="687" y="171" class="ax" text-anchor="middle">16</text>
+<text x="762" y="171" class="ax" text-anchor="middle">18</text>
+<text x="838" y="171" class="ax" text-anchor="middle">20</text>
+<text x="914" y="171" class="ax" text-anchor="middle">22</text>
+<text x="990" y="171" class="ax" text-anchor="middle">24 h</text>
+<text x="14"  y="95"  class="ax" text-anchor="middle" transform="rotate(-90,14,95)">Wirkung (rel.)</text>
+
+<!-- CURVE 1: Kurzwirkendes Analogon (Lispro/Aspart) — rot -->
+<!-- onset 15min (~x=89), peak 1h (x=118, y=30), end 4h (x=231, y=155) -->
+<path d="M80,155 C84,155 96,30 118,30 C135,30 205,155 231,155"
+      fill="none" stroke="#b02020" stroke-width="2.5" stroke-linejoin="round"/>
+
+<!-- CURVE 2: Normalinsulin — blau -->
+<!-- onset 30min (x=99), peak 2.5h (x=175, y=34), end 7h (x=345, y=155) -->
+<path d="M80,155 C92,155 135,34 175,34 C215,34 310,155 345,155"
+      fill="none" stroke="#2a4a7f" stroke-width="2.5"/>
+
+<!-- CURVE 3: NPH-Insulin — amber -->
+<!-- onset 2h (x=156), peak 6h (x=307, y=42), end 16h (x=687, y=155) -->
+<path d="M80,155 C108,155 145,42 307,42 C440,42 600,155 687,155"
+      fill="none" stroke="#cc8800" stroke-width="2.5"/>
+
+<!-- CURVE 4: Glargin (flach, gestrichelt) — grün -->
+<!-- onset 3h (x=193), plateau 0.32 intensity y=115, end 24h (x=990) -->
+<path d="M80,155 C110,155 155,115 231,115 C600,115 870,115 952,115 C970,115 985,155 990,155"
+      fill="none" stroke="#1a6b3a" stroke-width="2.5" stroke-dasharray="7 3"/>
+
+<!-- CURVE 5: Degludec — grün gepunktet, flacher als Glargin -->
+<!-- extremely flat, extends beyond 24h shown with arrow -->
+<path d="M80,155 C115,155 165,122 245,122 C600,122 880,122 990,122"
+      fill="none" stroke="#1a8a40" stroke-width="1.8" stroke-dasharray="3 3"/>
+<polygon points="990,119 998,122 990,125" fill="#1a8a40"/>
+
+<!-- Degludec label at end -->
+<text x="912" y="118" class="ax" fill="#1a8a40">Degludec (&gt;42 h) →</text>
+
+<!-- LEGEND: row 1 -->
+<rect x="88" y="8"  width="20" height="3" fill="#b02020" rx="1"/>
+<text x="112" y="14" class="lg">Kurzwirkendes Analogon (Lispro, Aspart, Glulisin)</text>
+
+<rect x="88" y="18" width="20" height="3" fill="#2a4a7f" rx="1"/>
+<text x="112" y="24" class="lg">Normalinsulin (Altinsulin)</text>
+
+<!-- LEGEND: row 2 -->
+<rect x="420" y="8" width="20" height="3" fill="#cc8800" rx="1"/>
+<text x="444" y="14" class="lg">NPH-Insulin (Verzögerungsinsulin)</text>
+
+<line x1="420" y1="21" x2="440" y2="21" stroke="#1a6b3a" stroke-width="2.5" stroke-dasharray="7 3"/>
+<text x="444" y="26" class="lg">Langwirkendes Analogon (Glargin, Detemir)</text>
+
+</svg>
+</div>
+
+<!-- ============================================================
+     MAIN TABLE
+     ============================================================ -->
+<div class="section-label" style="margin-top:14px;">Insulinpräparate · Wirkprofile · Klinische Merkmale</div>
+<div class="table-wrap">
+<table>
+<thead>
+  <tr>
+    <th style="width:17%">Insulin / INN</th>
+    <th style="width:14%">Handelsnamen (Bsp.)</th>
+    <th style="width:10%">Wirk­beginn</th>
+    <th style="width:10%">Maximum</th>
+    <th style="width:10%">Dauer</th>
+    <th style="width:10%">Spritz-Ess-Abstand</th>
+    <th>Klinische Besonderheiten &amp; Cave-Punkte</th>
+  </tr>
+</thead>
+<tbody>
+
+  <!-- ───────────────────────────────── -->
+  <!--  KURZWIRKENDE ANALOGA             -->
+  <!-- ───────────────────────────────── -->
+  <tr class="cat-row green">
+    <td colspan="7">Kurzwirkende Insulinanaloga — Bolusinsulin · 1. Wahl prandial</td>
+  </tr>
+  <tr class="data-row green">
+    <td>
+      <div class="drug-name">Insulin lispro</div>
+      <div class="trade-name">Humalog®, Liprolog®</div>
+      <span class="tag-pill green">Analogon</span>
+    </td>
+    <td>Humalog® U-100/U-200<br>Liprolog®</td>
+    <td><span class="val-num">10–15 min</span></td>
+    <td><span class="val-num">1–2 h</span></td>
+    <td><span class="val-num">3–5 h</span></td>
+    <td><span class="val-num">0 min</span><span class="val-sub">direkt vor dem Essen; ggf. auch danach</span></td>
+    <td>Erstes zugelassenes Insulinanalogon · invertierte B28/B29-Aminosäuren → verhindert Hexameragglomeration → schnellere Resorption · geeignet für CSII (Pumpe) · U-200: doppelt konzentriert für höheren Bedarf</td>
+  </tr>
+  <tr class="data-row green">
+    <td>
+      <div class="drug-name">Insulin aspart</div>
+      <div class="trade-name">NovoRapid®, Fiasp®</div>
+      <span class="tag-pill green">Analogon</span>
+    </td>
+    <td>NovoRapid®<br>Fiasp® (ultra-schnell)</td>
+    <td><span class="val-num">10–20 min</span><span class="val-sub">Fiasp: &lt;5 min</span></td>
+    <td><span class="val-num">1–3 h</span></td>
+    <td><span class="val-num">3–5 h</span></td>
+    <td><span class="val-num">0–15 min</span><span class="val-sub">Fiasp: auch postprandial möglich</span></td>
+    <td>Fiasp enthält Niacinamid + L-Arginin → deutlich beschleunigte Resorption · i.v.-Gabe möglich (Klinik: DKA, perioperativ) · in NVL und DDG-Leitlinie als Bolusinsulin empfohlen</td>
+  </tr>
+  <tr class="data-row green">
+    <td>
+      <div class="drug-name">Insulin glulisin</div>
+      <div class="trade-name">Apidra®</div>
+      <span class="tag-pill green">Analogon</span>
+    </td>
+    <td>Apidra® U-100</td>
+    <td><span class="val-num">10–15 min</span></td>
+    <td><span class="val-num">~1 h</span></td>
+    <td><span class="val-num">3–4 h</span></td>
+    <td><span class="val-num">0–15 min</span></td>
+    <td>Mischbar mit NPH (im Gegensatz zu Glargin) · für CSII zugelassen · kürzeste Wirkdauer der kurzwirkenden Analoga → günstig bei kleinen Mahlzeiten</td>
+  </tr>
+
+  <!-- ───────────────────────────────── -->
+  <!--  NORMALINSULIN                    -->
+  <!-- ───────────────────────────────── -->
+  <tr class="cat-row blue">
+    <td colspan="7">Normalinsulin (Altinsulin) — Humanidentisch · i.v.-fähig</td>
+  </tr>
+  <tr class="data-row blue">
+    <td>
+      <div class="drug-name">Humaninsulin (regular)</div>
+      <div class="trade-name">Actrapid®, Insuman® Rapid, Huminsulin® Normal</div>
+      <span class="tag-pill blue">Human</span>
+    </td>
+    <td>Actrapid® HM<br>Insuman® Rapid<br>Huminsulin® Normal</td>
+    <td><span class="val-num">30–60 min</span></td>
+    <td><span class="val-num">2–4 h</span></td>
+    <td><span class="val-num">6–8 h</span></td>
+    <td><span class="val-num">20–30 min</span><span class="val-sub">vor dem Essen!</span></td>
+    <td><span class="cave">Cave: zwingend langen SEA einhalten!</span> Häufig vergessen → postprandiale Hyperglykämie · <span class="first">i.v.-Gabe möglich</span> → Goldstandard bei DKA-Perfusor, perioperativem BZ-Management · Hyperkaliämie: 10 IE + Glukose 40% i.v. · günstigstes Insulin · klar (nicht aufschütteln)</td>
+  </tr>
+
+  <!-- ───────────────────────────────── -->
+  <!--  NPH-INSULIN                      -->
+  <!-- ───────────────────────────────── -->
+  <tr class="cat-row amber">
+    <td colspan="7">NPH-Insulin (Neutral-Protamin-Hagedorn) — Intermediär wirkendes Verzögerungsinsulin</td>
+  </tr>
+  <tr class="data-row amber">
+    <td>
+      <div class="drug-name">Isophan-Insulin (NPH)</div>
+      <div class="trade-name">Insuman® Basal, Protaphane®, Huminsulin® Basal</div>
+      <span class="tag-pill amber">Human</span>
+    </td>
+    <td>Insuman® Basal<br>Protaphane®<br>Huminsulin® Basal</td>
+    <td><span class="val-num">2–4 h</span></td>
+    <td><span class="val-num">4–8 h</span></td>
+    <td><span class="val-num">12–18 h</span></td>
+    <td>Nicht mahlzeitenbezogen<span class="val-sub">1–2× tägl.</span></td>
+    <td><span class="cave">Ausgeprägter Wirkpeak → Hypoglykämierisiko!</span> Insb. nächtliche Hypo bei abendlicher Injektion · <span class="cave">Cave: trübe Suspension → vor Injektion 10× schwenken!</span> · mischbar mit Normalinsulin und kurzwirkenden Analoga (außer Glargin) · kostengünstig · Grundlage der Mischinsuline</td>
+  </tr>
+
+  <!-- ───────────────────────────────── -->
+  <!--  LANGWIRKENDE ANALOGA             -->
+  <!-- ───────────────────────────────── -->
+  <tr class="cat-row blue">
+    <td colspan="7">Langwirkende Insulinanaloga — Basalinsulin · 1. Wahl Basalsubstitution</td>
+  </tr>
+  <tr class="data-row blue">
+    <td>
+      <div class="drug-name">Insulin glargin U-100</div>
+      <div class="trade-name">Lantus®, Abasaglar® (Biosimilar)</div>
+      <span class="tag-pill blue">Analogon</span>
+    </td>
+    <td>Lantus® U-100<br>Abasaglar® (Biosimilar)</td>
+    <td><span class="val-num">2–4 h</span></td>
+    <td><span class="val-num">Kein Peak</span><span class="val-sub">gleichmäßiges Plateau</span></td>
+    <td><span class="val-num">20–24 h</span></td>
+    <td>1× tägl.<span class="val-sub">fester Zeitpunkt</span></td>
+    <td><span class="first">1. Wahl Basalinsulin</span> in NVL und DDG-Leitlinie · <span class="cave">pH 4 → klar, sauer → nicht mischbar mit anderen Insulinen!</span> · <span class="cave">Nie i.v. geben!</span> · Abasaglar = Biosimilar, klinisch äquivalent · breite Evidenzbasis</td>
+  </tr>
+  <tr class="data-row blue">
+    <td>
+      <div class="drug-name">Insulin glargin U-300</div>
+      <div class="trade-name">Toujeo®</div>
+      <span class="tag-pill blue">Analogon</span>
+    </td>
+    <td>Toujeo® U-300<br>SoloStar® Pen</td>
+    <td><span class="val-num">6 h</span></td>
+    <td><span class="val-num">Kein Peak</span><span class="val-sub">sehr flaches Profil</span></td>
+    <td><span class="val-num">&gt;24 h</span></td>
+    <td>1× tägl.<span class="val-sub">fester Zeitpunkt</span></td>
+    <td>3-fach konzentriert → kleineres Injektionsvolumen, langsamere Freisetzung · flacheres Wirkprofil → weniger Hypoglykämien als U-100-Glargin (EDITION-Studien) · <span class="cave">Cave: Schwangerschaft — unzureichende Daten (Lantus bevorzugen)</span></td>
+  </tr>
+  <tr class="data-row blue">
+    <td>
+      <div class="drug-name">Insulin detemir</div>
+      <div class="trade-name">Levemir®</div>
+      <span class="tag-pill blue">Analogon</span>
+    </td>
+    <td>Levemir® U-100<br>FlexPen®</td>
+    <td><span class="val-num">1–2 h</span></td>
+    <td><span class="val-num">Flaches Plateau</span></td>
+    <td><span class="val-num">16–24 h</span><span class="val-sub">dosisabhängig</span></td>
+    <td>1–2× tägl.</td>
+    <td>Reversible Albuminbindung → pufferartiger Effekt, reproduzierbares Profil · weniger Gewichtszunahme als NPH · <span class="first">in der Schwangerschaft: gut untersucht, bevorzugt (CONCEPTT-Studie)</span> · bei hohem Bedarf 2× tägl. möglich</td>
+  </tr>
+  <tr class="data-row blue">
+    <td>
+      <div class="drug-name">Insulin degludec</div>
+      <div class="trade-name">Tresiba®</div>
+      <span class="tag-pill blue">Analogon</span>
+    </td>
+    <td>Tresiba® U-100/U-200<br>FlexTouch®</td>
+    <td><span class="val-num">~1 h</span></td>
+    <td><span class="val-num">Kein Peak</span><span class="val-sub">ultraflach</span></td>
+    <td><span class="val-num">&gt;42 h</span></td>
+    <td>1× tägl.<span class="val-sub">flexibel ±8 h möglich!</span></td>
+    <td>Längste Wirkdauer aller Basalinsuline · niedrigstes Hypoglykämierisiko aller Basalinsuline (DEVOTE-Studie, N Engl J Med 2017) · <span class="first">flexibler Injektionszeitpunkt</span> → ideal bei unregelmäßigem Alltag (Schichtarbeit) · auch als Ryzodeg® 70/30 (70% Degludec + 30% Aspart)</td>
+  </tr>
+
+  <!-- ───────────────────────────────── -->
+  <!--  MISCHINSULINE                    -->
+  <!-- ───────────────────────────────── -->
+  <tr class="cat-row muted">
+    <td colspan="7">Mischinsuline — Biphasische Kombinationspräparate</td>
+  </tr>
+  <tr class="data-row muted">
+    <td>
+      <div class="drug-name">Biphasisches Humaninsulin</div>
+      <div class="trade-name">Insuman® Comb 25, Mixtard® 30</div>
+      <span class="tag-pill muted">Human · Mix</span>
+    </td>
+    <td>Insuman® Comb 15/25/50<br>Mixtard® 30</td>
+    <td><span class="val-num">30 min</span></td>
+    <td><span class="val-num">Zweigipflig</span></td>
+    <td><span class="val-num">12–18 h</span></td>
+    <td>20–30 min vor dem Essen<span class="val-sub">2× tägl. (M + A)</span></td>
+    <td>Normalinsulin + NPH in festen Verhältnissen (z.B. 25/75) · wenig flexibel · feste Mahlzeitenstruktur erforderlich · <span class="cave">trüb → aufschütteln!</span> · heute selten verwendet (CT-Schema)</td>
+  </tr>
+  <tr class="data-row muted">
+    <td>
+      <div class="drug-name">Biphasisches Insulinanalogon</div>
+      <div class="trade-name">NovoMix® 30, Humalog® Mix 25/50</div>
+      <span class="tag-pill muted">Analogon · Mix</span>
+    </td>
+    <td>NovoMix® 30<br>Humalog® Mix 25<br>Humalog® Mix 50</td>
+    <td><span class="val-num">10–20 min</span></td>
+    <td><span class="val-num">Zweigipflig</span></td>
+    <td><span class="val-num">12–24 h</span></td>
+    <td>Direkt vor dem Essen<span class="val-sub">2–3× tägl.</span></td>
+    <td>Kurzwirkendes Analogon + Protaminsuspension (z.B. 30% Aspart + 70% Protaminaspart) · flexibler als Human-Mix · <span class="cave">Cave: trüb → schwenken!</span> · nicht für ICT geeignet · vereinfachtes Regime bei schlechter Compliance</td>
+  </tr>
+
+</tbody>
+</table>
+</div>
+
+<!-- ============================================================
+     NOTES SECTION
+     ============================================================ -->
+<div class="notes">
+  <div class="notes-title">Klinisch Wichtiges für den KP</div>
+  <div class="notes-subtitle">Therapieschemata · Dosierung · Notfallsituationen · Cave-Punkte</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Therapieregime</div>
+      <div class="note-card-title">CT · ICT · BOT · CSII</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>BOT</strong> (Basal-unterstützte orale Therapie): 1× Basalinsulin + OAD → Einstieg T2DM</li>
+          <li><strong>CT</strong> (konventionell): Mischinsulin 2×/d, feste Mahlzeiten — kaum noch empfohlen</li>
+          <li><strong>ICT</strong> (intensiviert konventionell): 1× Basal + 3× Bolus → Standard T1DM, zunehmend T2DM</li>
+          <li><strong>CSII</strong> (Insulinpumpe): kontinuierliche s.c. Kurzanalogon-Infusion → bevorzugt bei T1DM mit CGM (NVL)</li>
+          <li><span class="first">Basis-Bolus-Prinzip:</span> Basalinsulin ~50% + Bolus ~50% der Tagesdosis</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Dosierung</div>
+      <div class="note-card-title">Faustformeln für die Klinik</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Gesamttagesdosis:</strong> ~0,5–1,0 IE/kg KG/d (T1DM initial: ~0,5–0,7)</li>
+          <li><strong>Basis : Bolus:</strong> je ~50% der Tagesdosis aufteilen</li>
+          <li><strong>BE-Faktor:</strong> 1 IE Bolusinsulin → ~1–2 BE (10–20 g KH) — individuell!</li>
+          <li><strong>Korrekturfaktor:</strong> 1 IE senkt BZ um ~30–50 mg/dl (individuell)</li>
+          <li><strong>BZ-Ziele (NVL T2DM):</strong> nüchtern 80–130 mg/dl; HbA1c individuell 6,5–8,0%</li>
+          <li><strong>T1DM HbA1c-Ziel:</strong> &lt;7,0% (DDG)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Injektionstechnik</div>
+      <div class="note-card-title">Resorption &amp; Injektionsstellen</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Schnellste Resorption:</strong> Bauch (periumbilikal) → für Bolusinsulin bevorzugt</li>
+          <li><strong>Langsamste:</strong> Gesäß, Oberschenkel → für Basalinsulin geeignet</li>
+          <li><strong>Oberarm:</strong> mittelschnell · Rotation innerhalb einer Region!</li>
+          <li><span class="cave">Cave Lipohypertrophie:</span> Injektionsstellen konsequent rotieren! Mindert Resorption erheblich</li>
+          <li><span class="cave">Cave Wärme</span> (Sport, Dusche): beschleunigt Resorption → Hypoglykämiegefahr!</li>
+          <li>Nadellänge: 4 mm (Standard) · 6 mm bei Adipositas</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Hypoglykämie</div>
+      <div class="note-card-title">Erkennung &amp; Stufentherapie</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Def.:</strong> BZ &lt;70 mg/dl (3,9 mmol/l) · klinisch: Schwitzen, Zittern, Tachykardie, Verwirrtheit</li>
+          <li><strong>Schweregrad 1 (mild):</strong> 15–20 g schnelle KH p.o. (Traubenzucker, Fruchtsaft)</li>
+          <li><strong>Schweregrad 2 (schwer):</strong> Glukose 40% i.v. 20–50 ml <em>oder</em> Glucagon 1 mg i.m./s.c.</li>
+          <li><span class="cave">Cave NPH-Hypo:</span> nachts 2–4h nach abendlicher Injektion (Peakzeit!)</li>
+          <li><span class="cave">Cave Hypoglykämie-Wahrnehmungsstörung</span> bei langer Diabetesdauer → CGM indiziert</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Diabetische Ketoazidose</div>
+      <div class="note-card-title">Insulintherapie i.v. (Klinik)</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Schema:</strong> Normalinsulin i.v. 0,1 IE/kg/h als Perfusor</li>
+          <li><strong>Erst</strong> Volumen (NaCl 0,9%) → dann Insulin (cave: Kalium!)</li>
+          <li>BZ-Senkung max. 50–70 mg/dl/h — <span class="cave">nicht zu schnell!</span></li>
+          <li><span class="cave">Cave Kalium:</span> Insulin treibt K⁺ in Zellen → vor Start: K⁺ &gt;3,5 mmol/l sicherstellen</li>
+          <li><span class="cave">Kein Glargin / Detemir / Degludec i.v.!</span> Nur Normalinsulin oder Kurzanaloga i.v. geeignet</li>
+          <li>Übergang auf s.c.: BZ &lt;250 mg/dl + Ketonkörper negativ/rückläufig</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">Besondere Situationen</div>
+      <div class="note-card-title">Perioperativ · Niereninsuffizienz · Schwangerschaft</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Perioperativ:</strong> Basalinsulin beibehalten (50–80% der Dosis) · Bolus pausieren · BZ-Ziel 140–180 mg/dl stationär</li>
+          <li><strong>Niereninsuffizienz:</strong> Insulinbedarf ↓ (renaler Insulinabbau vermindert) → Dosis reduzieren! GFR-abhängig anpassen</li>
+          <li><strong>Schwangerschaft:</strong> Detemir oder Aspart/Lispro bevorzugt (Zulassung) · kein Toujeo · HbA1c-Ziel &lt;6,5%; nüchtern &lt;95 mg/dl</li>
+          <li><strong>Hyperkaliämie (Akuttherapie):</strong> 10 IE Normalinsulin + 50 ml Glukose 40% i.v. → K⁺ sinkt um ~1 mmol/l für 2–4 h (kausale Therapie danach!)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>NVL Typ-2-Diabetes 2023 · DDG-Leitlinie · AWMF-S3 · Fachinformationen der Hersteller</span>
+  <span>Insulintherapie · Klinische Übersicht</span>
+</footer>
+
+</body>
+</html>

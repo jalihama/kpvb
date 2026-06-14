@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANV Ätiologie – KP-Mindmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef5f8;--surf:#ffffff;--surf2:#e4eef1;
+  --t1:#08222c;--t2:#45697a;--t3:#8aa6b0;
+  --b1:rgba(18,86,108,.10);--b2:rgba(18,86,108,.18);--b3:rgba(18,86,108,.30);
+  --r:10px;--f:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  --PRE:#b45309;--INT:#0a7c9c;--POS:#b91c1c;--ROT:#6b7280;--LOP:.46;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#0a2733;--surf:#0f3848;--surf2:#0c2f3d;
+    --t1:#e3eef2;--t2:#9fc0cc;--t3:#5e8794;
+    --b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--b3:rgba(255,255,255,.22);
+    --PRE:#f59e0b;--INT:#24c4e6;--POS:#f87171;--ROT:#94a3b8;--LOP:.38;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f);background:var(--bg);color:var(--t1);display:flex;flex-direction:column}
+#hdr{display:flex;align-items:center;gap:12px;padding:0 18px;height:52px;background:var(--surf);border-bottom:1px solid var(--b1);flex-shrink:0;flex-wrap:wrap}
+.hbrand .ht{font-size:14px;font-weight:600;color:var(--t1);letter-spacing:-.2px}
+.hbrand .hs{font-size:10px;color:var(--t3);margin-top:1px}
+.hlgd{display:flex;gap:6px;margin-left:auto;align-items:center}
+.lpill{display:flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:500;border:1px solid}
+.ldot{width:6px;height:6px;border-radius:50%}
+.hacts{display:flex;gap:6px;margin-left:10px}
+.abtn{padding:5px 11px;font-size:11px;font-family:var(--f);color:var(--t2);border:1px solid var(--b2);border-radius:6px;background:transparent;cursor:pointer}
+.abtn:hover{background:var(--surf2);color:var(--t1)}
+#main{display:flex;flex:1;min-height:0;overflow:hidden}
+#cbox{flex:1;min-width:0;background:var(--surf2);position:relative;overflow:hidden}
+#viz{width:100%;height:100%;display:block;cursor:grab}
+#viz:active{cursor:grabbing}
+.cctrls{position:absolute;bottom:14px;left:14px;display:flex;gap:6px}
+.cbtn{padding:4px 11px;font-size:10.5px;font-family:var(--f);color:var(--t2);border:1px solid var(--b2);border-radius:6px;background:var(--surf);cursor:pointer}
+.cbtn:hover{background:var(--surf2)}
+#chint{position:absolute;bottom:14px;right:14px;font-size:10px;color:var(--t3)}
+#side{width:310px;flex-shrink:0;background:var(--surf);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden}
+#sempty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 22px;text-align:center;gap:8px}
+.seicon{font-size:28px;opacity:.4;margin-bottom:4px}
+.setitle{font-size:13px;font-weight:500;color:var(--t2)}
+.sesub{font-size:11px;color:var(--t3);line-height:1.6;margin-top:2px}
+.sekeys{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px;width:100%}
+.sekey{background:var(--surf2);border:1px solid var(--b1);border-radius:7px;padding:8px 6px;font-size:10px;color:var(--t2);text-align:center;line-height:1.5}
+.sekey b{display:block;font-size:12px;color:var(--t1);margin-bottom:1px}
+#scontent{display:none;flex-direction:column;flex:1;overflow:hidden}
+#shdr{padding:14px 16px 12px;border-bottom:1px solid var(--b1);flex-shrink:0;position:relative}
+#stag{font-size:9px;font-weight:700;padding:2px 9px;border-radius:10px;display:inline-block;margin-bottom:8px;letter-spacing:.4px;text-transform:uppercase}
+#stitle{font-size:14px;font-weight:500;color:var(--t1);line-height:1.38;padding-right:22px}
+#sclose{position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:5px;border:none;background:none;font-size:15px;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center}
+#sclose:hover{background:var(--surf2);color:var(--t1)}
+#sbody{flex:1;overflow-y:auto;padding:12px 16px;min-height:0}
+#sbul{list-style:none}
+#sbul li{font-size:11.5px;color:var(--t2);line-height:1.58;padding:4px 0 4px 14px;position:relative;border-bottom:1px solid var(--b1)}
+#sbul li:last-child{border-bottom:none}
+#sbul li::before{content:'·';position:absolute;left:3px;color:var(--t3);font-weight:700;font-size:14px;line-height:1.3}
+#sbul li b{color:var(--t1);font-weight:500}
+#snotes{border-top:1px solid var(--b1);padding:12px 16px 16px;background:var(--surf2);flex-shrink:0}
+.nhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.nlbl{font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px}
+#nstat{font-size:10px;color:var(--t3)}
+#nta{width:100%;background:var(--surf);border:1px solid var(--b2);border-radius:7px;padding:9px 10px;font-size:11.5px;font-family:var(--f);color:var(--t1);resize:none;outline:none;line-height:1.55;height:104px}
+#nta:focus{border-color:var(--b3)}
+#nta::placeholder{color:var(--t3);font-style:italic}
+footer{height:28px;background:var(--surf);border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);flex-shrink:0;gap:18px}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <div class="hbrand"><div class="ht">Akutes Nierenversagen · Ätiologie</div><div class="hs">KP-Mindmap · Notizen lokal gespeichert</div></div>
+  <div class="hlgd">
+    <div class="lpill" id="lp0"><div class="ldot" id="ld0"></div>Prärenal ~60%</div>
+    <div class="lpill" id="lp1"><div class="ldot" id="ld1"></div>Intrarenal ~35%</div>
+    <div class="lpill" id="lp2"><div class="ldot" id="ld2"></div>Postrenal ~5%</div>
+  </div>
+  <div class="hacts">
+    <button class="abtn" onclick="exportNotes()">📋 Notizen exportieren</button>
+    <button class="abtn" onclick="clearAllNotes()">🗑 Alle löschen</button>
+  </div>
+</header>
+<div id="main">
+  <div id="cbox">
+    <svg id="viz" overflow="visible"></svg>
+    <div class="cctrls">
+      <button class="cbtn" onclick="resetView()">↺ Reset</button>
+      <button class="cbtn" onclick="fitAll()">⊡ Einpassen</button>
+    </div>
+    <div id="chint">✦ = eigene Notiz vorhanden</div>
+  </div>
+  <div id="side">
+    <div id="sempty">
+      <div class="seicon">🩺</div>
+      <div class="setitle">ANV-Ätiologie</div>
+      <div class="sesub">Klick auf einen Knoten für klinische KP-Details und eigene Lernnotizen</div>
+      <div class="sekeys">
+        <div class="sekey"><b>FENa &lt;1%</b>Prärenal</div>
+        <div class="sekey"><b>FENa &gt;2%</b>Intrarenal</div>
+        <div class="sekey"><b>Sono first</b>Postrenal ausschl.</div>
+        <div class="sekey"><b>AEIOU</b>Dialyse-Ind.</div>
+      </div>
+    </div>
+    <div id="scontent">
+      <div id="shdr">
+        <div id="stag"></div>
+        <div id="stitle"></div>
+        <button id="sclose" onclick="closePanel()">×</button>
+      </div>
+      <div id="sbody"><ul id="sbul"></ul></div>
+      <div id="snotes">
+        <div class="nhdr"><span class="nlbl">📝 Notizen</span><span id="nstat"></span></div>
+        <textarea id="nta" placeholder="Eigene Notizen zu diesem Knoten…"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <span>Scrollen: Zoom</span><span>Ziehen: Pan</span><span>Klick: Details &amp; Notizen</span><span>✦: Notiz vorhanden</span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const dk=matchMedia('(prefers-color-scheme:dark)').matches;
+const PRE=dk?'#f59e0b':'#b45309',INT=dk?'#22d3ee':'#0e7490',POS=dk?'#f87171':'#b91c1c',ROT=dk?'#94a3b8':'#6b7280';
+const LOP=dk?.38:.46;
+[[PRE,0],[INT,1],[POS,2]].forEach(([c,i])=>{
+  document.getElementById('lp'+i).style.cssText+=`color:${c};border-color:${c}44`;
+  document.getElementById('ld'+i).style.background=c;
+});
+
+const K={
+aki:{t:'Definition & Überblick',p:['<b>KDIGO:</b> Krea &#8593;&#8805;0,3 mg/dl in 48h <i>oder</i> &#215;1,5 in 7d <i>oder</i> Diurese &lt;0,5 ml/kg/h &#8805;6h','<b>Stadien I&#8594;II&#8594;III</b> nach Krea-Anstieg; Stadium III = Dialysepflicht m&#246;glich','<b>Diagnostik:</b> Sono (Harnstau?) &#8594; Urinsediment &#8594; FENa &#8594; ggf. Biopsie','<b>Dialyse-AEIOU:</b> Azidose &#183; Elektrolyte &#183; Intoxikation &#183; Overload &#183; Ur&#228;mie']},
+pre:{t:'Pr&#228;renal (~60%)',p:['&#8595; Perfusionsdruck bei intakten Tubuli; <b>FENa &lt;1%</b>, Urin-Osmo &gt;500 mOsm/kg','Sediment: unauff&#228;llig / hyaline Zylinder; bei Therapie vollst&#228;ndig reversibel','&#9888;&#65039; Prolongierte Isch&#228;mie &#8594; &#220;bergang in <b>ATN</b>! (intrarenales ANV)']},
+pre_hypo:{t:'Hypovolämie',p:['Absoluter Volumenmangel &#8594; &#8595; renaler Perfusionsdruck; RAAS&#8593; + ADH&#8593; kompensatorisch','<b>Klinik:</b> Tachykardie, Hypotonie, trockene Schleimh&#228;ute, &#8595; Hautturgor, &#8595; ZVD','Therapie: Volumenersatz (Kristalloide first-line)']},
+pre_hypo_fd:{t:'&#8595; Fl&#252;ssigkeitszufuhr',p:['Exsikkose bei &#196;lteren, Bettl&#228;gerigen, Demenzkranken','Urin hochkonzentriert (Osmo &#8593;, dunkelgelb); leicht &#252;bersehen','Therapie: orale/i.v. Rehydratation']},
+pre_hypo_fl:{t:'&#8593; Fl&#252;ssigkeitsverluste',p:['Extern: Blutung, GI-Verluste, Verbrennung, Diuretika','Intern (Third Spacing): Pankreatitis, Peritonitis, Aszites, Ileus','Volumenersatz nach Verlustart w&#228;hlen']},
+pre_fl_blut:{t:'Blutungen',p:['Trauma, GI-Blutung (Ulkus, Varizen), postoperativ','Schock-Index = HF/RRsyst; &gt;1 kritisch, &gt;1,5 lebensbedrohlich','Therapie: Blutst&#252;llung + EK + FFP (1:1) + Kristalloide']},
+pre_fl_vomit:{t:'Erbrechen / Durchfall',p:['Erbrechen &#8594; HCl-Verlust &#8594; <b>metabolische Alkalose</b> + Hypokali&#228;mie','Durchfall &#8594; HCO&#8323;&#8315;-Verlust &#8594; <b>metabolische Azidose</b> + Hypokali&#228;mie','Volumenmangel bei &#196;lteren oft untersch&#228;tzt']},
+pre_fl_panc:{t:'Akute Pankreatitis',p:['Retroperitonealer Kapillarleck (Third Spacing) &#8594; massive Hypovolämie','Therapie: aggressive i.v. Fl&#252;ssigkeit (Ringerlaktat) in 24&#8211;48h','Atlanta-Klassifikation f&#252;r Schweregrad; ANV = Organkomplikation']},
+pre_fl_diur:{t:'Diuretika',p:['Thiazide + Schleifendiuretika &#8594; Hypovolämie (&#220;berdosierung)','&#9888;&#65039; FENa durch Diuretika verf&#228;lscht &#8594; <b>FEHarnstoff</b> nutzen (&lt;35% = pr&#228;renal)','Triple Whammy: NSAR + ACE-Hemmer + Diuretikum = hohes ANV-Risiko!']},
+pre_hmv:{t:'&#8595; HMV / Hypotonie',p:['Trotz normalem Gesamtvolumen: &#8595; arteriell wirksames Blutvolumen &#8594; GFR &#8595;','RAAS&#8593; &#8594; Na/Wasser-Retention &#8594; &#214;deme bei HI, Zirrhose, neph. Syndrom','Gemeinsame Endstrecke verschiedener Erkrankungen']},
+pre_hmv_hf:{t:'Herzinsuffizienz',p:['Kardiorenales Syndrom Typ 1 (akut) / Typ 2 (chronisch)','Ven&#246;se Kongestion erh&#246;ht renalen Venendruck &#8594; &#8595; GFR (nicht nur &#8595; HZV!)','&#9888;&#65039; Diuretika notwendig, aber &#220;berdosierung &#8594; ANV-Verschlechterung']},
+pre_hmv_zirr:{t:'Leberzirrhose',p:['Splanchnikusvasodilatation (NO&#8593;) &#8594; &#8595; eff. Volumen &#8594; RAAS&#8593;','HRS Typ 1 (rapid &lt;2 Wochen, Ausl&#246;ser: SBP/GI-Blutung) / Typ 2 (langsam)','Therapie: Terlipressin + Albumin; definitiv: Lebertransplantation']},
+pre_hmv_neph:{t:'Nephrotisches Syndrom',p:['Proteinurie &gt;3,5g/d &#8594; &#8595; Albumin &#8594; eff. Hypovolämie trotz &#214;deme','&#9888;&#65039; Diuretika vorsichtig: zu aggressiv &#8594; ANV-Verschlechterung!','Hyperkoagulabilit&#228;t (AT-III-Verlust) &#8594; Nierenvenenthrombose-Risiko&#8593;']},
+pre_hmv_ks:{t:'Kardiogener Schock',p:['MAP &lt;65 mmHg + Hypoperfusionszeichen + &#8595; HZV; h&#228;ufigste Ursache: STEMI','Therapie: Revaskularisation + Noradrenalin + ggf. IABP/Impella','H&#228;ufige Trigger: Arrhythmie, Myokarditis, dekompensierte KMP']},
+pre_hmv_sep:{t:'Sepsis',p:['Vasodilatation + Myokarddepression &#8594; distributiver Schock &#8594; &#8595; renale Perfusion','<b>H&#228;ufigste Ursache des ANV auf der ITS!</b>','Sepsis-3: SOFA &#8593;&#8805;2 + Infektfokus; Therapie: AB + Volumen + Noradrenalin']},
+pre_hmv_burn:{t:'Verbrennungen',p:['Kapillarleck + Verdunstungsverluste &#8594; massive Hypovolaemie','Parkland-Formel: 4 ml &#215; KG &#215; verbrannte KOF% in 24h (&#189; in ersten 8h)','Zus&#228;tzlich: Myoglobinurie bei Muskelbeteiligung &#8594; forcierte Diurese']},
+pre_med:{t:'Medikament&#246;s-toxisch (pr&#228;renal)',p:['Autoregulation: PG (Vasodilatation Vas afferens) + Ang-II (Konstriktion Vas efferens)','NSAR blockieren PG; ACE-Hemmer blockieren Ang-II &#8594; &#8595; GFR','Triple Whammy: NSAR + ACE-Hemmer + Diuretika = sehr hohes Risiko']},
+pre_med_nsar:{t:'NSAR',p:['COX-Hemmung &#8594; &#8595; PG &#8594; Vasokonstriktion Vas afferens &#8594; &#8595; GFR','Risiko&#8593; bei Hypovolämie, Herzinsuffizienz, vorbestehender NI, hohem Alter','&#9888;&#65039; OTC-Pr&#228;parate (Ibuprofen) werden von Patienten oft nicht angegeben!']},
+pre_med_ace:{t:'ACE-Hemmer / AT1-Blocker',p:['Hemmen Ang-II &#8594; Vasodilatation Vas efferens &#8594; &#8595; intraglomeru&#228;rer Druck','&#9888;&#65039; <b>Beidseitige NAS oder Einzelniere + ACE-Hemmer = ANV-Falle!</b>','Krea-Anstieg &lt;30%: akzeptabel; &gt;30%: Absetzen erw&#228;gen']},
+pre_med_cni:{t:'Calcineurininhibitoren',p:['Ciclosporin/Tacrolimus &#8594; Endothelin&#8593; + TxA2&#8593; &#8594; Vasokonstriktion','TDM (Talspiegel) obligat; Chronisch &#8594; interstitielle Streifenfibrose histologisch','Indikation: Transplantation; cave bei Hypovolämie + Nephrotoxika']},
+intra:{t:'Intrarenal (~35%)',p:['Direkte Parenchymsch&#228;digung; <b>FENa &gt;2%</b>, Urin-Osmo &lt;350 mOsm/kg','Sediment: granul&#228;re (muddy brown) Zylinder, Tubulusepithelzellen','Einteilung: tubulo-interstitiell &#183; vasku&#228;r &#183; glomer&#228;r']},
+intra_tubi:{t:'Tubulo-interstitiell',p:['ATN ~85% der intrarenalen Formen; au&#223;erdem: Pigment-NP, TIN, Verstopfungen','S3-Segment des prox. Tubulus am O&#8322;-sensitivsten','Tubuluszellen k&#246;nnen sich regenerieren &#8594; Erholung m&#246;glich (Wochen)']},
+intra_atn:{t:'Akute Tubulusnekrose',p:['H&#228;ufigste intrarenale Form; isch&#228;misch oder toxisch; Sediment: granul&#228;re Zylinder','Phasen: Initiationsphase &#8594; Erhaltungsphase (Oligurie 1&#8211;3 Wo) &#8594; Erholungsphase (Polyurie!)','&#9888;&#65039; Erholungsphase: Hypokali&#228;mie + Dehydratation durch Polyurie m&#246;glich']},
+intra_atn_sep:{t:'Sepsis-assoziierte ATN',p:['Endotoxin &#8594; renale Vasokonstriktion + direkte Tubulussch&#228;digung durch Zytokine','Kombination: isch&#228;misch + inflammatorisch + toxisch; h&#228;ufigste ITS-Ursache','Therapie: Fokussanierung + AB + h&#228;modynamische Stabilisierung']},
+intra_atn_isch:{t:'Isch&#228;mische ATN',p:['&#220;bergang pr&#228;renal &#8594; intrarenal bei anhaltender Minderperfusion','S3-Segment (kortikomedullärer Übergang) am vulnerabelsten','Je l&#228;nger die Isch&#228;mie, desto schlechter die Erholung &#8594; schnell handeln!']},
+intra_atn_med:{t:'Medikament&#246;s-toxische ATN',p:['Direkte Zytotoxizit&#228;t auf prox. Tubuluszellen (dosisabh&#228;ngig)','Wichtigste: Aminoglykoside, Cisplatin, Amphotericin B, Kontrastmittel, NSAR','Sediment: Tubulusepithelzellen + granul&#228;re Zylinder']},
+intra_atn_amino:{t:'Aminoglykoside',p:['Akkumulation in lysosomalen Vakuolen der prox. Tubuluszellen','&#10003; <b>Once-daily dosing</b> deutlich weniger nephrotoxisch als Mehrfachdosen','Monitoring: Talspiegel + Krea t&#228;glich; Risiko&#8593; bei Hypovolämie, Alter, NI']},
+intra_atn_nsar:{t:'NSAR (intrarenal)',p:['Doppelmechanismus: pr&#228;renal (&#8595; PG) + direkte tubul&#228;re Toxizit&#228;t','Cave: OTC-Verf&#252;gbarkeit &#8594; Patienten geben es oft nicht als Medikament an','Chronische NSAR-Einnahme: auch TIN + Minimal-Change-GN m&#246;glich']},
+intra_atn_ace:{t:'ACE-Hemmer (intrarenal)',p:['Hauptmechanismus pr&#228;renal; tubul&#228;re Isch&#228;mie bei &#220;berdosierung','Regelm&#228;&#223;ige Krea-Kontrollen unter Therapie essenziell','Trotzdem: langfristig nephroprotektiv bei Diabetes + Proteinurie']},
+intra_atn_ampho:{t:'Amphotericin B',p:['Bindet Ergosterol &#8594; Membranporen &#8594; Elektrolytverluste + Zelltod','Folgen: RTA Typ 1 + Hypokali&#228;mie + Hypomagnesi&#228;mie','&#10003; Liposomales Amphotericin B (AmBisome) deutlich weniger nephrotoxisch!']},
+intra_atn_cisp:{t:'Cisplatin',p:['Platinkomplexe &#8594; DNA-Quervernetzung in prox. Tubuluszellen &#8594; Apoptose','Prophylaxe: forcierte NaCl-Diurese vor + nach Gabe (Ziel: Urin &gt;100 ml/h)','Kumulativer Effekt; Dosisreduktion bei NI; Alternative: Carboplatin']},
+intra_atn_km:{t:'Kontrastmittel',p:['KM-Nephropathie: Krea &#8593; &gt;0,5 mg/dl oder &gt;25% innerhalb 48&#8211;72h nach KM','Risikofaktoren: vorbestehende NI (wichtigster!), Diabetes, Hypovolämie','Prophylaxe: i.v. NaCl 0,9% (1 ml/kg/h 6h vor + nach) + iso-osmolares KM']},
+intra_pig:{t:'Pigment-Nephropathie',p:['Myoglobin (Rhabdomyolyse) oder Hb (H&#228;molyse) &#8594; Tubulusschaden + Obstruktion','Urinteststreifen: Blut positiv, aber kein Erythrozyten im Mikroskop! (Schl&#252;sselbefund)','Therapie: aggressive Volumentherapie + ggf. Alkalisierung (Bicarbonat)']},
+intra_pig_myo:{t:'Myoglobinurie',p:['Ursachen: Crush &#183; Status epilepticus &#183; Statine &#183; Alkohol &#183; Drogen &#183; Hitzschlag','Labor: CK massiv &#8593;&#8593;&#8593; &#183; Myoglobin &#8593; &#183; Hyperkali&#228;mie &#183; Hyperphosphat&#228;mie','Therapie: Volumen (Ziel Diurese 200&#8211;300 ml/h) + Urin-Alkalisierung (pH-Ziel &gt;6,5)']},
+intra_pig_hb:{t:'H&#228;moglobinurie',p:['Intravasale H&#228;molyse: h&#228;molyt. Transfusionsreaktion, AIHA, G6PDH-Mangel, mechanisch','Labor: LDH &#8593;&#8593; &#183; Haptoglobin &#8595;&#8595; &#183; Plasma pink &#183; Coombs-Test (bei AIHA pos.)','Plasma pink/rot gef&#228;rbt (freies Hb) = Unterschied zur Myoglobinurie (klares Plasma)']},
+intra_tin:{t:'Tubulo-interstitielle Nephritis',p:['Entz&#252;ndliches Infiltrat im Interstitium; <b>Trias:</b> Fieber + Exanthem + Eosinophilie (selten komplett!)','Sediment: Leukozyturie, Leukozytenzylinder, <b>Eosinophilurie</b>, sterile Pyurie','Diagnose: klinisch + Labor; ggf. Nierenbiopsie; Therapie: Ausl&#246;ser weg + ggf. Steroide']},
+intra_tin_med:{t:'Medikament&#246;se TIN',p:['Immun-mediiert, <b>nicht dosisabh&#228;ngig</b> (allergisch), Latenz Tage&#8211;Monate','Eosinophilie + Eosinophilurie als Hinweis; Biopsie: dichtes interstitielles Infiltrat','Therapie: Ausl&#246;ser absetzen; Steroide (Prednisolon) bei schwerer Form']},
+intra_tin_pen:{t:'Penicilline / Cephalosporine',p:['Klassische Ausl&#246;ser der arzneimittelbedingten TIN; Latenz ~7&#8211;14 Tage','Klinik: Fieber + Exanthem + Arthralgien + Eosinophilie','Therapie: Absetzen + ggf. Steroide']},
+intra_tin_aci:{t:'Aciclovir',p:['Kristallpräzipitation im Tubulussystem (bei Hypovolämie + Hochdosis i.v.)','Prophylaxe: ausreichende i.v. Fl&#252;ssigkeit + langsame Infusion (&#8805;1h)','Risiko: schnelle Infusion + dehydrierter Patient + renale Vorerkrankung']},
+intra_tin_ppi:{t:'Protonenpumpenhemmer',p:['Zunehmend erkannte Ursache; Latenz Monate&#8211;Jahre (insidios!)','&#9888;&#65039; OTC-Verf&#252;gbarkeit &#8594; Patienten geben PPI oft nicht als Medikament an!','Chronische Einnahme &#8594; interstitielle Nephritis &#8594; chronische Nierensch&#228;digung']},
+intra_tin_nsar:{t:'NSAR (TIN)',p:['3. Mechanismus: pr&#228;renal + ATN + TIN (alle drei m&#246;glich!)','TIN oft kombiniert mit <b>Minimal-Change-GN</b> &#8594; nephr. Syndrom + ANV gleichzeitig','Membran&#246;se Glomerulopathie unter NSAR ebenfalls beschrieben']},
+intra_tin_inf:{t:'Infekti&#246;se TIN',p:['Direkte tubulointerstitielle Infektion durch Erreger','Wichtigste KP-Erreger: Hantavirus &#183; Leptospirose &#183; HIV &#183; Hepatitis C &#183; CMV','Stets mit systemischen Zeichen der Grundinfektion']},
+intra_tin_hanta:{t:'Hantavirus-Infektion',p:['&#220;bertragung: Inhalation von Nagetierexkrementen (R&#246;telmaus, Deutschland!)','Klinik: Fieber &#8594; Thrombozytopenie &#8595;&#8595; &#8594; ANV; Transaminasen &#8593;; Proteinurie + H&#228;maturie','&#9888;&#65039; <b>Meldepflichtig</b> nach IfSG! Serologische Best&#228;tigung (ELISA)']},
+intra_tin_lepto:{t:'Leptospirose (Weil-Krankheit)',p:['&#220;bertragung: kontaminiertes Wasser (Rattenurin); Risikogruppen: Bauern, Kanalarbeiter','Weil-Trias: <b>Ikterus + ANV + Konjunktivitis</b> (+ Fieber, Myalgien, Meningismus)','Therapie: Penicillin G oder Doxycyclin &#8211; fr&#252;hzeitig behandeln!']},
+intra_tin_hiv:{t:'HIV',p:['HIVAN: kollabsierende FSGS; v.a. bei niedrigem CD4 + hoher Viruslast','Genetische Pr&#228;disposition: <b>APOL1-Risikovarianten</b> (Afrika-Abstammung)','Therapie: ART; Tenofovir (ARV) selbst nephrotoxisch &#8594; Fanconi-Syndrom m&#246;glich']},
+intra_tin_hepc:{t:'Hepatitis C',p:['MPGN Typ I + gemischte Kryoglobulin&#228;mie Typ II &#8594; Immunkomplexe &#8594; GN','Klinik: Purpura + Arthralgien + GN-Syndrom; &#8595; C3/C4 typisch','Therapie: DAA (&gt;95% SVR) + ggf. Rituximab bei schwerer Kryoglobulin&#228;mie']},
+intra_tin_cmv:{t:'CMV',p:['Relevant bei Immunsupprimierten: post-Transplantation, HIV, Chemotherapie','Systemische CMV: Retinitis + Kolitis + &#214;sophagitis + Pneumonitis','Diagnose: CMV-PCR im Blut; Therapie: Ganciclovir / Valganciclovir']},
+intra_tin_para:{t:'Parainfekti&#246;se TIN',p:['Immun-mediiert (nicht direkte Infektion), mit zeitlichem Abstand zur Infektion','&#196;hnlich Post-Streptokokken-GN, aber tubulo-interstitiell','Therapie der Grundinfektion entscheidend']},
+intra_tin_strep:{t:'Streptokokken',p:['Post-Streptokokken-GN: 2&#8211;3 Wo nach Tonsillitis / 4&#8211;6 Wo nach Hautinfektion','Endokapill&#228;re proliferative GN; IgG + C3 (Humps im EM); ASLO&#8593;, &#8595; C3','Selbstlimitierend bei Kindern; Prognose bei Erwachsenen schlechter']},
+intra_tin_staph:{t:'Staphylokokken',p:['IgA-dominante postinfekti&#246;se GN; bei Endokarditis, Shunt-Infektionen','Histologisch &#228;hnlich IgA-Nephropathie, aber infekti&#246;s ausgel&#246;st','Sanierung der Grundinfektion = Schl&#252;sseltherapie']},
+intra_tin_legio:{t:'Legionellen',p:['Schwere atypische Pneumonie + <b>Hyponatri&#228;mie</b> (SiadH-&#228;hnlich) + ANV','Diagnose: Legionellen-Antigentest im Urin (Serogruppe 1 = 80%)','Therapie: Levofloxacin oder Makrolide; keine Beta-Laktame!']},
+intra_tin_infilt:{t:'Infiltrative TIN',p:['Granulombildung (Sarkoidose) oder Amyloidablagerungen im Interstitium','Teil einer systemischen Erkrankung; extrarenale Manifestationen wegweisend','Diagnose: Nierenbiopsie; Therapie je nach Grunderkrankung']},
+intra_tin_sarko:{t:'Sarkoidose',p:['Granulomatöse interstitielle Nephritis + Hyperkalzämie &#8594; Nephrokalzinose','Granulome produzieren unkontrolliert Calcitriol &#8594; Hyperkalzämie; ACE &#8593;','R&#246;ntgen Thorax: bilaterale Hilusvergr&#246;&#223;erung; Therapie: Prednisolon']},
+intra_tin_amyl:{t:'Amyloidose',p:['AL (Leichtketten bei Myelom/MGUS) &#183; AA (chron. Entz&#252;ndung: RA, CED, TBC)','Klinik: nephrotische Proteinurie + ANV + Organomegalie; Makroglossie (AL!)','Biopsie: <b>Kongorot-F&#228;rbung</b> &#8594; apfelgr&#252;ne Doppelbrechung im Polarisationsmikroskop']},
+intra_obs:{t:'Tubul&#228;re Verstopfungen',p:['Kristalle, Zylinder oder Pr&#228;zipitate &#8594; Tubuluslumen-Obstruktion &#8594; R&#252;ckstau','Vertreter: Urat (Tumor-Lysis!), Cast (Myelom), Oxalat (Ethylenglykol!)','Fr&#252;hzeitige Therapie oft reversibel']},
+intra_obs_urat:{t:'Akute Uratnephropathie',p:['Harns&#228;urekristalle in Tubuli; klassisch beim <b>Tumor-Lysis-Syndrom</b> (nach Chemo)','TLS-Labor: Harns&#228;ure &#8593;&#8593; &#183; Phosphat &#8593; &#183; Kalium &#8593; &#183; Kalzium &#8595; &#183; LDH &#8593;&#8593;','Prophylaxe: <b>Rasburicase</b> (Uratoxidase) + Hyperhydratation vor Chemotherapie']},
+intra_obs_cast:{t:'Cast-Nephropathie (Myelom-Niere)',p:['Freie Leichtketten (Bence-Jones) + Tamm-Horsfall-Protein &#8594; Zylinder &#8594; Obstruktion + Toxizit&#228;t','Diagnostik: Serum/Urin-Elektrophorese &#8594; monoklonale Bande; BJP im Urin','Therapie: Myelomtherapie + Hydratation; NSAR + KM meiden!']},
+intra_obs_oxal:{t:'Oxalat-Nephropathie',p:['Prim&#228;r (AGXT-Mutation) oder sekund&#228;r (Kurzdarm, exzessiv VitC, Ethylenglykol)','&#9888;&#65039; <b>Ethylenglykol (Frostschutzmittel):</b> Anionenl&#252;cken-Azidose + ANV + CaOxalat-Nadeln','Antidot: Fomepizol (alternativ Ethanol); H&#228;modialyse bei schwerer Intoxikation']},
+intra_vasc:{t:'Vasku&#228;r (intrarenal)',p:['Makrova sk&#228;r: Nierenarterien/-venen, Aorta, Kompartmentsyndrom','Mikrovasku&#228;r: TMA (TTP, HUS, HELLP, DIC) + Cholesterinembolie','Gemeinsam: Isch&#228;mie / Okklusion &#8594; GFR &#8595;; Schistozyten bei TMA!']},
+intra_vasc_macro:{t:'Makrovasku&#228;r',p:['Nierenarterien, -venen, Aorta, Kompartmentsyndrom','Diagnostik: Duplex-Sono (first-line) &#8594; CT-Angio','Oft interventionell oder chirurgisch behandlungsbed&#252;rftig']},
+intra_vasc_nast:{t:'Nierenarterienstenose',p:['Arteriosklerose (&gt;60J, oft bilateral) &#183; Fibromuskul&#228;re Dysplasie (junge Frauen)','&#9888;&#65039; <b>Bilateral + ACE-Hemmer/AT1-Blocker = ANV-Falle!</b> (klassische KP-Frage)','Diagnose: Duplex-Sono (Atemstillstand); CT/MR-Angio; Therapie: PTA &#177; Stent']},
+intra_vasc_nvt:{t:'Nierenvenenthrombose',p:['Assoziation: <b>Nephrotisches Syndrom</b> (AT-III-Verlust &#8594; Hyperkoagulabilit&#228;t!)','Klinik: Flankenschmerz &#183; Makroh&#228;maturie &#183; pl&#246;tzliche Proteinurie-Zunahme','Therapie: Antikoagulation (Heparin &#8594; VKA/DOAK)']},
+intra_vasc_infarkt:{t:'Niereninfarkte',p:['H&#228;ufigste Ursache: Embolie bei Vorhofflimmern; auch Endokarditis, Aortendissektion','Klinik: pl&#246;tzlicher Flankenschmerz + H&#228;maturie + Fieber','Labor: <b>LDH &#8593;&#8593;&#8593;</b> (sehr sensitiv!) + Krea &#8593;; Diagnose: CT-Angio']},
+intra_vasc_komp:{t:'Abd. Kompartmentsyndrom',p:['Intraabdomineller Druck &gt;20 mmHg &#8594; ven&#246;se Kompression &#8594; &#8595; renale Perfusion','Ursachen: massiver Aszites &#183; Ileus &#183; H&#228;matom &#183; nach Laparotomie','Messung: Blasendruck; Therapie: Druckentlastung (Laparostoma, Parazentese)']},
+intra_vasc_vask:{t:'Vaskulitis',p:['ANCA-assoziiert: GPA (Wegener, c-ANCA/PR3) &#183; MPA (p-ANCA/MPO) &#183; EGPA','Klinik: Rapid-progressive GN + ENT-Beteiligung (GPA) + Lungenblutung','Therapie: Cyclophosphamid + Steroide; Rituximab; TPE bei Lungenblutung']},
+intra_vasc_micro:{t:'Mikrovasku&#228;r (TMA)',p:['<b>TMA:</b> Mikrothromben in Arteriolen &#8594; mechanische H&#228;molyse + Thrombozytopenie','<b>Coombs-negativ!</b> Schistozyten im Blutausstrich = pathognomonisch','Vertreter: TTP &#183; HUS &#183; HELLP &#183; DIC &#183; Systemische Sklerose']},
+intra_vasc_chol:{t:'Cholesterinembolie-Syndrom',p:['Cholesterinkristalle aus atheromatösen Plaques nach Katheterinterventionen','Klinik: Livedo reticularis + blaue Zehen + ANV (Tage&#8211;Wochen nach Eingriff)','Labor: Eosinophilie + &#8595; Komplement; Diagnose: Haut- oder Nierenbiopsie']},
+intra_vasc_dic:{t:'DIC',p:['Systemische Gerinnungsaktivierung &#8594; Mikrothromben + Verbrauchskoagulopathie','H&#228;ufigste Ursache: Sepsis; auch Trauma, Verbrennung, Fruchtwasserembolie','Labor: Fibrinogen &#8595; &#183; D-Dimere &#8593;&#8593; &#183; Thrombozyten &#8595; &#183; PT + aPTT &#8593;']},
+intra_vasc_ttp:{t:'TTP',p:['ADAMTS13-Mangel (Autoantik&#246;rper) &#8594; ultralange vWF-Multimere &#8594; Thrombozytenaggregate','Pentade: MAHA (Coombs-neg.) &#183; Thrombozytopenie &#183; Fieber &#183; ANV &#183; Neurologie','&#9888;&#65039; <b>Sofortiger Plasmaaustausch (TPE)</b> + Rituximab + Caplacizumab; nicht abwarten!']},
+intra_vasc_hus:{t:'HUS',p:['Triade: Coombs-neg. MAHA + Thrombozytopenie + ANV','Typisch (Kinder): EHEC O157:H7 &#8594; Shiga-Toxin &#8594; blutiger Durchfall &#8594; HUS','&#9888;&#65039; <b>KEINE Antibiotika!</b> (&#8593; Shiga-Toxin-Freisetzung); aHUS: Eculizumab']},
+intra_vasc_hellp:{t:'HELLP-Syndrom',p:['Haemolysis + Elevated Liver enzymes + Low Platelets; 3. Trimenon/postpartal','Klinik: Oberbauchschmerzen + &#220;belkeit + Thrombozytopenie + ANV','&#9888;&#65039; <b>Sofortige Entbindung</b> = einzige definitive Therapie!']},
+intra_vasc_skler:{t:'Systemische Sklerose (Renale Krise)',p:['Pl&#246;tzliche schwere Hypertonie + rapid-progressives ANV; Anti-RNA-Pol-III-AK','&#9888;&#65039; <b>Besonderheit: ACE-Hemmer (Captopril) INDIZIERT trotz ANV!</b> Verbessert Prognose','Hochdosis-Kortikosteroide erh&#246;hen Krisen-Risiko &#8594; meiden!']},
+intra_vasc_sickle:{t:'Sichelzellerkrankung',p:['Sichelung in Vasa recta (Papille: &#8595;O&#8322;, &#8593;Osmo, &#8595;pH) &#8594; Papillennekrose','Klinik: Makroh&#228;maturie; Hyposthenurie = fr&#252;hestes renales Zeichen','Chronische Sch&#228;digung durch wiederholte Isch&#228;mie &#8594; CKD im Verlauf']},
+intra_glom:{t:'Glomer&#228;r',p:['Nephritisches Syndrom: H&#228;maturie + Proteinurie + Hypertonie + &#214;deme + ANV','<b>Erythrozylinder im Sediment</b> = glomerul&#228;rer Ursprung bis Gegenbeweis!','Diagnose: Urinsediment &#8594; C3/C4 &#8594; ANCA/Anti-GBM/ANA &#8594; Nierenbiopsie']},
+intra_glom_gn:{t:'Glomerulonephritiden',p:['Einteilung: proliferativ vs. nicht-proliferativ; nach &#196;tiopathogenese und Verlauf','Leitsymptom: nephritisches Syndrom mit Erythrozylindern','Diagnose: Nierenbiopsie mit LM + IF + EM']},
+intra_glom_rpgn:{t:'Rapid-progressive GN',p:['Rasche GFR-Verschlechterung (Wochen) + Halbmondbildung (&gt;50% Glomeruli)','Typ I: Anti-GBM (Goodpasture) &#183; Typ II: Immunkomplex &#183; Typ III: ANCA (pauci-immun)','&#9888;&#65039; <b>Soforttherapie:</b> Steroide + Cyclophosphamid &#177; Plasmaaustausch (Typ I + III)']},
+intra_glom_mc:{t:'Minimal-Change GN',p:['H&#228;ufigste Ursache nephr. Syndroms bei Kindern (80%); LM unauff&#228;llig','EM: diffuse Podozyten-Fu&#223;fortsatz-Verschmelzung (pathognomonisch)','Therapie: Prednisolon (&gt;90% Remission bei Kindern); Rezidive h&#228;ufig']},
+intra_glom_hiv:{t:'HIV-assoziierte Nephropathie',p:['HIVAN: kollabsierende FSGS; v.a. bei &#8595; CD4 + &#8593; Viruslast','Genetisch: APOL1-Risikovarianten; schwere Proteinurie + rapid-progressives ANV','Therapie: ART verbessert Prognose; ACE-Hemmer nephroprotektiv']},
+post:{t:'Postrenal (~5%)',p:['Obstruktion des Harnsystems &#8594; R&#252;ckstau &#8594; tubulointerstitielle Sch&#228;digung','&#9888;&#65039; <b>Immer zuerst ausschlie&#223;en:</b> Sono Nieren + Harnwege (Hydronephrose?)','Reversibel wenn fr&#252;h entlastet; postobstruktive Polyurie &#8594; Elektrolyte &#252;berwachen!']},
+post_cong:{t:'Angeborene Fehlbildungen',p:['Ureterabgangsstenose (UAS) h&#228;ufigste kongenitale Obstruktion &#8594; Hydronephrose','Weitere: Megaureter, Doppelureter, hintere Harnr&#246;hrenklappen (Jungen!)','Oft erst im Erwachsenenalter entdeckt; Diagnose: Sono + MCU; Therapie: OP']},
+post_acq:{t:'Erworbene Abflussbehinderungen',p:['Mechanisch: Steine &#183; Tumoren &#183; Strikturen &#183; BPH &#183; Tamponade','Funktionell: neurogene Blase, Anticholinergika','Diagnostik: Sono first-line; CT bei unklarem Befund']},
+post_uro:{t:'Urolithiasis',p:['Steinarten: CaOxalat (75%, r&#246;ntgendicht) &#183; Harns&#228;ure (r&#246;ntgentransparent) &#183; Struvit &#183; Zystin','Klinik: Nierenkolik &#8211; schwerster Flankenschmerz, wehenartig, keine Schonhaltung','&#9888;&#65039; Beidseitig oder Einzelniere &#8594; ANV-Notfall! &#8594; Harnableitung sofort']},
+post_tumor:{t:'Tumoren',p:['Zervix-Ca &#183; Prostata-Ca &#183; Blasen-Ca &#183; retroperitoneale Lymphome &#8594; Ureterkompr.','Oft bilaterale Hydronephrose bei fortgeschrittenen Malignomen','Therapie: Doppel-J-Katheter (innere Schiene) od. perkutane Nephrostomie']},
+post_abs:{t:'Abszesse',p:['Periureterale Abszesse &#8594; entz&#252;ndliche Schwellung &#8594; Ureterstenose','Psoas-Abszess (Spondylitis, M. Crohn) &#183; perforierte Appendizitis','Therapie: antibiotisch + Drainage + Harnableitung']},
+post_bph:{t:'Benigne Prostatahyperplasie',p:['<b>H&#228;ufigste postrenale Ursache beim &#228;lteren Mann!</b>','Restharn &#8594; Harnverhalt &#8594; bilaterale Hydronephrose','Sofortma&#223;nahme: transurethraler Harnblasenkatheter; Dauertherapie: &#945;-Blocker (Tamsulosin) + ggf. TURP']},
+post_cath:{t:'Fehlplatzierter Harnblasenkatheter',p:['Ballon im Ureter oder proximal in Harnr&#246;hre &#8594; Obstruktion','Kein Urinfluss trotz liegendem Katheter &#8594; Fehllage ausschlie&#223;en!','Sono: Harnblase gef&#252;llt bei liegendem Katheter &#8594; Lagekontrolle / Neuanlage']},
+post_tampo:{t:'Harnblasentamponade',p:['Blutkoagel verlegen Blasenauslass; nach urol. Eingriffen, Prostata-/Blasen-Ca','Klinik: Harnverhalt trotz Katheter (Koagel!); Unterbauchschmerz','Therapie: manuelle Blasensp&#252;lung mit Tiemann-Katheter &#177; Zystoskopie']},
+post_ormond:{t:'Retroperitoneale Fibrose (M. Ormond)',p:['Fibrotisches Gewebe umschlie&#223;t Ureteren periaortal; IgG4-assoziiert (h&#228;ufig!)','CT: mantelförmige Masse periaortal (mantle sign); Ureteren eingemauert','Therapie: Steroide (IgG4: gutes Ansprechen) + Ureter-Stenting / Uretereolyse']},
+post_strik:{t:'Urethrastrikturen',p:['Ursachen: Gonorrhoe (klassisch!) &#183; Chlamydien &#183; Trauma &#183; Dauerkatheter','Klinik: &#8595; Harnstrahl, Dysurie, Restharn, rezidivierende HWI','Diagnostik: Uroflowmetrie + MCU; Therapie: optische Urethrotomie / Urethroplastik']},
+post_neuro:{t:'Harnblasenentleerungsst&#246;rung',p:['Neurogene Blase: MS &#183; Parkinson &#183; DM (autonome Neuropathie) &#183; R&#252;ckenmarkl&#228;sion','Formen: hypoaktiver Detrusor (Areflexie) od. Detrusor-Sphinkter-Dyssynergie','Therapie: ISK (intermittierender Selbstkatheterismus) &#183; Botulinumtoxin &#183; Neuromodulation']}
+};
+
+const DATA={id:'aki',n:'Akutes\nNierenversagen',children:[
+{id:'pre',n:'Prärenal',s:'~60%',c:PRE,children:[
+  {id:'pre_hypo',n:'Hypovolämie',children:[
+    {id:'pre_hypo_fd',n:'↓ Flüssigkeitszufuhr'},
+    {id:'pre_hypo_fl',n:'↑ Flüssigkeitsverluste',children:[
+      {id:'pre_fl_blut',n:'Blutungen'},{id:'pre_fl_vomit',n:'Erbrechen / Durchfall'},
+      {id:'pre_fl_panc',n:'Akute Pankreatitis'},{id:'pre_fl_diur',n:'Diuretika'}
+    ]}
+  ]},
+  {id:'pre_hmv',n:'↓ HMV / Hypotonie',children:[
+    {id:'pre_hmv_hf',n:'Herzinsuffizienz',s:'Kardiorenales Syndrom'},
+    {id:'pre_hmv_zirr',n:'Leberzirrhose',s:'Hepatorenales Syndrom'},
+    {id:'pre_hmv_neph',n:'Nephrotisches Syndrom'},
+    {id:'pre_hmv_ks',n:'Kardiogener Schock'},
+    {id:'pre_hmv_sep',n:'Sepsis'},{id:'pre_hmv_burn',n:'Verbrennungen'}
+  ]},
+  {id:'pre_med',n:'Medikamentös-toxisch',s:'Autoregulation ↓',children:[
+    {id:'pre_med_nsar',n:'NSAR'},
+    {id:'pre_med_ace',n:'ACE-Hemmer',s:'AT1-Rezeptor-Blocker'},
+    {id:'pre_med_cni',n:'Calcineurininhibitoren',s:'z.B. Ciclosporin'}
+  ]}
+]},
+{id:'intra',n:'Intrarenal',s:'~35%',c:INT,children:[
+  {id:'intra_tubi',n:'Tubulo-interstitiell',children:[
+    {id:'intra_atn',n:'Akute Tubulusnekrose',s:'~85% d. intrarenalen Formen',children:[
+      {id:'intra_atn_sep',n:'Sepsis'},{id:'intra_atn_isch',n:'Ischämisch'},
+      {id:'intra_atn_med',n:'Medikamentös-toxisch',children:[
+        {id:'intra_atn_amino',n:'Aminoglykoside'},{id:'intra_atn_nsar',n:'NSAR'},
+        {id:'intra_atn_ace',n:'ACE-Hemmer'},{id:'intra_atn_ampho',n:'Amphotericin B'},
+        {id:'intra_atn_cisp',n:'Cisplatin'},{id:'intra_atn_km',n:'Kontrastmittel',s:'KM-assoz. Nierenschädigung'}
+      ]}
+    ]},
+    {id:'intra_pig',n:'Pigment-Nephropathie',children:[
+      {id:'intra_pig_myo',n:'Myoglobinurie',s:'Rhabdomyolyse → Crush'},{id:'intra_pig_hb',n:'Hämoglobinurie',s:'Hämolyse'}
+    ]},
+    {id:'intra_tin',n:'Tubulo-interst.\nNephritis',children:[
+      {id:'intra_tin_med',n:'Medikamentös',children:[
+        {id:'intra_tin_pen',n:'Penicilline / Cephalosporine'},{id:'intra_tin_aci',n:'Aciclovir'},
+        {id:'intra_tin_ppi',n:'Protonenpumpenhemmer'},{id:'intra_tin_nsar',n:'NSAR'}
+      ]},
+      {id:'intra_tin_inf',n:'Infektiös',children:[
+        {id:'intra_tin_hanta',n:'Hantavirus-Infektion'},{id:'intra_tin_lepto',n:'Leptospirose'},
+        {id:'intra_tin_hiv',n:'HIV'},{id:'intra_tin_hepc',n:'Hepatitis C'},{id:'intra_tin_cmv',n:'CMV'}
+      ]},
+      {id:'intra_tin_para',n:'Parainfektiös',children:[
+        {id:'intra_tin_strep',n:'Streptokokken'},{id:'intra_tin_staph',n:'Staphylokokken'},
+        {id:'intra_tin_legio',n:'Legionellen'}
+      ]},
+      {id:'intra_tin_infilt',n:'Infiltrativ',children:[
+        {id:'intra_tin_sarko',n:'Sarkoidose'},{id:'intra_tin_amyl',n:'Amyloidose'}
+      ]}
+    ]},
+    {id:'intra_obs',n:'Tubuläre\nVerstopfungen',children:[
+      {id:'intra_obs_urat',n:'Akute Uratnephropathie'},
+      {id:'intra_obs_cast',n:'Cast-Nephropathie'},
+      {id:'intra_obs_oxal',n:'Oxalat-Nephropathie'}
+    ]}
+  ]},
+  {id:'intra_vasc',n:'Vaskulär',children:[
+    {id:'intra_vasc_macro',n:'Makrovaskulär',children:[
+      {id:'intra_vasc_nast',n:'Nierenarterienstenose'},
+      {id:'intra_vasc_nvt',n:'Nierenvenenthrombose'},
+      {id:'intra_vasc_infarkt',n:'Niereninfarkte'},
+      {id:'intra_vasc_komp',n:'Abd. Kompartmentsyndrom'},
+      {id:'intra_vasc_vask',n:'Vaskulitis'}
+    ]},
+    {id:'intra_vasc_micro',n:'Mikrovaskulär',children:[
+      {id:'intra_vasc_chol',n:'Cholesterinembolie-Syndrom'},
+      {id:'intra_vasc_dic',n:'DIC',s:'Dissem. intravasale Gerinnung'},
+      {id:'intra_vasc_ttp',n:'TTP',s:'Thrombotisch-thrombozytopenische Purpura'},
+      {id:'intra_vasc_hus',n:'HUS',s:'Hämolytisch-urämisches Syndrom'},
+      {id:'intra_vasc_hellp',n:'HELLP-Syndrom'},
+      {id:'intra_vasc_skler',n:'Systemische Sklerose',s:'Renale Krise'},
+      {id:'intra_vasc_sickle',n:'Sichelzellerkrankung'}
+    ]}
+  ]},
+  {id:'intra_glom',n:'Glomerulär',children:[
+    {id:'intra_glom_gn',n:'Glomerulonephritiden',children:[
+      {id:'intra_glom_rpgn',n:'Rapid-progressive GN'},
+      {id:'intra_glom_mc',n:'Minimal-Change GN'}
+    ]},
+    {id:'intra_glom_hiv',n:'HIV-assoziierte\nNephropathie'}
+  ]}
+]},
+{id:'post',n:'Postrenal',s:'~5%',c:POS,children:[
+  {id:'post_cong',n:'Angeborene\nFehlbildungen'},
+  {id:'post_acq',n:'Erworbene\nAbflussbehinderungen',children:[
+    {id:'post_uro',n:'Urolithiasis'},{id:'post_tumor',n:'Tumoren'},
+    {id:'post_abs',n:'Abszesse'},{id:'post_bph',n:'Benigne Prostatahyperplasie'},
+    {id:'post_cath',n:'Fehlpl. Harnblasenkatheter'},{id:'post_tampo',n:'Harnblasentamponade'},
+    {id:'post_ormond',n:'Retroperitoneale Fibrose',s:'Morbus Ormond'},
+    {id:'post_strik',n:'Urethrastrikturen'},{id:'post_neuro',n:'Harnblasen-\nentleerungsstörung'}
+  ]}
+]}
+]};
+
+// Build hierarchy
+const root=d3.hierarchy(DATA,d=>d.children);
+root.descendants().forEach(d=>{
+  if(d.depth===0){d.data._c=ROT;return;}
+  let a=d;while(a.depth>1)a=a.parent;
+  d.data._c=a.data.c||ROT;
+});
+d3.tree().nodeSize([21,210])(root);
+
+// SVG setup
+const svgEl=document.getElementById('viz');
+const NS='http://www.w3.org/2000/svg';
+const mk=(tag,at)=>{const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(at))e.setAttribute(k,v);return e;};
+const gM=mk('g',{});svgEl.appendChild(gM);
+const gL=mk('g',{});gM.appendChild(gL);
+const gN=mk('g',{});gM.appendChild(gN);
+
+// Draw links
+root.links().forEach(lk=>{
+  const s=lk.source,t=lk.target,mx=(s.y+t.y)/2;
+  gL.appendChild(mk('path',{d:`M${s.y},${s.x}C${mx},${s.x} ${mx},${t.x} ${t.y},${t.x}`,fill:'none',stroke:t.data._c,'stroke-width':[2.5,2,1.5,1,.7][Math.min(t.depth,4)],'stroke-opacity':LOP}));
+});
+
+// Notes state
+const notesCache={};
+let curId=null,saveT=null,selCirc=null;
+
+// Draw nodes
+root.descendants().forEach(d=>{
+  const r=[11,8,6,4.5,3.5][Math.min(d.depth,4)];
+  const sz=[15,13.5,11.5,10.5,9.5][Math.min(d.depth,4)];
+  const lh=sz*1.32;
+  const grp=mk('g',{transform:`translate(${d.y},${d.x})`,style:'cursor:pointer'});
+  grp.dataset.nid=d.data.id||'';
+  const circ=mk('circle',{r,fill:d.data._c,'fill-opacity':[1,.9,.75,.65,.55][Math.min(d.depth,4)],stroke:d.data._c,'stroke-width':d.depth<=1?2:1});
+  grp.appendChild(circ);
+  const dot=mk('circle',{r:3.5,cx:r+1,cy:-r-1,fill:'#f59e0b',stroke:dk?'#171715':'#f5f4f0','stroke-width':1.2,visibility:'hidden','pointer-events':'none'});
+  dot.classList.add('ndot');grp.appendChild(dot);
+  const ps=d.data.n.split('\n'),hs=!!d.data.s,tot=ps.length+(hs?1:0);
+  const y0=-(tot*lh/2)+lh/2,xo=d.depth===0?0:r+7,ta=d.depth===0?'middle':'start';
+  const tx=mk('text',{'font-family':'-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif','text-anchor':ta,fill:d.data._c,'pointer-events':'none'});
+  ps.forEach((p,i)=>{const ts=mk('tspan',{x:xo,y:y0+i*lh,'font-size':sz,'font-weight':d.depth<=2?500:400});ts.textContent=p;tx.appendChild(ts);});
+  if(hs){const ts2=mk('tspan',{x:xo,y:y0+ps.length*lh,'font-size':sz-1.5,'font-weight':300,'font-style':'italic','fill-opacity':.55});ts2.textContent=d.data.s;tx.appendChild(ts2);}
+  grp.appendChild(tx);
+  grp.addEventListener('click',e=>{e.stopPropagation();openPanel(d,circ);});
+  gN.appendChild(grp);
+});
+
+function openPanel(d,circ){
+  if(selCirc){selCirc.setAttribute('stroke-width',selCirc._sw);}
+  selCirc=circ;circ._sw=d.depth<=1?2:1;circ.setAttribute('stroke-width',3.5);
+  curId=d.data.id;
+  const kp=K[curId]||{t:d.data.n.replace(/\n/g,' '),p:[]};
+  const col=d.data._c;
+  const tg=document.getElementById('stag');
+  tg.textContent=kp.t;
+  tg.style.cssText=`background:${col}18;color:${col};border:1px solid ${col}44;font-size:9px;font-weight:700;padding:2px 9px;border-radius:10px;display:inline-block;margin-bottom:8px;letter-spacing:.4px;text-transform:uppercase`;
+  document.getElementById('stitle').textContent=d.data.n.replace(/\n/g,' ');
+  const ul=document.getElementById('sbul');ul.innerHTML='';
+  kp.p.forEach(p=>{const li=document.createElement('li');li.innerHTML=p;ul.appendChild(li);});
+  document.getElementById('nta').value=notesCache[curId]||'';
+  document.getElementById('nstat').textContent='';
+  document.getElementById('sempty').style.display='none';
+  document.getElementById('scontent').style.display='flex';
+}
+
+function closePanel(){
+  document.getElementById('sempty').style.display='flex';
+  document.getElementById('scontent').style.display='none';
+  if(selCirc){selCirc.setAttribute('stroke-width',selCirc._sw);selCirc=null;}
+  curId=null;
+}
+
+function updateDots(){
+  document.querySelectorAll('[data-nid]').forEach(el=>{
+    const dot=el.querySelector('.ndot');
+    if(dot)dot.setAttribute('visibility',notesCache[el.dataset.nid]&&notesCache[el.dataset.nid].trim()?'visible':'hidden');
+  });
+}
+
+function saveNote(id,text){
+  notesCache[id]=text;
+  const ns=document.getElementById('nstat');
+  try{
+    if(text.trim())localStorage.setItem('akinote_'+id,text);
+    else localStorage.removeItem('akinote_'+id);
+    ns.textContent='Gespeichert ✓';
+    setTimeout(()=>ns.textContent='',2000);
+  }catch(e){ns.textContent='Fehler';}
+  updateDots();
+}
+
+document.getElementById('nta').addEventListener('input',function(){
+  clearTimeout(saveT);
+  document.getElementById('nstat').textContent='Eingabe…';
+  const id=curId,val=this.value;
+  saveT=setTimeout(()=>saveNote(id,val),700);
+});
+
+function loadAllNotes(){
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith('akinote_'))notesCache[k.replace('akinote_','')]=localStorage.getItem(k);
+    }
+  }catch(e){}
+  updateDots();
+}
+loadAllNotes();
+
+function exportNotes(){
+  const entries=Object.entries(notesCache).filter(([,v])=>v&&v.trim());
+  if(!entries.length){alert('Keine Notizen vorhanden.');return;}
+  const lines=['ANV KP-Mindmap — Meine Notizen','='.repeat(40),''];
+  entries.forEach(([id,text])=>{
+    const kp=K[id];
+    lines.push('## '+(kp?kp.t:id));
+    lines.push(text.trim());
+    lines.push('');
+  });
+  const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='ANV_Notizen.txt';a.click();
+  URL.revokeObjectURL(url);
+}
+
+function clearAllNotes(){
+  if(!confirm('Alle Notizen unwiderruflich löschen?'))return;
+  Object.keys(notesCache).forEach(k=>{localStorage.removeItem('akinote_'+k);delete notesCache[k];});
+  if(curId)document.getElementById('nta').value='';
+  document.getElementById('nstat').textContent='';
+  updateDots();
+}
+
+// Zoom and pan
+const zoom=d3.zoom().scaleExtent([0.04,12]).on('zoom',e=>gM.setAttribute('transform',e.transform));
+d3.select(svgEl).call(zoom);
+let initT;
+
+function fitAll(){
+  const W=svgEl.clientWidth,H=svgEl.clientHeight;
+  const ns=root.descendants();
+  const xs=ns.map(d=>d.x),ys=ns.map(d=>d.y);
+  const minX=Math.min(...xs)-30,maxX=Math.max(...xs)+30;
+  const minY=Math.min(...ys)-30,maxY=Math.max(...ys)+270;
+  const tW=maxY-minY,tH=maxX-minX;
+  const sc=Math.min(W/tW,H/tH)*.90;
+  initT=d3.zoomIdentity.translate(-minY*sc+(W-tW*sc)/2+18,-minX*sc+(H-tH*sc)/2).scale(sc);
+  d3.select(svgEl).transition().duration(500).call(zoom.transform,initT);
+}
+
+function resetView(){
+  if(initT)d3.select(svgEl).transition().duration(500).call(zoom.transform,initT);
+}
+
+// Handle resize
+window.addEventListener('resize',()=>{if(initT)fitAll();});
+document.fonts.ready.then(fitAll);
+</script>
+</body>
+</html>

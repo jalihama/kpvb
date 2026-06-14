@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lungenkarzinom – Klinische Übersicht</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f0ece3;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #1a1814;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 { font-weight: 700; font-size: 1.5rem; color: #1a1814; letter-spacing: -0.4px; }
+  header p { color: #5a5650; font-size: 11px; font-weight: 500; margin-top: 6px; text-transform: uppercase; letter-spacing: 2px; }
+
+  .main { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── TYPE COMPARISON TABLE ── */
+  .type-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .type-card {
+    border-radius: 5px;
+    border: 2px solid;
+    overflow: hidden;
+  }
+  .type-card.nsclc { border-color: #2a4a7f; }
+  .type-card.sclc  { border-color: #b02020; }
+
+  .type-header {
+    padding: 9px 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .type-card.nsclc .type-header { background: #2a4a7f; }
+  .type-card.sclc  .type-header { background: #b02020; }
+
+  .type-name { font-size: 14px; font-weight: 700; color: #fff; }
+  .type-sub  { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 1.5px; }
+  .type-pct  { margin-left: auto; font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.9); }
+
+  .type-body { background: #fff; padding: 10px 14px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+  .type-col { padding: 4px 10px 4px 0; border-right: 1px solid #e8e4dc; }
+  .type-col:last-child { border-right: none; padding-right: 0; padding-left: 10px; }
+  .type-col:nth-child(2) { padding-left: 10px; }
+  .col-label { font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.3px; color: #888; margin-bottom: 3px; }
+  .col-val { font-size: 11px; font-weight: 500; color: #1a1814; line-height: 1.5; }
+
+  .nsclc-sub { background: #fff; padding: 6px 14px 10px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; border-top: 1px solid #e8e4dc; }
+  .sub-chip { background: #f0ece3; border-radius: 3px; padding: 5px 8px; }
+  .sub-chip-name { font-size: 10.5px; font-weight: 600; color: #1a1814; }
+  .sub-chip-detail { font-size: 9.5px; color: #666; margin-top: 1px; }
+
+  /* ── SECTION ROWS ── */
+  .section-row { display: grid; gap: 12px; }
+  .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .row-2 { grid-template-columns: 1fr 1fr; }
+  .row-2-1 { grid-template-columns: 2fr 1fr; }
+
+  .card {
+    background: #fff;
+    border-radius: 5px;
+    border: 1px solid #c8c2b5;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #e8e4dc;
+  }
+  .card-tag {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+  }
+  .card-body { padding: 10px 12px; }
+
+  /* color variants */
+  .card.blue  { border-color: #2a4a7f; }
+  .card.blue .card-header { background: #eef2fa; }
+  .card.blue .card-tag { color: #2a4a7f; }
+
+  .card.green { border-color: #1a8a40; }
+  .card.green .card-header { background: #edf7f0; }
+  .card.green .card-tag { color: #1a6b3a; }
+
+  .card.red   { border-color: #b02020; }
+  .card.red .card-header { background: #fdf0f0; }
+  .card.red .card-tag { color: #b02020; }
+
+  .card.amber { border-color: #cc8800; }
+  .card.amber .card-header { background: #fff8ec; }
+  .card.amber .card-tag { color: #8a5500; }
+
+  .card.neutral { border-color: #c8c2b5; }
+  .card.neutral .card-header { background: #f5f0e8; }
+  .card.neutral .card-tag { color: #555; }
+
+  .card-title { font-size: 12.5px; font-weight: 600; color: #1a1814; }
+
+  /* list inside cards */
+  ul.clist { list-style: none; }
+  ul.clist li { padding-left: 14px; position: relative; font-size: 10.5px; line-height: 1.55; margin-bottom: 3px; color: #2a2820; }
+  ul.clist li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  .emph-red  { color: #b02020; font-weight: 600; }
+  .emph-green{ color: #1a6b3a; font-weight: 600; }
+  .emph-blue { color: #2a4a7f; font-weight: 600; }
+  .emph-amber{ color: #8a5500; font-weight: 600; }
+  .cave { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+
+  /* ── THERAPY FLOWCHART AREA ── */
+  .therapy-wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  /* ── STAGING MINI TABLE ── */
+  .staging-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px 12px; }
+  .stage-cell { border-radius: 3px; padding: 6px 8px; text-align: center; }
+  .stage-num { font-size: 12px; font-weight: 700; }
+  .stage-desc { font-size: 9.5px; color: #555; margin-top: 2px; line-height: 1.3; }
+
+  .stage-i    { background: #edf7f0; }
+  .stage-i .stage-num { color: #1a6b3a; }
+  .stage-ii   { background: #fff8ec; }
+  .stage-ii .stage-num { color: #8a5500; }
+  .stage-iii  { background: #fff2e0; }
+  .stage-iii .stage-num { color: #c05000; }
+  .stage-iv   { background: #fdf0f0; }
+  .stage-iv .stage-num { color: #b02020; }
+
+  /* ── PARANEOPLASIE TABLE ── */
+  .para-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px 12px; }
+  .para-row { display: flex; gap: 8px; align-items: flex-start; padding: 4px 6px; border-radius: 3px; background: #fafaf8; border: 1px solid #eee; }
+  .para-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .para-dot.sclc-dot { background: #b02020; }
+  .para-dot.nsclc-dot { background: #2a4a7f; }
+  .para-dot.both-dot { background: #888; }
+  .para-text { font-size: 10px; line-height: 1.4; color: #2a2820; }
+  .para-entity { font-weight: 600; font-size: 10px; }
+
+  /* ── SPECIAL FORMS ── */
+  .special-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .special-card { background: #fff; border-radius: 5px; border: 1.5px solid #b02020; overflow: hidden; }
+  .special-header { background: #fdf0f0; padding: 7px 12px; border-bottom: 1px solid #f0c0c0; }
+  .special-title { font-size: 12px; font-weight: 700; color: #b02020; }
+  .special-subtitle { font-size: 9.5px; color: #888; text-transform: uppercase; letter-spacing: 1.2px; }
+
+  /* ── NOTES / FOOTER ── */
+  .notes { max-width: 1200px; margin: 14px auto 0; border-top: 2px solid #1a1814; padding-top: 12px; }
+  .notes-title { font-weight: 700; font-size: 0.85rem; color: #1a1814; margin-bottom: 2px; }
+  .notes-sub { font-size: 9px; font-weight: 500; color: #5a5650; text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 10px; }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .note-card { background: #fff; border: 1px solid #c8c2b5; border-radius: 3px; padding: 7px 10px 7px 14px; position: relative; }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .bar.blue  { background: #2a4a7f; }
+  .bar.red   { background: #b02020; }
+  .bar.amber { background: #7a4a00; }
+  .bar.green { background: #1a6b3a; }
+  .note-card-label { font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #7a7468; margin-bottom: 1px; }
+  .note-card-title { font-size: 12px; font-weight: 600; color: #1a1814; margin-bottom: 4px; }
+  .note-card-body { font-size: 10.5px; color: #2a2820; line-height: 1.6; }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  footer { max-width: 1200px; margin: 14px auto 0; padding-top: 12px; border-top: 1px solid #c8c2b5; color: #7a7468; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; }
+
+  .divider-label {
+    font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #888;
+    text-align: center; padding: 4px 0 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lungenkarzinom – Klinische Übersicht</h1>
+  <p>AMBOSS · Leitlinienbasiert · Klinisch orientiert · Selbst erstellt — Fehler möglich</p>
+</header>
+
+<div class="main">
+
+  <!-- ══════════════════════════════════════════
+       BLOCK 1: TYPEN
+  ═══════════════════════════════════════════ -->
+  <div class="type-row">
+
+    <!-- NSCLC -->
+    <div class="type-card nsclc">
+      <div class="type-header">
+        <div>
+          <div class="type-name">NSCLC</div>
+          <div class="type-sub">Nicht-kleinzellig</div>
+        </div>
+        <div class="type-pct">~75%</div>
+      </div>
+      <div class="type-body">
+        <div class="type-col">
+          <div class="col-label">Wachstum</div>
+          <div class="col-val">Langsam<br><span style="font-size:9.5px;color:#888">Verdoppl. 180–300 d</span></div>
+        </div>
+        <div class="type-col">
+          <div class="col-label">Therapieziel</div>
+          <div class="col-val">Häufig kurativ<br>möglich</div>
+        </div>
+        <div class="type-col">
+          <div class="col-label">Prognose</div>
+          <div class="col-val" style="color:#1a6b3a;font-weight:600">Besser<br><span style="font-size:9.5px;color:#888;font-weight:400">5-JÜR bis 70% (lokal)</span></div>
+        </div>
+      </div>
+      <div class="nsclc-sub">
+        <div class="sub-chip">
+          <div class="sub-chip-name">Adenokarzinom</div>
+          <div class="sub-chip-detail">~45% · Peripher · ♀>♂ · Häufigster Typ bei Nichtrauchern</div>
+        </div>
+        <div class="sub-chip">
+          <div class="sub-chip-name">Plattenepithel-Ca</div>
+          <div class="sub-chip-detail">~25% · Zentral · ♂>♀ · Stark rauchassoziert</div>
+        </div>
+        <div class="sub-chip">
+          <div class="sub-chip-name">Großzelliges Ca</div>
+          <div class="sub-chip-detail">~5% · Undifferenziert · Hohe Proliferations­rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCLC -->
+    <div class="type-card sclc">
+      <div class="type-header">
+        <div>
+          <div class="type-name">SCLC</div>
+          <div class="type-sub">Kleinzellig · Neuroendokrin</div>
+        </div>
+        <div class="type-pct">~15%</div>
+      </div>
+      <div class="type-body">
+        <div class="type-col">
+          <div class="col-label">Wachstum</div>
+          <div class="col-val" style="color:#b02020;font-weight:600">Sehr schnell<br><span style="font-size:9.5px;color:#888;font-weight:400">Verdoppl. 10–50 d</span></div>
+        </div>
+        <div class="type-col">
+          <div class="col-label">Therapieziel</div>
+          <div class="col-val">Selten kurativ<br><span style="font-size:9.5px;color:#888">frühe Metastasierung</span></div>
+        </div>
+        <div class="type-col">
+          <div class="col-label">Prognose</div>
+          <div class="col-val" style="color:#b02020;font-weight:600">Schlechtest<br><span style="font-size:9.5px;color:#888;font-weight:400">5-JÜR ~20% (gesamt)</span></div>
+        </div>
+      </div>
+      <div class="nsclc-sub" style="grid-template-columns: 1fr 1fr;">
+        <div class="sub-chip">
+          <div class="sub-chip-name">Lage: Zentral</div>
+          <div class="sub-chip-detail">Meist peribronchial · frühe LK-Metastasierung</div>
+        </div>
+        <div class="sub-chip">
+          <div class="sub-chip-name">Paraneoplasie</div>
+          <div class="sub-chip-detail">Häufig (DNES-Ursprung) → SIADH, Cushing, Lambert-Eaton</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       BLOCK 2: RISIKOFAKTOREN + SYMPTOME + METASTASEN
+  ═══════════════════════════════════════════ -->
+  <div class="section-row row-3">
+
+    <!-- RISIKOFAKTOREN -->
+    <div class="card amber">
+      <div class="card-header">
+        <span class="card-tag">Ätiologie</span>
+        <span class="card-title">Risikofaktoren</span>
+      </div>
+      <div class="card-body">
+        <ul class="clist">
+          <li><span class="emph-amber">Zigarettenrauchen</span> — Wichtigster RF; Dauer + Menge entscheidend (Packungsjahre)</li>
+          <li>Passivrauchen · Radonexposition</li>
+          <li>Berufl. Noxen: Asbest · Quarzstaub · Schwermetalle</li>
+          <li>Feinstaub · Industrie-/Verkehrsgase</li>
+          <li style="margin-top:6px;"><span class="emph-blue">Endogen (insb. Adeno-Ca):</span></li>
+          <li>Genetische Disposition</li>
+          <li>Vorerkrankungen mit Narbenbildung (z.B. Tbc)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SYMPTOME -->
+    <div class="card blue">
+      <div class="card-header">
+        <span class="card-tag">Klinik</span>
+        <span class="card-title">Symptome</span>
+      </div>
+      <div class="card-body">
+        <div style="font-size:9.5px;font-weight:600;color:#b02020;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;">Oft erst im fortgeschrittenen Stadium!</div>
+        <ul class="clist">
+          <li>B-Symptomatik (Fieber, Nachtschweiß, Gewicht↓)</li>
+          <li><span class="emph-red">Hämoptysen</span> · Chronischer Husten ≥40 J. → immer karzinomverdächtig</li>
+          <li>Dyspnoe · Kachexie</li>
+          <li style="margin-top:4px;font-weight:600;color:#444;font-size:10px;">Verdrängung:</li>
+          <li>Dysphagie (Ösophagus-Kompression)</li>
+          <li>Heiserkeit (N. recurrens↓)</li>
+          <li>Obere Einflussstauung (V. cava-Kompr.)</li>
+          <li style="margin-top:4px;font-weight:600;color:#444;font-size:10px;">Chron. Hypoxie:</li>
+          <li>Uhrglasnägel · Trommelschlägelfinger</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- METASTASEN -->
+    <div class="card red">
+      <div class="card-header">
+        <span class="card-tag">Ausbreitung</span>
+        <span class="card-title">Metastasierung</span>
+      </div>
+      <div class="card-body">
+        <div style="font-size:10px;font-weight:600;color:#2a4a7f;margin-bottom:3px;">Lymphogen:</div>
+        <ul class="clist" style="margin-bottom:8px;">
+          <li>Mediastinale + hiläre Lymphknoten</li>
+          <li>Skalenus- + supraklavikuläre LK</li>
+        </ul>
+        <div style="font-size:10px;font-weight:600;color:#b02020;margin-bottom:3px;">Hämatogen — Merkhilfe: <span style="background:#fdeaea;padding:1px 5px;border-radius:3px;letter-spacing:1px;">GeLeNK</span></div>
+        <ul class="clist">
+          <li><strong>Ge</strong>hirn</li>
+          <li><strong>Le</strong>ber</li>
+          <li><strong>N</strong>ebennieren</li>
+          <li><strong>K</strong>nochen (Panzytopenie bei KM-Metastasen)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       BLOCK 3: PARANEOPLASIE + SONDERFORMEN
+  ═══════════════════════════════════════════ -->
+  <div class="section-row row-2">
+
+    <!-- PARANEOPLASIE -->
+    <div class="card neutral">
+      <div class="card-header">
+        <span class="card-tag">Paraneoplastische Syndrome</span>
+        <span class="card-title">Häufig beim SCLC (DNES-Ursprung)</span>
+      </div>
+      <div class="para-grid">
+        <div class="para-row">
+          <div class="para-dot sclc-dot"></div>
+          <div class="para-text"><span class="para-entity">SIADH</span> (Schwartz-Bartter) — ektope ADH-Sekretion</div>
+        </div>
+        <div class="para-row">
+          <div class="para-dot sclc-dot"></div>
+          <div class="para-text"><span class="para-entity">Cushing-Syndrom</span> — ektope ACTH-Sekretion</div>
+        </div>
+        <div class="para-row">
+          <div class="para-dot sclc-dot"></div>
+          <div class="para-text"><span class="para-entity">Lambert-Eaton-Syndrom</span> — AK gegen präsynapt. Ca²⁺-Kanäle</div>
+        </div>
+        <div class="para-row">
+          <div class="para-dot sclc-dot"></div>
+          <div class="para-text"><span class="para-entity">Paraneoplast. Polyneuropathie</span> — Anti-Hu-Antikörper</div>
+        </div>
+        <div class="para-row">
+          <div class="para-dot nsclc-dot"></div>
+          <div class="para-text"><span class="para-entity">Hyperkalzämie</span> — PTHrP-Sekretion (eher NSCLC/SqCC)</div>
+        </div>
+        <div class="para-row">
+          <div class="para-dot nsclc-dot"></div>
+          <div class="para-text"><span class="para-entity">Hypertrophe Osteoarthropathie</span> (Pierre-Marie-Bamberger) — Periostreaktion, Uhrglasnägel</div>
+        </div>
+        <div class="para-row">
+          <div class="para-dot both-dot"></div>
+          <div class="para-text"><span class="para-entity">Thrombozytose</span> + Phlebothrombose / Phlebitis migrans</div>
+        </div>
+        <div class="para-row">
+          <div class="para-dot sclc-dot"></div>
+          <div class="para-text"><span class="para-entity">Hypoglykämie</span> — IGF-2-Produktion durch Tumorzellen</div>
+        </div>
+      </div>
+      <div style="padding:0 12px 8px;display:flex;gap:12px;">
+        <span style="font-size:9px;display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#b02020;display:inline-block;"></span> SCLC typisch</span>
+        <span style="font-size:9px;display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#2a4a7f;display:inline-block;"></span> NSCLC typisch</span>
+        <span style="font-size:9px;display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#888;display:inline-block;"></span> Beide</span>
+      </div>
+    </div>
+
+    <!-- SONDERFORMEN -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div class="special-card">
+        <div class="special-header">
+          <div class="special-title">Pancoast-Tumor</div>
+          <div class="special-subtitle">Peripheres Ca der Lungenspitze</div>
+        </div>
+        <div class="card-body">
+          <ul class="clist">
+            <li><span class="cave">Horner-Trias:</span> Ptosis + Miosis + (Pseudo-)Enophthalmus — durch Infiltration Ganglion stellatum</li>
+            <li>Plexus-brachialis-Infiltration → Armschmerzen + motorisch/sensible Defizite</li>
+            <li>Lymphödem des Arms (Gefäß-/Lymphgefäßkompression)</li>
+            <li>Obere Einflussstauung (V. cava-Kompression)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="special-card" style="border-color:#2a4a7f;">
+        <div class="special-header" style="background:#eef2fa;border-bottom-color:#b8c8f0;">
+          <div class="special-title" style="color:#2a4a7f;">Minimalinvasives Adenokarzinom</div>
+          <div class="special-subtitle">Früher: Bronchioloalveoläres Ca</div>
+        </div>
+        <div class="card-body">
+          <ul class="clist">
+            <li>Ausbreitung „tapetenartig" entlang Alveolar-/Bronchialwände — kaum invasiv</li>
+            <li>Langsames Wachstum · Radiolog.: Solitärer Rundherd oder Pneumonie-ähnlich</li>
+            <li>Therapie: OP anstreben · <span class="emph-green">Prognose: Gut</span></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       BLOCK 4: DIAGNOSTIK
+  ═══════════════════════════════════════════ -->
+  <div class="card neutral">
+    <div class="card-header">
+      <span class="card-tag">Diagnostik</span>
+      <span class="card-title">Stufendiagnostik bei Verdacht auf Lungenkarzinom</span>
+    </div>
+    <div style="padding:10px 12px;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+
+        <div style="background:#f5f0e8;border-radius:4px;padding:8px 10px;border-top:3px solid #888;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#666;margin-bottom:5px;">① Anamnese &amp; Labor</div>
+          <ul class="clist">
+            <li>Rauchanamnese (Packungsjahre)</li>
+            <li>Berufsanamnese (Asbest, Metalle)</li>
+            <li>ECOG-/Karnofsky-Status</li>
+            <li>BB · LDH · Krea · Elektrolyte · Leberwerte</li>
+            <li style="color:#b02020;font-weight:500;">Tumormarker: keine diagn. Bedeutung!</li>
+          </ul>
+        </div>
+
+        <div style="background:#eef2fa;border-radius:4px;padding:8px 10px;border-top:3px solid #2a4a7f;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#2a4a7f;margin-bottom:5px;">② Bildgebung</div>
+          <ul class="clist">
+            <li>Rö-Thorax p.a. + seitlich (Erstuntersuchung)</li>
+            <li><span class="emph-blue">CT-Thorax + KM — Mittel der Wahl</span></li>
+            <li>Karzinomverdächtig: keine Verkalkung · Spicula · Größenzunahme</li>
+            <li style="font-style:italic;color:#888;font-size:9.5px;">Rundherd bei &gt;40 J. = Karzinom bis Beweis des Gegenteils</li>
+          </ul>
+        </div>
+
+        <div style="background:#edf7f0;border-radius:4px;padding:8px 10px;border-top:3px solid #1a8a40;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#1a6b3a;margin-bottom:5px;">③ Pathol. Sicherung</div>
+          <ul class="clist">
+            <li>Bronchoskopie + Biopsie / BAL / Bürstung (zentrale Tumoren)</li>
+            <li>CT-gesteuerte Punktion (periphere Tumoren)</li>
+            <li>Thorakoskopie / VATS bei Bedarf</li>
+          </ul>
+        </div>
+
+        <div style="background:#fff8ec;border-radius:4px;padding:8px 10px;border-top:3px solid #cc8800;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#8a5500;margin-bottom:5px;">④ Staging</div>
+          <ul class="clist">
+            <li><span class="emph-amber">Ganzkörper-PET/CT</span> — LK-Staging + Fernmetastasen</li>
+            <li>cMRT Schädel — Hirnmetastasen</li>
+            <li>Alternative: Knochenszintigrafie + Abdomen-Sono</li>
+            <li style="margin-top:4px;font-weight:600;color:#444;font-size:10px;">Molekulare Diagnostik (NSCLC):</li>
+            <li>EGFR-Mutation · ALK-Translokation · BRAF V600</li>
+            <li>PD-L1-Expression (TPS-Score)</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       BLOCK 5: THERAPIE – ALGORITHMUS SVG
+  ═══════════════════════════════════════════ -->
+  <div class="card neutral" style="overflow:visible;">
+    <div class="card-header">
+      <span class="card-tag">Therapie</span>
+      <span class="card-title">Therapiealgorithmus — NSCLC vs. SCLC nach Stadium</span>
+    </div>
+    <div class="therapy-wrap">
+<svg width="1176" height="630" viewBox="0 0 1176 630" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#555"/>
+  </marker>
+  <style>
+    text { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #1a1814; font-weight: 400; }
+    .th { font-weight: 600; font-size: 12px; }
+    .lbl { font-size: 10px; font-weight: 500; fill: #444; }
+    .tag { font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; }
+    .small { font-size: 9.5px; fill: #666; }
+  </style>
+</defs>
+
+<!-- ─── NSCLC COLUMN ─── -->
+<!-- Header -->
+<rect x="10" y="12" width="560" height="32" rx="4" fill="#2a4a7f"/>
+<text x="290" y="32" fill="white" font-weight="700" font-size="13" text-anchor="middle" style="fill:white">NSCLC — Nicht-kleinzellig (~75%)</text>
+
+<!-- Stadium I–IIIA₂  (text ends at y=215, box bottom = 56+226=282 → safe) -->
+<rect x="10" y="56" width="266" height="226" rx="4" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="143" y="74" class="tag" fill="#1a6b3a" text-anchor="middle">Stadium I – IIIA₂ · Kurativ</text>
+<line x1="20" y1="80" x2="266" y2="80" stroke="#cde8d5" stroke-width="1"/>
+<text x="20" y="96" class="th" fill="#1a1814">① OP: Lobektomie + Lymphadenektomie</text>
+<text x="20" y="111" font-size="10" fill="#555">– Therapie der Wahl bei Operabilität (R0-Resektion)</text>
+<text x="20" y="128" class="th" fill="#1a1814">② Adj. Chemotherapie (ab St. II)</text>
+<text x="20" y="142" font-size="10" fill="#555">– 4 Zyklen Cisplatin-haltige Kombination (≤60d nach OP)</text>
+<text x="20" y="159" class="th" fill="#1a1814">③ Targeted / Immuntherapie (ab St. II)</text>
+<text x="20" y="173" font-size="10" fill="#555">– EGFR-Mut.: Osimertinib</text>
+<text x="20" y="186" font-size="10" fill="#555">– PD-L1 ≥50%: Atezolizumab</text>
+<text x="20" y="199" font-size="10" fill="#555">– Unabh. PD-L1: Pembrolizumab</text>
+<text x="20" y="216" class="th" fill="#1a1814">④ Radiotherapie</text>
+<text x="20" y="230" font-size="10" fill="#555">– Inoperabel: Stereotakt. Radiatio</text>
+<text x="20" y="243" font-size="10" fill="#555">– Ab IIIA: postop. Mediastinalbestrahlung</text>
+
+<!-- Stadium IIIA₃–IIIC  (bottom = 56+112 = 168 → safe) -->
+<rect x="286" y="56" width="284" height="112" rx="4" fill="#fff8ec" stroke="#cc8800" stroke-width="1.5"/>
+<text x="428" y="74" class="tag" fill="#8a5500" text-anchor="middle">Stadium IIIA₃ – IIIC · Lokal fortgeschritten</text>
+<line x1="296" y1="80" x2="560" y2="80" stroke="#f0ddb0" stroke-width="1"/>
+<text x="296" y="96" class="th" fill="#1a1814">Definitive simultane Radiochemotherapie</text>
+<text x="296" y="110" font-size="10" fill="#555">– 2 Zyklen Cisplatin-Kombination + Radiatio</text>
+<text x="296" y="126" class="th" fill="#1a1814">+ Durvalumab (PD-L1 ≥1%)</text>
+<text x="296" y="140" font-size="10" fill="#555">– Erhaltungsimmuntherapie nach RCT</text>
+
+<!-- Arrow IIIA₃ → IV -->
+<line x1="428" y1="168" x2="428" y2="178" stroke="#cc8800" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<!-- Stadium IV  (starts y=180, text ends ~307, box bottom = 180+165=345 → safe) -->
+<rect x="286" y="180" width="284" height="165" rx="4" fill="#fdf0f0" stroke="#b02020" stroke-width="1.5"/>
+<text x="428" y="198" class="tag" fill="#b02020" text-anchor="middle">Stadium IV · Palliativ / Systemtherapie</text>
+<line x1="296" y1="204" x2="560" y2="204" stroke="#f0c0c0" stroke-width="1"/>
+<text x="296" y="220" class="th" fill="#1a1814">Targeted Therapy bei genet. Alteration:</text>
+<text x="296" y="234" font-size="10" fill="#555">– EGFR-Mut.: Osimertinib</text>
+<text x="296" y="247" font-size="10" fill="#555">– BRAF V600: Dabrafenib + Trametinib</text>
+<text x="296" y="260" font-size="10" fill="#555">– ALK-Transl.: Alectinib</text>
+<line x1="296" y1="267" x2="560" y2="267" stroke="#f0c0c0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="296" y="282" class="th" fill="#1a1814">Keine therapierbare Mutation:</text>
+<text x="296" y="296" font-size="10" fill="#555">– Chemoimmuntherapie (Platin + Checkpoint-Inh.)</text>
+<text x="296" y="309" font-size="10" fill="#555">– Immunmono (PD-L1 ≥50%): Checkpoint-Inhibitor</text>
+<text x="296" y="322" font-size="10" fill="#555">– Platin-Chemo allein (wenn Immunth. KI)</text>
+
+<!-- ─── SCLC COLUMN ─── -->
+<rect x="606" y="12" width="560" height="32" rx="4" fill="#b02020"/>
+<text x="886" y="32" fill="white" font-weight="700" font-size="13" text-anchor="middle" style="fill:white">SCLC — Kleinzellig (~15%)</text>
+
+<!-- Very Limited Disease  (text ends y=160, box bottom = 56+175=231 → safe) -->
+<rect x="606" y="56" width="175" height="175" rx="4" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="694" y="72" class="tag" fill="#1a6b3a" text-anchor="middle">Very Limited Disease</text>
+<text x="616" y="87" font-size="9.5" fill="#888" font-style="italic">T1–2, N0, M0</text>
+<line x1="616" y1="93" x2="771" y2="93" stroke="#cde8d5" stroke-width="1"/>
+<text x="616" y="109" class="th" fill="#1a1814">① OP + Lymphadenektomie</text>
+<text x="616" y="124" class="th" fill="#1a1814">② Chemo: 4× Cisplatin/Etoposid</text>
+<text x="616" y="139" class="th" fill="#1a1814">③ Prophylakt. Hirnbestr. (PCI)</text>
+<text x="616" y="154" class="th" fill="#1a1814">④ Ggf. Mediastinalbestr.</text>
+
+<!-- Limited Disease  (text ends y=160, box bottom = 56+175=231 → safe) -->
+<rect x="791" y="56" width="185" height="175" rx="4" fill="#fff8ec" stroke="#cc8800" stroke-width="1.5"/>
+<text x="884" y="72" class="tag" fill="#8a5500" text-anchor="middle">Limited Disease</text>
+<text x="801" y="87" font-size="9.5" fill="#888" font-style="italic">Thorax + LK, kein Fernmet.</text>
+<line x1="801" y1="93" x2="966" y2="93" stroke="#f0ddb0" stroke-width="1"/>
+<text x="801" y="109" class="th" fill="#1a1814">① Definit. simultane RCT</text>
+<text x="801" y="123" font-size="10" fill="#555">≥4 Zyklen Cisplatin/Etoposid</text>
+<text x="801" y="139" class="th" fill="#1a1814">② Prophylakt. Hirnbestr. (PCI)</text>
+<text x="801" y="153" font-size="10" fill="#555">Bei Remission nach RCT</text>
+
+<!-- Extensive Disease  (text ends y=174, box bottom = 56+180=236 → safe) -->
+<rect x="986" y="56" width="180" height="180" rx="4" fill="#fdf0f0" stroke="#b02020" stroke-width="1.5"/>
+<text x="1076" y="72" class="tag" fill="#b02020" text-anchor="middle">Extensive Disease</text>
+<text x="996" y="87" font-size="9.5" fill="#888" font-style="italic">Fernmetastasen vorhanden</text>
+<line x1="996" y1="93" x2="1156" y2="93" stroke="#f0c0c0" stroke-width="1"/>
+<text x="996" y="109" class="th" fill="#1a1814">① Chemoimmuntherapie</text>
+<text x="996" y="123" font-size="10" fill="#555">4× Platin/Etoposid + Atezolizumab</text>
+<text x="996" y="138" class="th" fill="#1a1814">+ Erhaltungsimmuntherapie</text>
+<text x="996" y="154" class="th" fill="#1a1814">② PCI</text>
+<text x="996" y="168" font-size="10" fill="#555">Ggf. palliative Bestrahlung</text>
+
+<!-- ─── GEMEINSAM: SUPPORTIV  (starts y=358, safe below all boxes) ─── -->
+<rect x="10" y="358" width="1156" height="72" rx="4" fill="#f5f0e8" stroke="#888" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text x="20" y="376" class="tag" fill="#555">Supportiv · für alle Stadien</text>
+<text x="20" y="394" font-size="11" fill="#1a1814">Schmerztherapie (WHO-Stufenschema) · Bisphosphonate / Denosumab bei Knochenmetastasen · Bronchoskop. Interventionen bei Obstruktion</text>
+<text x="20" y="412" font-size="11" fill="#1a1814">Pleurapunktion bei malignem Pleuraerguss · Bronchialarterienembolisation bei Hämoptysen · Palliativmedizin früh integrieren · Tabakentwöhnung anbieten</text>
+
+<!-- ─── PROGNOSE BALKEN ─── -->
+<rect x="10" y="442" width="1156" height="54" rx="4" fill="#fff" stroke="#c8c2b5" stroke-width="1.5"/>
+<text x="20" y="460" class="tag" fill="#555">Prognose · 5-Jahres-Überlebensrate</text>
+<rect x="20" y="468" width="420" height="18" rx="3" fill="#cde8d5"/>
+<rect x="20" y="468" width="235" height="18" rx="3" fill="#f0ddb0"/>
+<text x="446" y="481" font-size="10" fill="#1a6b3a" font-weight="600">NSCLC lokal (T1-2, N0): bis 70%</text>
+<text x="20" y="492" font-size="9.5" fill="#888" font-style="italic">Gesamt ~20%</text>
+<rect x="650" y="468" width="84" height="18" rx="3" fill="#f0c0c0"/>
+<text x="740" y="481" font-size="10" fill="#b02020" font-weight="600">SCLC: ~10–15%</text>
+<text x="650" y="492" font-size="9.5" fill="#888" font-style="italic">Sehr ungünstig (expl. Wachstum)</text>
+
+<!-- ─── CAVE ZEILE ─── -->
+<rect x="10" y="508" width="1156" height="42" rx="4" fill="#fdeaea" stroke="#b02020" stroke-width="1.5"/>
+<text x="20" y="526" font-size="11" fill="#1a1814"><tspan font-weight="700" fill="#b02020">Cave: </tspan>Fortgeschrittenes Lebensalter ist kein alleiniger Ausschlussgrund! · Molekulare Diagnostik vor Therapiebeginn (NSCLC) — EGFR, ALK, BRAF, PD-L1 bestimmt das Regime.</text>
+<text x="20" y="542" font-size="10" fill="#555">Rundherd &gt;40 J. → immer Biopsiepflicht bis Gegenbeweis  ·  Histologie + Molekularpathologie zwingend vor Therapieentscheidung sichern</text>
+
+</svg>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     NOTES
+════════════════════════════════════════════ -->
+<div class="notes">
+  <div class="notes-title">Ergänzende Hinweise</div>
+  <div class="notes-sub">Nicht direkt im Algorithmus abgebildet · Klinisch relevant</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Screening</div>
+      <div class="note-card-title">Wann an Malignom denken?</div>
+      <div class="note-card-body"><ul>
+        <li>Chronischer Husten oder rezidiv. Erkältungen <strong>≥40 J.</strong> → immer karzinomverdächtig</li>
+        <li>Jeder neu aufgetretene Lungenrundherd: Vergleich mit Voraufnahme obligat</li>
+        <li>Hämoptysen → sofortige Abklärung</li>
+        <li>Niedriger PET/CT: Ganzkörper-Staging verbessert Genauigkeit deutlich gegenüber separaten Untersuchungen</li>
+      </ul></div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Molekulare Diagnostik</div>
+      <div class="note-card-title">Wann welche Marker?</div>
+      <div class="note-card-body"><ul>
+        <li><strong>NSCLC Stad. IV:</strong> Alle therapeutisch relevanten Alterationen bestimmen</li>
+        <li><strong>NSCLC IB–IIIA:</strong> Mindestens EGFR-Exone 19/21 + PD-L1</li>
+        <li>EGFR, ALK, ROS1, RET, NTRK, BRAF V600, PD-L1 → bestimmt Erstlinientherapie</li>
+        <li><span class="cave">Tumormarker (CEA etc.) haben keine diagn. Bedeutung!</span></li>
+      </ul></div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Komplikationen</div>
+      <div class="note-card-title">Klinisch relevante Folgen</div>
+      <div class="note-card-body"><ul>
+        <li>Phrenikusparese → Zwerchfellhochstand</li>
+        <li>Maligner Pleuraerguss</li>
+        <li>Lungenembolie (Thrombophilie durch Tumor)</li>
+        <li>Tumoreinbruch → Blutung / massive Hämoptysen</li>
+        <li>Bronchusstumpfinsuffizienz nach Pneumonektomie → Pleuraempyem-Risiko</li>
+      </ul></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>Quellen: AMBOSS Lungenkarzinom · Leitlinienbasiert · Selbst erstellt — Fehler möglich</span>
+  <span>Lungenkarzinom · Klinische Übersicht</span>
+</footer>
+
+</body>
+</html>

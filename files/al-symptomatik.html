@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symptomatik – Akute Leukämien</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #eef5f8;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #08222c;
+    max-width: 1250px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 {
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #08222c;
+    letter-spacing: -0.4px;
+  }
+  header p {
+    color: #45697a;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  footer {
+    max-width: 1250px;
+    margin: 14px auto 0;
+    padding-top: 12px;
+    border-top: 1px solid #cddbe0;
+    color: #5e7e8a;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Symptomatik – Akute Leukämien (ALL / AML)</h1>
+  <p>AMBOSS · Klinisches Bild · Mind Map · Knochenmarkverdrängung → Systemsymptome</p>
+</header>
+
+<div class="wrap">
+<svg width="1200" height="970" viewBox="0 0 1200 970" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <style>
+    text { font-family: 'Roboto Flex', system-ui, sans-serif; font-size: 11px; font-weight: 400; fill: #08222c; }
+    .tag  { font-size: 8.5px; font-weight: 600; letter-spacing: 1.3px; text-transform: uppercase; }
+    .ctitle { font-size: 13px; font-weight: 700; }
+    .stitle { font-size: 11px; font-weight: 600; }
+    .item { font-size: 10px; font-weight: 400; fill: #3a3530; }
+    .em-red { fill: #b02020; font-weight: 700; }
+    .muted  { fill: #888; font-style: italic; }
+  </style>
+
+  <!-- Glow filter for center -->
+  <filter id="glow" x="-20%" y="-40%" width="140%" height="180%">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<!-- ================================================================
+     LAYER 1: BRANCH CONNECTORS  (drawn first, under all boxes)
+     ================================================================ -->
+
+<!-- Color legend:
+     Gestörte Hämatopoese   → #1a8a40  green
+     Organinfiltrationen    → #cc8800  amber
+     AML-spezifisch         → #6a2a7a  purple
+     Allgemeinsymptome      → #2a4a7f  blue
+     Komplikationen         → #b02020  red
+     ALL-spezifisch         → #c04000  orange-red
+-->
+
+<!-- ── CENTER → Gestörte Hämatopoese (TOP) ── -->
+<path d="M600,400 C600,365 600,332 600,285" fill="none" stroke="#1a8a40" stroke-width="3.5" stroke-linecap="round"/>
+
+<!-- ── CENTER → Organinfiltrationen (TOP-RIGHT) ── -->
+<path d="M702,432 C760,412 800,398 840,387" fill="none" stroke="#cc8800" stroke-width="3.5" stroke-linecap="round"/>
+
+<!-- ── CENTER → AML-spezifisch (BOTTOM-RIGHT) ── -->
+<path d="M702,498 C770,530 808,556 840,575" fill="none" stroke="#6a2a7a" stroke-width="3.5" stroke-linecap="round"/>
+
+<!-- ── CENTER → Allgemeinsymptome (BOTTOM) ── -->
+<path d="M600,530 C600,572 600,612 600,648" fill="none" stroke="#2a4a7f" stroke-width="3.5" stroke-linecap="round"/>
+
+<!-- ── CENTER → Komplikationen (BOTTOM-LEFT) ── -->
+<path d="M498,498 C432,530 394,556 362,575" fill="none" stroke="#b02020" stroke-width="3.5" stroke-linecap="round"/>
+
+<!-- ── CENTER → ALL-spezifisch (TOP-LEFT) ── -->
+<path d="M498,432 C440,412 402,398 362,387" fill="none" stroke="#c04000" stroke-width="3.5" stroke-linecap="round"/>
+
+<!-- ── Gestörte Hämatopoese → Leukozytopenie (sub-branch left) ── -->
+<path d="M530,200 C480,182 415,168 342,155" fill="none" stroke="#1a8a40" stroke-width="2" stroke-linecap="round" stroke-dasharray="none"/>
+
+<!-- ── Gestörte Hämatopoese → Anämie (sub-branch top-center) ── -->
+<path d="M600,200 C600,196 600,192 600,185" fill="none" stroke="#1a8a40" stroke-width="2" stroke-linecap="round"/>
+
+<!-- ── Gestörte Hämatopoese → Thrombozytopenie (sub-branch right) ── -->
+<path d="M670,200 C720,182 785,168 858,155" fill="none" stroke="#1a8a40" stroke-width="2" stroke-linecap="round"/>
+
+<!-- ── Junction dots at cluster connections ── -->
+<circle cx="600" cy="285" r="4" fill="#1a8a40"/>
+<circle cx="840" cy="387" r="4" fill="#cc8800"/>
+<circle cx="840" cy="575" r="4" fill="#6a2a7a"/>
+<circle cx="600" cy="648" r="4" fill="#2a4a7f"/>
+<circle cx="362" cy="575" r="4" fill="#b02020"/>
+<circle cx="362" cy="387" r="4" fill="#c04000"/>
+<circle cx="342" cy="155" r="3.5" fill="#1a8a40"/>
+<circle cx="600" cy="185" r="3.5" fill="#1a8a40"/>
+<circle cx="858" cy="155" r="3.5" fill="#1a8a40"/>
+
+
+<!-- ================================================================
+     LAYER 2: SUB-CLUSTER BOXES  (Leukozytopenie / Anämie / Thrombopenie)
+     ================================================================ -->
+
+<!-- ── Leukozytopenie (top-left) ── -->
+<rect x="148" y="98" width="196" height="116" rx="6" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="164" y="115" class="tag" fill="#1a6b3a">Leukozytopenie</text>
+<text x="164" y="132" class="stitle" fill="#08222c">Infektneigung</text>
+<line x1="162" y1="139" x2="332" y2="139" stroke="#cde8d5" stroke-width="1"/>
+<text x="164" y="155" class="item">· Bakt. + mykot. Infekte</text>
+<text x="164" y="169" class="item">· Mundsoor (Candida albicans)</text>
+<text x="164" y="183" class="item">· Fieber</text>
+<text x="164" y="197" class="item">· Grippeähnliche Symptome</text>
+
+<!-- ── Anämie (top-center) ── -->
+<rect x="462" y="62" width="276" height="123" rx="6" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="478" y="79" class="tag" fill="#1a6b3a">Anämie</text>
+<text x="600" y="97" class="stitle" fill="#08222c" text-anchor="middle">Sauerstoffmangel-Symptome</text>
+<line x1="480" y1="104" x2="726" y2="104" stroke="#cde8d5" stroke-width="1"/>
+<text x="478" y="120" class="item">· Schwäche · Chronische Müdigkeit</text>
+<text x="478" y="134" class="item">· Blässe</text>
+<text x="478" y="148" class="item">· Belastungsdyspnoe · Schwindel</text>
+<text x="478" y="162" class="item">· Tachykardie</text>
+
+<!-- ── Thrombozytopenie (top-right) ── -->
+<rect x="856" y="98" width="196" height="116" rx="6" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="872" y="115" class="tag" fill="#1a6b3a">Thrombozytopenie</text>
+<text x="872" y="132" class="stitle" fill="#08222c">Blutungsneigung</text>
+<line x1="870" y1="139" x2="1040" y2="139" stroke="#cde8d5" stroke-width="1"/>
+<text x="872" y="155" class="item">· Petechien · Hämatome</text>
+<text x="872" y="169" class="item">· Nasenbluten</text>
+<text x="872" y="183" class="item">· Zahnfleischbluten</text>
+<text x="872" y="197" class="item">· Menorrhagien</text>
+
+
+<!-- ================================================================
+     LAYER 3: MAIN CLUSTER BOXES (6 clusters)
+     ================================================================ -->
+
+<!-- ──────────────────────────────────────────────────────────────
+     CLUSTER 1 · Gestörte Hämatopoese  (TOP-CENTER)
+     Box: x=478 y=200 w=244 h=85  →  bottom at y=285
+     ────────────────────────────────────────────────────────────── -->
+<rect x="478" y="200" width="244" height="85" rx="8" fill="#edf7f0" stroke="#1a8a40" stroke-width="2.5"/>
+<text x="494" y="219" class="tag" fill="#1a6b3a">Hämatopoese-Insuffizienz · 3 Zellreihen betroffen</text>
+<text x="600" y="241" class="ctitle" fill="#08222c" text-anchor="middle">Gestörte Hämatopoese</text>
+<line x1="496" y1="250" x2="704" y2="250" stroke="#cde8d5" stroke-width="1"/>
+<text x="600" y="265" font-size="10" fill="#555" text-anchor="middle">Leukozyten ↓  ·  Erythrozyten ↓  ·  Thrombozyten ↓</text>
+<text x="600" y="278" font-size="9.5" class="muted" text-anchor="middle">Blasten verdrängen normale Hämatopoese im Knochenmark</text>
+
+<!-- ──────────────────────────────────────────────────────────────
+     CLUSTER 2 · Organinfiltrationen  (TOP-RIGHT)
+     Box: x=840 y=298 w=244 h=180
+     ────────────────────────────────────────────────────────────── -->
+<rect x="840" y="298" width="244" height="182" rx="8" fill="#fff8ec" stroke="#cc8800" stroke-width="2.5"/>
+<text x="857" y="317" class="tag" fill="#8a5500">Organinfiltration durch Blasten</text>
+<text x="962" y="338" class="ctitle" fill="#08222c" text-anchor="middle">Organinfiltrationen</text>
+<line x1="858" y1="347" x2="1072" y2="347" stroke="#f0ddb0" stroke-width="1"/>
+<text x="858" y="363" font-size="10.5" font-weight="600" fill="#7a4a00">ZNS — Meningeosis leucaemica:</text>
+<text x="868" y="377" class="item" fill="#555">→ Kopfschmerz · Erbrechen · Lethargie</text>
+<text x="868" y="390" class="item" fill="#555">→ Nackensteife · Hirnnervenausfälle</text>
+<text x="868" y="403" class="item" fill="#555">→ Querschnittsymptome</text>
+<line x1="858" y1="411" x2="1072" y2="411" stroke="#f0ddb0" stroke-width="0.75"/>
+<text x="858" y="426" font-size="10.5" font-weight="600" fill="#7a4a00">Abdomen:</text>
+<text x="868" y="440" class="item" fill="#555">→ Splenomegalie / Hepatomegalie</text>
+<text x="868" y="453" class="item" fill="#555">→ Viszerale Schmerzen</text>
+<line x1="858" y1="461" x2="1072" y2="461" stroke="#f0ddb0" stroke-width="0.75"/>
+<text x="858" y="475" class="item" fill="#555">Hoden · Haut · Auge (Exophthalmus)</text>
+
+<!-- ──────────────────────────────────────────────────────────────
+     CLUSTER 3 · AML-spezifisch  (BOTTOM-RIGHT)
+     Box: x=840 y=560 w=244 h=196
+     ────────────────────────────────────────────────────────────── -->
+<rect x="840" y="560" width="244" height="200" rx="8" fill="#f5eeff" stroke="#6a2a7a" stroke-width="2.5"/>
+<text x="857" y="579" class="tag" fill="#6a2a7a">Subtyp-abhängige Symptome · AML</text>
+<text x="962" y="599" class="ctitle" fill="#08222c" text-anchor="middle">AML-spezifisch</text>
+<line x1="858" y1="608" x2="1072" y2="608" stroke="#d8b0f0" stroke-width="1"/>
+
+<!-- APL sub-block with red highlight -->
+<rect x="840" y="613" width="244" height="68" fill="rgba(176,32,32,0.06)"/>
+<text x="857" y="629" font-size="10" font-weight="700" fill="#b02020">⚠  APL — t(15;17)  ·  Hämatol. Notfall!</text>
+<text x="857" y="643" class="item" fill="#555">→ DIC + Hyperfibrinolyse</text>
+<text x="857" y="657" class="em-red" font-size="10">→ Lebensbedrohliche Blutungen:</text>
+<text x="866" y="671" class="item" fill="#888" font-style="italic">  ZNS · GIT · Lunge · Haut · Schleimhäute</text>
+
+<line x1="858" y1="682" x2="1072" y2="682" stroke="#d8b0f0" stroke-width="0.75"/>
+<text x="857" y="697" font-size="10" font-weight="700" fill="#6a2a7a">Myelomonozytär (M4):</text>
+<text x="867" y="711" class="item" fill="#555">→ Gingivahyperplasie</text>
+<text x="867" y="724" class="item" fill="#555">→ Meningeosis leucaemica</text>
+<line x1="858" y1="732" x2="1072" y2="732" stroke="#d8b0f0" stroke-width="0.75"/>
+<text x="857" y="747" font-size="10" font-weight="700" fill="#6a2a7a">Megakaryoblastisch (M7):</text>
+<text x="867" y="760" class="item" fill="#555">→ Knochenmarkfibrose · Panzytopenie</text>
+
+<!-- ──────────────────────────────────────────────────────────────
+     CLUSTER 4 · Allgemeinsymptome  (BOTTOM-CENTER)
+     Box: x=428 y=648 w=344 h=88
+     ────────────────────────────────────────────────────────────── -->
+<rect x="428" y="648" width="344" height="88" rx="8" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="2.5"/>
+<text x="446" y="667" class="tag" fill="#2a4a7f">Systemische Allgemeinsymptome · unspezifisch</text>
+<text x="600" y="688" class="ctitle" fill="#08222c" text-anchor="middle">Allgemeinsymptome</text>
+<line x1="446" y1="697" x2="754" y2="697" stroke="#b8c8f0" stroke-width="1"/>
+<text x="600" y="713" font-size="10.5" fill="#333" text-anchor="middle">B-Symptomatik: Fieber · Nachtschweiß · Gewichtsverlust</text>
+<text x="600" y="728" font-size="10.5" font-weight="700" fill="#b02020" text-anchor="middle">⚡  Beginn akut — Symptomentwicklung innerhalb von Tagen!</text>
+
+<!-- ──────────────────────────────────────────────────────────────
+     CLUSTER 5 · Komplikationen  (BOTTOM-LEFT)
+     Box: x=118 y=560 w=244 h=170
+     ────────────────────────────────────────────────────────────── -->
+<rect x="118" y="560" width="244" height="172" rx="8" fill="#fff5f5" stroke="#b02020" stroke-width="2.5"/>
+<text x="135" y="579" class="tag" fill="#b02020">Hämatologische Notfälle</text>
+<text x="240" y="599" class="ctitle" fill="#08222c" text-anchor="middle">Komplikationen</text>
+<line x1="136" y1="608" x2="350" y2="608" stroke="#f0c0c0" stroke-width="1"/>
+<text x="135" y="624" font-size="10.5" font-weight="700" fill="#b02020">Leukostase-Syndrom</text>
+<text x="135" y="638" class="item">· Hyperleukozytose (&gt;100.000/μL)</text>
+<text x="135" y="651" class="item">· Pulmonal: Dyspnoe · Hypoxie</text>
+<text x="135" y="664" class="item">· ZNS: Bewusstseinsstör. · Krämpfe</text>
+<text x="135" y="677" class="item">· Retinaeinblutungen · Priapismus</text>
+<line x1="136" y1="685" x2="350" y2="685" stroke="#f0c0c0" stroke-width="0.75"/>
+<text x="135" y="701" font-size="10.5" font-weight="700" fill="#b02020">Tumorlyse-Syndrom</text>
+<text x="135" y="715" class="item">· Hyperkaliämie · Hyperurikämie</text>
+<text x="135" y="728" class="item">· Hyperphosphatämie · Hypokalzämie</text>
+
+<!-- ──────────────────────────────────────────────────────────────
+     CLUSTER 6 · ALL-spezifisch  (TOP-LEFT)
+     Box: x=118 y=298 w=244 h=180
+     ────────────────────────────────────────────────────────────── -->
+<rect x="118" y="298" width="244" height="182" rx="8" fill="#fff5ee" stroke="#c04000" stroke-width="2.5"/>
+<text x="135" y="317" class="tag" fill="#c04000">Lymphatische Blasten · ALL-typisch</text>
+<text x="240" y="338" class="ctitle" fill="#08222c" text-anchor="middle">ALL-spezifisch</text>
+<line x1="136" y1="347" x2="350" y2="347" stroke="#f0c8a0" stroke-width="1"/>
+<text x="135" y="363" font-size="10.5" font-weight="600" fill="#7a2800">ZNS — häufig! Meningeosis leucaemica:</text>
+<text x="145" y="377" class="item">→ Kopfschmerz · Lethargie · Erbrechen</text>
+<text x="145" y="390" class="item">→ Nackensteife · Hirnnervenausfälle</text>
+<line x1="136" y1="398" x2="350" y2="398" stroke="#f0c8a0" stroke-width="0.75"/>
+<text x="135" y="413" font-size="10.5" font-weight="600" fill="#7a2800">Skelett / Gelenke:</text>
+<text x="145" y="427" class="item">→ Knochenschmerzen</text>
+<text x="145" y="441" class="item muted">→ Kinder verweigern das Laufen</text>
+<text x="145" y="454" class="item">→ Arthralgie · Gelenkschwellung</text>
+<line x1="136" y1="462" x2="350" y2="462" stroke="#f0c8a0" stroke-width="0.75"/>
+<text x="135" y="477" font-size="10.5" fill="#555">Lymphadenopathie (indolent)</text>
+<text x="135" y="490" font-size="10.5" fill="#555">T-ALL: Mediastinaltumor → Stridor</text>
+
+
+<!-- ================================================================
+     LAYER 4: CENTER ELLIPSE  (drawn last — on top of all connectors)
+     ================================================================ -->
+
+<!-- Shadow ring -->
+<ellipse cx="600" cy="467" rx="121" ry="67" fill="rgba(0,0,0,0.10)"/>
+<!-- Main ellipse -->
+<ellipse cx="600" cy="465" rx="120" ry="66" fill="#08222c"/>
+<!-- Inner ring accent -->
+<ellipse cx="600" cy="465" rx="117" ry="63" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+
+<text x="600" y="449" font-size="14" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-0.3">Symptomatik</text>
+<text x="600" y="468" font-size="14" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-0.3">Akute Leukämien</text>
+<!-- Divider line inside ellipse -->
+<line x1="510" y1="476" x2="690" y2="476" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+<text x="600" y="491" font-size="9" font-weight="500" fill="rgba(255,255,255,0.6)" text-anchor="middle" letter-spacing="1.5">ALL  ·  AML  ·  APL</text>
+
+
+<!-- ================================================================
+     LAYER 5: LEGEND  (bottom-right corner of SVG)
+     ================================================================ -->
+<rect x="24" y="870" width="680" height="84" rx="5" fill="rgba(255,255,255,0.55)" stroke="#cddbe0" stroke-width="1"/>
+<text x="42" y="888" font-size="8.5" font-weight="600" fill="#5e7e8a" letter-spacing="1.5" text-transform="uppercase">LEGENDE · FARB-KODIERUNG</text>
+<line x1="40" y1="893" x2="690" y2="893" stroke="#cddbe0" stroke-width="0.75"/>
+
+<!-- Legend items -->
+<rect x="42"  y="901" width="12" height="12" rx="2" fill="#edf7f0" stroke="#1a8a40" stroke-width="1.5"/>
+<text x="60"  y="912" font-size="10" fill="#333">Gestörte Hämatopoese  (3 Zellreihen)</text>
+
+<rect x="242" y="901" width="12" height="12" rx="2" fill="#fff8ec" stroke="#cc8800" stroke-width="1.5"/>
+<text x="260" y="912" font-size="10" fill="#333">Organinfiltrationen</text>
+
+<rect x="400" y="901" width="12" height="12" rx="2" fill="#fff5ee" stroke="#c04000" stroke-width="1.5"/>
+<text x="418" y="912" font-size="10" fill="#333">ALL-spezifisch</text>
+
+<rect x="540" y="901" width="12" height="12" rx="2" fill="#f5eeff" stroke="#6a2a7a" stroke-width="1.5"/>
+<text x="558" y="912" font-size="10" fill="#333">AML-spezifisch</text>
+
+<rect x="42"  y="921" width="12" height="12" rx="2" fill="#fff5f5" stroke="#b02020" stroke-width="1.5"/>
+<text x="60"  y="932" font-size="10" fill="#333">Komplikationen  (Notfall)</text>
+
+<rect x="242" y="921" width="12" height="12" rx="2" fill="#f0f4ff" stroke="#2a4a7f" stroke-width="1.5"/>
+<text x="260" y="932" font-size="10" fill="#333">Allgemeinsymptome</text>
+
+<rect x="400" y="921" width="12" height="12" rx="2" fill="rgba(176,32,32,0.08)" stroke="#b02020" stroke-width="1"/>
+<text x="418" y="932" font-size="10" fill="#b02020" font-weight="600">⚠  Rot = Cave / Notfall / Hämatol. Alarm</text>
+
+</svg>
+</div>
+
+<footer>
+  <span>AMBOSS · Akute Leukämien · Symptomatik (AMBOSS 2024)</span>
+  <span>Mind Map · Klinisches Bild · ALL / AML / APL</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mammakarzinom – Therapiealgorithmus</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #eef5f8;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #08222c;
+    max-width: 1210px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #08222c;
+    letter-spacing: -0.4px;
+  }
+  header p {
+    color: #45697a;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  .notes {
+    max-width: 1210px;
+    margin: 20px auto 0;
+    border-top: 2px solid #08222c;
+    padding-top: 14px;
+  }
+  .notes-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #08222c;
+    margin-bottom: 2px;
+    letter-spacing: -0.1px;
+  }
+  .notes-subtitle {
+    font-size: 9px;
+    font-weight: 500;
+    color: #45697a;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+  }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .note-card {
+    background: #fff;
+    border: 1px solid #cddbe0;
+    border-radius: 3px;
+    padding: 7px 10px 7px 14px;
+    position: relative;
+  }
+  .note-card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 3px 0 0 3px; }
+  .note-card .bar.blue   { background: #2a4a7f; }
+  .note-card .bar.amber  { background: #7a4a00; }
+  .note-card .bar.red    { background: #b02020; }
+  .note-card .bar.green  { background: #1a6b3a; }
+  .note-card .bar.muted  { background: #45697a; }
+
+  .note-card-label { font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #5e7e8a; margin-bottom: 1px; }
+  .note-card-title { font-weight: 600; font-size: 0.78rem; color: #08222c; margin-bottom: 4px; letter-spacing: -0.1px; }
+  .note-card-body  { font-size: 10.5px; font-weight: 400; color: #13323d; line-height: 1.6; }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li { padding-left: 12px; position: relative; margin-bottom: 1px; }
+  .note-card-body ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+
+  .cave  { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+  .neg   { color: #b02020; font-weight: 600; }
+
+  footer {
+    max-width: 1210px;
+    margin: 14px auto 0;
+    padding-top: 12px;
+    border-top: 1px solid #cddbe0;
+    color: #5e7e8a;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Mammakarzinom – Therapiealgorithmus</h1>
+  <p>S3-Leitlinie Mammakarzinom 2024 · AGO Mamma · AWMF · Selbst erstellt auf Basis von AMBOSS — Fehler möglich</p>
+</header>
+
+<div class="wrap">
+<svg width="1210" height="1215" viewBox="0 0 1210 1215" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#555"/>
+  </marker>
+  <marker id="arr-red" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#b02020"/>
+  </marker>
+  <style>
+    text { font-family: 'Roboto Flex', system-ui, sans-serif; font-size: 11.5px; font-weight: 400; fill: #08222c; }
+    .tag   { font-size: 9.5px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    .lbl   { font-size: 10.5px; font-weight: 500; fill: #444; }
+    .title { font-size: 13px; font-weight: 600; }
+    .caps  { font-size: 9px; font-weight: 600; letter-spacing: 0.8px; fill: #888; }
+    .cave  { fill: #b02020; font-weight: 700; }
+    .first { fill: #1a6b3a; font-weight: 700; }
+    .ki    { fill: #b02020; font-weight: 700; }
+  </style>
+</defs>
+
+<!-- ============================================================
+     1. CONNECTORS  (drawn first — below all boxes)
+     ============================================================ -->
+
+<!-- Box1 → Box2 -->
+<line x1="600" y1="58" x2="600" y2="75" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box2 → Box3 -->
+<line x1="600" y1="170" x2="600" y2="180" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box3 → Palliativ (dashed, right — Stadium IV) -->
+<polyline points="1070,219 1078,219" fill="none" stroke="#b02020" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-red)"/>
+<text x="1066" y="211" font-size="9" font-weight="600" fill="#b02020" text-anchor="end">Stadium IV →</text>
+
+<!-- Box3 → Box4 (kurativ) -->
+<line x1="600" y1="255" x2="600" y2="265" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box4 → junction y=365, then two branches -->
+<line x1="600" y1="340" x2="600" y2="365" stroke="#555" stroke-width="2"/>
+<!-- Left branch (keine Neoadjuvanz) -->
+<polyline points="600,365 272,365 272,383" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Right branch (Neoadjuvanz) -->
+<polyline points="600,365 928,365 928,383" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Branch labels -->
+<text x="434" y="357" class="lbl" text-anchor="middle">Keine Neoadjuvanz-Indikation</text>
+<text x="766" y="357" class="lbl" text-anchor="middle">Neoadjuvanz indiziert</text>
+
+<!-- Box4a → reconverge y=535 -->
+<polyline points="272,463 272,535 597,535" fill="none" stroke="#555" stroke-width="2"/>
+<!-- Box4b → reconverge y=535 -->
+<polyline points="928,518 928,535 603,535" fill="none" stroke="#555" stroke-width="2"/>
+<!-- reconverge → Box5 -->
+<line x1="600" y1="535" x2="600" y2="555" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box5 → Box6 -->
+<line x1="600" y1="670" x2="600" y2="680" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box6 → junction y=763, three branches -->
+<line x1="600" y1="740" x2="600" y2="763" stroke="#555" stroke-width="2"/>
+<!-- Left: HR+ -->
+<polyline points="600,763 195,763 195,782" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Center: HER2+ -->
+<line x1="600" y1="763" x2="600" y2="782" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Right: TNBC -->
+<polyline points="600,763 1010,763 1010,782" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+<!-- Branch labels -->
+<text x="395" y="755" class="lbl" text-anchor="middle">HR-positiv / HER2−</text>
+<text x="622" y="773" font-size="10" font-weight="500" fill="#444">HER2-positiv</text>
+<text x="812" y="755" class="lbl" text-anchor="middle">Triple-negativ (TNBC)</text>
+
+<!-- Box6a → reconverge y=995 -->
+<polyline points="195,977 195,995 597,995" fill="none" stroke="#555" stroke-width="2"/>
+<!-- Box6b → reconverge y=995 -->
+<line x1="600" y1="977" x2="600" y2="995" stroke="#555" stroke-width="2"/>
+<!-- Box6c → reconverge y=995 -->
+<polyline points="1010,977 1010,995 603,995" fill="none" stroke="#555" stroke-width="2"/>
+<!-- reconverge → Box7 -->
+<line x1="600" y1="995" x2="600" y2="1015" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- Box7 → Box8 -->
+<line x1="600" y1="1110" x2="600" y2="1120" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+<!-- ============================================================
+     2. JUNCTION DOTS
+     ============================================================ -->
+<circle cx="600" cy="535" r="4.5" fill="#555"/>
+<circle cx="600" cy="995" r="4.5" fill="#555"/>
+
+<!-- ============================================================
+     3 + 4. BOXES WITH TEXT  (painted on top of connectors)
+     ============================================================ -->
+
+<!-- ── BOX 1: START pill ── -->
+<rect x="320" y="18" width="560" height="40" rx="20" fill="#08222c"/>
+<text x="600" y="43" font-size="14" font-weight="700" text-anchor="middle" style="fill:#fff;">Diagnose gesichert: Mammakarzinom</text>
+
+<!-- ── BOX 2: Staging & Biomarker ── -->
+<rect x="130" y="75" width="940" height="95" rx="5" fill="#fff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="150" y="93"  class="tag" fill="#2a4a7f">Schritt 1 · Diagnosesicherung, Staging &amp; Biomarkerdiagnostik</text>
+<text x="150" y="112" class="title" fill="#08222c">Histologie + TNM-Klassifikation + Tumorbiologie</text>
+<line x1="150" y1="121" x2="1058" y2="121" stroke="#b8c8f0" stroke-width="1"/>
+<text x="150" y="136" font-size="11" fill="#333">Diagnosesicherung: Stanzbiopsie (sono-/mammo-/MRT-gesteuert) · Histologie, ER/PR-Status, HER2 (IHC + ISH), Ki67, Grading (G1–G3) aus Primärbiopsie</text>
+<text x="150" y="151" font-size="11" fill="#333">TNM: Tumorgröße (T) · Lymphknotenstatus (N) · Fernmetastasen (M) → UICC-Stadium I–IV · Klinische Untersuchung inkl. Jackson-Test</text>
+<text x="150" y="166" font-size="11" fill="#333">Staging-Bildgebung <tspan font-style="italic">(ab UICC II mit N+/aggressiver Biologie/Symptomen):</tspan> CT-Thorax + CT-Abdomen · Skelettszintigrafie · ggf. PET-CT · MRT bei ZNS-Verdacht</text>
+
+<!-- ── BOX 3: Therapieintention ── -->
+<rect x="130" y="180" width="940" height="75" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<circle cx="1058" cy="178" r="12" fill="#08222c"/>
+<text x="1058" y="183" font-size="13" font-weight="700" text-anchor="middle" style="fill:#fff;">?</text>
+<text x="150" y="199" class="tag" fill="#555">Schritt 2 · Therapieintention nach Stadium</text>
+<text x="600" y="221" class="title" text-anchor="middle" fill="#08222c">Kurativer vs. Palliativer Ansatz</text>
+<text x="600" y="241" font-size="11" text-anchor="middle" fill="#444">Stadium I–III (M0) → <tspan fill="#1a6b3a" font-weight="600">Kurativer Ansatz</tspan> (Schritt 3 ↓)     ·     Stadium IV (M1) → <tspan fill="#b02020" font-weight="600">Palliativer Ansatz</tspan> (→)</text>
+
+<!-- ── BOX PAL: Stadium IV · Palliativ (dashed, right) ── -->
+<rect x="1078" y="180" width="125" height="240" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="1.5" stroke-dasharray="6 3"/>
+<text x="1088" y="199" class="tag" fill="#b02020">Stadium IV · Palliativ</text>
+<text x="1088" y="217" class="title" fill="#08222c">Systemtherapie</text>
+<line x1="1088" y1="225" x2="1191" y2="225" stroke="#f0c0c0" stroke-width="1"/>
+<text x="1088" y="241" font-size="10" fill="#333">HR+: Endokrine Th.</text>
+<text x="1088" y="255" font-size="10" fill="#333">+ CDK4/6-Inhibitor</text>
+<text x="1088" y="269" font-size="10" fill="#777" font-style="italic">(Ribociclib, Palbo-,</text>
+<text x="1088" y="282" font-size="10" fill="#777" font-style="italic">Abemaciclib)</text>
+<text x="1088" y="296" font-size="10" fill="#333">HER2+: Anti-HER2</text>
+<text x="1088" y="310" font-size="10" fill="#333">TNBC: Chemo ±</text>
+<text x="1088" y="324" font-size="10" fill="#333">Immuncheckpoint-I.</text>
+<line x1="1088" y1="335" x2="1191" y2="335" stroke="#f0c0c0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="1088" y="349" font-size="10" fill="#333">Knochen:</text>
+<text x="1088" y="363" font-size="10" fill="#333">Bisphosphonate</text>
+<text x="1088" y="376" font-size="10" fill="#333">/ Denosumab</text>
+<line x1="1078" y1="390" x2="1203" y2="390" stroke="#b02020" stroke-width="1.5"/>
+<rect x="1078" y="390" width="125" height="30" fill="#fdeaea"/>
+<text x="1088" y="404" font-size="9.5" fill="#b02020" font-weight="600">→ Tumorboard!</text>
+<text x="1088" y="417" font-size="9" fill="#888" font-style="italic">Stets interdisziplinär</text>
+
+<!-- ── BOX 4: Neoadjuvante Indikation? ── -->
+<rect x="130" y="265" width="940" height="75" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<circle cx="1058" cy="263" r="12" fill="#08222c"/>
+<text x="1058" y="268" font-size="13" font-weight="700" text-anchor="middle" style="fill:#fff;">?</text>
+<text x="150" y="284" class="tag" fill="#555">Schritt 3 · Neoadjuvante Systemtherapie — vor OP</text>
+<text x="600" y="305" class="title" text-anchor="middle" fill="#08222c">Neoadjuvante Systemtherapie indiziert?</text>
+<text x="600" y="325" font-size="11" text-anchor="middle">
+  <tspan class="cave">Indikation:</tspan><tspan fill="#444"> Inflammatorisches MK · TNBC ab cT1b · HER2-positiv ab cT2 oder N+ → Ermöglicht Downstaging, BET-Rate ↑, Axilladissektions-Rate ↓</tspan>
+</text>
+
+<!-- ── BOX 4a: Direkt OP (keine Neoadjuvanz) ── -->
+<rect x="130" y="383" width="285" height="80" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="150" y="402" class="tag" fill="#1a6b3a">Primär operativ</text>
+<text x="150" y="421" class="title" fill="#08222c">Direkt OP</text>
+<line x1="150" y1="429" x2="403" y2="429" stroke="#cde8d5" stroke-width="1"/>
+<text x="150" y="444" font-size="10.5" fill="#1a4a2a">Luminale Tumoren ohne Neoadjuvanz-Indikation</text>
+<text x="150" y="458" font-size="10.5" fill="#1a4a2a">Günstiges Tumor-Brust-Verhältnis · niedriges Risiko</text>
+
+<!-- ── BOX 4b: Neoadjuvante Systemtherapie ── -->
+<rect x="785" y="383" width="285" height="135" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="805" y="402" class="tag" fill="#8a5500">⚠  Neoadjuvante Systemtherapie</text>
+<text x="805" y="421" class="title" fill="#08222c">Präoperative Systemtherapie</text>
+<line x1="805" y1="429" x2="1058" y2="429" stroke="#f0ddb0" stroke-width="1"/>
+<text x="805" y="441" class="caps">Standard-Schema (18–24 Wochen)</text>
+<text x="805" y="455" font-size="10.5" fill="#6a4000">Anthracyclin + Taxan</text>
+<text x="805" y="469" font-size="10.5" fill="#6a4000">HER2+: + Trastuzumab + Pertuzumab</text>
+<text x="805" y="483" font-size="10.5" fill="#6a4000">TNBC: ± Carboplatin · ± Immuncheckpoint-I. (KEYNOTE-522)</text>
+<line x1="805" y1="494" x2="1058" y2="494" stroke="#f0ddb0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="805" y="506" class="caps">Ziel</text>
+<text x="805" y="518" font-size="10" fill="#888" font-style="italic">Downstaging · BET-Rate ↑ · pCR = bester Prognosefaktor</text>
+
+<!-- ── BOX 5: Operative Therapie ── -->
+<rect x="130" y="555" width="940" height="115" rx="5" fill="#fff" stroke="#1a8a40" stroke-width="2"/>
+<text x="150" y="574" class="tag" fill="#1a6b3a">Schritt 4 · Operative Therapie · Ziel: R0-Resektion</text>
+<text x="150" y="593" class="title" fill="#08222c">BET (Standard) oder Mastektomie + Lymphknotenmanagement</text>
+<line x1="150" y1="602" x2="1058" y2="602" stroke="#cde8d5" stroke-width="1"/>
+<text x="150" y="617" font-size="11" fill="#333">
+  <tspan class="first">BET:</tspan><tspan> Günstiges Tumor-Brust-Verhältnis · DCIS · R0 möglich · </tspan><tspan class="cave">Cave: adjuvante Radiatio nach BET stets obligat!</tspan>
+</text>
+<text x="150" y="632" font-size="11" fill="#333">
+  <tspan class="ki">Mastektomie:</tspan><tspan> Ungünstiges TB-Verhältnis · multizentrisches MK · inflammatorisches MK · KI für Radiatio · Patientinnenwunsch</tspan>
+</text>
+<text x="150" y="647" font-size="11" fill="#333">
+  <tspan font-weight="600">Sentinel-LNE</tspan><tspan> (Standard, cN0): Wächterlymphknoten · Tc99m-Markierung voroperativ · deutlich geringere Morbidität als Axilladissektion</tspan>
+</text>
+<text x="150" y="662" font-size="11" fill="#333">
+  <tspan font-weight="600">Axilladissektion:</tspan><tspan> ≥3 pos. Sentinel-LK · cN+/pN+ bei primärer OP · geplante Mastektomie → mind. 10 Lymphknoten entnehmen</tspan>
+</text>
+
+<!-- ── BOX 6: Adjuvante Entscheidung ── -->
+<rect x="130" y="680" width="940" height="60" rx="5" fill="#eaf1f3" stroke="#08222c" stroke-width="2"/>
+<circle cx="1058" cy="678" r="12" fill="#08222c"/>
+<text x="1058" y="683" font-size="13" font-weight="700" text-anchor="middle" style="fill:#fff;">?</text>
+<text x="150" y="699" class="tag" fill="#555">Schritt 5 · Adjuvante Systemtherapie — nach molekularem Subtyp</text>
+<text x="600" y="719" class="title" text-anchor="middle" fill="#08222c">Welche adjuvante Systemtherapie?</text>
+<text x="600" y="733" font-size="10.5" text-anchor="middle" fill="#555">Entscheidungsbasis: Subtyp · Stadium · Grading · Ki67 · Alter · Menopausenstatus · Patientinnenpräferenz</text>
+
+<!-- ── BOX 6a: HR+ / HER2− — Antihormontherapie ── -->
+<rect x="10" y="782" width="375" height="195" rx="5" fill="#edf7f0" stroke="#1a8a40" stroke-width="2"/>
+<text x="30" y="801" class="tag" fill="#1a6b3a">HR-positiv / HER2-negativ (~75%)</text>
+<text x="30" y="820" class="title" fill="#08222c">Antihormontherapie</text>
+<line x1="30" y1="828" x2="373" y2="828" stroke="#cde8d5" stroke-width="1"/>
+<text x="30" y="841" class="caps">Prämenopause</text>
+<text x="30" y="855" font-size="10.5" fill="#1a4a2a">Tamoxifen ≥5 J. (ggf. bis 10 J.) ± GnRH-Analoga</text>
+<line x1="30" y1="865" x2="373" y2="865" stroke="#cde8d5" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="30" y="878" class="caps">Postmenopause</text>
+<text x="30" y="892" font-size="10.5" fill="#1a4a2a">Aromatasehemmer ≥5 J. (Anastrozol, Letrozol, Exemestan)</text>
+<line x1="30" y1="902" x2="373" y2="902" stroke="#cde8d5" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="30" y="916" class="caps">Ergänzende Optionen</text>
+<text x="30" y="930" font-size="10.5" fill="#1a4a2a">Luminal-B / hohes Risiko: + Chemotherapie (Anthracyclin + Taxan)</text>
+<text x="30" y="944" font-size="10.5" fill="#1a4a2a">Hohes Rezidivrisiko: Abemaciclib adjuvant (S3-LL 2024 / monarchE)</text>
+<!-- Cave subblock -->
+<rect x="10" y="955" width="375" height="22" fill="#fdeaea"/>
+<line x1="10" y1="955" x2="385" y2="955" stroke="#b02020" stroke-width="1.5"/>
+<text x="30" y="969" font-size="10" fill="#b02020" font-weight="600">Cave: Tamoxifen → ↑ Endometriumkarzinom-Risiko · ↑ Thromboembolie</text>
+
+<!-- ── BOX 6b: HER2+ — Anti-HER2-Therapie ── -->
+<rect x="418" y="782" width="364" height="195" rx="5" fill="#fff8ec" stroke="#cc8800" stroke-width="2"/>
+<text x="438" y="801" class="tag" fill="#8a5500">HER2-positiv (any HR, ~15–20%)</text>
+<text x="438" y="820" class="title" fill="#08222c">Anti-HER2 + Chemotherapie</text>
+<line x1="438" y1="828" x2="770" y2="828" stroke="#f0ddb0" stroke-width="1"/>
+<text x="438" y="843" font-size="10.5" fill="#6a4000">Trastuzumab · 1 Jahr adjuvant</text>
+<text x="438" y="858" font-size="10.5" fill="#6a4000">Start: parallel zur Taxan-Phase der Chemotherapie</text>
+<text x="438" y="873" font-size="10.5" fill="#6a4000">pN+: duale Blockade → + Pertuzumab (APHINITY / S3-LL 2024)</text>
+<text x="438" y="888" font-size="10.5" fill="#6a4000">Schema: Anthracyclin + Taxan + Anti-HER2</text>
+<line x1="438" y1="900" x2="770" y2="900" stroke="#f0ddb0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="438" y="914" font-size="10.5" fill="#6a4000">Resttumor nach Neoadjuvanz: T-DM1 statt Trastuzumab</text>
+<text x="438" y="929" font-size="10.5" fill="#6a4000">HR-positiv und HER2+: zusätzlich Antihormontherapie!</text>
+<!-- Cave subblock -->
+<rect x="418" y="955" width="364" height="22" fill="#fdeaea"/>
+<line x1="418" y1="955" x2="782" y2="955" stroke="#b02020" stroke-width="1.5"/>
+<text x="438" y="969" font-size="10" fill="#b02020" font-weight="600">Cave: Kardiotoxizität Trastuzumab! → Echokardiografie-Kontrolle der LV-Funktion</text>
+
+<!-- ── BOX 6c: TNBC — Adjuvante Chemotherapie ── -->
+<rect x="815" y="782" width="380" height="195" rx="5" fill="#fff5f5" stroke="#b02020" stroke-width="2"/>
+<text x="835" y="801" class="tag" fill="#b02020">Triple-negativ (TNBC) · ~15%</text>
+<text x="835" y="820" class="title" fill="#08222c">Adjuvante Chemotherapie</text>
+<line x1="835" y1="828" x2="1183" y2="828" stroke="#f0c0c0" stroke-width="1"/>
+<text x="835" y="843" font-size="10.5" fill="#333">Standard: Anthracyclin + Taxan (18–24 Wochen)</text>
+<text x="835" y="858" font-size="10.5" fill="#333">z.B. Epirubicin/Cyclophosphamid + Docetaxel</text>
+<text x="835" y="873" font-size="10.5" fill="#333">Resttumor nach Neoadjuvanz: Capecitabin-Erhaltungstherapie</text>
+<text x="835" y="888" font-size="10.5" fill="#333">BRCA1/2-Mutation: PARP-Inhibitor (Olaparib)</text>
+<line x1="835" y1="901" x2="1183" y2="901" stroke="#f0c0c0" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="835" y="916" font-size="10.5" fill="#333">Kein Ansprechen auf endokrine Th. / Anti-HER2-Th.</text>
+<text x="835" y="931" font-size="10" fill="#777" font-style="italic">Prämenopause: Fertilitätserhaltung besprechen!</text>
+<!-- Cave subblock -->
+<rect x="815" y="955" width="380" height="22" fill="#fdeaea"/>
+<line x1="815" y1="955" x2="1195" y2="955" stroke="#b02020" stroke-width="1.5"/>
+<text x="835" y="969" font-size="10" fill="#b02020" font-weight="600">Cave: G3-Tumoren · Hohes Lokalrezidivrisiko bei TNBC — intensivierte Nachsorge!</text>
+
+<!-- ── BOX 7: Strahlentherapie ── -->
+<rect x="130" y="1015" width="940" height="95" rx="5" fill="#fff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="150" y="1034" class="tag" fill="#2a4a7f">Schritt 6 · Strahlentherapie · lokoregionäre Kontrolle</text>
+<text x="150" y="1053" class="title" fill="#08222c">Radiatio nach operativer Therapie</text>
+<line x1="150" y1="1062" x2="1058" y2="1062" stroke="#b8c8f0" stroke-width="1"/>
+<text x="150" y="1077" font-size="11" fill="#333">
+  <tspan class="cave">Nach BET: Obligat bei allen invasiven MK!</tspan><tspan> Bisher keine Patientinnengruppe ohne Bestrahlungsindikation · Ausnahmen nur nach individueller Beratung</tspan>
+</text>
+<text x="150" y="1093" font-size="11" fill="#333">
+  <tspan font-weight="600">Nach Mastektomie (PMRT):</tspan><tspan> Bei lokal fortgeschrittenem / nodal positivem MK → Lokalrezidivrisiko ↓, Gesamtüberleben ↑</tspan>
+</text>
+<text x="150" y="1105" font-size="10.5" fill="#555" font-style="italic">DCIS nach BET: Radiatio allen Patientinnen anbieten · Cave NW: Strahlenpneumonitis · kardiovask. Komplikationen (linksseitig!) · Zweitneoplasien</text>
+
+<!-- ── BOX 8: Nachsorge ── -->
+<rect x="130" y="1120" width="940" height="70" rx="5" fill="#fff" stroke="#2a4a7f" stroke-width="2"/>
+<text x="150" y="1139" class="tag" fill="#2a4a7f">Schritt 7 · Nachsorge + Jährliche Systemtherapie-Neubewertung</text>
+<text x="150" y="1158" class="title" fill="#08222c">Langzeit-Nachsorgeprogramm</text>
+<text x="150" y="1175" font-size="11" fill="#333">Klinische Untersuchung + Mammografie/Sonografie · <tspan font-weight="600">Jährliche Neubewertung</tspan> Antihormontherapie-Dauer (Rezidivrisiko vs. NW) · Lymphödem-Prophylaxe nach Axilladissektion</text>
+<text x="150" y="1190" font-size="10.5" fill="#555">Labor nach Systemtherapie: Knochendichte (Aromatasehemmer → Osteoporose) · Kardiale Echokardiografie (Anthracycline, Trastuzumab) · Endometrium-Screening (Tamoxifen)</text>
+
+</svg>
+</div>
+
+<!-- ============================================================
+     NOTES SECTION
+     ============================================================ -->
+<div class="notes">
+  <div class="notes-title">Ergänzende Hinweise</div>
+  <div class="notes-subtitle">Aus dem Originaltext · nicht direkt im Algorithmus abgebildet · Selbst erstellt auf Basis von AMBOSS — Fehler möglich</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Neoadjuvante Chemotherapie</div>
+      <div class="note-card-title">Schemata &amp; Besonderheiten</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Standard: <strong>Anthracyclin + Taxan</strong> sequenziell oder simultan · 18–24 Wochen</li>
+          <li>Konkrete Schemata: Epirubicin/Cyclophosphamid → Paclitaxel oder Docetaxel · FAC/FEC nicht mehr 1. Wahl</li>
+          <li>HER2+: Duale Blockade Trastuzumab + Pertuzumab ab T2/N+ (hohes Rezidivrisiko)</li>
+          <li>pCR (pathologische Komplettremission nach NAC) = bester Einzelprognosefaktor — insb. bei TNBC und HER2+</li>
+          <li>Resttumor TNBC nach NAC: <strong>Capecitabin-Erhaltung</strong> empfohlen</li>
+          <li>Resttumor HER2+ nach NAC: <strong>T-DM1</strong> (Trastuzumab-Emtansin) statt Trastuzumab</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Antihormontherapie</div>
+      <div class="note-card-title">Dauer, NW &amp; besondere Situationen</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Tamoxifen wirkt <strong>agonistisch</strong> am Endometrium → ↑ Endometriumkarzinom-Risiko · ↑ Thromboembolie-Risiko</li>
+          <li>Aromatasehemmer: Inhibition peripherer Androgenumwandlung · <span class="cave">Cave: Osteoporose</span> → Knochendichte-Monitoring + ggf. Bisphosphonat</li>
+          <li>Dauer Standardtherapie: <strong>mind. 5 Jahre</strong> · bei hohem Rezidivrisiko Verlängerung auf <strong>10 Jahre</strong> (erweiterte adjuvante Antihormontherapie)</li>
+          <li>Verlängerte Antihormontherapie: Jährliche Nutzen-Risiko-Abwägung (Rezidivrisiko vs. NW-Last) · <strong>Abemaciclib adjuvant</strong> bei HR+/HER2−-Hochrisikopatientinnen per S3-LL 2024 (monarchE); Ribociclib / Palbociclib: Indikation laut AMBOSS-Quelle primär palliativ / metastasiert</li>
+          <li>Unklarer Menopausenstatus: Östrogen + FSH bestimmen!</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Anti-HER2-Therapie</div>
+      <div class="note-card-title">Trastuzumab: Monitoring &amp; NW</div>
+      <div class="note-card-body">
+        <ul>
+          <li><span class="cave">Kardiotoxizität</span> als bedeutendste NW: Asymptomatische LVEF-Reduktion oder symptomatische Herzinsuffizienz</li>
+          <li><strong>Echokardiografie-Kontrolle:</strong> Vor Therapiebeginn · regelmäßig unter Trastuzumab (Intervall je nach Protokoll, i.d.R. alle 3 Monate)</li>
+          <li>Therapiepause erwägen bei signifikantem LVEF-Abfall (≥10 Prozentpunkte unter Ausgangswert und/oder LVEF &lt;50%) — exakter Schwellenwert leitlinienabhängig</li>
+          <li>Keine simultane Gabe mit Anthracyclinen (additives Kardiotoxizitätsrisiko) → sequenzielles Schema</li>
+          <li>Sonstige NW: Infektanfälligkeit · grippeähnliche Symptome · Anämie · Verdauungsbeschwerden</li>
+          <li><strong>Pertuzumab</strong> (duale Blockade) bei pN+ oder hohem Rezidivrisiko · kombiniert mit Trastuzumab + Taxan</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">TNBC &amp; BRCA</div>
+      <div class="note-card-title">Hereditäres MK &amp; PARP-Inhibitoren</div>
+      <div class="note-card-body">
+        <ul>
+          <li>BRCA1/2-Testung indiziert bei: triple-negativem MK ≤59 J. · ≥3 Frauen mit MK in einer Linie · 1 Frau ≤35 J. · 1 Mann mit MK</li>
+          <li><strong>PARP-Inhibitor Olaparib:</strong> Bei BRCA1/2-Mutation nach Erfüllung der Zulassungskriterien (Resttumor nach NAC od. adj. Hochrisiko)</li>
+          <li>TNBC: ~15% aller MK · Hohe Rezidivneigung in ersten 3 Jahren · danach Rezidivrisiko sinkt</li>
+          <li>BRCA-Mutation und Schwangerschaft: Prophylaktische Maßnahmen besprechen (präventive Mastektomie als Einzelfallentscheidung)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Strahlentherapie</div>
+      <div class="note-card-title">Indikationen &amp; Komplikationen</div>
+      <div class="note-card-body">
+        <ul>
+          <li><span class="cave">Nach BET obligat</span> — bisher keine Patientinnengruppe identifiziert, bei der sicher auf Bestrahlung verzichtet werden kann</li>
+          <li>PMRT nach Mastektomie: Lokal fortgeschrittenes MK (T3/T4) · N+ · Reduktion des Lokalrezidivrisikos + Überlebensvorteil</li>
+          <li>Tumorbett-Boost: Zusatzbestrahlung nach BET bei erhöhtem Lokalrezidivrisiko (jung, G3, R1)</li>
+          <li>NW: Strahlenpneumonitis · <span class="cave">kardiovask. Komplikationen bei linksseitigen Tumoren!</span> · Lymphödem · Zweitneoplasien</li>
+          <li>DCIS: Radiatio allen Patientinnen nach BET anbieten · Reduktion von Lokalrezidiven (auch invasiven)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">Operative Therapie</div>
+      <div class="note-card-title">BET vs. Mastektomie · LK-Management</div>
+      <div class="note-card-body">
+        <ul>
+          <li>BET und Mastektomie: <strong>Gleichwertiges Gesamtüberleben</strong> bei korrekter Indikationsstellung</li>
+          <li>Intraoperativ: Fadenmarkierung der Resektionsränder · Clip-Markierung des Tumorbetts für gezielte Tumorbettbestrahlung</li>
+          <li>Sentinel-LNE: Nuklearmed. Tc99m am Vortag → Lymphabflussszintigrafie → Befundmarkierung auf Haut</li>
+          <li>Axilladissektion: Mind. 10 LK Level I + II entnehmen · Komplikationen: Lymphödem, Nervenläsionen (N. intercostobrachialis)</li>
+          <li>Rekonstruktion nach Mastektomie: Implantat oder autologe Lappenplastik · Kapselfibrose als häufigste Implantat-Komplikation</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>S3-Leitlinie: Früherkennung, Diagnostik, Therapie und Nachsorge des Mammakarzinoms (2024) · AGO Mamma · AWMF · Selbst erstellt auf Basis von AMBOSS — Fehler möglich</span>
+  <span>Mammakarzinom · Therapiealgorithmus</span>
+</footer>
+
+</body>
+</html>

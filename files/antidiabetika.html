@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orale Antidiabetika & GLP-1-RA — Übersicht</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #eef5f8;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-weight: 400;
+    padding: 24px 20px 30px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #08222c;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header h1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #08222c;
+    letter-spacing: -0.4px;
+  }
+  header p {
+    color: #45697a;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .wrap { display: flex; justify-content: center; overflow-x: auto; }
+
+  /* ── SVG site-of-action strip ── */
+  .site-wrap {
+    max-width: 1100px;
+    margin: 0 auto 22px;
+  }
+  .site-wrap svg { display: block; margin: 0 auto; }
+
+  /* ── Drug card grid ── */
+  .drug-grid {
+    max-width: 1100px;
+    margin: 0 auto 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .drug-card {
+    background: #fff;
+    border: 1px solid #cddbe0;
+    border-radius: 4px;
+    padding: 14px 16px 12px 22px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .drug-card .bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 6px; border-radius: 4px 0 0 4px;
+  }
+  .bar.green { background: #1a8a40; }
+  .bar.amber { background: #cc8800; }
+  .bar.red   { background: #b02020; }
+  .bar.blue  { background: #2a4a7f; }
+
+  .card-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #5e7e8a;
+    margin-bottom: 2px;
+  }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #08222c;
+    letter-spacing: -0.2px;
+    margin-bottom: 3px;
+  }
+  .card-substances {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: #444;
+    font-style: italic;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e1ebee;
+  }
+
+  .dsec { margin-bottom: 8px; }
+  .dsec-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: #5e7e8a;
+    margin-bottom: 3px;
+  }
+  .dsec-body {
+    font-size: 10.5px;
+    color: #13323d;
+    line-height: 1.55;
+  }
+  .dsec-body ul { list-style: none; }
+  .dsec-body ul li {
+    padding-left: 11px; position: relative; margin-bottom: 2px;
+  }
+  .dsec-body ul li::before {
+    content: '–'; position: absolute; left: 0; color: #aaa;
+  }
+
+  .kp-pearl {
+    margin-top: auto;
+    padding: 8px 10px;
+    background: #fff9e6;
+    border-left: 3px solid #cc8800;
+    border-radius: 2px;
+  }
+  .kp-pearl-label {
+    font-size: 8.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: #8a5500;
+    margin-bottom: 3px;
+  }
+  .kp-pearl-body {
+    font-size: 10.5px;
+    color: #13323d;
+    line-height: 1.55;
+  }
+  .kp-pearl-body ul { list-style: none; }
+  .kp-pearl-body ul li {
+    padding-left: 10px; position: relative; margin-bottom: 1px;
+  }
+  .kp-pearl-body ul li::before {
+    content: '▸'; position: absolute; left: 0; color: #cc8800; font-size: 9px;
+  }
+
+  .cave, .ki, .neg { color: #b02020; font-weight: 600; }
+  .first { color: #1a6b3a; font-weight: 600; }
+
+  /* ── Comparison table ── */
+  .comp-wrap {
+    max-width: 1100px;
+    margin: 24px auto 0;
+    border-top: 2px solid #08222c;
+    padding-top: 14px;
+  }
+  .comp-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #08222c;
+    margin-bottom: 2px;
+    letter-spacing: -0.1px;
+  }
+  .comp-subtitle {
+    font-size: 9px;
+    font-weight: 500;
+    color: #45697a;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+  }
+  table.comp {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #cddbe0;
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 10.5px;
+  }
+  table.comp th, table.comp td {
+    padding: 7px 9px;
+    text-align: left;
+    border-bottom: 1px solid #e1ebee;
+    border-right: 1px solid #e1ebee;
+  }
+  table.comp th {
+    background: #eaf1f3;
+    font-weight: 600;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #45697a;
+  }
+  table.comp td:first-child {
+    font-weight: 600;
+    color: #08222c;
+    background: #f2f7f8;
+  }
+  table.comp tr:last-child td { border-bottom: none; }
+  table.comp td:last-child, table.comp th:last-child { border-right: none; }
+  .sym-up { color: #b02020; font-weight: 700; }
+  .sym-down { color: #1a6b3a; font-weight: 700; }
+  .sym-neutral { color: #888; font-weight: 600; }
+  .sym-bene { color: #1a6b3a; font-weight: 700; }
+  .sym-warn { color: #b02020; font-weight: 700; }
+
+  /* ── Notes section ── */
+  .notes {
+    max-width: 1060px;
+    margin: 24px auto 0;
+    border-top: 2px solid #08222c;
+    padding-top: 14px;
+  }
+  .notes-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #08222c;
+    margin-bottom: 2px;
+    letter-spacing: -0.1px;
+  }
+  .notes-subtitle {
+    font-size: 9px;
+    font-weight: 500;
+    color: #45697a;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+  }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .note-card {
+    background: #fff;
+    border: 1px solid #cddbe0;
+    border-radius: 3px;
+    padding: 7px 10px 7px 14px;
+    position: relative;
+  }
+  .note-card .bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; border-radius: 3px 0 0 3px;
+  }
+  .note-card .bar.muted { background: #45697a; }
+  .note-card-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #5e7e8a;
+    margin-bottom: 1px;
+  }
+  .note-card-title {
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #08222c;
+    margin-bottom: 4px;
+    letter-spacing: -0.1px;
+  }
+  .note-card-body {
+    font-size: 10.5px;
+    font-weight: 400;
+    color: #13323d;
+    line-height: 1.6;
+  }
+  .note-card-body ul { list-style: none; }
+  .note-card-body ul li {
+    padding-left: 12px; position: relative; margin-bottom: 1px;
+  }
+  .note-card-body ul li::before {
+    content: '–'; position: absolute; left: 0; color: #aaa;
+  }
+
+  footer {
+    max-width: 1100px;
+    margin: 14px auto 0;
+    padding-top: 12px;
+    border-top: 1px solid #cddbe0;
+    color: #5e7e8a;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Orale Antidiabetika & GLP-1-RA — Übersicht</h1>
+  <p>Typ-2-Diabetes mellitus · ohne Insulin · NVL T2DM 2023</p>
+</header>
+
+<!-- ============================================================
+     SITE-OF-ACTION STRIP
+     ============================================================ -->
+<div class="site-wrap">
+<svg width="1060" height="240" viewBox="0 0 1060 240" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <style>
+    text {
+      font-family: 'Roboto Flex', system-ui, sans-serif;
+      font-size: 11.5px;
+      font-weight: 400;
+      fill: #08222c;
+    }
+    .tag {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+    .lbl {
+      font-size: 10.5px;
+      font-weight: 500;
+      fill: #5e7e8a;
+    }
+    .title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .organ {
+      font-size: 11px;
+      font-weight: 600;
+      fill: #08222c;
+    }
+  </style>
+</defs>
+
+<!-- Title row -->
+<text x="0" y="16" class="tag" fill="#45697a">Wo greifen die Substanzen an?</text>
+<text x="0" y="36" class="title" fill="#08222c">Angriffspunkte im Überblick</text>
+
+<!-- 5 organ columns, each ~200px wide, spacing ~10px -->
+<!-- Pancreas -->
+<rect x="0" y="56" width="200" height="172" rx="4" fill="#fff" stroke="#2a4a7f" stroke-width="1.5"/>
+<rect x="0" y="56" width="200" height="28" fill="#2a4a7f"/>
+<text x="100" y="75" class="organ" fill="#fff" text-anchor="middle">β-Zelle Pankreas</text>
+<text x="12" y="102" class="lbl" fill="#2a4a7f">Insulinfreisetzung ↑</text>
+<text x="12" y="124" font-size="10.5" fill="#08222c">• Sulfonylharnstoffe</text>
+<text x="12" y="140" font-size="10.5" fill="#08222c">• Glinide</text>
+<text x="12" y="156" font-size="10.5" fill="#08222c">• DPP-4-Hemmer*</text>
+<text x="12" y="172" font-size="10.5" fill="#08222c">• GLP-1-RA*</text>
+<text x="12" y="200" font-size="9" fill="#888" font-style="italic">*glukoseabhängig —</text>
+<text x="12" y="213" font-size="9" fill="#888" font-style="italic">keine Hypo als Mono</text>
+
+<!-- Liver -->
+<rect x="215" y="56" width="200" height="172" rx="4" fill="#fff" stroke="#1a8a40" stroke-width="1.5"/>
+<rect x="215" y="56" width="200" height="28" fill="#1a8a40"/>
+<text x="315" y="75" class="organ" fill="#fff" text-anchor="middle">Leber</text>
+<text x="227" y="102" class="lbl" fill="#1a6b3a">Glukoneogenese ↓</text>
+<text x="227" y="124" font-size="10.5" fill="#08222c">• Metformin</text>
+<text x="227" y="156" font-size="9" fill="#888" font-style="italic">Hepatische Hemmung</text>
+<text x="227" y="169" font-size="9" fill="#888" font-style="italic">der Glukoseproduktion</text>
+<text x="227" y="182" font-size="9" fill="#888" font-style="italic">via AMPK-Aktivierung —</text>
+<text x="227" y="195" font-size="9" fill="#888" font-style="italic">Haupteffekt</text>
+
+<!-- Intestine -->
+<rect x="430" y="56" width="200" height="172" rx="4" fill="#fff" stroke="#cc8800" stroke-width="1.5"/>
+<rect x="430" y="56" width="200" height="28" fill="#cc8800"/>
+<text x="530" y="75" class="organ" fill="#fff" text-anchor="middle">Dünndarm</text>
+<text x="442" y="102" class="lbl" fill="#8a5500">Glc-Resorption ↓</text>
+<text x="442" y="124" font-size="10.5" fill="#08222c">• α-Glukosidase-H.</text>
+<text x="442" y="140" font-size="10.5" fill="#08222c">• Metformin (Nebeneff.)</text>
+<text x="442" y="156" font-size="10.5" fill="#08222c">• GLP-1-RA (↓ Motilität)</text>
+<text x="442" y="184" font-size="9" fill="#888" font-style="italic">Inkretin-Effekt:</text>
+<text x="442" y="197" font-size="9" fill="#888" font-style="italic">enterale Glc löst</text>
+<text x="442" y="210" font-size="9" fill="#888" font-style="italic">stärkere Insulinantwort</text>
+
+<!-- Kidney -->
+<rect x="645" y="56" width="200" height="172" rx="4" fill="#fff" stroke="#1a8a40" stroke-width="1.5"/>
+<rect x="645" y="56" width="200" height="28" fill="#1a8a40"/>
+<text x="745" y="75" class="organ" fill="#fff" text-anchor="middle">Niere · prox. Tubulus</text>
+<text x="657" y="102" class="lbl" fill="#1a6b3a">Glukosurie ↑</text>
+<text x="657" y="124" font-size="10.5" fill="#08222c">• SGLT-2-Hemmer</text>
+<text x="657" y="156" font-size="9" fill="#888" font-style="italic">Insulin-unabhängig.</text>
+<text x="657" y="169" font-size="9" fill="#888" font-style="italic">Zusätzlich: Natriurese</text>
+<text x="657" y="182" font-size="9" fill="#888" font-style="italic">→ BP ↓ · kardio-</text>
+<text x="657" y="195" font-size="9" fill="#888" font-style="italic">renaler Benefit</text>
+
+<!-- Muscle/Fat -->
+<rect x="860" y="56" width="200" height="172" rx="4" fill="#fff" stroke="#45697a" stroke-width="1.5"/>
+<rect x="860" y="56" width="200" height="28" fill="#45697a"/>
+<text x="960" y="75" class="organ" fill="#fff" text-anchor="middle">Muskel / Fett</text>
+<text x="872" y="102" class="lbl" fill="#45697a">Insulinsensitivität ↑</text>
+<text x="872" y="124" font-size="10.5" fill="#08222c">• Metformin</text>
+<text x="872" y="140" font-size="10.5" fill="#08222c">• Glitazone (PPAR-γ)</text>
+<text x="872" y="168" font-size="9" fill="#888" font-style="italic">Periphere Sensibili-</text>
+<text x="872" y="181" font-size="9" fill="#888" font-style="italic">sierung für Insulin —</text>
+<text x="872" y="194" font-size="9" fill="#888" font-style="italic">v.a. bei Insulin-</text>
+<text x="872" y="207" font-size="9" fill="#888" font-style="italic">resistenz relevant</text>
+
+</svg>
+</div>
+
+<!-- ============================================================
+     DRUG CLASS CARDS — 8 klasses in 2×4 grid
+     ============================================================ -->
+<div class="drug-grid">
+
+  <!-- 1. METFORMIN -->
+  <div class="drug-card">
+    <div class="bar green"></div>
+    <div class="card-label">Klasse 1 · First Line</div>
+    <div class="card-title">Biguanide</div>
+    <div class="card-substances">Metformin</div>
+
+    <div class="dsec">
+      <div class="dsec-label">Wirkmechanismus</div>
+      <div class="dsec-body">
+        Hemmung der <strong>hepatischen Glukoneogenese</strong> (Haupteffekt) · Aktivierung der AMPK · verminderte intestinale Glukoseresorption · erhöhte periphere Insulinsensitivität · <strong>keine</strong> Steigerung der Insulinsekretion
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Indikation</div>
+      <div class="dsec-body">
+        <span class="first">Mittel der 1. Wahl</span> bei T2DM (NVL 2023) · Monotherapie oder Basis jeder Kombi · einschleichend dosieren (Start 500 mg abends → 2×850–1000 mg)
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Nebenwirkungen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>GI (~30 %): Übelkeit, Diarrhö, Metallgeschmack — oft initial, meist rückläufig</li>
+          <li>Vitamin-B12-Mangel (Langzeit)</li>
+          <li><span class="cave">Laktatazidose</span> (selten, potenziell letal)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Kontraindikationen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>GFR < 30 ml/min absolut · 30–45 ml/min: max. 1000 mg/d</li>
+          <li>Akute Hypoxie, Schock, respiratorische Insuff.</li>
+          <li>Schwere Leberinsuff., Alkoholabusus</li>
+          <li>48 h vor iodhaltigem KM pausieren (bei GFR ≤ 60)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kp-pearl">
+      <div class="kp-pearl-label">⭐ KP Pearl</div>
+      <div class="kp-pearl-body">
+        <ul>
+          <li><strong>First Line</strong> bei T2DM · kostengünstig · keine Hypoglykämie als Mono</li>
+          <li><strong>48 h pausieren</strong> vor KM-Gabe & größeren OPs (Laktatazidose-Prophylaxe)</li>
+          <li>Gewichtsneutral bis leicht senkend · kardiovaskulärer Benefit (UKPDS)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. SULFONYLHARNSTOFFE -->
+  <div class="drug-card">
+    <div class="bar amber"></div>
+    <div class="card-label">Klasse 2 · Insulinotrop</div>
+    <div class="card-title">Sulfonylharnstoffe</div>
+    <div class="card-substances">Glibenclamid · Glimepirid · Gliclazid · Gliquidon</div>
+
+    <div class="dsec">
+      <div class="dsec-label">Wirkmechanismus</div>
+      <div class="dsec-body">
+        Bindung an den <strong>SUR1-Rezeptor</strong> des ATP-abhängigen K⁺-Kanals an der β-Zelle → Kanalschluss → Depolarisation → Ca²⁺-Einstrom → <strong>Insulinfreisetzung</strong> (glukose-unabhängig!) · funktionierende β-Zellen nötig
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Indikation</div>
+      <div class="dsec-body">
+        T2DM bei Metformin-Unverträglichkeit / -KI · als Add-on · heute nachrangig gegenüber DOAK-ähnlich modernen Substanzen (SGLT-2-H., GLP-1-RA)
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Nebenwirkungen</div>
+      <div class="dsec-body">
+        <ul>
+          <li><span class="cave">Hypoglykämie</span> — höchstes Risiko unter OADs, v.a. Glibenclamid (lange HWZ)</li>
+          <li>Gewichtszunahme</li>
+          <li>Selten: Blutbildveränderungen, allergische Reaktionen</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Kontraindikationen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>T1DM, Schwangerschaft, Stillzeit</li>
+          <li>Schwere Nieren-/Leberinsuff. (<em>Ausnahme</em>: Gliquidon bei NI — hepatische Elimination)</li>
+          <li>Sulfonamid-Allergie</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kp-pearl">
+      <div class="kp-pearl-label">⭐ KP Pearl</div>
+      <div class="kp-pearl-body">
+        <ul>
+          <li><strong>Größtes Hypoglykämierisiko</strong> aller oralen Antidiabetika</li>
+          <li><strong>Gliquidon</strong> = einzige SU für Niereninsuffizienz (hepatische Ausscheidung)</li>
+          <li>Glibenclamid: besonders lange & schwere Hypos durch lange HWZ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. GLINIDE -->
+  <div class="drug-card">
+    <div class="bar amber"></div>
+    <div class="card-label">Klasse 3 · Insulinotrop (kurz)</div>
+    <div class="card-title">Glinide (Meglitinide)</div>
+    <div class="card-substances">Repaglinid · Nateglinid</div>
+
+    <div class="dsec">
+      <div class="dsec-label">Wirkmechanismus</div>
+      <div class="dsec-body">
+        Wie Sulfonylharnstoffe (K-ATP-Kanal-Schluss an β-Zelle), aber <strong>andere Bindungsstelle</strong> und <strong>kürzere Wirkdauer</strong> · präprandiale Einnahme → postprandiale Insulinspitze
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Indikation</div>
+      <div class="dsec-body">
+        Postprandiale Hyperglykämie bei T2DM · praktisch nur bei unregelmäßigem Essrhythmus · <span class="cave">in Deutschland seit 2016 nicht mehr zu Lasten der GKV verordnungsfähig</span> (außer Ausnahmefälle)
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Nebenwirkungen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>Hypoglykämie (geringer als SU, aber möglich)</li>
+          <li>Gewichtszunahme</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Kontraindikationen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>T1DM, Schwangerschaft</li>
+          <li>Schwere Leberinsuff.</li>
+          <li>Nateglinid: schwere Niereninsuff. (Repaglinid hingegen OK)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kp-pearl">
+      <div class="kp-pearl-label">⭐ KP Pearl</div>
+      <div class="kp-pearl-body">
+        <ul>
+          <li><strong>Repaglinid</strong>: hepatisch eliminiert → Niereninsuffizienz tolerabel</li>
+          <li>In D seit 2016 quasi nicht mehr erstattungsfähig — eher Examensrandthema</li>
+          <li>"Mahlzeiten-Insulin-Sekretagogum" — einnehmen kurz vor der Mahlzeit</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. α-GLUKOSIDASE-HEMMER -->
+  <div class="drug-card">
+    <div class="bar blue"></div>
+    <div class="card-label">Klasse 4 · Postprandial</div>
+    <div class="card-title">α-Glukosidase-Hemmer</div>
+    <div class="card-substances">Acarbose · Miglitol</div>
+
+    <div class="dsec">
+      <div class="dsec-label">Wirkmechanismus</div>
+      <div class="dsec-body">
+        Kompetitive Hemmung der <strong>α-Glukosidasen</strong> am Bürstensaum des Dünndarms → verzögerter Abbau von Oligo-/Disacchariden → gedämpfter postprandialer BZ-Anstieg
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Indikation</div>
+      <div class="dsec-body">
+        Postprandiale Hyperglykämie bei T2DM · selten als Monotherapie, meist Kombi · Einnahme zu Beginn der Mahlzeit
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Nebenwirkungen</div>
+      <div class="dsec-body">
+        <ul>
+          <li><strong>Blähungen, Flatulenz, Diarrhö</strong> (sehr häufig — großes Compliance-Problem)</li>
+          <li>Erhöhte Transaminasen (selten)</li>
+          <li>Keine Hypoglykämie als Monotherapie</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Kontraindikationen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>Chronisch-entzündliche Darmerkrankungen (CED)</li>
+          <li>Malabsorptionssyndrome, Ileus-Anamnese</li>
+          <li>Schwere Niereninsuffizienz</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kp-pearl">
+      <div class="kp-pearl-label">⭐ KP Pearl</div>
+      <div class="kp-pearl-body">
+        <ul>
+          <li><span class="cave">Bei Hypoglykämie unter Kombitherapie:</span> <strong>Traubenzucker (Glucose) geben</strong> — NICHT Haushaltszucker! Saccharose kann nicht mehr gespalten werden → unwirksam</li>
+          <li>Gewichtsneutral · keine Hypoglykämie als Mono</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. GLITAZONE -->
+  <div class="drug-card">
+    <div class="bar red"></div>
+    <div class="card-label">Klasse 5 · Insulin-Sensitizer</div>
+    <div class="card-title">Thiazolidindione (Glitazone)</div>
+    <div class="card-substances">Pioglitazon <em>(Rosiglitazon 2010 vom Markt)</em></div>
+
+    <div class="dsec">
+      <div class="dsec-label">Wirkmechanismus</div>
+      <div class="dsec-body">
+        <strong>PPAR-γ-Agonisten</strong> (nukleärer Rezeptor) → veränderte Genexpression → erhöhte Insulinsensitivität in Fettgewebe, Muskel, Leber · Umverteilung viszerales → subkutanes Fettgewebe
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Indikation</div>
+      <div class="dsec-body">
+        T2DM bei ausgeprägter Insulinresistenz · <span class="cave">in Deutschland seit 2011 nicht mehr zu Lasten der GKV verordnungsfähig</span> (Beschluss des G-BA wegen ungünstigem Nutzen-Risiko-Profil)
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Nebenwirkungen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>Gewichtszunahme, Ödeme</li>
+          <li><span class="cave">Herzinsuffizienz</span> (Dekompensation durch Volumenretention)</li>
+          <li>Frakturen (v.a. postmenopausale Frauen)</li>
+          <li><span class="cave">Blasenkarzinom-Risiko</span> (diskutiert)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Kontraindikationen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>Herzinsuffizienz (alle NYHA-Stadien)</li>
+          <li>Blasenkarzinom (aktuell oder in Anamnese)</li>
+          <li>Leberinsuffizienz · Schwangerschaft</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kp-pearl">
+      <div class="kp-pearl-label">⭐ KP Pearl</div>
+      <div class="kp-pearl-body">
+        <ul>
+          <li><strong>PPAR-γ</strong> = immer die Examensantwort nach dem MoA</li>
+          <li>In D <strong>nicht GKV-erstattungsfähig</strong> — fast nur noch akademisches Thema</li>
+          <li>Rosiglitazon wegen kardiovaskulärer Mortalität vom Markt (2010)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. DPP-4-HEMMER -->
+  <div class="drug-card">
+    <div class="bar blue"></div>
+    <div class="card-label">Klasse 6 · Inkretin-Verstärker</div>
+    <div class="card-title">DPP-4-Hemmer (Gliptine)</div>
+    <div class="card-substances">Sita- · Vilda- · Saxa- · Lina-gliptin</div>
+
+    <div class="dsec">
+      <div class="dsec-label">Wirkmechanismus</div>
+      <div class="dsec-body">
+        Hemmung der <strong>Dipeptidyl-Peptidase-4</strong> → verzögerter Abbau von endogenem <strong>GLP-1 und GIP</strong> → glukose<strong>abhängige</strong> Insulinfreisetzung ↑ · Glukagonsuppression ↑ · verzögerte Magenentleerung (schwach)
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Indikation</div>
+      <div class="dsec-body">
+        T2DM — v.a. Add-on zu Metformin bei älteren Pat. / Komorbidität · gut verträglich, oral · wenn GLP-1-RA nicht möglich (z.B. Injektion)
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Nebenwirkungen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>Insgesamt gering: Kopfschmerzen, Nasopharyngitis</li>
+          <li>Pankreatitis (selten)</li>
+          <li>Gelenkschmerzen (selten)</li>
+          <li>Keine Hypoglykämie als Monotherapie</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Kontraindikationen</div>
+      <div class="dsec-body">
+        <ul>
+          <li>Schwangerschaft, Stillzeit</li>
+          <li>Vorsicht bei Pankreatitis in der Anamnese</li>
+          <li>Dosisanpassung bei NI (<em>Ausnahme</em>: Linagliptin — biliäre Elimination)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kp-pearl">
+      <div class="kp-pearl-label">⭐ KP Pearl</div>
+      <div class="kp-pearl-body">
+        <ul>
+          <li><strong>Gewichtsneutral</strong> · <strong>keine Hypoglykämie</strong> als Mono (glukoseabhängig)</li>
+          <li><strong>Linagliptin</strong> = keine Dosisanpassung bei Niereninsuffizienz</li>
+          <li>Kein kardiovaskulärer Benefit (im Unterschied zu GLP-1-RA / SGLT-2-H.)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. GLP-1-RA -->
+  <div class="drug-card">
+    <div class="bar green"></div>
+    <div class="card-label">Klasse 7 · Inkretinmimetikum</div>
+    <div class="card-title">GLP-1-Rezeptor-Agonisten</div>
+    <div class="card-substances">Exenatid · Liraglutid · Dulaglutid · Semaglutid</div>
+
+    <div class="dsec">
+      <div class="dsec-label">Wirkmechanismus</div>
+      <div class="dsec-body">
+        Agonist am <strong>GLP-1-Rezeptor</strong> (DPP-4-resistent) → glukose<strong>abhängige</strong> Insulinfreisetzung · Glukagonsuppression · <strong>verzögerte Magenentleerung</strong> · zentrale Appetit-/Sättigungsregulation → Gewichtsreduktion
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Indikation</div>
+      <div class="dsec-body">
+        T2DM — <span class="first">bevorzugt bei Adipositas und/oder manifester ASCVD</span> · Applikation meist s.c. (tägl. / wöchentl.) · orales Semaglutid (Rybelsus) verfügbar · Liraglutid & Semaglutid auch für Adipositas zugelassen
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Nebenwirkungen</div>
+      <div class="dsec-body">
+        <ul>
+          <li><strong>GI: Übelkeit, Erbrechen, Diarrhö</strong> — v.a. initial, oft rückläufig</li>
+          <li>Pankreatitis (selten)</li>
+          <li>Gallenwegserkrankungen</li>
+          <li>Keine Hypoglykämie als Monotherapie</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Kontraindikationen</div>
+      <div class="dsec-body">
+        <ul>
+          <li><span class="cave">MEN 2 / medulläres Schilddrüsen-Ca</span> (FA oder Eigen-A)</li>
+          <li>Schwere Gastroparese</li>
+          <li>Pankreatitis-Anamnese (rel. KI)</li>
+          <li>Schwangerschaft</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kp-pearl">
+      <div class="kp-pearl-label">⭐ KP Pearl</div>
+      <div class="kp-pearl-body">
+        <ul>
+          <li><strong>Kardiovaskulärer Benefit</strong> (LEADER · SUSTAIN-6 · REWIND — nicht im AMBOSS-Basistext detailliert)</li>
+          <li><strong>Gewichtsreduktion</strong> deutlich — Kombi bei T2DM + Adipositas ideal</li>
+          <li>C-Zell-Hyperplasie beobachtet in Rattenstudien → KI MEN 2</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. SGLT-2-HEMMER -->
+  <div class="drug-card">
+    <div class="bar green"></div>
+    <div class="card-label">Klasse 8 · Glukosurie-Induktor</div>
+    <div class="card-title">SGLT-2-Hemmer (Gliflozine)</div>
+    <div class="card-substances">Empa- · Dapa- · Cana- · Ertu-gliflozin</div>
+
+    <div class="dsec">
+      <div class="dsec-label">Wirkmechanismus</div>
+      <div class="dsec-body">
+        Hemmung des <strong>Natrium-Glukose-Kotransporters 2</strong> im proximalen Tubulus → verminderte Glukose-Reabsorption → <strong>Glukosurie</strong> · zusätzlich Natriurese → BP-Senkung, Volumenreduktion · <strong>insulinunabhängig</strong>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Indikation</div>
+      <div class="dsec-body">
+        T2DM · <span class="first">Herzinsuffizienz (HFrEF & HFpEF — auch ohne Diabetes!)</span> · <span class="first">chronische Niereninsuffizienz</span> (auch ohne Diabetes) · kardiovaskuläre Vorerkrankung
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Nebenwirkungen</div>
+      <div class="dsec-body">
+        <ul>
+          <li><strong>Genitale Mykosen</strong> (Vulvovaginitis / Balanitis) — häufig</li>
+          <li>Harnwegsinfekte · Volumenmangel, Hypotonie</li>
+          <li><span class="cave">Euglykäme Ketoazidose</span> — seltene, aber kritische NW</li>
+          <li>Fournier-Gangrän (sehr selten) · initial reversibler GFR-Abfall</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dsec">
+      <div class="dsec-label">Kontraindikationen</div>
+      <div class="dsec-body">
+        <ul>
+          <li><span class="cave">T1DM</span> (Ketoazidose!)</li>
+          <li>Schwere Niereninsuff. (Start-GFR präparatabhängig, meist < 20–25 ml/min)</li>
+          <li>Z.n. diabetischer Ketoazidose</li>
+          <li>Schwangerschaft</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kp-pearl">
+      <div class="kp-pearl-label">⭐ KP Pearl</div>
+      <div class="kp-pearl-body">
+        <ul>
+          <li><strong>Kardio- & renoprotektiv</strong> — Studien: EMPA-REG, DAPA-HF, DAPA-CKD, EMPA-KIDNEY (<em>nicht im AMBOSS-Basistext detailliert</em>)</li>
+          <li><strong>Perioperativ 3–4 Tage vor OP pausieren</strong> (Ketoazidose-Prophylaxe)</li>
+          <li>Gewichtsreduktion · BP-Senkung · keine Hypoglykämie als Mono</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     COMPARISON TABLE
+     ============================================================ -->
+<div class="comp-wrap">
+  <div class="comp-title">Vergleich auf einen Blick</div>
+  <div class="comp-subtitle">Schnellreferenz für die Substanzwahl</div>
+  <table class="comp">
+    <thead>
+      <tr>
+        <th>Klasse</th>
+        <th>Hypoglykämie</th>
+        <th>Gewicht</th>
+        <th>Niereninsuff.</th>
+        <th>CV-Benefit</th>
+        <th>Applikation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Metformin</td>
+        <td><span class="sym-neutral">–</span> (nein)</td>
+        <td><span class="sym-down">↓</span> / neutral</td>
+        <td>GFR > 30 (reduzieren < 45)</td>
+        <td><span class="sym-bene">+</span> (UKPDS)</td>
+        <td>1–2×/d p.o.</td>
+      </tr>
+      <tr>
+        <td>Sulfonylharnstoffe</td>
+        <td><span class="sym-up">↑↑↑</span></td>
+        <td><span class="sym-up">↑</span></td>
+        <td>vorsichtig (außer <em>Gliquidon</em>)</td>
+        <td><span class="sym-neutral">–</span></td>
+        <td>1–3×/d p.o.</td>
+      </tr>
+      <tr>
+        <td>Glinide</td>
+        <td><span class="sym-up">↑↑</span></td>
+        <td><span class="sym-up">↑</span></td>
+        <td><em>Repaglinid</em> OK</td>
+        <td><span class="sym-neutral">–</span></td>
+        <td>präprandial p.o.</td>
+      </tr>
+      <tr>
+        <td>α-Glukosidase-H.</td>
+        <td><span class="sym-neutral">–</span> (nein)</td>
+        <td>neutral</td>
+        <td>KI bei schwerer NI</td>
+        <td><span class="sym-neutral">–</span></td>
+        <td>zu Mahlzeiten p.o.</td>
+      </tr>
+      <tr>
+        <td>Glitazone (Pioglitazon)</td>
+        <td><span class="sym-neutral">–</span> (nein)</td>
+        <td><span class="sym-up">↑↑</span></td>
+        <td>OK</td>
+        <td><span class="sym-warn">↑ HF-Risiko</span></td>
+        <td>1×/d p.o.</td>
+      </tr>
+      <tr>
+        <td>DPP-4-Hemmer</td>
+        <td><span class="sym-neutral">–</span> (nein)</td>
+        <td>neutral</td>
+        <td><em>Linagliptin</em> ohne Anpassung</td>
+        <td><span class="sym-neutral">–</span></td>
+        <td>1×/d p.o.</td>
+      </tr>
+      <tr>
+        <td>GLP-1-RA</td>
+        <td><span class="sym-neutral">–</span> (nein)</td>
+        <td><span class="sym-down">↓↓</span></td>
+        <td>variabel · oft tolerabel</td>
+        <td><span class="sym-bene">+ +</span></td>
+        <td>1×/d–1×/Woche s.c. (Sema p.o.)</td>
+      </tr>
+      <tr>
+        <td>SGLT-2-Hemmer</td>
+        <td><span class="sym-neutral">–</span> (nein)</td>
+        <td><span class="sym-down">↓</span></td>
+        <td>GFR > 20–25 je n. Präp.</td>
+        <td><span class="sym-bene">+ +</span> (+ renal)</td>
+        <td>1×/d p.o.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================
+     KP PEARLS NOTES SECTION
+     ============================================================ -->
+<div class="notes">
+  <div class="notes-title">Klinische Prüfungs-Pearls & Stolperfallen</div>
+  <div class="notes-subtitle">Häufige Examensfragen · Merksätze</div>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Stufentherapie · NVL 2023</div>
+      <div class="note-card-title">Eskalation bei T2DM</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Stufe 1:</strong> Lebensstil · Basisschulung</li>
+          <li><strong>Stufe 2:</strong> Metformin (<span class="first">1. Wahl</span>)</li>
+          <li><strong>Stufe 3:</strong> Bei hohem CV-/Nierenrisiko → Kombi Metformin <strong>+ SGLT-2-H.</strong> oder <strong>+ GLP-1-RA</strong> · sonst zweites OAD</li>
+          <li><strong>Stufe 4:</strong> Dreifachkombi oder Insulin-Therapie</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">α-Glukosidase-H. · Hypo</div>
+      <div class="note-card-title">Traubenzucker, nicht Saccharose!</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Unter Acarbose wird <strong>Saccharose nicht mehr gespalten</strong></li>
+          <li>→ Haushaltszucker (Rohr-/Rübenzucker) <span class="neg">unwirksam</span> bei Hypoglykämie</li>
+          <li>→ Immer <strong>reine Glucose (Traubenzucker)</strong> geben</li>
+          <li>Klassische Examens-Stolperfalle</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Metformin · perioperativ</div>
+      <div class="note-card-title">48-h-Regel</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>48 h vor iodhaltigem KM</strong> pausieren (bei GFR ≤ 60)</li>
+          <li>Wiederaufnahme erst nach Bestätigung stabiler Nierenfunktion</li>
+          <li>Vor größeren OPs ebenfalls 48 h pausieren</li>
+          <li>Grund: <span class="cave">Laktatazidose</span> bei akuter Nierenfunktionsverschlechterung</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">SGLT-2-H. · Ketoazidose</div>
+      <div class="note-card-title">Euglykäme diabet. Ketoazidose</div>
+      <div class="note-card-body">
+        <ul>
+          <li>BZ oft <strong>normal oder nur mäßig erhöht</strong> — täuscht!</li>
+          <li>Trotzdem: Azidose, Ketonkörper ↑</li>
+          <li>Risiko ↑ bei Infekt, Fasten, OP, Alkohol</li>
+          <li><strong>3–4 Tage vor elektiver OP pausieren</strong></li>
+          <li>KI: <span class="cave">T1DM</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar blue"></div>
+      <div class="note-card-label">Niereninsuffizienz</div>
+      <div class="note-card-title">Wer bleibt verfügbar?</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Linagliptin</strong> — biliäre Elimination</li>
+          <li><strong>Gliquidon</strong> — SU mit hepatischer Ausscheidung</li>
+          <li><strong>Repaglinid</strong> — hepatisch eliminiert</li>
+          <li>GLP-1-RA: variabel, oft tolerabel</li>
+          <li>SGLT-2-H.: bis GFR 20–25 ml/min (Präparat-abhängig)</li>
+          <li><span class="neg">Nicht</span>: Metformin (GFR < 30), Acarbose, andere SU</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar green"></div>
+      <div class="note-card-label">Substanzwahl · Komorbidität</div>
+      <div class="note-card-title">Wer kriegt was?</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>ASCVD / KHK:</strong> GLP-1-RA oder SGLT-2-H.</li>
+          <li><strong>Herzinsuffizienz:</strong> SGLT-2-H.</li>
+          <li><strong>CKD:</strong> SGLT-2-H. (ggf. GLP-1-RA)</li>
+          <li><strong>Adipositas:</strong> GLP-1-RA > SGLT-2-H.</li>
+          <li><strong>Älter/frail:</strong> DPP-4-H. (mild, gut verträglich)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar amber"></div>
+      <div class="note-card-label">Hypoglykämie-Ranking</div>
+      <div class="note-card-title">Risiko für Unterzucker</div>
+      <div class="note-card-body">
+        <ul>
+          <li><span class="cave">Hoch:</span> Sulfonylharnstoffe (v.a. Glibenclamid)</li>
+          <li><span class="cave">Moderat:</span> Glinide</li>
+          <li><span class="first">Kein</span> Hypo-Risiko als Mono: Metformin, DPP-4-H., GLP-1-RA, SGLT-2-H., α-Glukosidase-H., Glitazone</li>
+          <li>Aber: Hypoglykämie möglich in Kombi mit SU / Insulin</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar muted"></div>
+      <div class="note-card-label">Inkretin-Effekt</div>
+      <div class="note-card-title">Warum wirken DPP-4-H. & GLP-1-RA?</div>
+      <div class="note-card-body">
+        <ul>
+          <li>Orale Glukose löst <strong>stärkere</strong> Insulinantwort aus als intravenöse</li>
+          <li>Grund: enterale Hormone <strong>GLP-1</strong> und <strong>GIP</strong> (Inkretine)</li>
+          <li>Bei T2DM ist dieser Effekt vermindert</li>
+          <li>GLP-1-RA = Rezeptor-Agonist (direkt) · DPP-4-H. = Abbau-Hemmer (indirekt)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <div class="bar red"></div>
+      <div class="note-card-label">Nicht mehr GKV-fähig</div>
+      <div class="note-card-title">Welche Substanzen?</div>
+      <div class="note-card-body">
+        <ul>
+          <li><strong>Glitazone</strong> — seit 2011 (G-BA-Beschluss, ungünstiges Nutzen-Risiko)</li>
+          <li><strong>Glinide</strong> — seit 2016 eingeschränkt (nur Ausnahmefall)</li>
+          <li>→ Praktisch nur Metformin, SU, DPP-4-H., GLP-1-RA, SGLT-2-H., α-Glukosidase-H. im Alltag relevant</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>Basiert auf AMBOSS-Lernkarten · NVL Typ-2-Diabetes 2023 · DDG-Leitlinie</span>
+  <span>Orale Antidiabetika · Übersicht v1</span>
+</footer>
+
+</body>
+</html>

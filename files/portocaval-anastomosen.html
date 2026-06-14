@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portocaval Anastomoses</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Roboto Flex', -apple-system, sans-serif;
+  background: #061d28;
+  color: #e8e4d9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px;
+}
+h1 {
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #c0bdb0;
+  margin-bottom: 5px;
+}
+.subtitle {
+  font-size: 12px;
+  color: #55564a;
+  margin-bottom: 26px;
+  letter-spacing: 0.06em;
+}
+svg { max-width: 760px; width: 100%; }
+.site-btn { cursor: pointer; }
+.info-panel {
+  max-width: 620px;
+  width: 100%;
+  margin-top: 26px;
+  background: #0f3848;
+  border: 1px solid #1c4253;
+  border-radius: 10px;
+  padding: 22px 26px;
+  min-height: 90px;
+}
+.info-panel h2 {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.info-panel p { font-size: 14px; line-height: 1.78; color: #aba89a; }
+.route {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: #08222c;
+  border-left: 2px solid #d4983a;
+  padding: 9px 14px;
+  margin-top: 12px;
+  color: #d4983a;
+  border-radius: 0 5px 5px 0;
+  line-height: 1.9;
+}
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-right: 5px;
+  margin-bottom: 10px;
+}
+.danger { background:#2e1414; color:#d45252; border:1px solid #4a2020; }
+.note { background:#14202e; color:#52a0d4; border:1px solid #20304a; }
+</style>
+</head>
+<body>
+
+<h1>Portocaval Anastomoses</h1>
+<p class="subtitle">Click on a numbered site to explore the anatomy</p>
+
+<svg viewBox="0 0 760 600" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Body outline -->
+  <path d="M220,52 C182,106 168,185 170,298 Q170,368 178,428 Q188,484 215,528 Q250,568 330,575 Q410,568 445,528 Q472,484 482,428 Q490,368 490,298 C492,185 478,106 440,52"
+        fill="none" stroke="#2e3040" stroke-width="1.5"/>
+
+  <!-- Diaphragm -->
+  <path d="M170,198 Q330,228 490,198" fill="none" stroke="#3a3d50" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text font-family="Georgia,serif" font-size="11" fill="#444658" x="494" y="204">diaphragm</text>
+
+  <!-- Esophagus -->
+  <rect x="270" y="46" width="24" height="156" rx="7" fill="#181a24" stroke="#3a3d50" stroke-width="0.8"/>
+  <text font-family="Georgia,serif" font-size="11" fill="#5a5c70" x="264" y="92" text-anchor="end">Esophagus</text>
+
+  <!-- Liver -->
+  <ellipse cx="402" cy="244" rx="65" ry="40" fill="#181a24" stroke="#3a3d50" stroke-width="0.8"/>
+  <text font-family="Georgia,serif" font-size="12" fill="#7a7c8e" x="402" y="248" text-anchor="middle">Liver</text>
+
+  <!-- Spleen -->
+  <ellipse cx="190" cy="242" rx="24" ry="17" fill="#181a24" stroke="#3a3d50" stroke-width="0.7"/>
+  <text font-family="Georgia,serif" font-size="10" fill="#5a5c70" x="190" y="246" text-anchor="middle">Spleen</text>
+
+  <!-- Intestines -->
+  <rect x="205" y="304" width="248" height="128" rx="16" fill="#181a24" stroke="#3a3d50" stroke-width="0.6" opacity="0.8"/>
+  <text font-family="Georgia,serif" font-size="11" fill="#44465a" x="329" y="372" text-anchor="middle">Intestines</text>
+
+  <!-- Pelvis -->
+  <path d="M215,466 Q330,454 448,468 Q453,510 438,542 Q414,568 330,574 Q246,568 222,542 Q207,512 215,466Z"
+        fill="#181a24" stroke="#3a3d50" stroke-width="0.6" opacity="0.75"/>
+  <text font-family="Georgia,serif" font-size="11" fill="#44465a" x="330" y="520" text-anchor="middle">Pelvis / rectum</text>
+
+  <!-- PORTAL SYSTEM -->
+  <path d="M214,242 Q260,246 302,298" fill="none" stroke="#b84e28" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M322,430 Q312,370 304,302" fill="none" stroke="#b84e28" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M304,299 Q332,268 348,252" fill="none" stroke="#b84e28" stroke-width="4" stroke-linecap="round"/>
+  <path d="M298,294 Q282,260 278,228 Q275,206 278,202" fill="none" stroke="#b84e28" stroke-width="2" stroke-linecap="round"/>
+  <path d="M296,298 Q278,340 265,374 Q260,392 258,408" fill="none" stroke="#b84e28" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="5,4"/>
+  <path d="M304,430 Q302,458 300,484" fill="none" stroke="#b84e28" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- SYSTEMIC SYSTEM -->
+  <path d="M456,52 Q458,210 458,352 Q458,440 456,552" fill="none" stroke="#2870bc" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M432,52 Q430,118 430,202" fill="none" stroke="#2870bc" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M170,222 Q168,302 167,382 Q167,428 170,468" fill="none" stroke="#2870bc" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="6,4"/>
+  <path d="M456,484 Q418,482 336,482" fill="none" stroke="#2870bc" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- SITE 1: Esophageal -->
+  <g class="site-btn" id="s1" onclick="show(1)">
+    <path d="M280,202 Q355,190 430,202" fill="none" stroke="#d4983a" stroke-width="2.2" stroke-dasharray="7,4"/>
+    <circle id="s1bg" cx="280" cy="202" r="18" fill="#d4983a" opacity="0.22"/>
+    <circle cx="280" cy="202" r="18" fill="none" stroke="#d4983a" stroke-width="2.5"/>
+    <circle cx="280" cy="202" r="10" fill="#d4983a"/>
+    <text font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#1a0e00" x="280" y="207" text-anchor="middle">1</text>
+  </g>
+
+  <!-- SITE 2: Paraumbilical -->
+  <g class="site-btn" id="s2" onclick="show(2)">
+    <path d="M258,408 Q212,404 170,400" fill="none" stroke="#d4983a" stroke-width="2.2" stroke-dasharray="7,4"/>
+    <circle id="s2bg" cx="216" cy="405" r="18" fill="#d4983a" opacity="0.22"/>
+    <circle cx="216" cy="405" r="18" fill="none" stroke="#d4983a" stroke-width="2.5"/>
+    <circle cx="216" cy="405" r="10" fill="#d4983a"/>
+    <text font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#1a0e00" x="216" y="410" text-anchor="middle">2</text>
+  </g>
+
+  <!-- SITE 3: Anorectal -->
+  <g class="site-btn" id="s3" onclick="show(3)">
+    <path d="M302,482 Q320,482 336,482" fill="none" stroke="#d4983a" stroke-width="2.2" stroke-dasharray="7,4"/>
+    <circle id="s3bg" cx="318" cy="483" r="18" fill="#d4983a" opacity="0.22"/>
+    <circle cx="318" cy="483" r="18" fill="none" stroke="#d4983a" stroke-width="2.5"/>
+    <circle cx="318" cy="483" r="10" fill="#d4983a"/>
+    <text font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#1a0e00" x="318" y="488" text-anchor="middle">3</text>
+  </g>
+
+  <!-- Inline labels -->
+  <text font-family="Georgia,serif" font-size="11" fill="#b84e28" x="268" y="266" text-anchor="end">Left gastric v.</text>
+  <text font-family="Georgia,serif" font-size="11" fill="#b84e28" x="352" y="295">Portal v.</text>
+  <text font-family="Georgia,serif" font-size="11" fill="#2870bc" x="462" y="325">IVC</text>
+  <text font-family="Georgia,serif" font-size="11" fill="#2870bc" x="436" y="134">Azygos v.</text>
+
+  <!-- Right callout leaders -->
+  <line x1="298" y1="200" x2="495" y2="148" stroke="#333545" stroke-width="0.5" stroke-dasharray="4,3"/>
+  <text font-family="Georgia,serif" font-size="12" fill="#d4983a" x="498" y="142">1  Esophageal varices</text>
+  <text font-family="Georgia,serif" font-size="11" fill="#555870" x="498" y="157">Left gastric  to  azygos v.</text>
+
+  <line x1="234" y1="405" x2="495" y2="390" stroke="#333545" stroke-width="0.5" stroke-dasharray="4,3"/>
+  <text font-family="Georgia,serif" font-size="12" fill="#d4983a" x="498" y="384">2  Caput medusae</text>
+  <text font-family="Georgia,serif" font-size="11" fill="#555870" x="498" y="400">Paraumbilical  to  epigastric v.</text>
+
+  <line x1="336" y1="482" x2="495" y2="472" stroke="#333545" stroke-width="0.5" stroke-dasharray="4,3"/>
+  <text font-family="Georgia,serif" font-size="12" fill="#d4983a" x="498" y="466">3  Rectal varices</text>
+  <text font-family="Georgia,serif" font-size="11" fill="#555870" x="498" y="482">Superior  to  inf. rectal v.</text>
+
+  <!-- Legend -->
+  <rect x="495" y="508" width="225" height="82" rx="8" fill="#0f3848" stroke="#1c4253" stroke-width="1"/>
+  <line x1="508" y1="526" x2="534" y2="526" stroke="#b84e28" stroke-width="2.5"/>
+  <text font-family="Georgia,serif" font-size="11" fill="#b84e28" x="540" y="530">Portal system</text>
+  <line x1="508" y1="547" x2="534" y2="547" stroke="#2870bc" stroke-width="2.5"/>
+  <text font-family="Georgia,serif" font-size="11" fill="#2870bc" x="540" y="551">Systemic veins</text>
+  <line x1="508" y1="568" x2="534" y2="568" stroke="#d4983a" stroke-width="2" stroke-dasharray="6,3"/>
+  <circle cx="521" cy="568" r="5" fill="#d4983a" opacity="0.55"/>
+  <text font-family="Georgia,serif" font-size="11" fill="#d4983a" x="540" y="572">Anastomosis site</text>
+
+</svg>
+
+<div class="info-panel" id="panel">
+  <p style="color:#3a3d50; font-style:italic; font-size:13px;">Select a numbered anastomosis site above to see the anatomy and clinical significance.</p>
+</div>
+
+<script>
+const info = {
+  1: {
+    title: "Esophageal varices",
+    color: "#b84e28",
+    tags: [{t:"High bleeding risk",c:"danger"},{t:"Most clinically significant",c:"note"}],
+    body: "The left gastric vein (Vena gastrica sinistra) normally drains into the portal vein. It also sends branches upward into the lower esophageal wall, where they anastomose with esophageal veins that drain into the azygos. In portal hypertension, blood backs up and is pushed retrograde up the left gastric vein into the esophageal submucosal plexus. These veins have no muscular support and lie under a thin mucosa — they dilate into varices and rupture catastrophically. Mortality from a single bleeding episode can reach 20%.",
+    route: "Portal v.  →  left gastric v.  →  esophageal submucosal plexus  →  azygos v.  →  SVC"
+  },
+  2: {
+    title: "Caput medusae",
+    color: "#b84e28",
+    tags: [{t:"Classic sign",c:"note"},{t:"Low bleeding risk",c:"note"}],
+    body: "The paraumbilical veins run along the round ligament of the liver (Ligamentum teres hepatis — the obliterated remnant of the fetal umbilical vein) and connect the left branch of the portal vein to the superficial epigastric veins of the anterior abdominal wall. In portal hypertension these veins dilate visibly around the umbilicus, radiating outward like the snakes of Medusa. Unlike esophageal varices they rarely cause life-threatening bleeding, but their presence is a clear clinical sign of portal hypertension.",
+    route: "Left portal v.  →  paraumbilical v.  →  superficial epigastric v.  →  femoral / SVC"
+  },
+  3: {
+    title: "Rectal varices",
+    color: "#b84e28",
+    tags: [{t:"Not hemorrhoids",c:"note"},{t:"Lower bleeding risk",c:"note"}],
+    body: "The superior rectal vein drains into the inferior mesenteric vein (portal system). The middle and inferior rectal veins drain into the internal iliac (systemic). At the anorectal junction these two systems anastomose in the hemorrhoidal plexus. In portal hypertension this plexus dilates into rectal varices — distinct from primary hemorrhoids, which are not caused by portal hypertension. They bleed less severely than esophageal varices because the overlying mucosa is thicker and better supported.",
+    route: "Superior rectal v. (IMV / portal)  →  hemorrhoidal plexus  →  middle/inf. rectal v.  →  internal iliac  →  IVC"
+  }
+};
+
+function show(n) {
+  const d = info[n];
+  const tags = d.tags.map(t => `<span class="tag ${t.c}">${t.t}</span>`).join("");
+  document.getElementById("panel").innerHTML =
+    `<h2 style="color:${d.color}">${d.title}</h2>${tags}<p>${d.body}</p><div class="route">${d.route}</div>`;
+  [1,2,3].forEach(i => {
+    document.getElementById("s"+i+"bg").setAttribute("opacity", i===n ? "0.45" : "0.22");
+  });
+}
+</script>
+</body>
+</html>
