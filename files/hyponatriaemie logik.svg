@@ -1,6 +1,302 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" font-family="system-ui,-apple-system,sans-serif">
-<rect width="800" height="560" fill="#eef5f8"></rect>
-<rect x="24" y="24" width="752" height="512" fill="#ffffff" stroke="#8fc3d2" stroke-width="1.5" stroke-dasharray="9 9" rx="18"></rect>
-<text x="400" y="266" text-anchor="middle" font-size="27" fill="#0c2933">Hyponatriämie Untersuchungen</text>
-<text x="400" y="302" text-anchor="middle" font-size="15" fill="#5f8696">Platzhalter — files/hyponatriaemie logik.svg</text>
+<svg viewBox="0 0 1700 1360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="hypo-title hypo-desc" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="hypo-title">Urinuntersuchung bei Hyponatriämie – Diagnostischer Algorithmus mit Begründung jedes Schritts</title>
+  <desc id="hypo-desc">Annotiertes Flussdiagramm zur ätiologischen Zuordnung einer Hyponatriämie. Jeder Entscheidungsknoten trägt eine Logik-Erläuterung. Grundprinzip: Hyponatriämie bedeutet zu viel Wasser relativ zum Natrium; jeder Test klärt, warum die Niere das überschüssige freie Wasser nicht ausscheidet. Schritt 1 prüft über die Urinosmolalität, ob ADH aktiv ist. Bei aktivem ADH prüft Schritt 2 über das Urin-Natrium, ob ADH appropriat aktiviert ist, mit weiterer Differenzierung über den Volumenstatus.</desc>
+
+  <rect width="1700" height="1360" fill="#fafafa"/>
+
+  <!-- Header -->
+  <text x="850" y="50" text-anchor="middle" font-size="28" font-weight="700" fill="#0f172a">Urinuntersuchung bei Hyponatriämie</text>
+  <text x="850" y="80" text-anchor="middle" font-size="15" fill="#64748b">Die diagnostische Logik hinter jedem Schritt</text>
+
+  <!-- CORE PRINCIPLE -->
+  <rect x="350" y="103" width="1000" height="84" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="372" y="128" font-size="12" font-weight="700" fill="#0f766e" letter-spacing="1.5">GRUNDPRINZIP</text>
+  <text x="372" y="151" font-size="13.5" fill="#334155">Hyponatriämie = zu viel Wasser im Verhältnis zum Natrium. Gesunde Nieren können überschüssiges freies Wasser ausscheiden.</text>
+  <text x="372" y="174" font-size="13.5" font-weight="700" fill="#0f172a">Jeder Test fragt daher: Warum wird das überschüssige Wasser nicht ausgeschieden?</text>
+
+  <!-- STEP 1 node -->
+  <rect x="690" y="205" width="320" height="80" rx="14" fill="#ccfbf1" stroke="#0d9488" stroke-width="2.5"/>
+  <text x="850" y="234" text-anchor="middle" font-size="11" font-weight="700" fill="#0f766e" letter-spacing="2">SCHRITT 1</text>
+  <text x="850" y="266" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Urinosmolalität?</text>
+
+  <!-- STEP 1 logic annotation -->
+  <rect x="690" y="289" width="320" height="82" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="708" y="309" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">LOGIK</text>
+  <text x="708" y="329" font-size="12.5" font-weight="700" fill="#334155">Fragt: Ist ADH an oder aus?</text>
+  <text x="708" y="347" font-size="11.5" fill="#475569">Die Urinosmolalität ist das Ablesefenster der</text>
+  <text x="708" y="362" font-size="11.5" fill="#475569">ADH-Aktivität — hält die Niere Wasser zurück?</text>
+
+  <!-- Split 1 -->
+  <line x1="850" y1="371" x2="850" y2="385" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="230" y1="385" x2="1470" y2="385" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="230" y1="385" x2="230" y2="400" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="850" y1="385" x2="850" y2="400" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="1470" y1="385" x2="1470" y2="400" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Branch pills -->
+  <rect x="130" y="400" width="200" height="46" rx="23" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="230" y="429" text-anchor="middle" font-size="16" font-weight="700" fill="#1d4ed8">≤ 100 mosmol/kg</text>
+
+  <rect x="750" y="400" width="200" height="46" rx="23" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="850" y="429" text-anchor="middle" font-size="16" font-weight="700" fill="#1d4ed8">≥ 100 mosmol/kg</text>
+
+  <rect x="1370" y="400" width="200" height="46" rx="23" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="1470" y="429" text-anchor="middle" font-size="15" font-weight="700" fill="#1d4ed8">&gt; Plasmaosmolalität</text>
+
+  <line x1="230" y1="446" x2="230" y2="462" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="850" y1="446" x2="850" y2="462" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="1470" y1="446" x2="1470" y2="462" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- LEFT interpretation strip -->
+  <rect x="80" y="462" width="300" height="80" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="96" y="481" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">LOGIK</text>
+  <text x="96" y="500" font-size="11.5" fill="#475569">ADH ist korrekt AUS — die Niere scheidet</text>
+  <text x="96" y="515" font-size="11.5" fill="#475569">freies Wasser richtig aus. Das Problem</text>
+  <text x="96" y="530" font-size="11.5" font-weight="700" fill="#334155">liegt auf der Zufuhrseite.</text>
+
+  <!-- CENTER interpretation strip -->
+  <rect x="470" y="462" width="760" height="80" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="490" y="481" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">LOGIK</text>
+  <text x="490" y="503" font-size="12.5" fill="#475569">ADH ist AKTIV — die Niere hält Wasser zurück, obwohl ohnehin zu viel davon vorhanden ist.</text>
+  <text x="490" y="524" font-size="12.5" font-weight="700" fill="#334155">Aber warum ist ADH an? → Schritt 2 klärt das.</text>
+
+  <!-- RIGHT interpretation strip -->
+  <rect x="1320" y="462" width="300" height="80" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="1336" y="481" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">LOGIK</text>
+  <text x="1336" y="503" font-size="11.5" fill="#475569">Urin konzentrierter als das Plasma —</text>
+  <text x="1336" y="521" font-size="11.5" font-weight="700" fill="#334155">ADH ist stark aktiv.</text>
+
+  <line x1="230" y1="542" x2="230" y2="560" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="1470" y1="542" x2="1470" y2="560" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="850" y1="542" x2="850" y2="562" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- LEFT content box -->
+  <rect x="80" y="560" width="300" height="240" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="80" y="560" width="300" height="36" rx="14" fill="#f1f5f9"/>
+  <line x1="80" y1="596" x2="380" y2="596" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="230" y="583" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Problem bei der Wasserzufuhr</text>
+  <text x="96" y="618" font-size="11" font-style="italic" fill="#64748b">Wasser kommt schneller herein, als selbst</text>
+  <text x="96" y="632" font-size="11" font-style="italic" fill="#64748b">eine gesunde Niere es klären kann.</text>
+
+  <circle cx="100" cy="662" r="3" fill="#2563eb"/>
+  <text x="114" y="667" font-size="13" font-weight="700" fill="#1e293b">Primäre Polydipsie</text>
+
+  <circle cx="100" cy="692" r="3" fill="#2563eb"/>
+  <text x="114" y="697" font-size="13" fill="#1e293b">Aufnahme großer Mengen</text>
+  <text x="114" y="713" font-size="13" fill="#1e293b">elektrolytarmer Flüssigkeit</text>
+
+  <circle cx="100" cy="744" r="3" fill="#2563eb"/>
+  <text x="114" y="749" font-size="13" font-weight="700" fill="#1e293b">TUR-Syndrom</text>
+  <text x="114" y="765" font-size="11" font-style="italic" fill="#64748b">(Resorption von Spülflüssigkeit)</text>
+
+  <!-- RIGHT content box -->
+  <rect x="1320" y="560" width="300" height="195" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="1320" y="560" width="300" height="36" rx="14" fill="#fee2e2"/>
+  <line x1="1320" y1="596" x2="1620" y2="596" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="1470" y="583" text-anchor="middle" font-size="14" font-weight="700" fill="#991b1b">Schlüsseldiagnose</text>
+
+  <text x="1470" y="660" text-anchor="middle" font-size="30" font-weight="700" fill="#7f1d1d">SIADH</text>
+  <text x="1336" y="698" font-size="11.5" font-style="italic" fill="#991b1b">Urinosmolalität über der Plasma-</text>
+  <text x="1336" y="714" font-size="11.5" font-style="italic" fill="#991b1b">osmolalität ist ein besonders starker</text>
+  <text x="1336" y="730" font-size="11.5" font-style="italic" fill="#991b1b">Hinweis auf ein SIADH.</text>
+
+  <!-- STEP 2 node -->
+  <rect x="690" y="562" width="320" height="78" rx="14" fill="#ccfbf1" stroke="#0d9488" stroke-width="2.5"/>
+  <text x="850" y="590" text-anchor="middle" font-size="11" font-weight="700" fill="#0f766e" letter-spacing="2">SCHRITT 2</text>
+  <text x="850" y="622" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Urin-Natrium?</text>
+
+  <!-- STEP 2 logic annotation -->
+  <rect x="690" y="644" width="320" height="92" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="708" y="664" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">LOGIK</text>
+  <text x="708" y="683" font-size="12.5" font-weight="700" fill="#334155">Fragt: Ist ADH aus legitimem Grund an?</text>
+  <text x="708" y="701" font-size="11.5" fill="#475569">Das Urin-Natrium zeigt, ob die Niere ein</text>
+  <text x="708" y="716" font-size="11.5" fill="#475569">niedriges effektives arterielles Blutvolumen</text>
+  <text x="708" y="731" font-size="11.5" fill="#475569">wahrnimmt.</text>
+
+  <!-- Split 2 -->
+  <line x1="850" y1="736" x2="850" y2="750" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="660" y1="750" x2="1040" y2="750" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="660" y1="750" x2="660" y2="766" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="1040" y1="750" x2="1040" y2="766" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Sub-pills -->
+  <rect x="560" y="766" width="200" height="42" rx="21" fill="#f3e8ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="660" y="793" text-anchor="middle" font-size="16" font-weight="700" fill="#6b21a8">≤ 30 mmol/L</text>
+
+  <rect x="940" y="766" width="200" height="42" rx="21" fill="#f3e8ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="1040" y="793" text-anchor="middle" font-size="16" font-weight="700" fill="#6b21a8">&gt; 30 mmol/L</text>
+
+  <line x1="660" y1="808" x2="660" y2="824" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="1040" y1="808" x2="1040" y2="824" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- =30 logic strip -->
+  <rect x="495" y="824" width="330" height="92" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="511" y="844" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">LOGIK</text>
+  <text x="511" y="863" font-size="11.5" fill="#475569">Die Niere retiniert Natrium avide → sie nimmt</text>
+  <text x="511" y="878" font-size="11.5" fill="#475569">ein niedriges effektives arterielles Blutvolumen</text>
+  <text x="511" y="893" font-size="11.5" fill="#475569">wahr. ADH ist hier</text>
+  <text x="638" y="893" font-size="11.5" font-weight="700" fill="#334155">APPROPRIAT aktiviert</text>
+  <text x="511" y="908" font-size="11.5" font-style="italic" fill="#64748b">— Teil derselben Volumen-Verteidigung.</text>
+
+  <line x1="660" y1="916" x2="660" y2="932" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Volumenstatus mini node -->
+  <rect x="575" y="932" width="170" height="40" rx="12" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="660" y="957" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">Volumenstatus?</text>
+
+  <line x1="660" y1="972" x2="660" y2="988" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="575" y1="988" x2="765" y2="988" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="575" y1="988" x2="575" y2="1014" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="765" y1="988" x2="765" y2="1014" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Hypervolämie box -->
+  <rect x="490" y="1014" width="170" height="232" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="490" y="1014" width="170" height="34" rx="12" fill="#f1f5f9"/>
+  <line x1="490" y1="1048" x2="660" y2="1048" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="575" y="1036" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Hypervolämie</text>
+
+  <text x="503" y="1064" font-size="10" font-style="italic" fill="#64748b">Gesamtkörperwasser ↑,</text>
+  <text x="503" y="1076" font-size="10" font-style="italic" fill="#64748b">aber arterielle Zirku-</text>
+  <text x="503" y="1088" font-size="10" font-style="italic" fill="#64748b">lation unterfüllt → Niere</text>
+  <text x="503" y="1100" font-size="10" font-style="italic" fill="#64748b">„fühlt“ sich unterfüllt</text>
+
+  <circle cx="504" cy="1126" r="2.5" fill="#475569"/>
+  <text x="514" y="1131" font-size="12" fill="#1e293b">Herzinsuffizienz</text>
+
+  <circle cx="504" cy="1158" r="2.5" fill="#475569"/>
+  <text x="514" y="1163" font-size="12" fill="#1e293b">Leberzirrhose</text>
+
+  <circle cx="504" cy="1196" r="2.5" fill="#475569"/>
+  <text x="514" y="1201" font-size="12" fill="#1e293b">Nephrotisches</text>
+  <text x="514" y="1217" font-size="12" fill="#1e293b">Syndrom</text>
+
+  <!-- Hypovolämie box -->
+  <rect x="680" y="1014" width="170" height="126" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="680" y="1014" width="170" height="34" rx="12" fill="#f1f5f9"/>
+  <line x1="680" y1="1048" x2="850" y2="1048" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="765" y="1036" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Hypovolämie</text>
+
+  <text x="693" y="1068" font-size="10" font-style="italic" fill="#64748b">Echter Volumenverlust</text>
+
+  <circle cx="695" cy="1098" r="7" fill="#475569"/>
+  <text x="695" y="1102" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff">1</text>
+  <text x="704" y="1103" font-size="12" fill="#1e293b">Gastrointestinale</text>
+  <text x="704" y="1119" font-size="12" fill="#1e293b">Verluste</text>
+
+  <!-- >30 logic strip -->
+  <rect x="875" y="824" width="330" height="56" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="891" y="844" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">LOGIK</text>
+  <text x="891" y="864" font-size="12.5" font-weight="700" fill="#334155">Die Niere retiniert Natrium NICHT avide.</text>
+
+  <line x1="1040" y1="880" x2="1040" y2="890" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Amber caveat -->
+  <rect x="875" y="890" width="330" height="96" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="891" y="911" font-size="12" font-weight="700" fill="#92400e">⚠ Achtung</text>
+  <text x="891" y="930" font-size="11" fill="#78350f">Diuretika und chronische Nierenkrankheit</text>
+  <text x="891" y="945" font-size="11" fill="#78350f">stören die Natriumverarbeitung der Niere —</text>
+  <text x="891" y="960" font-size="11" fill="#78350f">das Urin-Natrium ist dann als Volumenmarker</text>
+  <text x="891" y="975" font-size="11" font-weight="700" fill="#78350f">unzuverlässig.</text>
+
+  <line x1="1040" y1="986" x2="1040" y2="1000" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="955" y1="1000" x2="1150" y2="1000" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="955" y1="1000" x2="955" y2="1014" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="1150" y1="1000" x2="1150" y2="1014" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Ohne Hypovolämie box -->
+  <rect x="870" y="1014" width="170" height="212" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="870" y="1014" width="170" height="34" rx="12" fill="#fee2e2"/>
+  <line x1="870" y1="1048" x2="1040" y2="1048" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="955" y="1036" text-anchor="middle" font-size="13" font-weight="700" fill="#991b1b">Ohne Hypovolämie</text>
+
+  <text x="883" y="1064" font-size="10" font-style="italic" fill="#991b1b">ADH ist an, ohne dass</text>
+  <text x="883" y="1076" font-size="10" font-style="italic" fill="#991b1b">ein Volumen-Vorwand</text>
+  <text x="883" y="1088" font-size="10" font-style="italic" fill="#991b1b">besteht</text>
+
+  <circle cx="885" cy="1114" r="3" fill="#dc2626"/>
+  <text x="897" y="1119" font-size="14" font-weight="700" fill="#7f1d1d">SIADH</text>
+
+  <circle cx="885" cy="1148" r="7" fill="#475569"/>
+  <text x="885" y="1152" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff">2</text>
+  <text x="897" y="1153" font-size="11.5" font-weight="600" fill="#7f1d1d">Sekundäre Nebennieren-</text>
+  <text x="897" y="1167" font-size="11.5" font-weight="600" fill="#7f1d1d">rindeninsuffizienz</text>
+
+  <circle cx="885" cy="1200" r="3" fill="#dc2626"/>
+  <text x="897" y="1205" font-size="13" font-weight="700" fill="#7f1d1d">Hypothyreose</text>
+
+  <!-- Mit Hypovolämie box -->
+  <rect x="1060" y="1014" width="180" height="250" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="1060" y="1014" width="180" height="34" rx="12" fill="#f1f5f9"/>
+  <line x1="1060" y1="1048" x2="1240" y2="1048" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="1150" y="1036" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Mit Hypovolämie</text>
+
+  <text x="1073" y="1064" font-size="10" font-style="italic" fill="#64748b">Patient ist hypovoläm,</text>
+  <text x="1073" y="1076" font-size="10" font-style="italic" fill="#64748b">doch die Niere hält</text>
+  <text x="1073" y="1088" font-size="10" font-style="italic" fill="#64748b">Natrium nicht zurück</text>
+
+  <circle cx="1075" cy="1114" r="7" fill="#475569"/>
+  <text x="1075" y="1118" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff">1</text>
+  <text x="1085" y="1119" font-size="11.5" fill="#1e293b">Gastrointestinale Verluste</text>
+
+  <circle cx="1075" cy="1146" r="7" fill="#475569"/>
+  <text x="1075" y="1150" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff">2</text>
+  <text x="1085" y="1151" font-size="11.5" fill="#1e293b">Primäre Nebennieren-</text>
+  <text x="1085" y="1165" font-size="11.5" fill="#1e293b">rindeninsuffizienz</text>
+
+  <circle cx="1075" cy="1196" r="2.5" fill="#475569"/>
+  <text x="1085" y="1201" font-size="11.5" font-weight="600" fill="#1e293b">Salzverlustsyndrome:</text>
+  <text x="1089" y="1219" font-size="10.5" font-style="italic" fill="#64748b">– renal-tubuläre Azidose</text>
+  <text x="1089" y="1235" font-size="10.5" font-style="italic" fill="#64748b">– zerebrales Salzverlust-</text>
+  <text x="1089" y="1249" font-size="10.5" font-style="italic" fill="#64748b">&#160;&#160;syndrom</text>
+
+  <!-- FOOTNOTE: resolved contradictions -->
+  <rect x="80" y="825" width="385" height="322" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="80" y="825" width="385" height="36" rx="14" fill="#f1f5f9"/>
+  <line x1="80" y1="861" x2="465" y2="861" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="272" y="848" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Zwei scheinbare Widersprüche aufgelöst</text>
+
+  <circle cx="100" cy="884" r="9" fill="#475569"/>
+  <text x="100" y="888" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">1</text>
+  <text x="118" y="889" font-size="12" font-weight="700" fill="#334155">GI-Verluste erscheinen in beiden Na⁺-Ästen</text>
+  <text x="96" y="908" font-size="11" fill="#475569">Die Ursache ist dieselbe — nur der Nieren-Messwert</text>
+  <text x="96" y="922" font-size="11" fill="#475569">unterscheidet sich. Typisch: Hypovolämie → avide</text>
+  <text x="96" y="936" font-size="11" fill="#475569">Na⁺-Retention → Urin-Na⁺ ≤ 30. Diuretika oder eine</text>
+  <text x="96" y="950" font-size="11" fill="#475569">durch Erbrechen ausgelöste metabolische Alkalose</text>
+  <text x="96" y="964" font-size="11" fill="#475569">(Bikarbonat zieht Na⁺ mit in den Urin) treiben den</text>
+  <text x="96" y="978" font-size="11" fill="#475569">Wert aber &gt; 30 — dann ist der Marker verfälscht,</text>
+  <text x="96" y="992" font-size="11" fill="#475569">nicht die Diagnose.</text>
+
+  <circle cx="100" cy="1024" r="9" fill="#475569"/>
+  <text x="100" y="1028" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">2</text>
+  <text x="118" y="1029" font-size="12" font-weight="700" fill="#334155">Primäre vs. sekundäre NNR-Insuffizienz</text>
+  <text x="96" y="1048" font-size="11" fill="#475569">Welches Hormon fehlt, entscheidet die Seite.</text>
+  <text x="96" y="1062" font-size="11" fill="#475569">Primär: Aldosteron fehlt → Niere kann Na⁺ nicht</text>
+  <text x="96" y="1076" font-size="11" fill="#475569">halten → echter Volumenverlust (hypovoläm, Urin-</text>
+  <text x="96" y="1090" font-size="11" fill="#475569">Na⁺ hoch). Sekundär: Aldosteron bleibt erhalten</text>
+  <text x="96" y="1104" font-size="11" fill="#475569">(Renin-gesteuert), nur Cortisol fehlt → kein Volumen-</text>
+  <text x="96" y="1118" font-size="11" fill="#475569">verlust; ohne Cortisol-Hemmung steigt ADH →</text>
+  <text x="96" y="1132" font-size="11" fill="#475569">euvoläme, SIADH-artige Hyponatriämie.</text>
+
+  <!-- LEGEND -->
+  <g transform="translate(80, 1300)">
+    <text x="0" y="0" font-size="13" font-weight="700" fill="#334155">Legende</text>
+
+    <rect x="0" y="12" width="20" height="20" rx="4" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+    <text x="28" y="27" font-size="12" fill="#475569">Diagnostischer Schritt</text>
+
+    <rect x="190" y="12" width="20" height="20" rx="4" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="218" y="27" font-size="12" fill="#475569">Urinosmolalität-Pfad</text>
+
+    <rect x="380" y="12" width="20" height="20" rx="4" fill="#f3e8ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="408" y="27" font-size="12" fill="#475569">Urin-Natrium-Pfad</text>
+
+    <rect x="560" y="12" width="20" height="20" rx="4" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 2"/>
+    <text x="588" y="27" font-size="12" fill="#475569">Logik / Begründung</text>
+
+    <rect x="745" y="12" width="20" height="20" rx="4" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="773" y="27" font-size="12" fill="#475569">Caveat</text>
+
+    <rect x="865" y="12" width="20" height="20" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text x="893" y="27" font-size="12" fill="#475569">Schlüsseldiagnose</text>
+  </g>
 </svg>
