@@ -1,0 +1,146 @@
+/* ============================================================
+   KP-ATLAS · TREE COMPONENT STYLES (shared, themed via vars)
+   Each direction sets the palette custom properties + its own
+   hero/background chrome; this file styles the System→Topic→Item
+   tree, the toolbar controls and the system index.
+   ============================================================ */
+
+/* ---------- system section ---------- */
+.sys{
+  position:relative;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--panel);
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+  overflow:hidden;
+  opacity:0; transform:translateY(18px);
+  transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1), border-color .3s ease;
+}
+.sys.in{opacity:1; transform:none}
+.sys[hidden]{display:none}
+.sys:hover{border-color:var(--line-hi)}
+
+.sys-head{
+  width:100%; display:flex; align-items:center; gap:14px;
+  padding:18px 20px; background:none; border:0; cursor:pointer;
+  text-align:left; color:var(--ink); font:inherit;
+}
+.sys-head:focus-visible{outline:2px solid var(--accent); outline-offset:-3px; border-radius:var(--radius)}
+.sys-ic{
+  flex:0 0 auto; width:42px; height:42px; display:grid; place-items:center;
+  border-radius:12px; color:var(--accent);
+  background:radial-gradient(120% 120% at 30% 20%, color-mix(in oklab,var(--accent) 22%,transparent), transparent 70%);
+  border:1px solid color-mix(in oklab,var(--accent) 30%,transparent);
+  box-shadow:0 0 18px -6px var(--glow);
+  transition:transform .4s cubic-bezier(.2,.7,.2,1);
+}
+.sys-ic svg{width:24px; height:24px}
+.sys:hover .sys-ic{transform:translateY(-1px) scale(1.04)}
+.sys-name{
+  flex:1 1 auto; font-weight:600; font-size:clamp(16px,1.6vw,20px);
+  letter-spacing:-.01em; line-height:1.2;
+}
+.sys-count{
+  flex:0 0 auto; font:600 12px/1 var(--mono); letter-spacing:.04em;
+  color:var(--accent); padding:5px 9px; border-radius:999px;
+  background:color-mix(in oklab,var(--accent) 12%,transparent);
+  border:1px solid color-mix(in oklab,var(--accent) 24%,transparent);
+}
+.sys-chev{
+  flex:0 0 auto; width:11px; height:11px; margin-left:2px;
+  border-right:2px solid var(--ink-dim); border-bottom:2px solid var(--ink-dim);
+  transform:rotate(45deg); transition:transform .35s ease;
+}
+.sys.collapsed .sys-chev{transform:rotate(-45deg)}
+
+.sys-body{display:grid; grid-template-rows:1fr; transition:grid-template-rows .42s cubic-bezier(.3,.7,.2,1)}
+.sys.collapsed > .sys-body{grid-template-rows:0fr}
+.sys-body-inner{overflow:hidden; min-height:0; padding:0 14px 8px}
+
+/* ---------- topic row ---------- */
+.topic{border-top:1px solid var(--line-soft)}
+.topic[hidden]{display:none}
+.topic-head{
+  width:100%; display:flex; align-items:center; gap:11px;
+  padding:13px 8px 13px 6px; background:none; border:0; cursor:pointer;
+  text-align:left; color:var(--ink-soft); font:inherit;
+}
+.topic-head:focus-visible{outline:2px solid var(--accent); outline-offset:-2px; border-radius:8px}
+.topic-dot{
+  flex:0 0 auto; width:7px; height:7px; border-radius:50%;
+  background:var(--accent2); box-shadow:0 0 8px -1px var(--accent2);
+}
+.topic-name{flex:1 1 auto; font-weight:500; font-size:15px; letter-spacing:-.005em}
+.topic-count{flex:0 0 auto; font:500 11px/1 var(--mono); color:var(--ink-dim)}
+.topic-chev{
+  flex:0 0 auto; width:8px; height:8px;
+  border-right:1.8px solid var(--ink-dim); border-bottom:1.8px solid var(--ink-dim);
+  transform:rotate(45deg); transition:transform .3s ease; opacity:.8;
+}
+.topic.collapsed .topic-chev{transform:rotate(-45deg)}
+.topic:hover .topic-name{color:var(--ink)}
+
+.topic-body{display:grid; grid-template-rows:1fr; transition:grid-template-rows .3s cubic-bezier(.3,.7,.2,1)}
+.topic.collapsed > .topic-body{grid-template-rows:0fr}
+.items{list-style:none; margin:0; padding:0 0 8px; overflow:hidden; min-height:0}
+
+/* ---------- resource item ---------- */
+.item[hidden]{display:none}
+.item a{
+  display:flex; align-items:center; gap:12px; text-decoration:none;
+  padding:9px 12px; margin:2px 0; border-radius:10px; color:var(--ink-soft);
+  border:1px solid transparent; transition:background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.item a:hover{background:var(--item-hover); border-color:var(--line-hi); transform:translateX(2px)}
+.item a:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.item-type{
+  flex:0 0 auto; min-width:46px; text-align:center;
+  font:600 10.5px/1 var(--mono); letter-spacing:.05em; text-transform:uppercase;
+  padding:5px 7px; border-radius:7px; color:var(--tc,var(--accent));
+  background:color-mix(in oklab,var(--tc,var(--accent)) 13%,transparent);
+  border:1px solid color-mix(in oklab,var(--tc,var(--accent)) 34%,transparent);
+}
+.item-type[data-t="pdf"]{--tc:oklch(.82 .085 66)}
+.item-type[data-t="html"]{--tc:oklch(.84 .09 190)}
+.item-type[data-t="video"]{--tc:oklch(.8 .085 305)}
+.item-type[data-t="audio"]{--tc:oklch(.82 .085 245)}
+.item-type[data-t="image"]{--tc:oklch(.83 .09 150)}
+.item-type[data-t="link"]{--tc:oklch(.8 .02 220)}
+.item-title{flex:1 1 auto; font-size:14.5px; line-height:1.35; color:var(--ink); text-wrap:pretty}
+.item-size{flex:0 0 auto; font:500 11px/1 var(--mono); color:var(--ink-dim); white-space:nowrap}
+.item-open{
+  flex:0 0 auto; display:inline-flex; align-items:center; gap:4px;
+  font:500 12px/1 var(--mono); color:var(--ink-dim);
+  opacity:0; transform:translateX(-4px); transition:opacity .2s ease, transform .2s ease;
+}
+.item-open svg{width:13px; height:13px}
+.item a:hover .item-open, .item a:focus-visible .item-open{opacity:1; transform:none}
+
+/* ---------- type filter ---------- */
+.type-btn{
+  font:600 12.5px/1 var(--mono); letter-spacing:.02em; color:var(--ink-dim);
+  padding:9px 13px; border-radius:999px; cursor:pointer;
+  background:var(--chip); border:1px solid var(--line);
+  transition:color .2s ease, background .2s ease, border-color .2s ease;
+}
+.type-btn:hover{color:var(--ink-soft); border-color:var(--line-hi)}
+.type-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.type-btn.is-active{
+  color:var(--bg); background:var(--accent); border-color:var(--accent);
+  box-shadow:0 0 20px -6px var(--glow);
+}
+
+/* ---------- system index ---------- */
+.ix-link{
+  display:flex; align-items:center; gap:11px; text-decoration:none;
+  padding:9px 11px; border-radius:10px; color:var(--ink-soft);
+  border:1px solid transparent; transition:background .2s ease, border-color .2s, color .2s;
+}
+.ix-link[hidden]{display:none}
+.ix-link:hover{background:var(--item-hover); color:var(--ink); border-color:var(--line)}
+.ix-link:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.ix-ic{flex:0 0 auto; width:22px; height:22px; color:var(--accent); opacity:.9}
+.ix-ic svg{width:20px; height:20px}
+.ix-name{flex:1 1 auto; font-size:13px; line-height:1.25; letter-spacing:-.005em}
+.ix-count{flex:0 0 auto; font:500 11px/1 var(--mono); color:var(--ink-dim)}
