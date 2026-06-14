@@ -85,10 +85,22 @@
     composer.addPass(fxaa);
     composer.setSize(innerWidth, innerHeight);
     setFxaaRes();
+    frameCamera();
 
     ready = true;
     loadModels();
     render(lastScroll);
+  }
+
+  /* pull the camera back on narrow/portrait screens so the symmetric
+     object field stays centered & in view; keep fog + DoF focus in sync */
+  function frameCamera() {
+    const aspect = camera.aspect, fovV = camera.fov * Math.PI / 180;
+    let z = 14;
+    if (aspect < 1.15) z = Math.min(40, Math.max(14, 7.6 / (Math.tan(fovV / 2) * Math.max(aspect, 0.34))));
+    camera.position.z = z;
+    scene.fog.near = z - 6; scene.fog.far = z + 22;
+    if (bokeh && bokeh.uniforms && bokeh.uniforms.focus) bokeh.uniforms.focus.value = z;
   }
 
   function prep(gltf, targetSize) {
@@ -168,6 +180,7 @@
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
     composer.setSize(innerWidth, innerHeight);
     setFxaaRes();
+    frameCamera();
     render(lastScroll);
   }
 
