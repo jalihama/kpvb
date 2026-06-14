@@ -19,7 +19,7 @@
   const rand = (a, b) => a + Math.random() * (b - a);
 
   let renderer, scene, camera, composer, bokeh, fxaa, ready = false;
-  let items = [], parts = [], lastScroll = 0, glcanvas, fgcvs, fgctx, fgdots = [], fgRaf = null, skyCanvas, skyTex, objMats = [];
+  let items = [], parts = [], lastScroll = 0, glcanvas, fgcvs, fgctx, fgdots = [], fgRaf = null, skyCanvas, skyTex, objMats = [], cells = [], helixGroup, helixPath, hemi, _T, _N, _B, _off, UP_Y, UP_X;
   const SPAN = 15;                       // vertical world-wrap span
   const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
   /* curated complementary firefly palette (cool cyan/mint ↔ warm amber/rose) */
@@ -68,9 +68,10 @@
     camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 120);
     camera.position.set(0, 0, 14);
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x3a4a55, 0.55));
+    hemi = new THREE.HemisphereLight(0xffffff, 0x3a4a55, 0.7); scene.add(hemi);
     const d1 = new THREE.DirectionalLight(0xffffff, 0.5); d1.position.set(6, 9, 8); scene.add(d1);
     const d2 = new THREE.DirectionalLight(0x9fd0ff, 0.22); d2.position.set(-7, -3, 4); scene.add(d2);
+    buildHelix();
 
     /* particles are drawn in the 2D foreground layer (continuous DoF, theme-aware) */
 
@@ -176,6 +177,7 @@
     if (!ready) return;
     buildSky(bright, deep, ang);
     if (scene.fog) scene.fog.color.set(deep);
+    if (hemi) hemi.color.set(bright);
     for (const m of objMats) { if (m && m.color) m.color.set(obj); }
     render(lastScroll);
   }
@@ -207,11 +209,11 @@
   }
   function seedFg() {
     fgdots = [];
-    const n = Math.round(Math.min(52, innerWidth / 24));
+    const n = Math.round(Math.min(90, innerWidth / 15));
     for (let i = 0; i < n; i++) {
       fgdots.push({
         bx: Math.random(), by: Math.random(),
-        r: rand(0.6, 1.6), a: rand(0.55, 1.1), par: rand(0.2, 0.85), ci: (Math.random() * 4) | 0,
+        r: rand(0.6, 1.6), a: rand(0.85, 1.7), par: rand(0.2, 0.85), ci: (Math.random() * 4) | 0,
         wax: rand(0.015, 0.05), way: rand(0.015, 0.05),
         wsx: rand(0.08, 0.32), wsy: rand(0.08, 0.32), phx: rand(0, 6.28), phy: rand(0, 6.28),
         tw: rand(0.25, 0.75), pht: rand(0, 6.28)
@@ -242,7 +244,7 @@
         let y = wy * H - scroll * dpr * d.par * 0.03; y = ((y % span) + span) % span;
         const x = (((wx % 1) + 1) % 1) * W;
         const sh = 0.5 + 0.5 * Math.sin(t * d.tw * 0.5 + d.pht);
-        const glow = d.r * dpr * 3.2, a = 0.14 * (0.5 + 0.5 * sh);
+        const glow = d.r * dpr * 3.2, a = 0.34 * (0.5 + 0.5 * sh);
         const g = fgctx.createRadialGradient(x, y, 0, x, y, glow);
         g.addColorStop(0, `rgba(150,120,80,${a})`);
         g.addColorStop(0.4, `rgba(150,120,80,${a * 0.5})`);
@@ -272,9 +274,60 @@
     fgctx.globalCompositeOperation = "source-over";
   }
 
+  function fadeCell(t) { if (t < 0.03) return t / 0.03; return Math.max(0, 1 - Math.pow(Math.max(0, (t - 0.45) / 0.55), 1.4)); }
+  function buildHelix() {
+    class HP extends THREE.Curve {
+      getPoint(t) {
+        const turns = 7, a = t * turns * Math.PI * 2;
+        const z = 8 - t * 42, rad = 1.3 + t * 4.6;          // near camera (crisp) -> deep (fades)
+        return new THREE.Vector3(Math.cos(a) * rad + 2, Math.sin(a) * rad * 0.8 - 0.5, z);
+      }
+    }
+    helixPath = new HP();
+    helixGroup = new THREE.Group();
+    helixGroup.scale.setScalar(1);
+    helixGroup.position.set(0, 0, 0);
+    scene.add(helixGroup);
+    const pts = [[0,.22],[.30,.26],[.62,.40],[.88,.34],[1,.02],[.88,-.34],[.62,-.40],[.30,-.26],[0,-.22]].map(p => new THREE.Vector2(p[0], p[1]));
+    const rbcGeo = new THREE.LatheGeometry(pts, 28); rbcGeo.computeVertexNormals();
+    const wbcGeo = new THREE.IcosahedronGeometry(0.95, 1);
+    const pltGeo = new THREE.IcosahedronGeometry(0.42, 0);
+    const mRBC = new THREE.MeshStandardMaterial({ color: 0xc41e2a, roughness: .42, metalness: .05, transparent: true });
+    const mRBC2 = new THREE.MeshStandardMaterial({ color: 0x9e1520, roughness: .5, metalness: .05, transparent: true });
+    const mWBC = new THREE.MeshStandardMaterial({ color: 0xe9e2f0, roughness: .65, transparent: true, flatShading: true });
+    const mPLT = new THREE.MeshStandardMaterial({ color: 0xd8b389, roughness: .7, transparent: true, flatShading: true });
+    const N = 110; cells = [];
+    for (let i = 0; i < N; i++) {
+      const roll = Math.random(); let mesh, scale;
+      if (roll < 0.78) { mesh = new THREE.Mesh(rbcGeo, (Math.random() < .5 ? mRBC : mRBC2).clone()); scale = .5 + Math.random() * .18; }
+      else if (roll < 0.93) { mesh = new THREE.Mesh(pltGeo, mPLT.clone()); scale = .5 + Math.random() * .3; }
+      else { mesh = new THREE.Mesh(wbcGeo, mWBC.clone()); scale = .7 + Math.random() * .25; }
+      mesh.scale.setScalar(scale); mesh.rotation.set(Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28); mesh.frustumCulled = false;
+      helixGroup.add(mesh);
+      cells.push({ mesh, baseT: Math.random(), flow: 0.00010 + Math.random() * 0.00004, offAng: Math.random() * 6.28, offRad: Math.random() * 0.72, spin: new THREE.Vector3((Math.random() - .5) * .006, (Math.random() - .5) * .006, (Math.random() - .5) * .006) });
+    }
+    _T = new THREE.Vector3(); _N = new THREE.Vector3(); _B = new THREE.Vector3(); _off = new THREE.Vector3();
+    UP_Y = new THREE.Vector3(0, 1, 0); UP_X = new THREE.Vector3(1, 0, 0);
+  }
+  function updateCells() {
+    if (!cells.length) return;
+    for (const c of cells) {
+      let ct = (c.baseT + lastScroll * c.flow) % 1; if (ct < 0) ct += 1;
+      const p = helixPath.getPoint(ct); _T.copy(helixPath.getTangent(ct));
+      const up = Math.abs(_T.y) < 0.95 ? UP_Y : UP_X;
+      _N.crossVectors(up, _T).normalize(); _B.crossVectors(_T, _N).normalize();
+      const taper = 0.4 + 0.6 * ct, r = c.offRad * taper;
+      _off.copy(_N).multiplyScalar(Math.cos(c.offAng) * r).addScaledVector(_B, Math.sin(c.offAng) * r);
+      c.mesh.position.copy(p).add(_off);
+      c.mesh.rotation.x += c.spin.x; c.mesh.rotation.y += c.spin.y; c.mesh.rotation.z += c.spin.z;
+      c.mesh.material.opacity = fadeCell(ct);
+    }
+  }
+
   function render(scroll) {
     if (!ready) return;
     lastScroll = scroll;
+    updateCells();
     for (const it of items) {
       const u = it.userData;
       it.rotation.y = u.rx0 + scroll * u.rxs;   // object moves only with scroll

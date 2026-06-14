@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Cells · Helical Flow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    /* backdrop shows through the transparent canvas — swap to taste */
+    background: radial-gradient(circle at 58% 62%, #1b0c13 0%, #0c0508 52%, #050203 100%);
+  }
+  #scene { position: fixed; inset: 0; display: block; z-index: 0; }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0); // transparent -> CSS gradient shows through
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0a0406, 0.026); // depth haze; distant cells melt into the dark
+
+  // Respect reduced-motion: keep the ambience but calm it right down.
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.2 : 1;
+
+  const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0.8, 1.6, 19.5); // pulled back for breathing room behind content
+  camera.lookAt(0, 0, 0);
+
+  // --- Lights ---------------------------------------------------------------
+  scene.add(new THREE.AmbientLight(0x44202a, 0.9));
+  const key = new THREE.DirectionalLight(0xffd9c4, 1.1);
+  key.position.set(6, 8, 10);
+  scene.add(key);
+  const rim = new THREE.PointLight(0xff5a6e, 1.3, 60);
+  rim.position.set(-8, -4, 6);
+  scene.add(rim);
+  const fill = new THREE.PointLight(0x6f8bff, 0.5, 50);
+  fill.position.set(4, -6, -6);
+  scene.add(fill);
+
+  // --- Helix path: lower-right corner -> centre -----------------------------
+  class HelixPath extends THREE.Curve {
+    getPoint(t) {
+      const turns = 4.75;
+      const a = t * turns * Math.PI * 2;
+      const cx = (1 - t) * 9.8;        // far right     -> centre
+      const cy = (1 - t) * -7.2;       // low           -> centre
+      const cz = (1 - t) * -5.5;       // set well back -> toward viewer
+      const r  = (1 - t) * 2.8 + 0.25; // wide spiral   -> tight core
+      // Tilted loop: z shares the winding with x/y, so each cell
+      // corkscrews forward and back through depth as it spirals in.
+      const x = cx + r * Math.cos(a);
+      const y = cy + r * Math.sin(a);
+      const z = cz + r * (Math.cos(a) * 0.6 + Math.sin(a) * 0.35);
+      return new THREE.Vector3(x, y, z);
+    }
+  }
+  const path = new HelixPath();
+
+  // Very faint vessel suggestion winding along the path
+  const tubeMat = new THREE.MeshBasicMaterial({
+    color: 0x3a0d14, transparent: true, opacity: 0.07, side: THREE.BackSide
+  });
+  scene.add(new THREE.Mesh(new THREE.TubeGeometry(path, 200, 0.78, 14, false), tubeMat));
+
+  // --- Cell geometries ------------------------------------------------------
+  // Red blood cell: biconcave disc built by revolving a profile (lathe)
+  function makeRBCGeometry() {
+    const pts = [
+      new THREE.Vector2(0.00,  0.22),
+      new THREE.Vector2(0.30,  0.26),
+      new THREE.Vector2(0.62,  0.40),
+      new THREE.Vector2(0.88,  0.34),
+      new THREE.Vector2(1.00,  0.02),
+      new THREE.Vector2(0.88, -0.34),
+      new THREE.Vector2(0.62, -0.40),
+      new THREE.Vector2(0.30, -0.26),
+      new THREE.Vector2(0.00, -0.22),
+    ];
+    const g = new THREE.LatheGeometry(pts, 32);
+    g.computeVertexNormals();
+    return g;
+  }
+  const rbcGeo = makeRBCGeometry();
+  const wbcGeo = new THREE.IcosahedronGeometry(0.95, 1); // lumpy white cell
+  const pltGeo = new THREE.IcosahedronGeometry(0.42, 0); // small platelet
+
+  const matRBC  = new THREE.MeshStandardMaterial({ color: 0xc41e2a, roughness: 0.42, metalness: 0.05, transparent: true });
+  const matRBC2 = new THREE.MeshStandardMaterial({ color: 0x9e1520, roughness: 0.50, metalness: 0.05, transparent: true });
+  const matWBC  = new THREE.MeshStandardMaterial({ color: 0xe9e2f0, roughness: 0.65, metalness: 0.0,  transparent: true, flatShading: true });
+  const matPLT  = new THREE.MeshStandardMaterial({ color: 0xd8b389, roughness: 0.70, metalness: 0.0,  transparent: true, flatShading: true });
+
+  const N = 72;
+  const cells = [];
+  for (let i = 0; i < N; i++) {
+    const roll = Math.random();
+    let mesh, scale;
+    if (roll < 0.78) {                                   // red cells
+      mesh = new THREE.Mesh(rbcGeo, (Math.random() < 0.5 ? matRBC : matRBC2).clone());
+      scale = 0.50 + Math.random() * 0.18;
+    } else if (roll < 0.93) {                            // platelets
+      mesh = new THREE.Mesh(pltGeo, matPLT.clone());
+      scale = 0.50 + Math.random() * 0.30;
+    } else {                                             // white cells
+      mesh = new THREE.Mesh(wbcGeo, matWBC.clone());
+      scale = 0.70 + Math.random() * 0.25;
+    }
+    mesh.scale.setScalar(scale);
+    mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+    scene.add(mesh);
+
+    cells.push({
+      mesh,
+      t: Math.random(),
+      speed: (0.00030 + Math.random() * 0.00010) * motion,
+      offAng: Math.random() * Math.PI * 2,
+      offRad: Math.random() * 0.72,
+      spin: new THREE.Vector3((Math.random() - 0.5) * 0.008, (Math.random() - 0.5) * 0.008, (Math.random() - 0.5) * 0.008).multiplyScalar(motion),
+    });
+  }
+
+  // soft fade in at the corner, fade out as they reach the core
+  function fade(t) {
+    if (t < 0.08) return t / 0.08;
+    if (t > 0.86) return Math.max(0, (1 - t) / 0.14);
+    return 1;
+  }
+
+  // scratch vectors (avoid per-frame allocation)
+  const _T = new THREE.Vector3(), _N = new THREE.Vector3(), _B = new THREE.Vector3(), _off = new THREE.Vector3();
+  const UP_Y = new THREE.Vector3(0, 1, 0), UP_X = new THREE.Vector3(1, 0, 0);
+
+  function update() {
+    for (const c of cells) {
+      c.t += c.speed;
+      if (c.t >= 1) c.t -= 1;
+
+      const p = path.getPoint(c.t);
+      _T.copy(path.getTangent(c.t));                 // local flow direction
+      const up = Math.abs(_T.y) < 0.95 ? UP_Y : UP_X;
+      _N.crossVectors(up, _T).normalize();           // frame perpendicular to flow
+      _B.crossVectors(_T, _N).normalize();
+
+      const taper = 0.25 + 0.75 * (1 - c.t);          // pack tighter near the core
+      const r = c.offRad * taper;
+      _off.copy(_N).multiplyScalar(Math.cos(c.offAng) * r)
+          .addScaledVector(_B, Math.sin(c.offAng) * r);
+
+      c.mesh.position.copy(p).add(_off);
+      c.mesh.rotation.x += c.spin.x;
+      c.mesh.rotation.y += c.spin.y;
+      c.mesh.rotation.z += c.spin.z;
+      c.mesh.material.opacity = fade(c.t);
+    }
+  }
+
+  // --- Ambient plasma motes -------------------------------------------------
+  const moteCount = 140;
+  const moteGeo = new THREE.BufferGeometry();
+  const mp = new Float32Array(moteCount * 3);
+  for (let i = 0; i < moteCount; i++) {
+    mp[i * 3]     = (Math.random() - 0.5) * 26;
+    mp[i * 3 + 1] = (Math.random() - 0.5) * 18;
+    mp[i * 3 + 2] = (Math.random() - 0.5) * 16 - 2;
+  }
+  moteGeo.setAttribute('position', new THREE.BufferAttribute(mp, 3));
+  const motes = new THREE.Points(moteGeo, new THREE.PointsMaterial({
+    color: 0xff8095, size: 0.06, transparent: true, opacity: 0.35, depthWrite: false
+  }));
+  scene.add(motes);
+
+  // --- Loop -----------------------------------------------------------------
+  let frame = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    frame++;
+    update();
+    motes.rotation.y = frame * 0.00018 * motion;
+    motes.rotation.x = Math.sin(frame * 0.00015 * motion) * 0.05;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+</body>
+</html>
