@@ -46,7 +46,7 @@
     fgcvs = document.getElementById("fgdots");
     if (fgcvs) fgctx = fgcvs.getContext("2d");
     renderer = new THREE.WebGLRenderer({ canvas: glcanvas, antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.6));
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 760 ? 1 : 1.4));
     renderer.setSize(innerWidth, innerHeight);
     if ("outputEncoding" in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -190,7 +190,7 @@
 
   function resize() {
     if (!ready) return;
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.6));
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 760 ? 1 : 1.4));
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
     composer.setSize(innerWidth, innerHeight);
@@ -297,7 +297,7 @@
     const mRBC2 = new THREE.MeshStandardMaterial({ color: 0x9e1520, roughness: .5, metalness: .05, transparent: true });
     const mWBC = new THREE.MeshStandardMaterial({ color: 0xe9e2f0, roughness: .65, transparent: true, flatShading: true });
     const mPLT = new THREE.MeshStandardMaterial({ color: 0xd8b389, roughness: .7, transparent: true, flatShading: true });
-    const N = Math.round(Math.min(200, 120 + innerWidth / 12)); cells = [];
+    const N = innerWidth < 760 ? 42 : Math.round(Math.min(150, 90 + innerWidth / 14)); cells = [];
     for (let i = 0; i < N; i++) {
       const roll = Math.random(); let mesh, scale;
       if (roll < 0.78) { mesh = new THREE.Mesh(rbcGeo, (Math.random() < .5 ? mRBC : mRBC2).clone()); scale = .5 + Math.random() * .18; }

@@ -7,10 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="kp-tree.css?v=54">
+<link rel="stylesheet" href="kp-tree.css?v=56">
 <style>
 /* ===== palette — bluer aqua/turquoise, dark + light ===== */
 :root, [data-theme="dark"]{
+  color-scheme:dark;
   --bg:#061d28; --bg2:#0a2a38;
   --panel:rgba(14,42,56,.5); --panel2:rgba(9,30,42,.78);
   --line:rgba(120,200,225,.16); --line-soft:rgba(120,200,225,.09); --line-hi:rgba(120,200,225,.32);
@@ -25,6 +26,7 @@
   --font:"Roboto Flex",system-ui,sans-serif; --mono:"Roboto Mono",ui-monospace,monospace;
 }
 [data-theme="light"]{
+  color-scheme:light;
   --bg:#eef5f8; --bg2:#e3edf1;
   --panel:rgba(255,255,255,.7); --panel2:rgba(248,252,253,.85);
   --line:rgba(18,86,108,.16); --line-soft:rgba(18,86,108,.09); --line-hi:rgba(18,86,108,.3);
@@ -222,9 +224,9 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
   <div class="viewer-stage" id="vwStage"></div>
 </div>
 
-<script src="kp-data.js?v=54"></script>
-<script src="kp-icons.js?v=54"></script>
-<script src="kp-engine.js?v=54"></script>
+<script src="kp-data.js?v=56"></script>
+<script src="kp-icons.js?v=56"></script>
+<script src="kp-engine.js?v=56"></script>
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/BokehShader.js"></script>
@@ -236,7 +238,7 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
-<script src="kp-fx.js?v=54"></script>
+<script src="kp-fx.js?v=56"></script>
 <script>
 const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
 
