@@ -237,7 +237,8 @@
           sn.wrap.classList.toggle("collapsed", anyOpen);
           sn.head.setAttribute("aria-expanded", String(!anyOpen));
         });
-        opts.collapseAllBtn.textContent = anyOpen ? "Alle ausklappen" : "Alle einklappen";
+        const _lbl = opts.collapseAllBtn.querySelector("[data-collapse-label]") || opts.collapseAllBtn;
+        _lbl.textContent = anyOpen ? "Alle ausklappen" : "Alle einklappen";
       });
     }
 

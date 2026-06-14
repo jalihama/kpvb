@@ -90,6 +90,7 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 .tb-actions{display:flex; align-items:center; gap:9px; margin-left:auto}
 .tb-count{font:500 12.5px/1 var(--mono); color:var(--ink-dim); white-space:nowrap}
 .tb-count b{color:var(--accent)}
+.ca-icon{display:none}
 .ghost-btn{font:600 12.5px/1 var(--mono); color:var(--ink-soft); cursor:pointer; padding:9px 13px; border-radius:999px; background:var(--chip); border:1px solid var(--line); transition:border-color .2s,color .2s; white-space:nowrap}
 .ghost-btn:hover{border-color:var(--line-hi); color:var(--ink)}
 .ghost-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
@@ -121,6 +122,14 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 @media (max-width:880px){
   .main{grid-template-columns:1fr; padding-top:24px}
   .drawer-toggle{display:inline-flex; align-items:center; gap:7px}
+  .tb-brand{display:none}
+  .toolbar .types{display:none}
+  .tb-count{display:none}
+  .toolbar{gap:9px}
+  .search{flex:1 1 110px; min-width:96px}
+  #collapseAll{padding:0; width:38px; height:38px; display:grid; place-items:center}
+  #collapseAll [data-collapse-label]{display:none}
+  #collapseAll .ca-icon{display:block}
   .index{position:fixed; top:0; left:0; height:100%; width:min(82vw,330px); z-index:50; margin:0; max-height:none; padding:74px 14px 24px; overflow-y:auto; background:var(--bg2); border-right:1px solid var(--line); transform:translateX(-104%); transition:transform .34s cubic-bezier(.3,.7,.2,1); box-shadow:30px 0 80px -40px rgba(0,0,0,.5)}
   .index.open{transform:none}
   .index-close{position:absolute; top:16px; right:14px; display:grid; place-items:center; width:34px;height:34px; border-radius:9px; background:var(--chip); border:1px solid var(--line); color:var(--ink); cursor:pointer}
@@ -177,7 +186,7 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
     <div class="types" id="typeBar" role="group" aria-label="Nach Typ filtern"></div>
     <div class="tb-actions">
       <span class="tb-count"><b id="count">0</b> Ressourcen</span>
-      <button class="ghost-btn" id="collapseAll">Alle einklappen</button>
+      <button class="ghost-btn" id="collapseAll"><svg class="ca-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 9 5-5 5 5"/><path d="m7 15 5 5 5-5"/></svg><span data-collapse-label>Alle einklappen</span></button>
       <button class="icon-btn" id="themeToggle" aria-label="Hell-/Dunkelmodus umschalten" title="Hell / Dunkel">
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></svg>
         <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.5A8 8 0 1 1 10.5 4a6.3 6.3 0 0 0 9.5 9.5z"/></svg>
