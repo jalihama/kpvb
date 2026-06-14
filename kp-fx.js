@@ -19,7 +19,7 @@
   const rand = (a, b) => a + Math.random() * (b - a);
 
   let renderer, scene, camera, composer, bokeh, fxaa, ready = false;
-  let items = [], parts = [], lastScroll = 0, glcanvas, fgcvs, fgctx, fgdots = [], fgRaf = null, skyCanvas, skyTex, objMats = [], cells = [], helixGroup, helixPath, hemi, _T, _N, _B, _off, UP_Y, UP_X;
+  let items = [], parts = [], lastScroll = 0, glcanvas, fgcvs, fgctx, fgdots = [], fgRaf = null, skyCanvas, skyTex, objMats = [], cells = [], helixGroup, helixPath, hemi, _T, _N, _B, _off, UP_Y, UP_X, hxOff = 4, vyOff = -3;
   const SPAN = 15;                       // vertical world-wrap span
   const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
   /* curated complementary firefly palette (cool cyan/mint ↔ warm amber/rose) */
@@ -103,6 +103,7 @@
     let z = 14;
     if (aspect < 1.15) z = Math.min(40, Math.max(14, 7.6 / (Math.tan(fovV / 2) * Math.max(aspect, 0.34))));
     camera.position.z = z;
+    if (aspect < 1) { hxOff = 2.2; vyOff = -5.5; } else { hxOff = 4; vyOff = -3; }
     scene.fog.near = z - 6; scene.fog.far = z + 22;
     if (bokeh && bokeh.uniforms && bokeh.uniforms.focus) bokeh.uniforms.focus.value = z;
   }
@@ -283,8 +284,8 @@
     class HP extends THREE.Curve {
       getPoint(t) {
         const turns = 2.4, a = t * turns * Math.PI * 2;
-        const z = 10 - t * 64, rad = 1.2 + t * 6;            // near camera -> far depth (much longer)
-        const ox = 4 - t * 4, oy = -3 + t * 3;               // emerge from lower-right -> sweep to centre
+        const z = 10 - t * 64, rad = 1.2 + t * 6;
+        const ox = hxOff * (1 - t), oy = vyOff * (1 - t);    // emerge from corner -> sweep to centre (aspect-aware)
         return new THREE.Vector3(Math.cos(a) * rad + ox, Math.sin(a) * rad * 0.8 + oy, z);
       }
     }
