@@ -18,7 +18,7 @@ const ITEMS = [
   // — Nephrologie —
   { title:"Hyponatriämie Untersuchungen", system:"Nephrologie", topic:"Elektrolytstörungen Natrium", type:"image", file:"files/hyponatriaemie logik.svg", size:"1 S." },
   { title:"Hypernatriämie Untersuchungen", system:"Nephrologie", topic:"Elektrolytstörungen Natrium", type:"image", file:"files/urinuntersuchung_hypernatriaemie.svg", size:"1 S." },
-  { title:"BGA-Interpreter", system:"Nephrologie", topic:"Säure-Basen-Haushalt", type:"html", file:"files/bga-tool.html" },
+
 
   // — Notfallmedizin —
   { title:"Akute Intoxikation Artikel", system:"Notfallmedizin", topic:"Akute Intoxikationen", type:"html", file:"files/akuttoxikologie-kp.html", size:"1 S." },
