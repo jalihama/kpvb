@@ -71,9 +71,11 @@
     let regIndex = 0;
     const VIEW_TYPES = new Set(["pdf", "html", "image"]);
 
+    const sysColor = (i) => `oklch(0.7 0.14 ${(202 + i * 47) % 360})`;
     model.forEach((sys, si) => {
       const section = el("section", "sys");
       section.dataset.system = sys.system;
+      section.style.setProperty("--sys-accent", sysColor(si));
       section.id = "sys-" + slug(sys.system);
 
       const head = el("button", "sys-head");
@@ -151,7 +153,7 @@
       section.appendChild(head);
       section.appendChild(body);
       root.appendChild(section);
-      sysNodes.push({ wrap: section, head, countEl: head.querySelector(".sys-count"), topics: topicNodes });
+      sysNodes.push({ wrap: section, head, countEl: head.querySelector(".sys-count"), topics: topicNodes, color: sysColor(si) });
     });
 
     function toggle(wrap, btn) {
@@ -164,6 +166,7 @@
       sysNodes.forEach(sn => {
         const a = el("a", "ix-link");
         a.href = "#" + sn.wrap.id;
+        a.style.setProperty("--sys-accent", sn.color);
         a.innerHTML = '<span class="ix-ic">' + svgIcon(sn.wrap.dataset.system) + '</span><span class="ix-name"></span><span class="ix-count" aria-hidden="true"></span>';
         a.querySelector(".ix-name").textContent = sn.wrap.dataset.system;
         a.addEventListener("click", (e) => {

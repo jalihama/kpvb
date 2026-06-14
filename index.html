@@ -7,14 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="kp-tree.css">
+<link rel="stylesheet" href="kp-tree.css?v=44">
 <style>
 /* ===== palette — bluer aqua/turquoise, dark + light ===== */
 :root, [data-theme="dark"]{
   --bg:#061d28; --bg2:#0a2a38;
   --panel:rgba(14,42,56,.5); --panel2:rgba(9,30,42,.78);
   --line:rgba(120,200,225,.16); --line-soft:rgba(120,200,225,.09); --line-hi:rgba(120,200,225,.32);
-  --ink:#eaf6fb; --ink-soft:#bcd9e6; --ink-dim:#7ea7b8;
+  --ink:#eaf6fb; --ink-soft:#d6ecf5; --ink-dim:#9ec2d1;
   --accent:#24c4e6; --accent2:#67dbf3;
   --glow:rgba(36,196,230,.45);
   --chip:rgba(255,255,255,.03); --item-hover:rgba(120,200,225,.06);
@@ -28,7 +28,7 @@
   --bg:#eef5f8; --bg2:#e3edf1;
   --panel:rgba(255,255,255,.7); --panel2:rgba(248,252,253,.85);
   --line:rgba(18,86,108,.16); --line-soft:rgba(18,86,108,.09); --line-hi:rgba(18,86,108,.3);
-  --ink:#0c2933; --ink-soft:#34596a; --ink-dim:#5f8696;
+  --ink:#08222c; --ink-soft:#203b46; --ink-dim:#45697a;
   --accent:#0d9ec4; --accent2:#19b4d8;
   --glow:rgba(13,158,196,.28);
   --chip:rgba(10,70,90,.04); --item-hover:rgba(18,110,140,.07);
@@ -54,24 +54,25 @@ body{
 }
 .scene{position:fixed; inset:0; z-index:0; pointer-events:none}
 #gl{display:block; width:100%; height:100%}
-.wrap{position:relative; z-index:2}
+.frost{position:fixed; inset:0; z-index:1; pointer-events:none; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); background:color-mix(in oklab,var(--bg) 28%,transparent)}
+#fgdots{position:fixed; inset:0; z-index:2; pointer-events:none}
+.wrap{position:relative; z-index:3}
 
 /* ===== hero ===== */
 .hero{position:relative; display:flex; flex-direction:column; justify-content:center;
   max-width:1320px; margin:0 auto; padding:clamp(84px,12vh,150px) clamp(20px,5vw,56px) 40px; min-height:min(88vh,700px)}
 .hero-copy{position:relative; z-index:3; max-width:600px}
-.hero-copy::before{content:""; position:absolute; inset:-50px -20px -50px -60px; z-index:-1; background:linear-gradient(90deg, color-mix(in oklab,var(--bg) 80%,transparent) 12%, color-mix(in oklab,var(--bg) 52%,transparent) 50%, transparent 92%); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px)}
 .eyebrow{display:inline-flex; align-items:center; gap:9px; margin:0 0 24px; font:600 12px/1 var(--mono); letter-spacing:.22em; text-transform:uppercase; color:var(--accent); padding:8px 15px; border-radius:999px; border:1px solid color-mix(in oklab,var(--accent) 26%,transparent); background:color-mix(in oklab,var(--accent) 8%,transparent)}
 .eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 9px var(--accent)}
-h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font-size:clamp(46px,8vw,96px); background:var(--title-grad); -webkit-background-clip:text; background-clip:text; color:transparent}
-.lede{margin:24px 0 0; max-width:500px; font-size:clamp(16px,2vw,20px); color:var(--ink-soft); text-wrap:pretty}
+h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font-size:clamp(46px,8vw,96px); background:linear-gradient(180deg,var(--ink),var(--ink2)); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 2px 16px var(--bg)) drop-shadow(0 0 4px var(--bg))}
+.lede{margin:24px 0 0; max-width:500px; font-size:clamp(16px,2vw,20px); color:var(--ink-soft); text-wrap:pretty; text-shadow:0 1px 16px var(--bg), 0 0 7px var(--bg)}
 .countdown{margin-top:28px; display:inline-flex; align-items:baseline; gap:10px; font:500 14px/1 var(--mono); color:var(--ink-soft); padding:11px 18px; border-radius:999px; background:var(--panel2); border:1px solid var(--line); backdrop-filter:blur(8px)}
 .countdown[hidden]{display:none}
 .countdown b{font-size:22px; color:var(--accent); font-weight:600}
 .scrollcue{position:absolute; left:clamp(20px,5vw,56px); bottom:26px; display:flex; align-items:center; gap:9px; font:500 11px/1 var(--mono); letter-spacing:.2em; text-transform:uppercase; color:var(--ink-dim)}
 .scrollcue svg{width:15px;height:15px}
 
-@media (max-width:900px){.hero{min-height:auto; padding-top:60px; padding-bottom:24px}}
+@media (max-width:900px){.hero{min-height:auto; padding-top:22px; padding-bottom:24px} .hero-copy::before{display:none}}
 
 /* ===== toolbar ===== */
 .toolbar{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:13px; flex-wrap:wrap; padding:13px clamp(16px,4vw,40px); background:var(--panel2); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--line); transition:background-color .5s ease, padding .28s ease}
@@ -128,10 +129,10 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
   .toolbar{gap:9px}
   .search{flex:1 1 110px; min-width:96px}
   #collapseAll{padding:0; width:38px; height:38px; display:grid; place-items:center}
-  #collapseAll [data-collapse-label]{display:none}
+  #collapseAll [data-collapse-label]{display:none !important}
   #collapseAll .ca-icon{display:block}
-  .index{position:fixed; top:0; left:0; height:100%; width:min(82vw,330px); z-index:50; margin:0; max-height:none; padding:74px 14px 24px; overflow-y:auto; background:var(--bg2); border-right:1px solid var(--line); transform:translateX(-104%); transition:transform .34s cubic-bezier(.3,.7,.2,1); box-shadow:30px 0 80px -40px rgba(0,0,0,.5)}
-  .index.open{transform:none}
+  .index{position:fixed; top:0; left:0; height:100%; width:min(82vw,330px); z-index:50; margin:0; max-height:none; padding:74px 14px 24px; overflow-y:auto; background:var(--bg2); border-right:1px solid var(--line); transform:translateX(-104%); transition:transform .34s cubic-bezier(.3,.7,.2,1)}
+  .index.open{transform:none; box-shadow:30px 0 80px -40px rgba(0,0,0,.5)}
   .index-close{position:absolute; top:16px; right:14px; display:grid; place-items:center; width:34px;height:34px; border-radius:9px; background:var(--chip); border:1px solid var(--line); color:var(--ink); cursor:pointer}
 }
 @media (min-width:881px){.index-close{display:none}}
@@ -167,6 +168,8 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 </head>
 <body>
 <canvas id="gl" class="scene" aria-hidden="true"></canvas>
+<div class="frost" aria-hidden="true"></div>
+<canvas id="fgdots" aria-hidden="true"></canvas>
 
 <div class="wrap">
   <header class="hero">
@@ -176,7 +179,6 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
       <p class="lede">Alle Lernmaterialien — nach System und Krankheitsbild. Eine ruhige Übersicht, die sich beim Scrollen entfaltet.</p>
       <div class="countdown" id="countdown" hidden>noch <b data-n>0</b> Tage bis zur Prüfung</div>
     </div>
-    <div class="scrollcue" aria-hidden="true">Scrollen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
   </header>
 
   <nav class="toolbar" aria-label="Suche und Filter">
@@ -220,9 +222,9 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
   <div class="viewer-stage" id="vwStage"></div>
 </div>
 
-<script src="kp-data.js"></script>
-<script src="kp-icons.js"></script>
-<script src="kp-engine.js"></script>
+<script src="kp-data.js?v=44"></script>
+<script src="kp-icons.js?v=44"></script>
+<script src="kp-engine.js?v=44"></script>
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/BokehShader.js"></script>
@@ -234,15 +236,58 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
-<script src="kp-fx.js"></script>
+<script src="kp-fx.js?v=44"></script>
 <script>
 const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+/* ===== scroll-driven scene colour journey =====
+   light: daylight → sunset ; dark: midnight → dawn  (whole scene recolours) */
+const JOURNEY = {
+  light: {
+    from:{top:'#eef6fc',hor:'#fafdfe',obj:'#2f9fbf',bg:'#f6fafd',bg2:'#eef4f8',panel:'#ffffff',line:'#1f6076',ink:'#08222c',ink2:'#041018',inkSoft:'#203b46',inkDim:'#45697a',accent:'#0d9ec4',accent2:'#19b4d8'},
+    to:  {top:'#b9a9c9',hor:'#f6c79a',obj:'#d98a55',bg:'#f3e2d2',bg2:'#ecd0bb',panel:'#fffaf3',line:'#7a4a2e',ink:'#0a1508',ink2:'#000000',inkSoft:'#2c1c10',inkDim:'#54381f',accent:'#c8612e',accent2:'#e5965a'}
+  },
+  dark: {
+    from:{top:'#04141d',hor:'#0a2733',obj:'#28a6c4',bg:'#061d28',bg2:'#0a2a38',panel:'#16323f',line:'#78c8e1',ink:'#eaf6fb',ink2:'#ffffff',inkSoft:'#d6ecf5',inkDim:'#9ec2d1',accent:'#24c4e6',accent2:'#67dbf3'},
+    to:  {top:'#283a5e',hor:'#c0906f',obj:'#c89274',bg:'#262b46',bg2:'#333a5a',panel:'#06121a',line:'#caa284',ink:'#ffffff',ink2:'#ffffff',inkSoft:'#f6efe9',inkDim:'#ddd1d4',accent:'#e0a070',accent2:'#edbb8c'}
+  }
+};
+const _hx = (h)=>{h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+const _lp = (a,b,k)=>{const A=_hx(a),B=_hx(b);return [Math.round(A[0]+(B[0]-A[0])*k),Math.round(A[1]+(B[1]-A[1])*k),Math.round(A[2]+(B[2]-A[2])*k)];};
+const _rgb = (a)=>`rgb(${a[0]},${a[1]},${a[2]})`;
+function applyJourney(){
+  const dark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const j = dark ? JOURNEY.dark : JOURNEY.light;
+  const max = (document.documentElement.scrollHeight - innerHeight) || 1;
+  const p = Math.min(1, Math.max(0, window.scrollY / max));
+  const s = document.documentElement.style;
+  const arr = (k)=> _lp(j.from[k], j.to[k], p);
+  const col = (k)=> _rgb(arr(k));
+  const rgba = (a,al)=> `rgba(${a[0]},${a[1]},${a[2]},${al})`;
+  s.setProperty('--bg', col('bg')); s.setProperty('--bg2', col('bg2'));
+  s.setProperty('--ink', col('ink')); s.setProperty('--ink2', col('ink2')); s.setProperty('--ink-soft', col('inkSoft'));
+  s.setProperty('--ink-dim', col('inkDim')); s.setProperty('--accent', col('accent')); s.setProperty('--accent2', col('accent2'));
+  s.setProperty('--title-grad', `linear-gradient(180deg, ${col('ink')}, ${col('accent')})`);
+  s.setProperty('--glow', rgba(arr('accent'), .4));
+  s.setProperty('--p', p.toFixed(3));
+  const pt = arr('panel'); const ptd = pt.map(v=>Math.round(v*0.92));
+  const pAlpha = dark ? .6 : .74;
+  s.setProperty('--panel', rgba(pt, pAlpha)); s.setProperty('--panel2', rgba(pt, dark?.84:.9));
+  s.setProperty('--panel-top', rgba(pt, pAlpha)); s.setProperty('--panel-bot', rgba(ptd, pAlpha));
+  const lt = arr('line');
+  const la = dark ? .16 : .26;
+  s.setProperty('--line', rgba(lt, la)); s.setProperty('--line-soft', rgba(lt, la*0.55)); s.setProperty('--line-hi', rgba(lt, la+0.12));
+  s.setProperty('--chip', rgba(lt,.06)); s.setProperty('--item-hover', rgba(lt,.09));
+  const ang = (dark ? (220 + p * 100) : (40 + p * 100)) * Math.PI / 180;
+  if (window.KPFX && KPFX.setScene) KPFX.setScene(col('hor'), col('top'), col('obj'), ang);   // rotating sun direction
+}
 
 /* theme toggle — light is the default; in-memory only, no storage */
 document.getElementById("themeToggle").addEventListener("click", () => {
   const root = document.documentElement;
   root.setAttribute("data-theme", root.getAttribute("data-theme") === "light" ? "dark" : "light");
-  KPFX.setTheme();
+  window.scrollTo(0, 0); target = 0; smooth = 0;
+  applyJourney();
 });
 
 /* 3D specimen scene */
@@ -256,12 +301,12 @@ function tick(){
   if (Math.abs(target - smooth) < 0.4){ smooth = target; renderAll(); raf = null; return; }
   renderAll(); raf = requestAnimationFrame(tick);
 }
-function onScroll(){ target = window.scrollY; updCompact(); if (REDUCE){ smooth = target; renderAll(); return; } if (!raf) raf = requestAnimationFrame(tick); }
+function onScroll(){ target = window.scrollY; updCompact(); applyJourney(); if (REDUCE){ smooth = target; renderAll(); return; } if (!raf) raf = requestAnimationFrame(tick); }
 const toolbarEl = document.querySelector(".toolbar"), heroEl = document.querySelector(".hero");
 let heroH = heroEl.offsetHeight;
 function updCompact(){ toolbarEl.classList.toggle("compact", window.scrollY > heroH - 90); }
 addEventListener("scroll", onScroll, { passive:true });
-addEventListener("resize", () => { heroH = heroEl.offsetHeight; KPFX.resize(); renderAll(); updCompact(); });
+addEventListener("resize", () => { heroH = heroEl.offsetHeight; KPFX.resize(); renderAll(); updCompact(); applyJourney(); });
 updCompact();
 
 /* mount tree engine */
@@ -331,8 +376,10 @@ addEventListener("keydown", (e)=>{ if(e.key==="Escape" && viewerOpen){ e.prevent
 (function(){ const id=hashId(); if(id && registry[id]) openViewer(registry[id], false); })();
 
 /* first paint */
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 renderAll();
-addEventListener("load", () => { KPFX.resize(); renderAll(); });
+applyJourney();
+addEventListener("load", () => { window.scrollTo(0,0); target = 0; smooth = 0; KPFX.resize(); renderAll(); applyJourney(); });
 </script>
 </body>
 </html>

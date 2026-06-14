@@ -12,15 +12,19 @@
    ============================================================ */
 (function () {
   const MODELS = [
-    { url: "models/ribbon-rainbow.glb", n: 2, size: 8 },
+    { url: "models/ribbon-rainbow.glb", n: 1, size: 9.2 },
   ];
   /* cohesive cool tints so the specimens suit the theme + glow */
   const TINTS = ["#27c4e6", "#34c7c0", "#3f8fd0", "#57cfe8", "#2aa6c6", "#6a8fe0"];
   const rand = (a, b) => a + Math.random() * (b - a);
 
   let renderer, scene, camera, composer, bokeh, fxaa, ready = false;
-  let items = [], parts = [], lastScroll = 0, glcanvas;
+  let items = [], parts = [], lastScroll = 0, glcanvas, fgcvs, fgctx, fgdots = [], fgRaf = null, skyCanvas, skyTex, objMats = [];
   const SPAN = 15;                       // vertical world-wrap span
+  const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
+  /* curated complementary firefly palette (cool cyan/mint ↔ warm amber/rose) */
+  const FG_DARK = ["150,224,243", "130,226,168", "244,194,110", "240,138,160"];
+  const FG_LIGHT = ["28,118,146", "46,134,92", "182,108,52", "166,80,108"];
 
   function bgColor() {
     const hex = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#061d28";
@@ -39,6 +43,8 @@
 
   function init(opts) {
     glcanvas = opts.canvas;
+    fgcvs = document.getElementById("fgdots");
+    if (fgcvs) fgctx = fgcvs.getContext("2d");
     renderer = new THREE.WebGLRenderer({ canvas: glcanvas, antialias: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.6));
     renderer.setSize(innerWidth, innerHeight);
@@ -47,9 +53,12 @@
     renderer.toneMappingExposure = 0.92;
 
     scene = new THREE.Scene();
-    const bg = bgColor();
-    scene.background = bg;
-    scene.fog = new THREE.Fog(bg, 11, 36);
+    skyCanvas = document.createElement("canvas"); skyCanvas.width = 64; skyCanvas.height = 64;
+    skyTex = new THREE.CanvasTexture(skyCanvas);
+    if ("encoding" in skyTex) skyTex.encoding = THREE.sRGBEncoding;
+    buildSky("#0a2733", "#04141d");
+    scene.background = skyTex;
+    scene.fog = new THREE.Fog(new THREE.Color("#0a2733"), 11, 36);
     /* environment map so metallic glTF materials are lit (no more black) */
     try {
       const pmrem = new THREE.PMREMGenerator(renderer);
@@ -63,17 +72,7 @@
     const d1 = new THREE.DirectionalLight(0xffffff, 0.5); d1.position.set(6, 9, 8); scene.add(d1);
     const d2 = new THREE.DirectionalLight(0x9fd0ff, 0.22); d2.position.set(-7, -3, 4); scene.add(d2);
 
-    /* glowing sprite particles (also get DoF) */
-    const tex = particleTexture();
-    const pcount = Math.round(Math.min(40, innerWidth / 30));
-    for (let i = 0; i < pcount; i++) {
-      const mat = new THREE.SpriteMaterial({ map: tex, color: new THREE.Color(PCOL[i % PCOL.length]), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: rand(0.25, 0.7) });
-      const sp = new THREE.Sprite(mat);
-      const s = rand(0.12, 0.6); sp.scale.set(s, s, s);
-      sp.userData = { baseX: rand(-11, 11), baseY: rand(-7.5, 7.5), baseZ: rand(-7, 3), par: rand(0.2, 1.1), ph: rand(0, 6.28) };
-      sp.position.set(sp.userData.baseX, sp.userData.baseY, sp.userData.baseZ);
-      scene.add(sp); parts.push(sp);
-    }
+    /* particles are drawn in the 2D foreground layer (continuous DoF, theme-aware) */
 
     /* post-processing: render + bokeh DoF */
     composer = new THREE.EffectComposer(renderer);
@@ -88,6 +87,7 @@
     frameCamera();
 
     ready = true;
+    sizeFg(); seedFg(); startFg();
     loadModels();
     render(lastScroll);
   }
@@ -137,14 +137,11 @@
         else if (o.isLine) o.material = lineMat;
         else if (o.isPoints) o.material = ptMat;
       });
-      const u = {
-        baseX: rand(-7.5, 7.5), baseY: rand(-7, 7), baseZ: rand(-16, 2),
-        par: rand(0.35, 1.15), ph: rand(0, 6.28), ph2: rand(0, 6.28),
-        rx0: rand(0, 6.28), ry0: rand(0, 6.28), rxs: rand(-0.0004, 0.0004), rys: rand(-0.0009, 0.0009) || 0.0005,
-        zAmp: rand(1.8, 4.0),
-      };
+      objMats.push(meshMat, lineMat, ptMat);
+      const u = { rx0: rand(0, 6.28), ry0: rand(0, 6.28), rxs: 0.0006 };
       inst.userData = u;
-      inst.position.set(u.baseX, u.baseY, u.baseZ);
+      inst.position.set(0, 0, -1);          // centered, just behind the focus plane
+      inst.rotation.set(0, u.rx0, 0);
       scene.add(inst); items.push(inst);
     }
   }
@@ -160,10 +157,26 @@
     });
   }
 
-  function setTheme() {
+  function buildSky(bright, deep, ang) {
+    ang = ang || 0;
+    const c = skyCanvas.getContext("2d"), W = skyCanvas.width, H = skyCanvas.height;
+    const cx = W / 2, cy = H / 2, R = Math.hypot(W, H) / 2;
+    const dx = Math.cos(ang) * R, dy = Math.sin(ang) * R;            // sun direction rotates with scroll
+    const g = c.createLinearGradient(cx - dx, cy - dy, cx + dx, cy + dy);
+    g.addColorStop(0, bright); g.addColorStop(1, deep);
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    const g2 = c.createLinearGradient(cx - dx, cy - dy, cx + dx, cy + dy);
+    g2.addColorStop(0, "rgba(255,255,255,0.6)"); g2.addColorStop(1, "rgba(0,0,0,0.45)");
+    c.globalCompositeOperation = "soft-light";
+    c.fillStyle = g2; c.fillRect(0, 0, W, H);
+    c.globalCompositeOperation = "source-over";
+    if (skyTex) skyTex.needsUpdate = true;
+  }
+  function setScene(bright, deep, obj, ang) {
     if (!ready) return;
-    const bg = bgColor();
-    scene.background = bg; scene.fog.color = bg;
+    buildSky(bright, deep, ang);
+    if (scene.fog) scene.fog.color.set(deep);
+    for (const m of objMats) { if (m && m.color) m.color.set(obj); }
     render(lastScroll);
   }
 
@@ -181,32 +194,94 @@
     composer.setSize(innerWidth, innerHeight);
     setFxaaRes();
     frameCamera();
+    sizeFg(); seedFg(); startFg();
     render(lastScroll);
+  }
+
+  function sizeFg() {
+    if (!fgcvs) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    fgcvs.width = innerWidth * dpr; fgcvs.height = innerHeight * dpr;
+    fgcvs.style.width = innerWidth + "px"; fgcvs.style.height = innerHeight + "px";
+    fgcvs._dpr = dpr;
+  }
+  function seedFg() {
+    fgdots = [];
+    const n = Math.round(Math.min(52, innerWidth / 24));
+    for (let i = 0; i < n; i++) {
+      fgdots.push({
+        bx: Math.random(), by: Math.random(),
+        r: rand(0.6, 1.6), a: rand(0.55, 1.1), par: rand(0.2, 0.85), ci: (Math.random() * 4) | 0,
+        wax: rand(0.015, 0.05), way: rand(0.015, 0.05),
+        wsx: rand(0.08, 0.32), wsy: rand(0.08, 0.32), phx: rand(0, 6.28), phy: rand(0, 6.28),
+        tw: rand(0.25, 0.75), pht: rand(0, 6.28)
+      });
+    }
+  }
+  function startFg() {
+    if (REDUCE) return;                 // reduced motion → fireflies static (painted by render)
+    if (fgRaf) return;
+    const loop = (now) => { paintFg(now); fgRaf = requestAnimationFrame(loop); };
+    fgRaf = requestAnimationFrame(loop);
+  }
+  function paintFg(now) {
+    if (!fgctx || !fgcvs._dpr) return;
+    const dpr = fgcvs._dpr, W = fgcvs.width, H = fgcvs.height, span = H * 1.4;
+    const t = now * 0.001, scroll = lastScroll;
+    const max = (document.documentElement.scrollHeight - innerHeight) || 1;
+    const p = Math.min(1, Math.max(0, scroll / max));
+    fgctx.clearRect(0, 0, W, H);
+    const dark = document.documentElement.getAttribute("data-theme") !== "light";
+
+    if (!dark) {
+      // daytime → sunset: drifting dust motes (scene colour handled by CSS journey)
+      fgctx.globalCompositeOperation = "source-over";
+      for (const d of fgdots) {
+        const wx = d.bx + Math.sin(t * d.wsx + d.phx) * d.wax;
+        const wy = d.by + Math.sin(t * d.wsy + d.phy) * d.way;
+        let y = wy * H - scroll * dpr * d.par * 0.03; y = ((y % span) + span) % span;
+        const x = (((wx % 1) + 1) % 1) * W;
+        const sh = 0.5 + 0.5 * Math.sin(t * d.tw * 0.5 + d.pht);
+        const glow = d.r * dpr * 3.2, a = 0.14 * (0.5 + 0.5 * sh);
+        const g = fgctx.createRadialGradient(x, y, 0, x, y, glow);
+        g.addColorStop(0, `rgba(150,120,80,${a})`);
+        g.addColorStop(0.4, `rgba(150,120,80,${a * 0.5})`);
+        g.addColorStop(1, `rgba(150,120,80,0)`);
+        fgctx.fillStyle = g; fgctx.beginPath(); fgctx.arc(x, y, glow, 0, 6.2832); fgctx.fill();
+      }
+      return;
+    }
+
+    // midnight → dawn: fireflies winking out as the dawn light comes up
+    fgctx.globalCompositeOperation = "lighter";
+    const fade = 1 - p * 0.8;
+    const col = "190,226,120";
+    for (const d of fgdots) {
+      const wx = d.bx + Math.sin(t * d.wsx + d.phx) * d.wax;
+      const wy = d.by + Math.sin(t * d.wsy + d.phy) * d.way;
+      let y = wy * H - scroll * dpr * d.par * 0.025; y = ((y % span) + span) % span;
+      const x = (((wx % 1) + 1) % 1) * W;
+      const blink = Math.pow(Math.max(0, Math.sin(t * d.tw + d.pht)), 6);
+      const glow = d.r * dpr * 4.2, a = d.a * (0.1 + 0.9 * blink) * fade;
+      const g = fgctx.createRadialGradient(x, y, 0, x, y, glow);
+      g.addColorStop(0, `rgba(${col},${a})`);
+      g.addColorStop(0.35, `rgba(${col},${a * 0.5})`);
+      g.addColorStop(1, `rgba(${col},0)`);
+      fgctx.fillStyle = g; fgctx.beginPath(); fgctx.arc(x, y, glow, 0, 6.2832); fgctx.fill();
+    }
+    fgctx.globalCompositeOperation = "source-over";
   }
 
   function render(scroll) {
     if (!ready) return;
     lastScroll = scroll;
-    const wp = 0.011;
     for (const it of items) {
       const u = it.userData;
-      let y = u.baseY - scroll * wp * u.par;
-      y = ((y + SPAN / 2) % SPAN + SPAN) % SPAN - SPAN / 2;
-      it.position.y = y;
-      it.position.z = u.baseZ + Math.sin(scroll * 0.0009 + u.ph) * u.zAmp;
-      it.position.x = u.baseX + Math.sin(scroll * 0.0006 + u.ph2) * 0.7;
-      it.rotation.y = u.ry0 + scroll * u.rys;
-      it.rotation.x = u.rx0 + scroll * u.rxs;
-    }
-    for (const p of parts) {
-      const u = p.userData;
-      let y = u.baseY - scroll * wp * u.par;
-      y = ((y + SPAN / 2) % SPAN + SPAN) % SPAN - SPAN / 2;
-      p.position.y = y;
-      p.position.z = u.baseZ + Math.sin(scroll * 0.0011 + u.ph) * 1.3;
+      it.rotation.y = u.rx0 + scroll * u.rxs;   // object moves only with scroll
     }
     composer.render();
+    if (REDUCE) paintFg(performance.now());
   }
 
-  window.KPFX = { init, resize, render, setTheme };
+  window.KPFX = { init, resize, render, setScene };
 })();

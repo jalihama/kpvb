@@ -10,12 +10,14 @@
   position:relative;
   border:1px solid var(--line);
   border-radius:var(--radius);
-  background:var(--panel);
+  background:linear-gradient(180deg, var(--panel-top, var(--panel)), var(--panel-bot, var(--panel)));
+  background-size:100% 160%; background-position:0 calc(var(--p,0) * -55%);
   backdrop-filter:blur(7px);
   -webkit-backdrop-filter:blur(7px);
   overflow:hidden;
   opacity:0; transform:translateY(18px);
-  transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1), border-color .3s ease;
+  box-shadow:0 calc(5px + var(--p,0) * 8px) calc(16px + var(--p,0) * 18px) -12px rgba(18,34,52, calc(.14 + var(--p,0) * .12));
+  transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1), border-color .3s ease, box-shadow .35s ease;
 }
 .sys.in{opacity:1; transform:none}
 .sys[hidden]{display:none}
@@ -29,9 +31,9 @@
 .sys-head:focus-visible{outline:2px solid var(--accent); outline-offset:-3px; border-radius:var(--radius)}
 .sys-ic{
   flex:0 0 auto; width:42px; height:42px; display:grid; place-items:center;
-  border-radius:12px; color:var(--accent);
-  background:radial-gradient(120% 120% at 30% 20%, color-mix(in oklab,var(--accent) 22%,transparent), transparent 70%);
-  border:1px solid color-mix(in oklab,var(--accent) 30%,transparent);
+  border-radius:12px; color:var(--sys-accent,var(--accent));
+  background:radial-gradient(120% 120% at 30% 20%, color-mix(in oklab,var(--sys-accent,var(--accent)) 22%,transparent), transparent 70%);
+  border:1px solid color-mix(in oklab,var(--sys-accent,var(--accent)) 30%,transparent);
   box-shadow:0 0 18px -6px var(--glow);
   transition:transform .4s cubic-bezier(.2,.7,.2,1);
 }
@@ -43,9 +45,9 @@
 }
 .sys-count{
   flex:0 0 auto; font:600 12px/1 var(--mono); letter-spacing:.04em;
-  color:var(--accent); padding:5px 9px; border-radius:999px;
-  background:color-mix(in oklab,var(--accent) 12%,transparent);
-  border:1px solid color-mix(in oklab,var(--accent) 24%,transparent);
+  color:var(--sys-accent,var(--accent)); padding:5px 9px; border-radius:999px;
+  background:color-mix(in oklab,var(--sys-accent,var(--accent)) 12%,transparent);
+  border:1px solid color-mix(in oklab,var(--sys-accent,var(--accent)) 24%,transparent);
 }
 .sys-chev{
   flex:0 0 auto; width:11px; height:11px; margin-left:2px;
@@ -69,7 +71,7 @@
 .topic-head:focus-visible{outline:2px solid var(--accent); outline-offset:-2px; border-radius:8px}
 .topic-dot{
   flex:0 0 auto; width:7px; height:7px; border-radius:50%;
-  background:var(--accent2); box-shadow:0 0 8px -1px var(--accent2);
+  background:var(--sys-accent,var(--accent2)); box-shadow:0 0 8px -1px var(--sys-accent,var(--accent2));
 }
 .topic-name{flex:1 1 auto; font-weight:500; font-size:15px; letter-spacing:-.005em}
 .topic-count{flex:0 0 auto; font:500 11px/1 var(--mono); color:var(--ink-dim)}
@@ -140,7 +142,7 @@
 .ix-link[hidden]{display:none}
 .ix-link:hover{background:var(--item-hover); color:var(--ink); border-color:var(--line)}
 .ix-link:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
-.ix-ic{flex:0 0 auto; width:22px; height:22px; color:var(--accent); opacity:.9}
+.ix-ic{flex:0 0 auto; width:22px; height:22px; color:var(--sys-accent,var(--accent)); opacity:.9}
 .ix-ic svg{width:20px; height:20px}
 .ix-name{flex:1 1 auto; font-size:13px; line-height:1.25; letter-spacing:-.005em}
 .ix-count{flex:0 0 auto; font:500 11px/1 var(--mono); color:var(--ink-dim)}
