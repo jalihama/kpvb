@@ -346,7 +346,8 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
-<script src="kp-fx.js?v=71"></script>
+<script src="kp-fx.js?v=76"></script>
+<script src="kp-fx-lite.js?v=76"></script>
 <script>
 const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
 
@@ -418,7 +419,8 @@ document.getElementById("themeToggle").addEventListener("click", () => {
   applyJourney();
 });
 
-/* 3D specimen scene */
+/* 3D specimen scene (mobile uses the lightweight 2D fallback) */
+if (innerWidth < 760 && window.KPFXLite) { window.KPFX = window.KPFXLite; document.getElementById("gl").classList.add("lite"); }
 KPFX.init({ canvas: document.getElementById("gl") });
 
 /* minimal / stare-into-space mode — one system at a time, switch via side menu */
