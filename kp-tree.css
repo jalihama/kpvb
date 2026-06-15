@@ -11,8 +11,8 @@
   border:1px solid var(--line);
   border-radius:var(--radius);
   background:linear-gradient(180deg, var(--panel-top, var(--panel)), var(--panel-bot, var(--panel)));
-  backdrop-filter:blur(7px);
-  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
   overflow:hidden;
   opacity:0; transform:translateY(18px);
   box-shadow:none;
@@ -58,9 +58,9 @@
 }
 .sys.collapsed .sys-chev{transform:rotate(-45deg)}
 
-.sys-body{display:grid; grid-template-rows:1fr; transition:grid-template-rows .42s cubic-bezier(.3,.7,.2,1)}
+.sys-body{display:grid; grid-template-rows:1fr; transition:grid-template-rows .3s cubic-bezier(.3,.7,.2,1)}
 .sys.collapsed > .sys-body{grid-template-rows:0fr}
-.sys-body-inner{overflow:hidden; min-height:0; padding:0 14px 8px}
+.sys-body-inner{overflow:hidden; min-height:0; padding:0 14px 8px; contain:content}
 
 /* ---------- topic row ---------- */
 .topic{border-top:1px solid var(--line-soft)}
@@ -85,9 +85,9 @@
 .topic.collapsed .topic-chev{transform:rotate(-45deg)}
 .topic:hover .topic-name{color:var(--ink)}
 
-.topic-body{display:grid; grid-template-rows:1fr; transition:grid-template-rows .3s cubic-bezier(.3,.7,.2,1)}
+.topic-body{display:grid; grid-template-rows:1fr; transition:grid-template-rows .24s cubic-bezier(.3,.7,.2,1)}
 .topic.collapsed > .topic-body{grid-template-rows:0fr}
-.items{list-style:none; margin:0; padding:0 0 8px; overflow:hidden; min-height:0}
+.items{list-style:none; margin:0; padding:0 0 8px; overflow:hidden; min-height:0; contain:content}
 
 /* ---------- resource item ---------- */
 .item[hidden]{display:none}

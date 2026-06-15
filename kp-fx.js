@@ -47,7 +47,7 @@
     fgcvs = document.getElementById("fgdots");
     if (fgcvs) fgctx = fgcvs.getContext("2d");
     renderer = new THREE.WebGLRenderer({ canvas: glcanvas, antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 760 ? 1 : 1.4));
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 760 ? 1.25 : 1.4));
     renderer.setSize(innerWidth, innerHeight);
     if ("outputEncoding" in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -195,7 +195,7 @@
 
   function resize() {
     if (!ready) return;
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 760 ? 1 : 1.4));
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 760 ? 1.25 : 1.4));
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
     composer.setSize(innerWidth, innerHeight);
