@@ -347,7 +347,6 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
 <script src="kp-fx.js?v=76"></script>
-<script src="kp-fx-lite.js?v=76"></script>
 <script>
 const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
 
@@ -382,8 +381,9 @@ function applyJourney(){
   const j = dark ? JOURNEY.dark : JOURNEY.light;
   const max = (document.documentElement.scrollHeight - innerHeight) || 1;
   const p = gradientOn ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+  const pc = Math.round(p * 18) / 18;                 // quantised: card colour vars change in steps, not every frame (no per-frame card repaint)
   const s = document.documentElement.style;
-  const arr = (k)=> _lp(j.from[k], j.to[k], p);
+  const arr = (k)=> _lp(j.from[k], j.to[k], pc);
   const col = (k)=> _rgb(arr(k));
   const rgba = (a,al)=> `rgba(${a[0]},${a[1]},${a[2]},${al})`;
   s.setProperty('--bg', col('bg')); s.setProperty('--bg2', col('bg2'));
@@ -419,8 +419,7 @@ document.getElementById("themeToggle").addEventListener("click", () => {
   applyJourney();
 });
 
-/* 3D specimen scene (mobile uses the lightweight 2D fallback) */
-if (innerWidth < 760 && window.KPFXLite) { window.KPFX = window.KPFXLite; document.getElementById("gl").classList.add("lite"); }
+/* 3D specimen scene */
 KPFX.init({ canvas: document.getElementById("gl") });
 
 /* minimal / stare-into-space mode — one system at a time, switch via side menu */
