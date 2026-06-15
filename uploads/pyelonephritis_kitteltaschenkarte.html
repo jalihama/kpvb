@@ -1,0 +1,347 @@
+<!--
+  Pyelonephritis — Kitteltaschen-Lernkarte (KP / Kenntnisprüfung)
+  Print-optimiert (A4 quer). Eigenständiges Fragment, alle Klassen unter .pn gekapselt.
+  Fachstand: AWMF S3-Leitlinie 043-044 (unkomplizierte HWI), Update April 2024.
+-->
+<style>
+  /* ---- Tokens ---------------------------------------------------------- */
+  .pn {
+    --ink: #16201d;
+    --paper: #ffffff;
+    --line: #d4dad6;
+    --teal: #0f6b63;
+    --teal-soft: #e7f1ef;
+    --slate: #64726d;
+    --oral: #1f7a4d;       /* grün — unkompliziert / oral */
+    --oral-bg: #e6f3eb;
+    --iv: #c8821a;         /* amber — schwer / i.v. */
+    --iv-bg: #fbf0dd;
+    --cplx: #9e2a22;       /* tiefrot — kompliziert / Urosepsis */
+    --cplx-bg: #f6dcd9;
+    --danger: #c2362f;
+
+    --mono: "SF Mono", "DejaVu Sans Mono", "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+    --sans: "Inter", -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 11px;
+    line-height: 1.34;
+    background: var(--paper);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 18px 20px 26px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .pn * { box-sizing: border-box; }
+
+  /* ---- Masthead -------------------------------------------------------- */
+  .pn-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 16px; border-bottom: 2.5px solid var(--ink);
+    padding-bottom: 9px; margin-bottom: 12px;
+  }
+  .pn-title { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.04; }
+  .pn-title .sub { display: block; font-size: 11px; font-weight: 600; color: var(--teal); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 3px; }
+  .pn-tag { text-align: right; font-size: 9.5px; color: var(--slate); max-width: 280px; line-height: 1.3; }
+  .pn-tag b { color: var(--ink); }
+  .pn-pearl {
+    display: inline-block; margin-top: 5px; font-style: normal;
+    font-size: 9px; font-weight: 700; color: var(--teal);
+    background: var(--teal-soft); border: 1px solid var(--teal);
+    border-radius: 4px; padding: 2px 6px; line-height: 1.3;
+  }
+
+  /* ---- Top facts strip ------------------------------------------------- */
+  .pn-strip {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
+    border: 1px solid var(--line); border-radius: 7px; overflow: hidden;
+    margin-bottom: 13px;
+  }
+  .pn-fact { padding: 7px 10px; border-right: 1px solid var(--line); }
+  .pn-fact:last-child { border-right: none; }
+  .pn-fact .lab { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate); font-weight: 700; margin-bottom: 2px; }
+  .pn-fact .val { font-size: 10.5px; font-weight: 600; }
+  .pn-fact .val .mono { font-family: var(--mono); font-weight: 700; }
+
+  /* ---- Column layout --------------------------------------------------- */
+  .pn-grid { column-count: 3; column-gap: 16px; column-fill: balance; }
+  @media (max-width: 980px) { .pn-grid { column-count: 2; } }
+  @media (max-width: 660px) { .pn-grid { column-count: 1; } }
+
+  .pn .card {
+    break-inside: avoid; -webkit-column-break-inside: avoid;
+    border: 1px solid var(--line); border-radius: 7px;
+    padding: 9px 11px 10px; margin: 0 0 12px;
+    background: var(--paper);
+  }
+  .pn .card.accent { border-color: var(--teal); border-width: 1.5px; }
+  .pn .card.accent .h { color: var(--teal); }
+
+  .pn .h {
+    font-size: 11.5px; font-weight: 800; letter-spacing: 0.01em;
+    margin: 0 0 6px; display: flex; align-items: center; gap: 7px;
+  }
+  .pn .h .n {
+    font-family: var(--mono); font-size: 9px; font-weight: 700;
+    background: var(--ink); color: #fff; border-radius: 4px;
+    padding: 1px 5px; letter-spacing: 0.02em;
+  }
+  .pn .card.accent .h .n { background: var(--teal); }
+
+  .pn p { margin: 0 0 5px; }
+  .pn ul { margin: 0 0 5px; padding-left: 15px; }
+  .pn li { margin-bottom: 2.5px; }
+  .pn b, .pn strong { font-weight: 700; }
+  .pn .mono { font-family: var(--mono); }
+  .pn .pill {
+    font-family: var(--mono); font-size: 9.5px; font-weight: 700;
+    background: var(--teal-soft); color: var(--teal);
+    padding: 0.5px 4px; border-radius: 3px; white-space: nowrap;
+  }
+  .pn .note { font-size: 9.5px; color: var(--slate); font-style: italic; margin-top: 4px; }
+  .pn .danger { color: var(--danger); font-weight: 700; }
+  .pn u { text-decoration-thickness: 1px; text-underline-offset: 1.5px; }
+
+  /* ---- Signature: severity -> regimen readout band -------------------- */
+  .pn .readout { display: flex; flex-direction: column; gap: 3px; margin: 2px 0 6px; }
+  .pn .ro-row {
+    display: grid; grid-template-columns: 92px 1fr; align-items: stretch;
+    border-radius: 5px; overflow: hidden;
+  }
+  .pn .ro-cat {
+    font-weight: 800; font-size: 9px; line-height: 1.2;
+    display: flex; flex-direction: column; justify-content: center;
+    color: #fff; padding: 4px 7px; text-align: left;
+  }
+  .pn .ro-cat small { font-weight: 600; font-size: 8px; opacity: 0.92; }
+  .pn .ro-act {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px;
+    padding: 4px 8px; font-size: 9.5px; font-weight: 600; background: var(--paper);
+    border: 1px solid var(--line); border-left: none;
+    border-radius: 0 5px 5px 0;
+  }
+  .pn .ro-rx {
+    font-family: var(--mono); font-weight: 800; font-size: 10px;
+    border: 1px solid currentColor; border-radius: 3px; padding: 0 4px;
+  }
+  .pn .ro-meta { font-family: var(--mono); font-size: 8.5px; color: var(--slate); margin-left: auto; }
+
+  .pn .z-oral .ro-cat { background: var(--oral); }
+  .pn .z-iv   .ro-cat { background: var(--iv); }
+  .pn .z-cplx .ro-cat { background: var(--cplx); }
+  .pn .z-ss   .ro-cat { background: var(--teal); }
+  .pn .z-oral .ro-rx { color: var(--oral); }
+  .pn .z-iv   .ro-rx { color: var(--iv); }
+  .pn .z-cplx .ro-rx { color: var(--cplx); }
+  .pn .z-ss   .ro-rx { color: var(--teal); }
+
+  /* ---- Mini tables ----------------------------------------------------- */
+  .pn table.kt { width: 100%; border-collapse: collapse; font-size: 9.5px; margin: 2px 0 5px; }
+  .pn table.kt th { text-align: left; font-weight: 700; color: var(--slate); border-bottom: 1px solid var(--line); padding: 2px 4px; font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .pn table.kt td { padding: 2.5px 4px; border-bottom: 1px solid #eef1f0; vertical-align: top; }
+  .pn table.kt tr:last-child td { border-bottom: none; }
+  .pn table.kt td .mono { font-weight: 700; }
+
+  /* ---- Pearl / drill box ----------------------------------------------- */
+  .pn .drill {
+    background: var(--teal-soft); border: 1px dashed var(--teal);
+    border-radius: 6px; padding: 7px 9px; margin-top: 5px;
+  }
+  .pn .drill .dh { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--teal); margin-bottom: 4px; }
+  .pn .drill p { margin: 0 0 3px; font-size: 9.5px; }
+  .pn .drill p:last-child { margin-bottom: 0; }
+
+  /* ---- Footer ---------------------------------------------------------- */
+  .pn-foot {
+    margin-top: 4px; border-top: 1px solid var(--line); padding-top: 8px;
+    font-size: 8.5px; color: var(--slate); line-height: 1.4;
+  }
+  .pn-foot b { color: var(--ink); }
+
+  @media print {
+    .pn { max-width: none; padding: 6mm 7mm; font-size: 8.4px; }
+    .pn-grid { column-count: 3; column-gap: 9px; }
+    .pn .card { margin-bottom: 7px; padding: 6px 8px 7px; }
+    @page { size: A4 landscape; margin: 6mm; }
+  }
+</style>
+
+<div class="pn">
+
+  <div class="pn-head">
+    <h1 class="pn-title">Pyelonephritis — akut
+      <span class="sub">Klinik · Urin &amp; Labor · Empirische Antibiose · Bildgebung · Urosepsis</span>
+    </h1>
+    <div class="pn-tag"><b>Kitteltaschen-Lernkarte.</b> Orientierung nach AWMF-S3-LL Harnwegsinfektionen (Update 2024) — Dosis individualisieren, lokales Antibiogramm &amp; Hausstandard beachten.
+      <span class="pn-pearl">PRÜFUNGS-PEARL · häufiges Co-Prüfer-/Allgemeinmedizin-Thema → empirische Antibiose KNAPP &amp; sicher nennen.</span>
+    </div>
+  </div>
+
+  <!-- TOP FACTS -->
+  <div class="pn-strip">
+    <div class="pn-fact">
+      <div class="lab">Leittrias</div>
+      <div class="val">Flankenschmerz + Fieber <span class="mono">&gt;38°C</span>/Schüttelfrost + Dysurie</div>
+    </div>
+    <div class="pn-fact">
+      <div class="lab">Häufigster Erreger</div>
+      <div class="val"><i>E. coli</i> <span class="mono">~70–80%</span></div>
+    </div>
+    <div class="pn-fact">
+      <div class="lab">Urin-Schlüssel</div>
+      <div class="val">Leukos + Nitrit + <b>Leukozytenzylinder</b> → obere HWI</div>
+    </div>
+    <div class="pn-fact">
+      <div class="lab">Bildgebung zuerst</div>
+      <div class="val"><b>Sonografie</b> — Harnstau? Stein? Abszess?</div>
+    </div>
+    <div class="pn-fact">
+      <div class="lab">Notfall</div>
+      <div class="val">Obstruktion + Infekt = <b class="danger">Entlastung</b> (DJ/PCN) + AB</div>
+    </div>
+  </div>
+
+  <!-- ============ COLUMNS ============ -->
+  <div class="pn-grid">
+
+    <!-- 1 — KLINIK -->
+    <div class="card">
+      <div class="h"><span class="n">1</span>Klinik &amp; körperliche Untersuchung</div>
+      <p><b>Trias:</b> <u>Flankenschmerz</u> + <u>Fieber &gt;38°C / Schüttelfrost</u> + <u>reduzierter AZ</u>; oft mit unteren Symptomen (Dysurie, Pollakisurie, Algurie).</p>
+      <ul>
+        <li><b>KU:</b> <b>Klopf-/Druckschmerz im Nierenlager</b> (kostovertebral); Bauch weich, ggf. Druckschmerz Flanke.</li>
+        <li>Übelkeit/Erbrechen, Krankheitsgefühl; Tachykardie/Hypotonie → Sepsis-Alarm.</li>
+      </ul>
+      <p><b>DD Flanke + Fieber:</b> Nephrolithiasis/Kolik, Cholezystitis/Cholangitis, Appendizitis (retrozäkal), Adnexitis/PID, basale Pneumonie, Pankreatitis, Herpes zoster, Aortenaneurysma.</p>
+      <p class="note">Bei <b>Männern</b> Prostatabeteiligung bedenken → gilt als kompliziert.</p>
+    </div>
+
+    <!-- 2 — URIN & LABOR -->
+    <div class="card">
+      <div class="h"><span class="n">2</span>Urin &amp; Labor</div>
+      <p><b>U-Stix / Sediment:</b></p>
+      <ul>
+        <li><b>Leukozyturie</b> (Pyurie) + Leukozytenesterase pos.</li>
+        <li><b>Nitrit pos.</b> → Nitrat-reduzierende Enterobakterien (<i>E. coli</i>, Klebsiella, Proteus). <b>Negativ schließt NICHT aus</b> (Enterokokken, <i>S. saprophyticus</i>, Pseudomonas).</li>
+        <li><b>Leukozytenzylinder</b> = renaler Ursprung → spricht für Pyelonephritis (vs. untere HWI).</li>
+        <li>Mikrohämaturie möglich.</li>
+      </ul>
+      <p><b>Mittelstrahl-Urinkultur VOR Antibiose</b> (signifikant <span class="mono">≥10⁴–10⁵ KBE/ml</span>) — anders als bei unkomplizierter Zystitis.</p>
+      <p><b>Blut:</b> Leukozytose, CRP↑, ggf. PCT; <b>Blutkulturen</b> bei Fieber/stationär/Sepsisverdacht; Krea/eGFR.</p>
+    </div>
+
+    <!-- 3 — EMPIRISCHE ANTIBIOSE (signature) -->
+    <div class="card accent">
+      <div class="h"><span class="n">3</span>Empirische Antibiose — Schwere ablesen → Schema nennen</div>
+      <div class="readout">
+        <div class="ro-row z-oral">
+          <div class="ro-cat">Unkompliziert<small>leicht–moderat</small></div>
+          <div class="ro-act"><span class="ro-rx">p.o.</span> Cefpodoxim · Ciprofloxacin · Levofloxacin<span class="ro-meta">7–10 d</span></div>
+        </div>
+        <div class="ro-row z-iv">
+          <div class="ro-cat">Unkompliziert<small>schwer · Erbrechen</small></div>
+          <div class="ro-act"><span class="ro-rx">i.v.</span> Cefotaxim · Ceftriaxon · Cipro-/Levofloxacin<span class="ro-meta">Sequenz p.o.</span></div>
+        </div>
+        <div class="ro-row z-cplx">
+          <div class="ro-cat">Kompliziert<small>Urosepsis-V.a.</small></div>
+          <div class="ro-act"><span class="ro-rx">i.v.</span> Piperacillin/Tazobactam; ESBL/MRE → Carbapenem<span class="ro-meta">&lt;1 h</span></div>
+        </div>
+        <div class="ro-row z-ss">
+          <div class="ro-cat">Schwangerschaft<small>stets stationär erwägen</small></div>
+          <div class="ro-act"><span class="ro-rx">i.v.</span> Cephalosporin Gr. 2/3 (Cefuroxim/Cefpodoxim) — <b>keine Chinolone/Cotrim</b></div>
+        </div>
+      </div>
+      <p class="note">Gesamtdauer ~<b>7–14 d</b> (je nach Substanz/Schwere); nach Antibiogramm gezielt umstellen, i.v.→p.o. nach Entfieberung. Kalkuliert: Empfindlichkeit &gt;90% anstreben.</p>
+
+      <div class="drill">
+        <div class="dh">10-Sekunden-Antwort (Co-Prüfer)</div>
+        <p><b>„Urinkultur + Blutkulturen abnehmen, dann sofort kalkulierte Antibiose.“</b></p>
+        <p>Ambulant/leicht → <b>orales Fluorchinolon oder Cefpodoxim</b>. Schwer/stationär → <b>Ceftriaxon i.v.</b> Kompliziert/septisch → <b>Pip/Tazo i.v.</b> + Fokuskontrolle.</p>
+      </div>
+    </div>
+
+    <!-- 4 — UNKOMPLIZIERT vs KOMPLIZIERT -->
+    <div class="card">
+      <div class="h"><span class="n">4</span>Unkompliziert vs. kompliziert</div>
+      <table class="kt">
+        <tr><th>Unkompliziert</th><th>Kompliziert</th></tr>
+        <tr>
+          <td>Sonst gesunde, nicht-schwangere Frau (Prämenopause); Harntrakt normal, Nierenfunktion normal</td>
+          <td>Obstruktion/Stein, Reflux, Katheter, Restharn, neurogene Blase</td>
+        </tr>
+        <tr>
+          <td>Spontanverlauf günstig</td>
+          <td>Mann · Schwangere · Immunsuppression · relevante NI · schlecht eingestellter Diabetes · nosokomial · Rezidiv/Therapieversagen</td>
+        </tr>
+      </table>
+      <p class="danger" style="margin-top:6px;">Nur Zystitis-Mittel — NICHT bei Pyelonephritis:</p>
+      <p>Fosfomycin (Einmaldosis), Nitrofurantoin, Pivmecillinam, Nitroxolin → <b>kein ausreichender Gewebe-/Parenchymspiegel</b>.</p>
+      <p class="note">Internationaler Trend (USA): Pyelonephritis generell als „kompliziert“ — dt. LL führt „unkompliziert“ noch.</p>
+    </div>
+
+    <!-- 5 — BILDGEBUNG -->
+    <div class="card">
+      <div class="h"><span class="n">5</span>Bildgebung</div>
+      <ul>
+        <li><b>Sonografie (1. Wahl):</b> Harnstau/Hydronephrose, Konkrement, Restharn, Abszess, Pyonephrose. Bei jedem V.a. Pyelonephritis sinnvoll.</li>
+        <li><b>CT (nativ + KM / CT-Urografie):</b> bei V.a. <b>Obstruktion</b>, Stein, Abszess oder <b>fehlender Besserung nach 48–72 h</b> → Komplikationssuche (Goldstandard).</li>
+        <li><b>MRT statt CT</b> in der Schwangerschaft.</li>
+      </ul>
+      <p class="danger">Obstruktion + Infektion = urologischer NOTFALL:</p>
+      <p><b>Sofortige Harnableitung</b> — DJ-Ureterstent oder perkutane Nephrostomie — <u>plus</u> Antibiose. Antibiose allein reicht NICHT (Pyonephrose/Urosepsis-Gefahr).</p>
+    </div>
+
+    <!-- 6 — UROSEPSIS -->
+    <div class="card">
+      <div class="h"><span class="n">6</span>Urosepsis — must-not-miss</div>
+      <p><b>Erkennen (qSOFA ≥2):</b> Atemfrequenz <span class="mono">≥22</span> · RR<sub>syst</sub> <span class="mono">≤100</span> · Vigilanzminderung. Plus Fieber/Hypothermie, Tachykardie, <b>Laktat↑</b>.</p>
+      <p><b>Sepsis-Bündel (1 h):</b></p>
+      <ul>
+        <li>2× Blutkulturen + Laktat, dann <b>Breitspektrum-AB &lt;1 h</b>.</li>
+        <li>Kristalloide <span class="mono">30 ml/kg</span> bei Hypotonie/Laktat ≥2.</li>
+        <li><b>Fokuskontrolle = Harnabfluss sichern</b> (Entlastung bei Obstruktion!).</li>
+        <li>Bei persistierender Hypotonie → Noradrenalin.</li>
+      </ul>
+      <p class="note">Emphysematöse Pyelonephritis (v.a. Diabetiker, gasbildend) → Notfall, ggf. operativ.</p>
+    </div>
+
+    <!-- 7 — ANTIBIOTIKA-STECKBRIEF -->
+    <div class="card">
+      <div class="h"><span class="n">7</span>Antibiotika — Klasse · Warum · NW · KI</div>
+      <p><b>Fluorchinolone</b> (Cipro-/Levofloxacin) — Gyrasehemmer.</p>
+      <ul>
+        <li><b>Warum:</b> gute Gewebepenetration + hohe Harnkonzentration.</li>
+        <li><b>NW/Warnung:</b> Sehnenruptur (Achilles), QT↑, Aortenaneurysma/-dissektion, ZNS (Krampfschwelle↓), Dysglykämie, Photosensibilität.</li>
+        <li><b>KI/Beschränkung:</b> Rote-Hand-Brief 2019 → bei unkompliz. Infekten nur ohne Alternative; nicht in SS/Stillzeit; Vorsicht Myasthenie. Kationen (Ca/Mg/Fe/Antazida) ↓ Resorption.</li>
+      </ul>
+      <p style="margin-top:5px;"><b>Cephalosporine 3. Gen</b> (Ceftriaxon/Cefotaxim/Cefpodoxim) — β-Laktam.</p>
+      <ul>
+        <li><b>Warum:</b> gute gramnegative Wirkung (Enterobacteriaceae).</li>
+        <li><b>NW:</b> Allergie (Kreuzallergie Penicillin selten), <i>C.-difficile</i>-Kolitis; Ceftriaxon → Gallensludge/Pseudolithiasis.</li>
+        <li><b>Praxis:</b> Ceftriaxon 1×/d (HWZ 6–9 h), keine Dosisanpassung bei NI.</li>
+      </ul>
+      <p class="note"><b>Niereninsuffizienz:</b> Dosis vieler AB anpassen (renale Clearance).</p>
+    </div>
+
+    <!-- 8 — SCHMIDMAIER-TIPPS / FALLSTRICKE -->
+    <div class="card">
+      <div class="h"><span class="n">8</span>Schmidmaier-Tipps &amp; Fallstricke</div>
+      <ul>
+        <li><b>Headline zuerst</b> („zack-zack“): Diagnose → Kultur → kalkulierte Antibiose → Sono.</li>
+        <li><b>Kultur vor Antibiose</b> — bei Pyelonephritis Pflicht (nicht bei einfacher Zystitis).</li>
+        <li><b>Obstruktion ausschließen</b> (Sono) — bei Stau drainieren, nicht nur antibiotisch behandeln.</li>
+        <li>Zystitis-Mittel (Fosfomycin/Nitrofurantoin) sind <b>keine</b> Pyelonephritis-Therapie.</li>
+        <li>In der <b>Schwangerschaft keine Fluorchinolone/Cotrimoxazol</b>.</li>
+        <li><b>Bedside-Ehrlichkeit:</b> nur Klopfschmerz dokumentieren, den du wirklich geprüft hast — er prüft die KU selbst nach.</li>
+        <li>Antipyrese/Analgesie: Paracetamol/Metamizol — <b>Metamizol-Falle:</b> Agranulozytose.</li>
+      </ul>
+    </div>
+
+  </div><!-- /grid -->
+
+  <div class="pn-foot">
+    <b>Lernhilfe — keine verbindliche Therapieanweisung.</b> Empfehlungen orientieren sich an der AWMF-S3-Leitlinie „Unkomplizierte, bakterielle, ambulant erworbene Harnwegsinfektionen bei Erwachsenen“ (Reg.-Nr. 043-044, Update April 2024) sowie gängiger Lehrbuchmeinung und stellen <b>Beispielschemata</b> dar. Substanzwahl, Dosis und Dauer stets an lokales Antibiogramm/Resistenzlage, Nierenfunktion, Schwangerschaft und Komedikation anpassen; Hausstandard und ärztliche Supervision beachten. Bei Urosepsis strukturiertes Sepsis-Protokoll mit früher Fokuskontrolle verwenden.
+  </div>
+
+</div>

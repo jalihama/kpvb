@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calcium – Elektrolytstörungen · KP-Mindmap</title>
+<style>
+:root{
+  --bg:#f4f3ef;--surf:#ffffff;--surf2:#edeae2;
+  --t1:#1a1918;--t2:#55544d;--t3:#9a9890;
+  --b1:rgba(0,0,0,.08);--b2:rgba(0,0,0,.15);--b3:rgba(0,0,0,.24);
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  --TEAL:#0e7490;--SLATE:#64748b;--VIOLET:#7c3aed;
+  --AMBER:#b45309;--RED:#b91c1c;--EMER:#047857;
+  --ROOT:#475569;--LOP:.46;
+  --accent:#0e7490;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#17171a;--surf:#222224;--surf2:#1d1d1f;
+  --t1:#e4e2da;--t2:#8a887f;--t3:#5c5a54;
+  --b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--b3:rgba(255,255,255,.22);
+  --TEAL:#22d3ee;--SLATE:#94a3b8;--VIOLET:#a78bfa;
+  --AMBER:#f59e0b;--RED:#f87171;--EMER:#34d399;
+  --ROOT:#cbd5e1;--LOP:.38;
+  --accent:#22d3ee;
+}}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--t1);display:flex;flex-direction:column}
+
+/* ── Header ── */
+#hdr{display:flex;align-items:center;gap:12px;padding:0 18px;min-height:54px;background:var(--surf);border-bottom:1px solid var(--b1);flex-shrink:0;flex-wrap:wrap}
+.hbrand .ht{font-size:14px;font-weight:600;letter-spacing:-.2px}
+.hbrand .hs{font-size:10px;color:var(--t3);margin-top:1px}
+
+/* Segmented toggle */
+.seg{display:inline-flex;background:var(--surf2);border:1px solid var(--b1);border-radius:9px;padding:2px;gap:2px}
+.segbtn{padding:6px 14px;font-size:11.5px;font-weight:500;font-family:var(--sans);color:var(--t2);border:none;background:none;border-radius:7px;cursor:pointer;white-space:nowrap;transition:all .15s}
+.segbtn.active{background:var(--surf);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+.hleg{display:flex;gap:5px;margin-left:auto;align-items:center;flex-wrap:wrap}
+.lp{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:500;border:1px solid;white-space:nowrap}
+.ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hacts{display:flex;gap:5px}
+.abtn{padding:5px 9px;font-size:10.5px;font-family:var(--sans);color:var(--t2);border:1px solid var(--b2);border-radius:7px;background:transparent;cursor:pointer;display:flex;align-items:center;gap:4px}
+.abtn:hover{background:var(--surf2);color:var(--t1)}
+.abtn-txt{white-space:nowrap}
+
+/* ── Backdrop (mobile) ── */
+#backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:199;opacity:0;pointer-events:none;transition:opacity .3s}
+#backdrop.active{opacity:1;pointer-events:auto}
+
+/* ── Main ── */
+#main{display:flex;flex:1;min-height:0;overflow:hidden}
+#cbox{flex:1;min-width:0;background:var(--surf2);position:relative;overflow:hidden}
+#viz{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#viz:active{cursor:grabbing}
+.cctrl{position:absolute;bottom:12px;left:12px;display:flex;gap:5px;z-index:10}
+.cbtn{padding:5px 11px;font-size:11px;font-family:var(--sans);color:var(--t2);border:1px solid var(--b2);border-radius:6px;background:var(--surf);cursor:pointer}
+.cbtn:hover{background:var(--surf2)}
+#chint{position:absolute;bottom:12px;right:12px;font-size:9.5px;color:var(--t3);pointer-events:none}
+
+/* ── Side panel ── */
+#side{width:320px;flex-shrink:0;background:var(--surf);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden}
+#drag-handle{display:none}
+#sempty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;text-align:center;gap:10px}
+.sei{font-size:30px;opacity:.4}
+.set{font-size:13px;font-weight:500;color:var(--t2)}
+.ses{font-size:11px;color:var(--t3);line-height:1.65}
+.sekeys{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;width:100%}
+.sekey{background:var(--surf2);border:1px solid var(--b1);border-radius:7px;padding:8px 6px;font-size:10px;color:var(--t2);text-align:center;line-height:1.5}
+.sekey b{display:block;font-size:11px;color:var(--t1);margin-bottom:2px}
+
+#scont{display:none;flex-direction:column;flex:1;overflow:hidden}
+#shdr{padding:14px 16px 12px;border-bottom:1px solid var(--b1);flex-shrink:0;position:relative}
+#stag{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:8px;display:inline-block;margin-bottom:7px}
+#sttl{font-size:13.5px;font-weight:500;line-height:1.38;padding-right:24px}
+#scl{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:5px;border:none;background:none;font-size:15px;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--sans)}
+#scl:hover{background:var(--surf2);color:var(--t1)}
+#sbody{flex:1;overflow-y:auto;padding:13px 16px;min-height:0}
+
+/* Structured sections */
+.psec{margin-bottom:13px}
+.psec:last-child{margin-bottom:0}
+.pslabel{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.pslabel::before{content:'';width:3px;height:11px;border-radius:2px;background:currentColor;flex-shrink:0}
+.pstext{font-size:11.5px;color:var(--t2);line-height:1.6}
+.pstext b{color:var(--t1);font-weight:500}
+
+/* Plain bullet list */
+#sbul,.sbul{list-style:none}
+#sbul li,.sbul li{font-size:11.5px;color:var(--t2);line-height:1.58;padding:4px 0 4px 14px;position:relative;border-bottom:1px solid var(--b1)}
+#sbul li:last-child,.sbul li:last-child{border-bottom:none}
+#sbul li::before,.sbul li::before{content:'·';position:absolute;left:3px;color:var(--t3);font-size:15px;line-height:1.2;font-weight:700}
+#sbul li b,.sbul li b{color:var(--t1);font-weight:500}
+
+/* Notes */
+#snotes{border-top:1px solid var(--b1);padding:12px 16px 16px;background:var(--surf2);flex-shrink:0}
+.nhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.nlbl{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--t3)}
+#nstat{font-size:9.5px;color:var(--t3)}
+#nta{width:100%;background:var(--surf);border:1px solid var(--b2);border-radius:7px;padding:8px 10px;font-size:11.5px;font-family:var(--sans);color:var(--t1);resize:none;outline:none;line-height:1.55;height:90px}
+#nta:focus{border-color:var(--accent)}
+#nta::placeholder{color:var(--t3);font-style:italic;font-size:11px}
+
+footer{height:26px;background:var(--surf);border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:center;gap:16px;font-size:9.5px;color:var(--t3);flex-shrink:0}
+footer span+span::before{content:'·';margin-right:16px}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ════ MOBILE (<768px) ════ */
+@media(max-width:767px){
+  #hdr{padding:8px 12px;gap:8px;min-height:0}
+  .hbrand{width:100%;display:flex;justify-content:space-between;align-items:center}
+  .hbrand .hs{display:none}
+  .seg{order:3}
+  .segbtn{padding:7px 16px;font-size:12px}
+  .hleg{order:4;margin-left:0;width:100%}
+  .lp{padding:3px 8px;font-size:10px}
+  .hacts{order:2;margin-left:auto}
+  .abtn-txt{display:none}
+  footer{display:none}
+  #cbox{width:100%}
+  #chint{font-size:9px}
+  #backdrop{display:block}
+  #side{
+    position:fixed;bottom:0;left:0;right:0;width:100%;height:0;max-height:80vh;
+    border-left:none;border-top:1px solid var(--b2);border-radius:18px 18px 0 0;
+    box-shadow:0 -8px 32px rgba(0,0,0,.22);
+    transition:height .36s cubic-bezier(.4,0,.2,1);z-index:200;overflow:hidden;
+  }
+  #side.mopen{height:76vh}
+  #drag-handle{display:block;width:40px;height:4px;background:var(--b3);border-radius:2px;margin:10px auto 4px;flex-shrink:0}
+  #sempty{display:none!important}
+  #nta{height:74px}
+  .cbtn{padding:8px 14px;font-size:11px}
+}
+@media(max-width:400px){
+  .hleg{gap:3px}
+  .lp{padding:3px 6px;font-size:9.5px}
+}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <div class="hbrand">
+    <div>
+      <div class="ht">Calcium · Elektrolytstörungen</div>
+      <div class="hs">KP-Mindmap · Knoten antippen für Details + Notizen</div>
+    </div>
+    <div class="hacts">
+      <button class="abtn" id="focusBtn" onclick="toggleFocus()" title="Nur KP-Essentials anzeigen">★<span class="abtn-txt"> Nur Essentials</span></button>
+      <button class="abtn" onclick="exportNotes()" title="Notizen exportieren">📋<span class="abtn-txt"> Export</span></button>
+      <button class="abtn" onclick="clearNotes()" title="Alle Notizen löschen">🗑<span class="abtn-txt"> Löschen</span></button>
+    </div>
+  </div>
+  <div class="seg">
+    <button class="segbtn active" id="seg-hypo" onclick="setMode('hypo')">Hypokalzämie</button>
+    <button class="segbtn" id="seg-hyper" onclick="setMode('hyper')">Hyperkalzämie</button>
+  </div>
+  <div class="seg">
+    <button class="segbtn active" id="seg-class" onclick="setView('class')">Klassifikation</button>
+    <button class="segbtn" id="seg-mech" onclick="setView('mech')">Mechanismus</button>
+  </div>
+  <div class="hleg" id="hleg"></div>
+</header>
+
+<div id="backdrop" onclick="closePanel()"></div>
+
+<div id="main">
+  <div id="cbox">
+    <svg id="viz" overflow="visible"></svg>
+    <div class="cctrl">
+      <button class="cbtn" onclick="resetView()">↺</button>
+      <button class="cbtn" onclick="fitAll()">⊡</button>
+    </div>
+    <div id="chint"><span class="deskonly">★ = KP-Essential · ✦ = Notiz · Scrollen: Zoom</span></div>
+  </div>
+  <div id="side">
+    <div id="drag-handle"></div>
+    <div id="sempty">
+      <div class="sei">🧪</div>
+      <div class="set" id="empty-title">Hypokalzämie</div>
+      <div class="ses">Klick auf einen Knoten für Überblick, Mechanismus, Labor und Therapie</div>
+      <div class="sekeys">
+        <div class="sekey"><b>PTH↓ Ph↑</b>Hypopara</div>
+        <div class="sekey"><b>PTH↑ Ca↑</b>prim. HPT</div>
+        <div class="sekey"><b>QT ↑</b>Hypokalzämie</div>
+        <div class="sekey"><b>QT ↓</b>Hyperkalzämie</div>
+      </div>
+    </div>
+    <div id="scont">
+      <div id="shdr">
+        <div id="stag"></div>
+        <div id="sttl"></div>
+        <button id="scl" onclick="closePanel()">×</button>
+      </div>
+      <div id="sbody"></div>
+      <div id="snotes">
+        <div class="nhdr"><span class="nlbl">📝 Meine Notizen</span><span id="nstat"></span></div>
+        <textarea id="nta" placeholder="Eigene Notizen zu diesem Knoten…"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>★: KP-Essential</span>
+  <span>„Nur Essentials": Fokus-Ansicht</span>
+  <span>Klick: Überblick · Mechanismus · Labor · Therapie</span>
+  <span>✦: Notiz</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const dk=matchMedia('(prefers-color-scheme:dark)').matches;
+const C={
+  TEAL:dk?'#22d3ee':'#0e7490', SLATE:dk?'#94a3b8':'#64748b', VIOLET:dk?'#a78bfa':'#7c3aed',
+  AMBER:dk?'#f59e0b':'#b45309', RED:dk?'#f87171':'#b91c1c', EMER:dk?'#34d399':'#047857', BLUE:dk?'#60a5fa':'#2563eb',
+  ROOT:dk?'#cbd5e1':'#475569'
+};
+const GOLD=dk?'#fbbf24':'#d97706';
+const LOP=dk?.38:.46;
+
+/* ════════════════════════════════════════════════════════
+   CONTENT — structured (o/w/l/th) for disease nodes,
+   plain (p) for overview/category nodes
+   ════════════════════════════════════════════════════════ */
+const K={
+/* ---------- HYPOKALZÄMIE ---------- */
+hypoca:{t:'Definition & Klinik',p:[
+  '<b>Definition:</b> Gesamtcalcium &lt;2,2 mmol/L bzw. ionisiertes Ca²⁺ &lt;1,15 mmol/L',
+  '⚠️ Nur bei vermindertem <b>ionisiertem</b> Calcium symptomatisch!',
+  '<b>Leitsymptom Tetanie:</b> Kribbelparästhesien (perioral), Karpopedalspasmen (Pfötchenstellung), Hyperreflexie',
+  '<b>Zeichen:</b> Chvostek (Fazialis-Beklopfen → Mundwinkelzucken) · Trousseau (RR-Manschette → Pfötchenstellung)',
+  '<b>EKG:</b> QT-Zeit-<b>Verlängerung</b> → Torsade de Pointes',
+  '⚠️ Unter Digitalis NIE Calcium i.v. (Kammerflimmern!)',
+  '<b>Therapieprinzip:</b> symptomatisch → Ca i.v.; chronisch → Ca p.o. + Vit D; Hypomagnesiämie ausgleichen']},
+hypo_echt:{t:'Ionisiertes Ca²⁺ ↓',p:[
+  'Das freie, aktive Calcium ist tatsächlich erniedrigt → <b>symptomatisch</b>',
+  'Drei Mechanismengruppen: endokrin/metabol · medikamentös · weitere (Umverteilung/Komplexbildung)',
+  '<b>Diagnostischer Schlüssel:</b> Konstellation aus PTH + Phosphat']},
+hypo_pseudo:{t:'Ca-gesamt ↓ · ionisiert ↔',p:[
+  'Gesamtcalcium erniedrigt, <b>ionisiertes Calcium normal</b> → i.d.R. asymptomatisch',
+  'Ursache: erniedrigtes Bindungsprotein (Albumin) → weniger proteingebundenes Calcium',
+  '<b>Payne-Korrektur:</b> Ca-korr (mmol/L) = gemessenes Ca + 1 − [0,025 × Albumin g/L]',
+  'Keine Calcium-Substitution nötig!']},
+hypo_syndrom:{t:'Angeboren / genetisch',p:[
+  'Seltene angeborene Störungen mit Hypokalzämie',
+  'Wichtigste KP-Vertreter: DiGeorge-Syndrom, idiopathische infantile Hypokalzämie']},
+hypo_endo:{t:'Echte Hypokalzämie',p:[
+  'Störung der hormonellen Calcium-Regulation (PTH, Vitamin D)',
+  'Zwei Hauptvertreter: Hypoparathyreoidismus · Vitamin-D-Mangel',
+  'Über die PTH/Phosphat-Konstellation gut differenzierbar']},
+hypo_med:{t:'Echte Hypokalzämie',p:[
+  'Verschiedene Mechanismen: ↑ renale Ausscheidung · Hemmung der Knochenresorption · Komplexbildung · Vit-D-Abbau',
+  'Sorgfältige Medikamentenanamnese essenziell']},
+hypo_weit:{t:'Echte Hypokalzämie',p:[
+  'Heterogene Gruppe: Umverteilung (pH), Komplexbildung, Phosphat-Präzipitation',
+  'Oft im akuten oder intensivmedizinischen Setting']},
+hypo_hypopara:{t:'Endokrin/metabol',
+  o:'Mangel an Parathormon. <b>Häufigste Form postoperativ</b> nach Schilddrüsen-OP (versehentliche Entfernung oder Schädigung der Nebenschilddrüsen). Seltener autoimmun oder genetisch.',
+  w:'PTH↓ → ↓ renale Ca-Rückresorption + ↓ Calcitriol-Synthese + ↓ Knochenfreisetzung → Serum-Ca fällt. Gleichzeitig ↓ Phosphatausscheidung → Phosphat steigt.',
+  l:'Klassische Konstellation: <b>PTH↓ UND Phosphat↑</b> (bei Ca↓). Pseudohypoparathyreoidismus: PTH↑ bei PTH-Resistenz (Phosphat↑).',
+  th:'Calcium p.o. + aktives Vitamin D (Calcitriol). Akut/symptomatisch: Calcium i.v. Begleitende Hypomagnesiämie ausgleichen.'},
+hypo_vitd:{t:'Endokrin/metabol',
+  o:'<b>Eine der häufigsten Ursachen der Hypokalzämie</b> (neben dem Hypoparathyreoidismus). Genese vielfältig: chronische Nierenkrankheit (↓ renale 1-Hydroxylierung), Leberinsuffizienz (↓ 25-Hydroxylierung), geringe Sonnenexposition, Alkoholismus, Maldigestion/Malabsorption.',
+  w:'Calcitriol↓ → ↓ intestinale Ca-Resorption + ↓ renale Ca-Rückresorption → Hypokalzämie. Kompensatorisch sekundärer Hyperparathyreoidismus.',
+  l:'<b>25(OH)-Vitamin-D↓.</b> PTH↑ (sekundär) UND Phosphat↓ (PTH-Wirkung → ↑ Phosphatausscheidung). ⚠️ Ausnahme CKD: Phosphat↑ (renale Retention).',
+  th:'Vitamin-D-Substitution (Cholecalciferol; bei CKD aktives Calcitriol) + Calcium. Grunderkrankung behandeln.'},
+hypo_med_schleif:{t:'Medikament',
+  o:'Schleifendiuretika (z.B. Furosemid) als häufige iatrogene Ursache.',
+  w:'Hemmung des Na-K-2Cl-Cotransporters in der Henle-Schleife → Wegfall des für die parazelluläre Ca-Rückresorption nötigen Potenzials → ↑ renale Ca-Ausscheidung.',
+  l:'Ca↓, oft Hypokaliämie/Hypomagnesiämie begleitend. Merke: Schleifendiuretika verlieren Ca, Thiazide halten Ca (Gegenteil!).',
+  th:'Ggf. Umstellung auf Thiazid; Elektrolyte substituieren.'},
+hypo_med_gluco:{t:'Medikament',
+  o:'Glucocorticoide bei Langzeittherapie.',
+  w:'↓ intestinale Ca-Resorption + ↑ renale Ca-Ausscheidung + Hemmung der Vitamin-D-Wirkung.',
+  l:'Ca↓ (meist mild); zusätzlich Osteoporose-Risiko bei Langzeittherapie.',
+  th:'Calcium + Vitamin D als Begleitschutz; Steroiddosis minimieren.'},
+hypo_med_amino:{t:'Medikament',
+  o:'Aminoglykoside (z.B. Gentamicin) — nephrotoxische Antibiotika.',
+  w:'Renale tubuläre Schädigung mit Magnesiumverlust → Hypomagnesiämie → funktioneller Hypoparathyreoidismus → Hypokalzämie.',
+  l:'Ca↓, Mg↓; Kreatinin↑ als Zeichen der Nephrotoxizität.',
+  th:'Magnesium ausgleichen (Voraussetzung für PTH-Wirkung); Nierenfunktion überwachen.'},
+hypo_med_cis:{t:'Medikament',
+  o:'Cisplatin — nephrotoxisches Zytostatikum.',
+  w:'Tubuläre Schädigung mit renalem Magnesium- und Calciumverlust; Hypomagnesiämie verstärkt die Hypokalzämie.',
+  l:'Ca↓, Mg↓↓ (typisch ausgeprägt), Kreatinin↑.',
+  th:'Mg-Substitution; forcierte Hydratation als Cisplatin-Prophylaxe.'},
+hypo_med_calcitonin:{t:'Medikament',
+  o:'Calcitonin — direkter PTH-Gegenspieler.',
+  w:'Hemmt Osteoklasten → ↓ Knochenfreisetzung von Calcium → Serum-Ca fällt.',
+  l:'Ca↓ (meist mild und transient).',
+  th:'Bei Bedarf Dosisreduktion; in der Hyperkalzämie-Therapie ist dieser Effekt erwünscht.'},
+hypo_med_denos:{t:'Medikament',
+  o:'Denosumab (RANKL-Antikörper) und Bisphosphonate — Antiresorptiva.',
+  w:'Hemmen die osteoklastäre Knochenresorption → ↓ Ca-Freisetzung aus dem Knochen → Hypokalzämie (v.a. bei vorbestehendem Vitamin-D-Mangel).',
+  l:'Ca↓; immer Vitamin-D-Status prüfen.',
+  th:'⚠️ Vor Gabe Vitamin-D-Mangel und Hypokalzämie ausgleichen! Bei Symptomen Ca-Substitution.'},
+hypo_med_foscarnet:{t:'Medikament',
+  o:'Foscarnet — Virostatikum (z.B. bei CMV).',
+  w:'Komplexbildung (Chelation) mit ionisiertem Calcium → ↓ freies Ca (Gesamt-Ca kann normal sein).',
+  l:'Ionisiertes Ca↓; Gesamt-Ca evtl. normal.',
+  th:'Langsame Infusion; Ca-Substitution bei Symptomen.'},
+hypo_med_phenytoin:{t:'Medikament',
+  o:'Phenytoin — Antiepileptikum.',
+  w:'Induktion hepatischer Enzyme → beschleunigter Vitamin-D-Abbau → Vitamin-D-Mangel → Hypokalzämie.',
+  l:'Ca↓, 25(OH)-Vitamin-D↓ bei Langzeittherapie.',
+  th:'Vitamin-D-Substitution unter Langzeittherapie.'},
+hypo_weit_pankr:{t:'Weitere Ursache',
+  o:'Nekrotisierende Pankreatitis — schwere Verlaufsform mit Fettgewebsnekrosen.',
+  w:'Lipase setzt freie Fettsäuren frei → Verseifung (Saponifikation) mit Calcium → Calciumseifen binden Ca im Nekrosegebiet → Hypokalzämie.',
+  l:'Ca↓, Lipase↑↑, PTH↑ (sekundär). ⚠️ Hypokalzämie bei Pankreatitis = Hinweis auf <b>nekrotisierenden Verlauf</b> (prognostisch ungünstig, Ranson-Kriterium).',
+  th:'Intensivtherapie der Pankreatitis; Ca-Substitution nur bei Symptomen.'},
+hypo_weit_hyperv:{t:'Weitere Ursache · Umverteilung',
+  o:'Akute Hyperventilationstetanie — häufiger Notfall, oft psychogen/Angst-getriggert.',
+  w:'Hyperventilation → respiratorische Alkalose (pH↑) → vermehrte Ca-Bindung an Albumin (H⁺ wird verdrängt, Calcium bindet) → ↓ ionisiertes Ca → neuromuskuläre Übererregbarkeit. <b>Reine Umverteilung — Gesamt-Ca normal!</b>',
+  l:'Gesamtcalcium normal; ionisiertes Ca passager↓; BGA: respiratorische Alkalose.',
+  th:'Beruhigen, CO₂-Rückatmung (Tüte) unter ärztlicher Kontrolle. ⚠️ KEINE Calcium-Substitution (Effekt nur kurzfristig, keine Bedeutung)!'},
+hypo_weit_rhabdo:{t:'Weitere Ursache',
+  o:'Rhabdomyolyse — Zerfall quergestreifter Muskulatur (Trauma, Statine, Status epilepticus).',
+  w:'Muskelzerfall → Freisetzung von Phosphat → Hyperphosphatämie → Ca-Phosphat-Präzipitation; zusätzlich Ca-Einstrom in geschädigte Muskelzellen → Hypokalzämie.',
+  l:'CK↑↑↑, Phosphat↑, Ca↓, PTH↑. (Cave: in der Erholungsphase Hyperkalzämie möglich, wenn deponiertes Ca remobilisiert wird.)',
+  th:'Aggressive Volumentherapie; Ca-Substitution nur bei symptomatischer Hypokalzämie (sonst Risiko der Verkalkung).'},
+hypo_weit_citrat:{t:'Weitere Ursache · Komplexbildung',
+  o:'Citratzufuhr bei Massentransfusion oder Citrat-Antikoagulation (Dialyse/Apherese).',
+  w:'Citrat chelatiert ionisiertes Calcium → ↓ freies Ca (Gesamt-Ca normal).',
+  l:'Ionisiertes Ca↓ bei normalem Gesamt-Ca; im Rahmen der Transfusion/Dialyse.',
+  th:'Calcium-Substitution (i.v.) begleitend zur Massentransfusion.'},
+hypo_weit_phosphat:{t:'Weitere Ursache',
+  o:'Hyperphosphatämie (Tumorlyse, Rhabdomyolyse, massive Phosphatzufuhr).',
+  w:'Erhöhtes Phosphat → Überschreitung des Ca-Phosphat-Löslichkeitsprodukts → Ausfällung von Ca-Phosphat im Gewebe → Hypokalzämie.',
+  l:'Phosphat↑↑, Ca↓; bei Tumorlyse zusätzlich Harnsäure↑, Kalium↑, LDH↑.',
+  th:'Phosphatsenkung (Phosphatbinder, ggf. Dialyse); Tumorlyse-Prophylaxe.'},
+hypo_weit_rta:{t:'Weitere Ursache',
+  o:'Renal-tubuläre Azidose — chronische tubuläre Funktionsstörung.',
+  w:'Chronische metabolische Azidose + renaler Ca-Verlust führen zu Hypokalzämie; kompensatorisch PTH↑.',
+  l:'PTH↑ bei Phosphat normal/↑; metabolische Azidose mit normaler Anionenlücke.',
+  th:'Alkalisierung (Bicarbonat), Behandlung der Grundstörung.'},
+hypo_pseudo_albu:{t:'Pseudohypokalzämie',
+  o:'<b>Häufigste Ursache der Pseudohypokalzämie.</b> Bei nephrotischem Syndrom, Leberzirrhose, Malnutrition, schwerer Entzündung.',
+  w:'Albumin transportiert ~50% des Gesamtcalciums. ↓ Albumin → ↓ proteingebundenes Ca → Gesamt-Ca↓, ABER ionisiertes (freies) Ca bleibt normal → asymptomatisch.',
+  l:'Gesamt-Ca↓, <b>ionisiertes Ca normal</b>, Albumin↓. Payne-Korrektur: Ca-korr = Ca + 1 − [0,025 × Albumin g/L]; nach Korrektur normal = Pseudohypokalzämie.',
+  th:'Keine Calcium-Substitution! Grunderkrankung behandeln.'},
+hypo_pseudo_gado:{t:'Pseudohypokalzämie',
+  o:'Gadoliniumhaltige Kontrastmittel — kein echter Calciummangel.',
+  w:'Keine echte Hypokalzämie: Laborinterferenz — einige Gd-Präparate stören die Labormethode zur Serumcalcium-Bestimmung → falsch-niedriger Messwert.',
+  l:'Gesamt-Ca falsch-niedrig nach KM-Infusion; ionisiertes Ca normal.',
+  th:'Keine Therapie; Messung mit anderer Methode/später wiederholen.'},
+hypo_syndrom_digeorge:{t:'Syndromal',
+  o:'<b>DiGeorge-Syndrom</b> — Mikrodeletion 22q11.2; Störung der 3./4. Schlundtaschen → Aplasie/Hypoplasie von Nebenschilddrüsen und Thymus.',
+  w:'Fehlende/hypoplastische Nebenschilddrüsen → PTH-Mangel (Hypoparathyreoidismus) → Hypokalzämie.',
+  l:'Ca↓, PTH↓, Phosphat↑ (wie Hypoparathyreoidismus); genetischer Nachweis der 22q11.2-Deletion.',
+  th:'Calcium + aktives Vitamin D; Therapie der weiteren Manifestationen (Immundefekt durch Thymusaplasie, Herzfehler). Merke: <b>CATCH-22</b> (Cardiac, Abnormal facies, Thymic hypoplasia, Cleft palate, Hypocalcemia, 22q11).'},
+hypo_syndrom_infantil:{t:'Syndromal',
+  o:'Idiopathische infantile Hypokalzämie — seltene angeborene Hypokalzämie im Säuglingsalter.',
+  w:'Genetisch bedingte Störung der Calciumhomöostase ohne erkennbare Sekundärursache.',
+  l:'Ca↓ im Säuglingsalter; Ausschluss anderer (sekundärer) Ursachen.',
+  th:'Calcium- und ggf. Vitamin-D-Substitution nach Verlauf.'},
+
+/* ---------- HYPERKALZÄMIE ---------- */
+hyperca:{t:'Definition & Klinik',p:[
+  '<b>Definition:</b> Gesamtcalcium &gt;2,65 mmol/L bzw. ionisiertes Ca²⁺ &gt;1,35 mmol/L',
+  'Leicht (2,75–2,9) oft asymptomatisch; Symptome ab &gt;3 mmol/L oder bei raschem Anstieg',
+  '<b>Merkhilfe „Stein, Bein, Magen-Pein & psychisches Sein“:</b> Nierensteine · Knochenschmerzen · GI (Übelkeit, Ulkus, Pankreatitis) · Psyche (Lethargie, Verwirrtheit)',
+  '<b>Renal:</b> Polyurie → Exsikkose · Nephrolithiasis · Nephrokalzinose',
+  '<b>EKG:</b> QT-Zeit-<b>Verkürzung</b>',
+  '⚠️ <b>Hyperkalzämische Krise</b> (&gt;3,5 mmol/L): Exsikkose, Fieber, Psychose, Koma; letal bis 50%',
+  '<b>Therapieprinzip:</b> Volumengabe (NaCl) ZUERST → forcierte Diurese → Bisphosphonate → Calcitonin → Glucocorticoide']},
+hyper_endo:{t:'PTH-vermittelt u.a.',p:[
+  'Hormonelle Störungen mit Hyperkalzämie',
+  'Wichtigster Vertreter: <b>primärer Hyperparathyreoidismus</b> (80% aller Hyperkalzämien, häufigste ambulante Ursache!)']},
+hyper_tumor:{t:'Häufigste stationäre Ursache',p:[
+  'Zweithäufigste Ursache insgesamt; häufigste Ursache im stationär-onkologischen Kollektiv',
+  'Zwei Mechanismen: <b>PTHrP-Bildung</b> (paraneoplastisch) oder <b>Osteolyse</b>',
+  'PTH ist hier supprimiert (↓)!']},
+hyper_sonst:{t:'Granulome, Medikamente u.a.',p:[
+  'Heterogene Gruppe: granulomatöse Erkrankungen, Medikamente, Vitamin-Intoxikationen, Immobilisation',
+  'Familiäre hypokalziurische Hyperkalzämie als wichtige DD zum pHPT']},
+hyper_phpt:{t:'Endokrinologisch',
+  o:'<b>80% aller Hyperkalzämien</b>, häufigste ambulante Ursache. Meist solitäres Nebenschilddrüsen-Adenom (selten Hyperplasie/Karzinom) mit autonomer PTH-Überproduktion.',
+  w:'Autonome PTH-Sekretion↑ → ↑ renale Ca-Rückresorption + ↑ Calcitriol (→ ↑ intestinale Resorption) + ↑ osteoklastäre Knochenresorption → Hyperkalzämie. Phosphat↓ (PTH ↑ Phosphatausscheidung).',
+  l:'<b>PTH↑</b> (inadäquat normal oder erhöht trotz Hyperkalzämie!) + Ca↑ + Phosphat↓; Ca im 24-h-Urin <b>&gt;200 mg/24h</b>.',
+  th:'Operative Entfernung des Adenoms (Parathyreoidektomie) = kausal. Bei Inoperabilität Cinacalcet (Calcimimetikum). DD beachten: familiäre hypokalziurische Hyperkalzämie (Urin-Ca &lt;100 mg/24h)!'},
+hyper_tphpt:{t:'Endokrinologisch',
+  o:'Tertiärer Hyperparathyreoidismus — Folge eines langjährigen sekundären HPT (meist bei chronischer Nierenkrankheit).',
+  w:'Chronische Hypokalzämie (CKD) → jahrelange PTH-Stimulation → Nebenschilddrüsen-Hyperplasie → autonome, nicht mehr regulierte PTH-Produktion → Umschlag von Hypo- zu <b>Hyperkalzämie</b>.',
+  l:'PTH↑↑ + Ca↑ (im Gegensatz zum sekundären HPT, wo Ca↓/normal). Meist bei dialysepflichtiger CKD.',
+  th:'Parathyreoidektomie; Cinacalcet; Optimierung der CKD-/Mineralhaushalt-Therapie.'},
+hyper_hyperthyr:{t:'Endokrinologisch',
+  o:'Hyperthyreose — Überfunktion der Schilddrüse.',
+  w:'Schilddrüsenhormone (T3/T4) steigern den Knochenumsatz → ↑ osteoklastäre Knochenresorption → Ca-Freisetzung → meist milde Hyperkalzämie.',
+  l:'TSH↓, fT3/fT4↑; PTH supprimiert (↓).',
+  th:'Thyreostatische Behandlung der Hyperthyreose; Hyperkalzämie bessert sich mit Euthyreose.'},
+hyper_addison:{t:'Endokrinologisch',
+  o:'Nebennierenrindeninsuffizienz (Morbus Addison) — Cortisolmangel.',
+  w:'Cortisolmangel → ↓ renale Ca-Ausscheidung + Hämokonzentration durch Volumenmangel → Hyperkalzämie.',
+  l:'Cortisol↓, ACTH↑ (primär); zusätzlich Hyponatriämie + Hyperkaliämie typisch.',
+  th:'Hydrocortison-Substitution; Volumengabe; Hyperkalzämie normalisiert sich unter Substitution.'},
+hyper_akro:{t:'Endokrinologisch',
+  o:'Akromegalie — GH/IGF-1-Überschuss (Hypophysenadenom).',
+  w:'GH/IGF-1 → ↑ renale 1-Hydroxylierung (Calcitriol↑) → ↑ intestinale Ca-Resorption; meist milde Hyperkalzämie.',
+  l:'IGF-1↑, GH im oGTT nicht supprimierbar. ⚠️ Cave: Assoziation mit MEN-1 → dann zusätzlich primärer HPT!',
+  th:'Therapie der Akromegalie (OP/Somatostatin-Analoga); MEN-1 ausschließen.'},
+hyper_para:{t:'Tumorinduziert',
+  o:'<b>Häufigste tumorbedingte Ursache</b> der Hyperkalzämie. Tumorzellen bilden PTHrP (Parathormon-related Peptide). Typisch bei Plattenepithelkarzinomen.',
+  w:'PTHrP wirkt wie PTH am PTH-Rezeptor → ↑ renale Ca-Rückresorption + ↑ osteoklastäre Knochenresorption → Hyperkalzämie. Tumoren: <b>Lungenkarzinom</b> (v.a. Plattenepithel), Nierenzellkarzinom, Ovarialkarzinom.',
+  l:'<b>PTHrP↑</b>; PTH↓ (durch Hyperkalzämie supprimiert!); Ca↑, Phosphat↓.',
+  th:'Tumortherapie; Hyperkalzämie-Notfalltherapie (Volumen → Bisphosphonate/Denosumab → Calcitonin).'},
+hyper_osteo:{t:'Tumorinduziert',
+  o:'Osteolyse / Knochenmetastasen — lokale Knochendestruktion durch Tumor.',
+  w:'Tumorzellen im Knochen aktivieren Osteoklasten (lokale Zytokine, RANKL) → direkte Osteolyse → Ca-Freisetzung → Hyperkalzämie. <b>Multiples Myelom</b>; Metastasen bei Lungen-, Mamma-, Nierenzell-, Prostatakarzinom.',
+  l:'PTH↓, PTHrP normal/↓; Ca↑. Bei Myelom: Paraproteine (Immunfixation Serum/Urin), Bence-Jones-Protein.',
+  th:'Bisphosphonate/Denosumab; Tumor-/Myelomtherapie; Hyperkalzämie-Notfalltherapie.'},
+hyper_granu:{t:'Sonstige',
+  o:'Granulomatöse Erkrankungen — <b>Sarkoidose</b> (häufigster Vertreter), Lymphome, Tuberkulose.',
+  w:'Aktivierte Makrophagen in den Granulomen exprimieren 1-α-Hydroxylase → unkontrollierte, <b>PTH-unabhängige Calcitriol-Produktion</b> → ↑ intestinale Ca-Resorption → Hyperkalzämie.',
+  l:'<b>1,25-Dihydroxy-Vitamin-D (Calcitriol)↑</b>; PTH↓. Bei Sarkoidose: ACE↑, Röntgen-Thorax (bihiläre Lymphadenopathie).',
+  th:'Glucocorticoide (hemmen 1-α-Hydroxylase → Calcitriol↓); Behandlung der Grunderkrankung.'},
+hyper_thiazid:{t:'Sonstige · Medikament',
+  o:'Thiaziddiuretika und Lithium.',
+  w:'Thiazide: ↑ distale renale Ca-Rückresorption → Hyperkalzämie (Gegenteil der Schleifendiuretika!); demaskieren oft einen latenten pHPT. Lithium: verschiebt den Sollwert des Calcium-Sensing-Rezeptors → PTH-Sekretion erst bei höherem Ca.',
+  l:'Ca↑; bei Lithium PTH normal/↑ (lithiuminduzierter Hyperparathyreoidismus).',
+  th:'Absetzen/Umstellen des auslösenden Medikaments; pHPT abklären.'},
+hyper_tamox:{t:'Sonstige · Medikament',
+  o:'Östrogenantagonisten wie Tamoxifen (Mammakarzinom-Therapie).',
+  w:'„Tumor flare" zu Therapiebeginn bei ossär metastasiertem Mammakarzinom → vorübergehend ↑ Knochenresorption → Hyperkalzämie.',
+  l:'Ca↑ (meist transient zu Therapiebeginn).',
+  th:'Meist selbstlimitierend; Volumengabe, ggf. Bisphosphonate bei Symptomen.'},
+hyper_theo:{t:'Sonstige · Medikament',
+  o:'Theophyllin-Überdosierung.',
+  w:'Bei Intoxikation β-adrenerge Stimulation und ↑ Knochenresorption → milde Hyperkalzämie.',
+  l:'Theophyllin-Spiegel↑; Ca↑ (mild) im Rahmen der Toxizität.',
+  th:'Theophyllin absetzen; supportive Therapie der Intoxikation; ggf. β-Blocker.'},
+hyper_cacarb:{t:'Sonstige',
+  o:'Calciumcarbonat-Gabe (Osteoporose-Therapie, Antazida) — klassisch „Milk-Alkali-Syndrom".',
+  w:'Exzessive Calcium- und Alkalizufuhr → Hyperkalzämie + metabolische Alkalose + Niereninsuffizienz (Trias).',
+  l:'Ca↑, metabolische Alkalose, Kreatinin↑; PTH↓.',
+  th:'Calcium-/Alkalizufuhr stoppen; Volumengabe; Nierenfunktion überwachen.'},
+hyper_vitd:{t:'Sonstige',
+  o:'Vitamin-Überdosierung — Vitamin-D-Intoxikation (häufiger) oder Vitamin-A-Intoxikation.',
+  w:'Vit-D-Intox: ↑↑ Calcitriol → ↑ intestinale Ca-Resorption + ↑ Knochenresorption → Hyperkalzämie. Vit-A-Intox: stimuliert Osteoklasten → ↑ Knochenresorption.',
+  l:'<b>25(OH)-Vitamin-D↑</b> (bei Vit-D-Intox); PTH↓; Ca↑, Phosphat oft↑.',
+  th:'Vitamin absetzen; Volumengabe; Glucocorticoide (senken Calcitriol-Wirkung) bei Vit-D-Intox.'},
+hyper_immob:{t:'Sonstige',
+  o:'Lange Immobilisation — bei Bettlägerigkeit, Querschnitt, Polytrauma.',
+  w:'Fehlende mechanische Belastung → Knochenresorption (Osteoklasten) &gt; Knochenaufbau → Ca-Freisetzung → Hyperkalzämie; v.a. bei ohnehin hohem Knochenumsatz (Jugendliche, M. Paget).',
+  l:'Ca↑; PTH↓; Marker des Knochenumsatzes erhöht.',
+  th:'Mobilisation, Volumengabe; ggf. Bisphosphonate.'},
+hyper_fhh:{t:'Sonstige · wichtige DD',
+  o:'<b>Familiäre hypokalziurische Hyperkalzämie</b> — autosomal-dominante Mutation des Calcium-Sensing-Rezeptors (CASR). Wichtige DD zum primären HPT!',
+  w:'Defekter Ca-Sensing-Rezeptor → Niere „erkennt" hohes Calcium nicht → vermehrte renale Ca-Rückresorption + PTH-Sekretion erst bei höherem Sollwert → Hyperkalzämie bei paradox niedriger Calciumausscheidung.',
+  l:'Ca↑ + <b>Hypokalzurie (Urin-Ca &lt;100 mg/24h!)</b>; PTH normal/leicht↑ (in 10–15%). ⚠️ Abgrenzung zum pHPT (Urin-Ca &gt;200 mg/24h) ist klausurrelevant!',
+  th:'<b>Keine Therapie erforderlich</b> (asymptomatisch, gutartig). Wichtig: keine unnötige Parathyreoidektomie!'},
+
+/* ---------- MECHANISMUS-Kategorien (HYPO) ---------- */
+hypo_m_pth:{t:'Mechanismus',p:[
+  '<b>↓ PTH-Wirkung</b> → ↓ renale Ca-Rückresorption + ↓ Calcitriol + ↓ Knochenfreisetzung',
+  'Direkt (Hypoparathyreoidismus, DiGeorge) oder <b>funktionell durch Hypomagnesiämie</b> (Aminoglykoside, Cisplatin)',
+  'Konstellation: PTH↓ (bzw. inadäquat normal) + Phosphat↑']},
+hypo_m_vitd:{t:'Mechanismus',p:[
+  '<b>↓ Vitamin-D-Wirkung</b> → ↓ intestinale Ca-Resorption',
+  'Mangel (Zufuhr/Sonne/Synthese bei CKD oder Leber) oder beschleunigter Abbau (Phenytoin-Enzyminduktion)',
+  'Konstellation: 25(OH)-Vit-D↓ · PTH↑ (sekundär) · Phosphat↓ (Ausnahme CKD: Phosphat↑)']},
+hypo_m_bind:{t:'Mechanismus',p:[
+  '<b>↑ Bindung / Komplexierung / Präzipitation</b> von ionisiertem Calcium',
+  'Phosphat-Präzipitation (Tumorlyse, Rhabdomyolyse) · Chelation (Citrat, Foscarnet) · Verseifung mit Fettsäuren (Pankreatitis) · Alkalose → ↑ Albuminbindung (Hyperventilation)',
+  'Oft Gesamt-Ca normal, nur ionisiertes Ca↓ (z.B. Citrat, Hyperventilation)']},
+hypo_m_excr:{t:'Mechanismus',p:[
+  '<b>↑ renale Calcium-Ausscheidung</b>',
+  'Schleifendiuretika (Na-K-2Cl-Block), Glucocorticoide (zusätzlich ↓ intestinale Resorption), renal-tubuläre Azidose',
+  'Merke: Schleifendiuretika verlieren Ca, Thiazide halten Ca']},
+hypo_m_bone:{t:'Mechanismus',p:[
+  '<b>↓ osteoklastäre Knochenresorption</b> (Antiresorptiva) → ↓ Ca-Freisetzung aus dem Knochen',
+  'Bisphosphonate, Denosumab, Calcitonin',
+  '⚠️ Risiko v.a. bei vorbestehendem Vitamin-D-Mangel → vorher ausgleichen']},
+hypo_m_pseudo:{t:'Kein echter Mangel',p:[
+  'Ionisiertes (freies) Calcium <b>normal</b> → i.d.R. asymptomatisch',
+  'Hypoalbuminämie (↓ Bindungsprotein) oder Laborartefakt (Gadolinium-KM)',
+  'Payne-Korrektur entlarvt die Pseudohypokalzämie']},
+
+/* ---------- MECHANISMUS-Kategorien (HYPER) ---------- */
+hyper_m_pth:{t:'Mechanismus',p:[
+  '<b>PTH oder PTHrP</b> → ↑ Knochenresorption + ↑ renale Ca-Rückresorption',
+  'Autonom (pHPT, tertiärer HPT), CASR-bedingt (FHH, Lithium) oder paraneoplastisch (PTHrP)',
+  'Phosphat↓ (PTH/PTHrP steigern die Phosphatausscheidung)']},
+hyper_m_bone:{t:'Mechanismus',p:[
+  '<b>↑ osteoklastäre Knochenresorption ohne PTH-Vermittlung</b>',
+  'Osteolyse (Myelom/Metastasen, RANKL) · Hyperthyreose (↑ Umsatz) · Immobilisation · Vitamin-A · Tamoxifen-Flare · Theophyllin',
+  'PTH supprimiert (↓)']},
+hyper_m_vitd:{t:'Mechanismus',p:[
+  '<b>↑ Calcitriol-Wirkung</b> → ↑ intestinale Ca-Resorption',
+  'Granulome (makrophagäre 1-α-Hydroxylase) · Vitamin-D-Intoxikation · Akromegalie (GH → Calcitriol↑)',
+  'Calcitriol↑ · PTH↓']},
+hyper_m_intake:{t:'Mechanismus',p:[
+  '<b>↑ Zufuhr und/oder ↓ renale Ausscheidung</b>',
+  'Calciumcarbonat (Milk-Alkali-Syndrom) · Thiazide (↑ distale Rückresorption) · Addison (↓ Ausscheidung + Hämokonzentration)',
+  'PTH meist ↓']}
+};
+
+/* ════════════════════════════════════════════════════════
+   TREE STRUCTURES
+   ════════════════════════════════════════════════════════ */
+const DATA_HYPO={id:'hypoca',n:'Hypo-\nkalzämie',children:[
+  {id:'hypo_echt',n:'Echte Hypokalzämie',s:'ionisiert ↓',c:C.TEAL,legend:'Echte (ion. ↓)',children:[
+    {id:'hypo_endo',n:'Endokrine /\nmetabole Ursachen',children:[
+      {id:'hypo_hypopara',n:'Hypoparathyreoidismus',s:'PTH↓ · Phosphat↑',e:1},
+      {id:'hypo_vitd',n:'Vitamin-D-Mangel',s:'sehr häufig',e:1}
+    ]},
+    {id:'hypo_med',n:'Medikamente',children:[
+      {id:'hypo_med_schleif',n:'Schleifendiuretika'},
+      {id:'hypo_med_gluco',n:'Glucocorticoide'},
+      {id:'hypo_med_amino',n:'Aminoglykoside'},
+      {id:'hypo_med_cis',n:'Cisplatin'},
+      {id:'hypo_med_calcitonin',n:'Calcitonin'},
+      {id:'hypo_med_denos',n:'Denosumab / Bisphosphonate'},
+      {id:'hypo_med_foscarnet',n:'Foscarnet'},
+      {id:'hypo_med_phenytoin',n:'Phenytoin'}
+    ]},
+    {id:'hypo_weit',n:'Weitere Ursachen',children:[
+      {id:'hypo_weit_pankr',n:'Nekrotisierende Pankreatitis',e:1},
+      {id:'hypo_weit_hyperv',n:'Hyperventilation',s:'Umverteilung!',e:1},
+      {id:'hypo_weit_rhabdo',n:'Rhabdomyolyse'},
+      {id:'hypo_weit_citrat',n:'Citratzufuhr',s:'Massentransfusion'},
+      {id:'hypo_weit_phosphat',n:'Hyperphosphatämie'},
+      {id:'hypo_weit_rta',n:'Renal-tubuläre Azidose'}
+    ]}
+  ]},
+  {id:'hypo_pseudo',n:'Pseudo-\nhypokalzämie',s:'ionisiert ↔',c:C.SLATE,legend:'Pseudo (Albumin↓)',children:[
+    {id:'hypo_pseudo_albu',n:'Hypoalbuminämie',s:'häufigste Pseudoform',e:1},
+    {id:'hypo_pseudo_gado',n:'Gadolinium-Kontrastmittel',s:'Laborinterferenz'}
+  ]},
+  {id:'hypo_syndrom',n:'Seltene syndromale\nUrsachen',c:C.VIOLET,legend:'Syndromal',children:[
+    {id:'hypo_syndrom_digeorge',n:'DiGeorge-Syndrom',s:'22q11.2 · CATCH-22',e:1},
+    {id:'hypo_syndrom_infantil',n:'Idiopathische infantile\nHypokalzämie'}
+  ]}
+]};
+
+const DATA_HYPER={id:'hyperca',n:'Hyper-\nkalzämie',children:[
+  {id:'hyper_endo',n:'Endokrinologische\nUrsachen',c:C.AMBER,legend:'Endokrin',children:[
+    {id:'hyper_phpt',n:'Primärer\nHyperparathyreoidismus',s:'80% · PTH↑',e:1},
+    {id:'hyper_tphpt',n:'Tertiärer\nHyperparathyreoidismus',s:'bei CKD'},
+    {id:'hyper_hyperthyr',n:'Hyperthyreose'},
+    {id:'hyper_addison',n:'NNR-Insuffizienz',s:'Morbus Addison'},
+    {id:'hyper_akro',n:'Akromegalie'}
+  ]},
+  {id:'hyper_tumor',n:'Tumorinduzierte\nHyperkalzämie',c:C.RED,legend:'Tumor',children:[
+    {id:'hyper_para',n:'Paraneoplasie',s:'PTHrP · häufigste',e:1},
+    {id:'hyper_osteo',n:'Osteolyse /\nKnochenmetastasen',e:1}
+  ]},
+  {id:'hyper_sonst',n:'Sonstige Ursachen',c:C.EMER,legend:'Sonstige',children:[
+    {id:'hyper_granu',n:'Granulomatöse\nErkrankungen',s:'Sarkoidose · Calcitriol↑',e:1},
+    {id:'hyper_thiazid',n:'Thiazide / Lithium',e:1},
+    {id:'hyper_tamox',n:'Tamoxifen',s:'Östrogenantagonist'},
+    {id:'hyper_theo',n:'Theophyllin-Überdosierung'},
+    {id:'hyper_cacarb',n:'Calciumcarbonat',s:'Milk-Alkali-Syndrom'},
+    {id:'hyper_vitd',n:'Vitamin-Überdosierung',s:'Vit-D / Vit-A'},
+    {id:'hyper_immob',n:'Lange Immobilisation'},
+    {id:'hyper_fhh',n:'Fam. hypokalziurische\nHyperkalzämie',s:'DD zum pHPT!',e:1}
+  ]}
+]};
+
+/* ════ Mechanismus-organisierte Bäume (gleiche Leaf-IDs → gleiche Inhalte + Notizen) ════ */
+const DATA_HYPO_MECH={id:'hypoca',n:'Hypo-\nkalzämie',children:[
+  {id:'hypo_m_pth',n:'↓ PTH-Wirkung',c:C.TEAL,legend:'↓ PTH',children:[
+    {id:'hypo_hypopara',n:'Hypoparathyreoidismus',s:'PTH↓ direkt',e:1},
+    {id:'hypo_syndrom_digeorge',n:'DiGeorge-Syndrom',s:'NSD-Aplasie',e:1},
+    {id:'hypo_med_amino',n:'Aminoglykoside',s:'→ Hypomagnesiämie'},
+    {id:'hypo_med_cis',n:'Cisplatin',s:'→ Hypomagnesiämie'},
+    {id:'hypo_syndrom_infantil',n:'Idiopath. infantile\nHypokalzämie',s:'genetisch'}
+  ]},
+  {id:'hypo_m_vitd',n:'↓ Vitamin-D-Wirkung',c:C.BLUE,legend:'↓ Vitamin D',children:[
+    {id:'hypo_vitd',n:'Vitamin-D-Mangel',s:'sehr häufig',e:1},
+    {id:'hypo_med_phenytoin',n:'Phenytoin',s:'↑ Vit-D-Abbau'}
+  ]},
+  {id:'hypo_m_bind',n:'↑ Ca-Bindung /\nPräzipitation',c:C.VIOLET,legend:'↑ Bindung',children:[
+    {id:'hypo_weit_phosphat',n:'Hyperphosphatämie',s:'Tumorlyse · Präzipitation'},
+    {id:'hypo_weit_rhabdo',n:'Rhabdomyolyse',s:'Phosphat ↑'},
+    {id:'hypo_weit_citrat',n:'Citratzufuhr',s:'Chelation · Transfusion'},
+    {id:'hypo_med_foscarnet',n:'Foscarnet',s:'Chelation'},
+    {id:'hypo_weit_pankr',n:'Nekrotisierende Pankreatitis',s:'Verseifung · Fettsäuren',e:1},
+    {id:'hypo_weit_hyperv',n:'Hyperventilation',s:'Alkalose → Albuminbindung',e:1}
+  ]},
+  {id:'hypo_m_excr',n:'↑ Renale Ausscheidung',c:C.AMBER,legend:'↑ Ausscheidung',children:[
+    {id:'hypo_med_schleif',n:'Schleifendiuretika',s:'↑ renaler Ca-Verlust'},
+    {id:'hypo_med_gluco',n:'Glucocorticoide',s:'↑ Ausscheidung + ↓ Resorption'},
+    {id:'hypo_weit_rta',n:'Renal-tubuläre Azidose',s:'renaler Ca-Verlust'}
+  ]},
+  {id:'hypo_m_bone',n:'↓ Knochenresorption\n(antiresorptiv)',c:C.EMER,legend:'↓ Resorption',children:[
+    {id:'hypo_med_denos',n:'Denosumab / Bisphosphonate',s:'Osteoklastenhemmung'},
+    {id:'hypo_med_calcitonin',n:'Calcitonin',s:'Osteoklastenhemmung'}
+  ]},
+  {id:'hypo_m_pseudo',n:'Pseudo / Artefakt',c:C.SLATE,legend:'Pseudo',children:[
+    {id:'hypo_pseudo_albu',n:'Hypoalbuminämie',s:'Bindungsprotein↓',e:1},
+    {id:'hypo_pseudo_gado',n:'Gadolinium-KM',s:'Laborinterferenz'}
+  ]}
+]};
+
+const DATA_HYPER_MECH={id:'hyperca',n:'Hyper-\nkalzämie',children:[
+  {id:'hyper_m_pth',n:'PTH- / PTHrP-\nvermittelt',c:C.AMBER,legend:'PTH / PTHrP',children:[
+    {id:'hyper_phpt',n:'Primärer\nHyperparathyreoidismus',s:'autonomes PTH↑',e:1},
+    {id:'hyper_tphpt',n:'Tertiärer\nHyperparathyreoidismus',s:'autonom bei CKD'},
+    {id:'hyper_fhh',n:'Fam. hypokalziurische\nHyperkalzämie',s:'CASR · Hypokalzurie',e:1},
+    {id:'hyper_para',n:'Paraneoplasie',s:'PTHrP · häufigste',e:1}
+  ]},
+  {id:'hyper_m_bone',n:'↑ Knochenresorption\n(PTH-unabhängig)',c:C.RED,legend:'↑ Resorption',children:[
+    {id:'hyper_osteo',n:'Osteolyse /\nKnochenmetastasen',s:'RANKL · Myelom',e:1},
+    {id:'hyper_hyperthyr',n:'Hyperthyreose',s:'↑ Knochenumsatz'},
+    {id:'hyper_immob',n:'Lange Immobilisation',s:'fehlende Belastung'},
+    {id:'hyper_tamox',n:'Tamoxifen',s:'Tumor flare'},
+    {id:'hyper_theo',n:'Theophyllin-Überdosierung',s:'β-adrenerg'}
+  ]},
+  {id:'hyper_m_vitd',n:'↑ Vitamin-D- /\nCalcitriol-Wirkung',c:C.EMER,legend:'↑ Calcitriol',children:[
+    {id:'hyper_granu',n:'Granulomatöse\nErkrankungen',s:'Makrophagen-Calcitriol',e:1},
+    {id:'hyper_vitd',n:'Vitamin-Überdosierung',s:'Vit-D (Vit-A: Knochen)'},
+    {id:'hyper_akro',n:'Akromegalie',s:'GH → Calcitriol↑'}
+  ]},
+  {id:'hyper_m_intake',n:'↑ Zufuhr /\n↓ renale Ausscheidung',c:C.BLUE,legend:'↑ Zufuhr / ↓ Ausschd.',children:[
+    {id:'hyper_cacarb',n:'Calciumcarbonat',s:'Milk-Alkali · Zufuhr'},
+    {id:'hyper_thiazid',n:'Thiazide / Lithium',s:'↓ renale Ausscheidung',e:1},
+    {id:'hyper_addison',n:'NNR-Insuffizienz',s:'↓ Ausscheidung + Hämokonz.'}
+  ]}
+]};
+
+/* ════════════════════════════════════════════════════════
+   RENDERING
+   ════════════════════════════════════════════════════════ */
+function markEssential(node){
+  let keep=false;
+  if(node.children){for(const c of node.children){if(markEssential(c))keep=true;}}
+  node._keep=!!(node.e||keep);
+  return node._keep;
+}
+markEssential(DATA_HYPO);markEssential(DATA_HYPER);
+markEssential(DATA_HYPO_MECH);markEssential(DATA_HYPER_MECH);
+let focusMode=false;
+
+const svgEl=document.getElementById('viz');
+const NS='http://www.w3.org/2000/svg';
+const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);return e;};
+const gM=mk('g',{});svgEl.appendChild(gM);
+const gL=mk('g',{});gM.appendChild(gL);
+const gN=mk('g',{});gM.appendChild(gN);
+
+const notesCache={};
+let curId=null,saveT=null,selCirc=null,mode='hypo',view='class',root=null;
+const isMobile=()=>window.innerWidth<768;
+
+const zoom=d3.zoom().scaleExtent([0.04,14]).on('zoom',e=>gM.setAttribute('transform',e.transform));
+d3.select(svgEl).call(zoom);
+let initT;
+
+function render(){
+  const DATA = view==='mech'
+    ? (mode==='hypo'?DATA_HYPO_MECH:DATA_HYPER_MECH)
+    : (mode==='hypo'?DATA_HYPO:DATA_HYPER);
+  const childAcc = focusMode ? (d=>d.children?d.children.filter(c=>c._keep):null) : (d=>d.children);
+  root=d3.hierarchy(DATA,childAcc);
+  root.descendants().forEach(d=>{
+    if(d.depth===0){d.data._c=C.ROOT;return;}
+    let a=d;while(a.depth>1)a=a.parent;
+    d.data._c=a.data.c||C.ROOT;
+  });
+  d3.tree().nodeSize([22,236])(root);
+
+  gL.replaceChildren();
+  gN.replaceChildren();
+  selCirc=null;
+
+  root.links().forEach(lk=>{
+    const s=lk.source,t=lk.target,mx=(s.y+t.y)/2;
+    gL.appendChild(mk('path',{d:`M${s.y},${s.x}C${mx},${s.x} ${mx},${t.x} ${t.y},${t.x}`,fill:'none',stroke:t.data._c,'stroke-width':[2.5,2,1.5,1,.7][Math.min(t.depth,4)],'stroke-opacity':LOP}));
+  });
+
+  root.descendants().forEach(d=>{
+    const r=[11,8,6,4.5,3.5][Math.min(d.depth,4)];
+    const sz=[15,13.5,11.5,10.5,9.5][Math.min(d.depth,4)];
+    const lh=sz*1.32;
+    const leaf=!d.children;
+    const ess=leaf&&d.data.e;
+    const dim=leaf&&!d.data.e&&!focusMode;
+    const grp=mk('g',{transform:`translate(${d.y},${d.x})`,style:'cursor:pointer'});
+    if(dim)grp.setAttribute('opacity',dk?.30:.34);
+    grp.dataset.nid=d.data.id||'';
+    const circ=mk('circle',{r,fill:d.data._c,'fill-opacity':ess?1:[1,.9,.75,.65,.55][Math.min(d.depth,4)],stroke:d.data._c,'stroke-width':d.depth<=1?2:1});
+    grp.appendChild(circ);
+    if(ess)grp.appendChild(mk('circle',{r:r+3.5,fill:'none',stroke:GOLD,'stroke-width':1.6,'stroke-opacity':.85}));
+    grp.appendChild(mk('circle',{r:Math.max(r,15),fill:'transparent'}));
+    const dot=mk('circle',{r:3.5,cx:r+1,cy:-r-1,fill:'#f59e0b',stroke:dk?'#222224':'#f4f3ef','stroke-width':1.2,visibility:'hidden','pointer-events':'none'});
+    dot.classList.add('ndot');grp.appendChild(dot);
+    if(ess){const st=mk('text',{x:r+7,y:3.6,'font-size':11,fill:GOLD,'font-weight':600,'pointer-events':'none'});st.textContent='★';grp.appendChild(st);}
+    const ps=d.data.n.split('\n'),hs=!!d.data.s,tot=ps.length+(hs?1:0);
+    const y0=-(tot*lh/2)+lh/2,xo=d.depth===0?0:(r+8)+(ess?14:0),ta=d.depth===0?'middle':'start';
+    const tx=mk('text',{'text-anchor':ta,fill:d.data._c,'pointer-events':'none'});
+    ps.forEach((p,i)=>{const ts=mk('tspan',{x:xo,y:y0+i*lh,'font-size':sz,'font-weight':ess?600:(d.depth<=2?500:400)});ts.textContent=p;tx.appendChild(ts);});
+    if(hs){const ts2=mk('tspan',{x:xo,y:y0+ps.length*lh,'font-size':sz-1.5,'font-weight':300,'font-style':'italic','fill-opacity':.55});ts2.textContent=d.data.s;tx.appendChild(ts2);}
+    grp.appendChild(tx);
+    grp.addEventListener('click',e=>{e.stopPropagation();openPanel(d,circ);});
+    gN.appendChild(grp);
+  });
+
+  buildLegend();
+  updateDots();
+  setTimeout(fitAll,40);
+}
+
+function buildLegend(){
+  const el=document.getElementById('hleg');
+  el.replaceChildren();
+  (root.children||[]).forEach(c=>{
+    const col=c.data.c;
+    const pill=document.createElement('div');pill.className='lp';
+    pill.style.cssText=`color:${col};border-color:${col}44`;
+    const dot=document.createElement('div');dot.className='ld';dot.style.background=col;
+    pill.appendChild(dot);
+    pill.appendChild(document.createTextNode(c.data.legend||c.data.n.replace(/\n/g,' ')));
+    el.appendChild(pill);
+  });
+}
+
+/* ── Panel ── */
+function addSection(parent,label,content,col){
+  if(!content)return;
+  const sec=document.createElement('div');sec.className='psec';
+  const lab=document.createElement('div');lab.className='pslabel';
+  lab.style.color=col;lab.textContent=label;
+  sec.appendChild(lab);
+  if(Array.isArray(content)){
+    const ul=document.createElement('ul');ul.className='sbul';
+    content.forEach(p=>{const li=document.createElement('li');li.innerHTML=p;ul.appendChild(li);});
+    sec.appendChild(ul);
+  }else{
+    const tx=document.createElement('div');tx.className='pstext';tx.innerHTML=content;
+    sec.appendChild(tx);
+  }
+  parent.appendChild(sec);
+}
+
+function openPanel(d,circ){
+  if(selCirc)selCirc.setAttribute('stroke-width',selCirc._sw);
+  selCirc=circ;circ._sw=d.depth<=1?2:1;circ.setAttribute('stroke-width',3.5);
+  curId=d.data.id;
+  const kp=K[curId]||{t:d.data.n.replace(/\n/g,' ')};
+  const col=d.data._c;
+  const tg=document.getElementById('stag');
+  tg.textContent=kp.t||'';
+  tg.style.cssText=`background:${col}18;color:${col};border:1px solid ${col}44;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:8px;display:inline-block;margin-bottom:7px`;
+  document.getElementById('sttl').textContent=d.data.n.replace(/\n/g,' ');
+  const body=document.getElementById('sbody');
+  body.replaceChildren();
+  if(kp.o||kp.w||kp.l||kp.th){
+    addSection(body,'Überblick',kp.o,col);
+    addSection(body,'Warum '+(mode==='hypo'?'Hypo':'Hyper')+'kalzämie?',kp.w,col);
+    addSection(body,'Labor & Diagnostik',kp.l,col);
+    addSection(body,'Therapie',kp.th,col);
+  }else if(kp.p){
+    const ul=document.createElement('ul');ul.id='sbul';
+    kp.p.forEach(p=>{const li=document.createElement('li');li.innerHTML=p;ul.appendChild(li);});
+    body.appendChild(ul);
+  }
+  document.getElementById('nta').value=notesCache[curId]||'';
+  document.getElementById('nstat').textContent='';
+  document.getElementById('sempty').style.display='none';
+  document.getElementById('scont').style.display='flex';
+  if(isMobile()){
+    document.getElementById('side').classList.add('mopen');
+    document.getElementById('backdrop').classList.add('active');
+  }
+}
+
+function closePanel(){
+  document.getElementById('side').classList.remove('mopen');
+  document.getElementById('backdrop').classList.remove('active');
+  if(!isMobile()){
+    document.getElementById('sempty').style.display='';
+    document.getElementById('scont').style.display='none';
+  }
+  if(selCirc){selCirc.setAttribute('stroke-width',selCirc._sw);selCirc=null;}
+  curId=null;
+}
+
+/* swipe-down to close (mobile) */
+let tsY=0;
+const sideEl=document.getElementById('side');
+sideEl.addEventListener('touchstart',e=>{tsY=e.touches[0].clientY;},{passive:true});
+sideEl.addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-tsY>65)closePanel();},{passive:true});
+
+/* ── Mode toggle ── */
+function applyAccent(){
+  const accent = mode==='hypo'?C.TEAL:C.AMBER;
+  document.documentElement.style.setProperty('--accent',accent);
+  document.getElementById('seg-hypo').style.color = mode==='hypo'?accent:'';
+  document.getElementById('seg-hyper').style.color = mode==='hyper'?accent:'';
+  document.getElementById('seg-class').style.color = view==='class'?accent:'';
+  document.getElementById('seg-mech').style.color = view==='mech'?accent:'';
+}
+
+function setMode(m){
+  if(m===mode)return;
+  mode=m;
+  document.getElementById('seg-hypo').classList.toggle('active',m==='hypo');
+  document.getElementById('seg-hyper').classList.toggle('active',m==='hyper');
+  document.getElementById('empty-title').textContent = m==='hypo'?'Hypokalzämie':'Hyperkalzämie';
+  applyAccent();
+  closePanel();
+  render();
+}
+
+function setView(v){
+  if(v===view)return;
+  view=v;
+  document.getElementById('seg-class').classList.toggle('active',v==='class');
+  document.getElementById('seg-mech').classList.toggle('active',v==='mech');
+  applyAccent();
+  closePanel();
+  render();
+}
+
+function toggleFocus(){
+  focusMode=!focusMode;
+  const b=document.getElementById('focusBtn');
+  b.style.cssText = focusMode ? `background:${GOLD}22;border-color:${GOLD};color:${GOLD}` : '';
+  closePanel();
+  render();
+}
+function updateDots(){
+  document.querySelectorAll('[data-nid]').forEach(el=>{
+    const dot=el.querySelector('.ndot');
+    if(dot)dot.setAttribute('visibility',notesCache[el.dataset.nid]&&notesCache[el.dataset.nid].trim()?'visible':'hidden');
+  });
+}
+function saveNote(id,text){
+  notesCache[id]=text;
+  const ns=document.getElementById('nstat');
+  try{
+    if(text.trim())localStorage.setItem('canote_'+id,text);
+    else localStorage.removeItem('canote_'+id);
+    ns.textContent='Gespeichert ✓';setTimeout(()=>ns.textContent='',2000);
+  }catch(e){ns.textContent='(kein localStorage)';}
+  updateDots();
+}
+function loadAllNotes(){
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith('canote_'))notesCache[k.replace('canote_','')]=localStorage.getItem(k);
+    }
+  }catch{}
+}
+document.getElementById('nta').addEventListener('input',function(){
+  clearTimeout(saveT);
+  document.getElementById('nstat').textContent='Eingabe…';
+  const id=curId,val=this.value;
+  saveT=setTimeout(()=>saveNote(id,val),700);
+});
+function exportNotes(){
+  const entries=Object.entries(notesCache).filter(([,v])=>v&&v.trim());
+  if(!entries.length){alert('Keine Notizen vorhanden.');return;}
+  const lines=['Calcium KP-Mindmap — Meine Notizen','='.repeat(44),''];
+  entries.forEach(([id,text])=>{const kp=K[id];lines.push(`## ${kp&&kp.t?kp.t+' — ':''}${id}`);lines.push(text.trim());lines.push('');});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}));
+  a.download='Calcium_Notizen.txt';a.click();URL.revokeObjectURL(a.href);
+}
+function clearNotes(){
+  if(!confirm('Alle Notizen löschen (Hypo + Hyper)?'))return;
+  try{Object.keys(notesCache).forEach(k=>{localStorage.removeItem('canote_'+k);delete notesCache[k];});}catch{}
+  if(curId)document.getElementById('nta').value='';
+  updateDots();
+}
+
+/* ── Zoom / fit ── */
+function fitAll(){
+  if(!root)return;
+  const ns=root.descendants();
+  const xs=ns.map(d=>d.x),ys=ns.map(d=>d.y);
+  const W=svgEl.clientWidth||window.innerWidth-(isMobile()?0:320);
+  const H=svgEl.clientHeight||window.innerHeight-80;
+  const minX=Math.min(...xs)-30,maxX=Math.max(...xs)+30;
+  const minY=Math.min(...ys)-30,maxY=Math.max(...ys)+300;
+  const sc=Math.min(W/(maxY-minY),H/(maxX-minX))*.92;
+  initT=d3.zoomIdentity.translate(-minY*sc+(W-(maxY-minY)*sc)/2+20,-minX*sc+(H-(maxX-minX)*sc)/2).scale(sc);
+  d3.select(svgEl).transition().duration(450).call(zoom.transform,initT);
+}
+function resetView(){if(initT)d3.select(svgEl).transition().duration(450).call(zoom.transform,initT);}
+
+/* ── Init ── */
+loadAllNotes();
+applyAccent();
+render();
+window.addEventListener('resize',()=>setTimeout(fitAll,120));
+</script>
+</body>
+</html>

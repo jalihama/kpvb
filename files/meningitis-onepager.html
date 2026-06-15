@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meningitis — Prüfungs-One-Pager (KP / M3)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  .mng {
+    --ink:#16242e;
+    --body:#26343d;
+    --muted:#5d6c75;
+    --line:#e3e9eb;
+    --line-soft:#eef2f3;
+    --bg:#eef2f4;
+    --card:#ffffff;
+    --navy:#143a51;
+    --navy-d:#0e2d40;
+    --teal:#0d7a89;
+    --teal-d:#0a5c68;
+    --teal-soft:#e3f1f2;
+    --bact:#c12a21;
+    --bact-bg:#fbeae8;
+    --bact-d:#8f1e18;
+    --viral:#1d7a4b;
+    --viral-bg:#e7f4ec;
+    --gold:#9c6f16;
+    --gold-bg:#fcf2d8;
+    --gold-line:#ecd49a;
+
+    --shadow:0 1px 2px rgba(20,40,60,.04), 0 6px 18px rgba(20,40,60,.06);
+    --shadow-hi:0 2px 4px rgba(20,40,60,.06), 0 12px 30px rgba(20,40,60,.10);
+    --radius:14px;
+
+    font-family:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color:var(--body);
+    background:var(--bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    font-size:16px;
+  }
+  .mng *, .mng *::before, .mng *::after { box-sizing:border-box; }
+  .mng img { max-width:100%; }
+
+  /* ---------- Layout shell ---------- */
+  .mng .wrap { max-width:1080px; margin:0 auto; padding:0 clamp(14px, 4vw, 28px); }
+  .mng section, .mng .feature, .mng #meldung { scroll-margin-top:74px; }
+
+  /* ---------- Header ---------- */
+  .mng .masthead { background:linear-gradient(160deg, var(--navy) 0%, var(--navy-d) 100%); color:#fff; padding:clamp(26px,5vw,44px) 0 clamp(20px,4vw,30px); }
+  .mng .masthead .wrap { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:18px; }
+  .mng h1 { font-size:clamp(28px,6vw,46px); line-height:1.02; font-weight:900; letter-spacing:-.025em; margin:0; }
+  .mng h1 .tag { display:block; font-size:clamp(13px,2.6vw,17px); font-weight:600; letter-spacing:.01em; color:#9fd5dd; margin-top:8px; }
+  .mng .ref-note { font-size:12.5px; color:#bcd3dc; max-width:300px; line-height:1.45; text-align:right; }
+  .mng .ref-note b { color:#fff; font-weight:700; }
+  @media (max-width:640px){ .mng .ref-note { text-align:left; max-width:none; } }
+
+  /* ---------- Sticky nav ---------- */
+  .mng .nav { position:sticky; top:0; z-index:40; background:rgba(255,255,255,.92); backdrop-filter:saturate(1.4) blur(8px); border-bottom:1px solid var(--line); }
+  .mng .nav .wrap { display:flex; gap:6px; overflow-x:auto; padding-top:9px; padding-bottom:9px; scrollbar-width:none; }
+  .mng .nav .wrap::-webkit-scrollbar { display:none; }
+  .mng .nav a { flex:0 0 auto; text-decoration:none; font-size:12.5px; font-weight:600; color:var(--muted); padding:6px 12px; border-radius:999px; white-space:nowrap; transition:background .15s, color .15s; }
+  .mng .nav a:hover { background:var(--teal-soft); color:var(--teal-d); }
+  .mng .nav a.active { background:var(--navy); color:#fff; }
+  .mng .nav a:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
+
+  /* ---------- Emergency banner ---------- */
+  .mng .alarm { background:linear-gradient(135deg, var(--bact) 0%, var(--bact-d) 100%); color:#fff; border-radius:var(--radius); padding:clamp(16px,3vw,22px) clamp(18px,3vw,26px); margin-top:clamp(20px,4vw,30px); display:flex; flex-wrap:wrap; align-items:center; gap:16px 24px; box-shadow:var(--shadow-hi); }
+  .mng .alarm .siren { flex:0 0 auto; display:flex; align-items:center; gap:13px; }
+  .mng .alarm .siren svg { width:34px; height:34px; }
+  .mng .alarm .siren .lead { font-weight:800; font-size:clamp(16px,3vw,20px); line-height:1.1; }
+  .mng .alarm .siren .lead span { display:block; font-weight:600; font-size:12.5px; color:#ffd9d4; margin-top:3px; letter-spacing:.03em; text-transform:uppercase; }
+  .mng .alarm .pearl { flex:1 1 320px; font-size:14.5px; line-height:1.5; border-left:3px solid rgba(255,255,255,.45); padding-left:16px; }
+  .mng .alarm .pearl b { font-weight:800; color:#fff; }
+  .mng .alarm .pearl em { font-style:normal; background:rgba(255,255,255,.16); padding:1px 6px; border-radius:5px; font-weight:700; }
+
+  /* ---------- Section scaffolding ---------- */
+  .mng .blk { padding:clamp(26px,5vw,40px) 0 0; }
+  .mng .blk-head { display:flex; align-items:center; gap:11px; margin-bottom:16px; }
+  .mng .blk-head .ico { flex:0 0 auto; width:34px; height:34px; border-radius:10px; display:grid; place-items:center; background:var(--teal-soft); color:var(--teal-d); }
+  .mng .blk-head .ico svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .mng .blk-head h2 { margin:0; font-size:clamp(17px,3vw,20px); font-weight:800; letter-spacing:-.01em; color:var(--navy); }
+  .mng .blk-head .sub { font-size:12.5px; font-weight:600; color:var(--muted); }
+  .mng .blk-head.danger .ico { background:var(--bact-bg); color:var(--bact-d); }
+  .mng .blk-head.danger h2 { color:var(--bact-d); }
+
+  .mng .grid { display:grid; gap:clamp(12px,2vw,18px); grid-template-columns:repeat(auto-fit, minmax(290px,1fr)); }
+
+  .mng .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(15px,2.4vw,20px); box-shadow:var(--shadow); transition:box-shadow .18s, transform .18s; }
+  @media (hover:hover) and (pointer:fine){ .mng .card.lift:hover { box-shadow:var(--shadow-hi); transform:translateY(-2px); } }
+  .mng .card h3 { margin:0 0 10px; font-size:15.5px; font-weight:800; color:var(--ink); display:flex; align-items:center; gap:8px; }
+  .mng .card h3 .dot { width:8px; height:8px; border-radius:50%; background:var(--teal); flex:0 0 auto; }
+
+  .mng p { margin:0 0 10px; }
+  .mng .card p:last-child, .mng .card ul:last-child { margin-bottom:0; }
+  .mng ul { margin:0 0 10px; padding-left:0; list-style:none; }
+  .mng ul li { position:relative; padding-left:20px; margin-bottom:7px; }
+  .mng ul li::before { content:""; position:absolute; left:4px; top:.62em; width:6px; height:6px; border-radius:50%; background:var(--teal); }
+  .mng ul.warn li::before { background:var(--bact); }
+  .mng ul.check li::before { content:"✓"; background:none; left:0; top:0; color:var(--viral); font-weight:800; font-size:13px; }
+  .mng b, .mng strong { font-weight:700; color:var(--ink); }
+  .mng .danger-t { color:var(--bact); font-weight:700; }
+  .mng .muted { color:var(--muted); }
+  .mng .sub-h { font-weight:800; color:var(--navy); font-size:13px; text-transform:uppercase; letter-spacing:.04em; margin:14px 0 7px; }
+  .mng .sub-h:first-child { margin-top:0; }
+  .mng .mono { font-family:"SF Mono", ui-monospace, "DejaVu Sans Mono", Menlo, Consolas, monospace; font-weight:700; font-size:.94em; }
+  .mng .chip { display:inline-block; font-family:"SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:700; background:var(--teal-soft); color:var(--teal-d); padding:1px 7px; border-radius:6px; white-space:nowrap; }
+
+  /* ---------- Merksatz / callout ---------- */
+  .mng .merksatz { background:var(--gold-bg); border:1px solid var(--gold-line); border-left:5px solid var(--gold); border-radius:10px; padding:12px 14px; margin-top:14px; }
+  .mng .merksatz .lbl { font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--gold); margin-bottom:4px; }
+  .mng .merksatz p { margin:0; font-weight:700; color:#5e441a; font-size:14.5px; line-height:1.45; }
+
+  .mng .callout { border-radius:10px; padding:11px 13px; font-size:13.5px; line-height:1.45; margin-top:12px; }
+  .mng .callout.note { background:var(--gold-bg); border:1px solid var(--gold-line); color:#5e441a; }
+  .mng .callout.note b { color:#5e441a; }
+  .mng .callout.red { background:var(--bact-bg); border:1px solid #f0c4bf; color:var(--bact-d); }
+  .mng .callout.red b { color:var(--bact-d); }
+  .mng .callout .k { font-weight:800; text-transform:uppercase; font-size:11px; letter-spacing:.05em; }
+
+  /* ---------- Examination signs ---------- */
+  .mng .signs { display:grid; grid-template-columns:1fr 1fr; gap:11px; margin-top:6px; }
+  @media (max-width:380px){ .mng .signs { grid-template-columns:1fr; } }
+  .mng .sign { border:1px solid var(--line); border-radius:10px; padding:9px 10px; background:#fbfdfd; }
+  .mng .sign .cap { font-size:12px; font-weight:800; color:var(--teal-d); margin-bottom:3px; }
+  .mng .sign svg { width:100%; height:60px; display:block; }
+  .mng .sign .ex { font-size:11.5px; color:var(--muted); margin-top:4px; line-height:1.35; }
+  .mng .sign .ex b { color:var(--ink); }
+
+  /* ---------- Diagnostic pathway ---------- */
+  .mng .feature { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(16px,2.6vw,24px); box-shadow:var(--shadow); margin-top:16px; }
+  .mng .feature.accent-teal { border-top:4px solid var(--teal); }
+  .mng .feature.accent-red { border-top:4px solid var(--bact); }
+  .mng .feat-head { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-bottom:16px; }
+  .mng .feat-head h2 { margin:0; font-size:clamp(17px,3vw,20px); font-weight:800; color:var(--navy); letter-spacing:-.01em; }
+  .mng .clock { font-family:"SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:800; letter-spacing:.02em; background:var(--bact); color:#fff; border-radius:999px; padding:5px 13px; }
+
+  .mng .steps { display:grid; gap:11px; grid-template-columns:repeat(4,1fr); }
+  @media (max-width:760px){ .mng .steps { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:440px){ .mng .steps { grid-template-columns:1fr; } }
+  .mng .step { border:1px solid var(--line); border-radius:11px; padding:12px 13px 13px; background:#fbfdfd; position:relative; }
+  .mng .step .num { width:27px; height:27px; border-radius:50%; background:var(--navy); color:#fff; font-weight:800; font-size:14px; display:grid; place-items:center; margin-bottom:8px; }
+  .mng .step .st { font-weight:800; font-size:13.5px; color:var(--ink); margin-bottom:3px; line-height:1.25; }
+  .mng .step .sd { font-size:12.5px; color:var(--muted); line-height:1.4; }
+  .mng .step .sd b { color:var(--ink); }
+  .mng .step.hot { border-color:#f0c4bf; background:var(--bact-bg); }
+  .mng .step.hot .num { background:var(--bact); }
+  .mng .step.hot .sd b { color:var(--bact-d); }
+
+  .mng .redflags { margin-top:14px; display:grid; gap:11px; grid-template-columns:1.3fr 1fr; }
+  @media (max-width:720px){ .mng .redflags { grid-template-columns:1fr; } }
+
+  /* ---------- Liquor table ---------- */
+  .mng .tablewrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:11px; }
+  .mng table.liq { width:100%; border-collapse:collapse; min-width:560px; font-size:13.5px; }
+  .mng table.liq th, .mng table.liq td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+  .mng table.liq thead th { font-size:12px; text-transform:uppercase; letter-spacing:.03em; background:#f6f9f9; color:var(--muted); font-weight:800; border-bottom:1px solid var(--line); }
+  .mng table.liq thead th.c-bact { background:var(--bact); color:#fff; }
+  .mng table.liq thead th.c-viral { background:var(--viral); color:#fff; }
+  .mng table.liq tbody th { font-weight:800; color:var(--ink); white-space:nowrap; }
+  .mng table.liq td.bact { background:var(--bact-bg); }
+  .mng table.liq td.viral { background:var(--viral-bg); }
+  .mng table.liq td.bact .mono { color:var(--bact-d); }
+  .mng table.liq tr:last-child th, .mng table.liq tr:last-child td { border-bottom:none; }
+  .mng table.liq .em-bact { color:var(--bact); font-weight:800; }
+
+  /* ---------- Therapy drug cards ---------- */
+  .mng .drugs { display:grid; gap:12px; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); }
+  .mng .drug { border:1px solid var(--line); border-radius:11px; padding:13px 14px; background:#fbfdfd; }
+  .mng .drug .dn { font-weight:800; font-size:15px; color:var(--navy); }
+  .mng .drug .dd { font-family:"SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:700; color:var(--teal-d); margin:3px 0 7px; }
+  .mng .drug .dx { font-size:12.5px; color:var(--muted); line-height:1.45; }
+  .mng .drug .dx b { color:var(--ink); }
+  .mng .drug.key { background:#fff; border-color:var(--teal); border-width:1.5px; }
+
+  /* ---------- Prophylaxis mini table ---------- */
+  .mng table.mini { width:100%; border-collapse:collapse; font-size:13px; margin-top:4px; }
+  .mng table.mini th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.03em; color:var(--muted); font-weight:800; padding:5px 8px; border-bottom:1px solid var(--line); }
+  .mng table.mini td { padding:7px 8px; border-bottom:1px solid var(--line-soft); vertical-align:top; line-height:1.4; }
+  .mng table.mini tr:last-child td { border-bottom:none; }
+  .mng table.mini td:first-child { font-weight:700; color:var(--ink); white-space:nowrap; }
+
+  /* ---------- Pearls ---------- */
+  .mng ol.pearls { counter-reset:p; list-style:none; margin:0; padding:0; }
+  .mng ol.pearls li { counter-increment:p; position:relative; padding:0 0 0 38px; margin-bottom:11px; min-height:26px; font-size:14px; line-height:1.45; }
+  .mng ol.pearls li:last-child { margin-bottom:0; }
+  .mng ol.pearls li::before { content:counter(p); position:absolute; left:0; top:0; width:26px; height:26px; border-radius:50%; background:var(--navy); color:#fff; font-weight:800; font-size:13px; display:grid; place-items:center; }
+
+  /* ---------- Drill ---------- */
+  .mng .drill { display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(255px,1fr)); }
+  .mng .qa { border:1px solid var(--line); border-radius:11px; padding:12px 14px; background:var(--teal-soft); }
+  .mng .qa .q { font-weight:800; color:var(--navy-d); font-size:13.5px; line-height:1.35; margin-bottom:5px; }
+  .mng .qa .a { font-size:13px; color:var(--body); line-height:1.45; }
+  .mng .qa .a::before { content:"→ "; color:var(--teal-d); font-weight:800; }
+
+  /* ---------- Footer ---------- */
+  .mng footer { margin-top:clamp(30px,5vw,46px); background:var(--navy-d); color:#bcd3dc; }
+  .mng footer .wrap { padding:22px 0 26px; font-size:12px; line-height:1.55; }
+  .mng footer b { color:#fff; }
+  .mng footer .src { display:block; margin-top:7px; color:#86a5b3; }
+
+  @media (prefers-reduced-motion:reduce){
+    .mng * { transition:none !important; scroll-behavior:auto !important; }
+  }
+  @media print {
+    .mng { background:#fff; font-size:11px; }
+    .mng .nav, .mng .card.lift:hover { box-shadow:none; }
+    .mng .nav { position:static; }
+    .mng .alarm, .mng .feature, .mng .card { box-shadow:none; }
+  }
+</style>
+<style id="kp-brand">
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+:root{ --bg:#eef5f8!important; --ink:#08222c!important; --ink-soft:#45697a!important; --slate:#45697a!important; --paper:#ffffff!important; --card:#ffffff!important; --line:#cddbe0!important; --sans:'Roboto Flex',-apple-system,system-ui,sans-serif!important; --mono:'Roboto Mono',ui-monospace,monospace!important; }
+html,body{background:#eef5f8}
+body,h1,h2,h3,h4,h5,h6,p,li,td,th,span,div,a,button{font-family:'Roboto Flex',-apple-system,system-ui,sans-serif !important}
+code,.mono,pre,kbd{font-family:'Roboto Mono',ui-monospace,monospace !important}
+</style>
+</head>
+<body>
+<div class="mng">
+
+  <!-- ===== MASTHEAD ===== -->
+  <header class="masthead">
+    <div class="wrap">
+      <h1>Meningitis
+        <span class="tag">Prüfungs-relevanter One-Pager · KP / M3 · Innere &amp; Notfall</span>
+      </h1>
+      <div class="ref-note"><b>Lernhilfe.</b> Orientiert an DGN-S2k „Ambulant erworbene bakterielle Meningoenzephalitis" (AWMF 030-089) &amp; RKI-Ratgeber. Dosierungen individualisieren, lokalen Standard beachten.</div>
+    </div>
+  </header>
+
+  <!-- ===== STICKY NAV ===== -->
+  <nav class="nav" aria-label="Abschnitte">
+    <div class="wrap">
+      <a href="#klinik">Klinik</a>
+      <a href="#erreger">Erreger</a>
+      <a href="#diagnostik">Diagnostik</a>
+      <a href="#liquor">Liquor</a>
+      <a href="#therapie">Therapie</a>
+      <a href="#meningokokken">Meningokokken</a>
+      <a href="#meldung">Meldepflicht</a>
+      <a href="#komplikationen">Komplikationen</a>
+      <a href="#pearls">Pearls</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+
+    <!-- ===== EMERGENCY BANNER ===== -->
+    <div class="alarm">
+      <div class="siren">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 18a6 6 0 0 1 12 0z"/><line x1="4" y1="18" x2="20" y2="18"/><line x1="12" y1="6" x2="12" y2="3"/>
+          <line x1="18.5" y1="8" x2="20.5" y2="6.5"/><line x1="5.5" y1="8" x2="3.5" y2="6.5"/>
+        </svg>
+        <div class="lead">Neurologischer Notfall<span>Zeit ist Gehirn</span></div>
+      </div>
+      <div class="pearl"><b>Merke (Pearl):</b> Bewusstseinsgetrübter Patient mit <em>Fieber + Petechien</em> = <b>Meningokokken-Sepsis</b> bis zum Beweis des Gegenteils. Reflex: sofort Antibiose → <b>dich schützen</b> (Tröpfchenisolation) → <b>Kontakte schützen</b> (Prophylaxe/Impfung) → <b>melden</b>. Antibiose nie wegen CT/LP verzögern.</div>
+    </div>
+
+    <!-- ===== 1. KLINIK ===== -->
+    <section id="klinik" class="blk">
+      <div class="blk-head">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19a6.5 6.5 0 0 1 13 0"/></svg></span>
+        <div><h2>Definition &amp; Klinik</h2></div>
+      </div>
+      <div class="grid">
+
+        <div class="card lift">
+          <h3><span class="dot"></span>Definition &amp; Leitsymptome</h3>
+          <p>Entzündung der <b>Meningen</b> (Hirnhäute). Bei Mitbeteiligung des Hirnparenchyms → <b>Meningoenzephalitis</b>.</p>
+          <div class="sub-h">Leitsymptome</div>
+          <ul>
+            <li>Fieber, Kopfschmerzen</li>
+            <li><b>Meningismus</b> / Nackensteife</li>
+            <li>Photophobie, Übelkeit/Erbrechen</li>
+            <li>Vigilanzminderung</li>
+          </ul>
+          <div class="sub-h">Warnhinweise (Red Flags)</div>
+          <ul class="warn">
+            <li>Krampfanfall, fokal-neurologische Defizite</li>
+            <li><b>Petechien / Purpura</b> (→ Meningokokken)</li>
+            <li>Rasche Verschlechterung, Schock</li>
+          </ul>
+          <div class="merksatz">
+            <div class="lbl">Merksatz</div>
+            <p>Fieber + Kopfschmerz + Nackensteife ± Bewusstseinsstörung → bakterielle Meningitis ausschließen!</p>
+          </div>
+        </div>
+
+        <div class="card lift">
+          <h3><span class="dot"></span>Meningismus-Zeichen <span class="muted" style="font-weight:600;font-size:12px;">(benennen &amp; vorführen)</span></h3>
+          <p>Passive Nackenbeugung schmerzhaft/eingeschränkt. Ergänzend:</p>
+          <div class="signs">
+            <div class="sign">
+              <div class="cap">Kernig</div>
+              <svg viewBox="0 0 120 56" xmlns="http://www.w3.org/2000/svg" aria-label="Kernig-Zeichen">
+                <line x1="6" y1="44" x2="60" y2="44" stroke="#16242e" stroke-width="2.2"/>
+                <circle cx="58" cy="44" r="3.4" fill="#0a5c68"/>
+                <line x1="58" y1="44" x2="76" y2="18" stroke="#0a5c68" stroke-width="3.4" stroke-linecap="round"/>
+                <circle cx="76" cy="18" r="3" fill="#0a5c68"/>
+                <line x1="76" y1="18" x2="104" y2="25" stroke="#c12a21" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="2.8 2.8"/>
+                <path d="M88 12 q9 2 12 10" fill="none" stroke="#c12a21" stroke-width="1.5"/>
+                <text x="103" y="14" font-family="monospace" font-size="11" fill="#c12a21" font-weight="700">✕</text>
+              </svg>
+              <div class="ex">Hüfte 90° gebeugt → <b>Knie-Streckung</b> schmerzhaft/blockiert.</div>
+            </div>
+            <div class="sign">
+              <div class="cap">Brudzinski</div>
+              <svg viewBox="0 0 120 56" xmlns="http://www.w3.org/2000/svg" aria-label="Brudzinski-Zeichen">
+                <line x1="34" y1="44" x2="100" y2="44" stroke="#16242e" stroke-width="2.2"/>
+                <line x1="34" y1="44" x2="22" y2="31" stroke="#0a5c68" stroke-width="3.4" stroke-linecap="round"/>
+                <circle cx="20" cy="29" r="5" fill="none" stroke="#0a5c68" stroke-width="2.2"/>
+                <text x="6" y="20" font-family="monospace" font-size="11" fill="#c12a21" font-weight="700">↑</text>
+                <line x1="72" y1="44" x2="79" y2="30" stroke="#c12a21" stroke-width="3.4" stroke-linecap="round"/>
+                <line x1="79" y1="30" x2="90" y2="37" stroke="#c12a21" stroke-width="3.4" stroke-linecap="round"/>
+              </svg>
+              <div class="ex">Passive <b>Nackenbeugung</b> → unwillkürliche Hüft-/Kniebeugung.</div>
+            </div>
+          </div>
+          <p style="margin-top:10px;"><b>Lasègue</b> oft positiv.</p>
+          <div class="callout red"><span class="k">Cave</span> &nbsp;Meningismus kann <b>fehlen</b> — Säuglinge, Hochbetagte, Immunsupprimierte, tiefes Koma.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== 2. ERREGER ===== -->
+    <section id="erreger" class="blk">
+      <div class="blk-head">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.2"/><circle cx="10.5" cy="11" r="1"/><circle cx="13.5" cy="13" r="1"/><line x1="12" y1="6.8" x2="12" y2="4"/><line x1="12" y1="17.2" x2="12" y2="20"/><line x1="6.8" y1="12" x2="4" y2="12"/><line x1="17.2" y1="12" x2="20" y2="12"/><line x1="8.3" y1="8.3" x2="6.3" y2="6.3"/><line x1="15.7" y1="15.7" x2="17.7" y2="17.7"/></svg></span>
+        <div><h2>Häufige Erreger</h2><span class="sub">Exam-Fokus: Erwachsene</span></div>
+      </div>
+      <div class="grid">
+
+        <div class="card lift">
+          <h3><span class="dot" style="background:var(--bact);"></span>Bakteriell</h3>
+          <ul>
+            <li><b>Streptococcus pneumoniae</b> — häufigster Erreger bei Erwachsenen</li>
+            <li><b>Neisseria meningitidis</b> (Meningokokken)</li>
+            <li><b>Listeria monocytogenes</b> — v. a. &gt; 50 J, immunsupprimiert, Schwangere</li>
+            <li><i>Haemophilus influenzae</i> (selten dank Impfung)</li>
+          </ul>
+          <div class="sub-h" style="color:var(--viral);">Viral</div>
+          <ul>
+            <li>Enteroviren (häufig)</li>
+            <li>außerdem <b>HSV / VZV</b> möglich</li>
+          </ul>
+          <div class="sub-h" style="color:var(--gold);">Sonderformen</div>
+          <ul>
+            <li>tuberkulöse Meningitis — <b>subakut</b>, basal, Hirnnervenausfälle</li>
+            <li>Neuroborreliose — eher <b>radikulär/subakut</b> (Bannwarth)</li>
+          </ul>
+        </div>
+
+        <div class="card lift">
+          <h3><span class="dot"></span>Erreger nach Alter &amp; Risiko</h3>
+          <div class="tablewrap" style="min-width:0;">
+            <table class="mini">
+              <thead><tr><th>Gruppe</th><th>Häufigste Erreger</th></tr></thead>
+              <tbody>
+                <tr><td>Neugeborene</td><td>B-Streptokokken, <i>E. coli</i>, Listerien</td></tr>
+                <tr><td>Kinder</td><td>Pneumokokken, Meningokokken (Hib selten)</td></tr>
+                <tr><td>Erwachsene</td><td>Pneumokokken &gt; Meningokokken</td></tr>
+                <tr><td>&gt; 50 J · Immun&shy;suppr. · Schwangere · Alkohol</td><td>+ <b class="danger-t">Listerien</b> → Ampicillin nötig!</td></tr>
+                <tr><td>Nosokomial / Shunt</td><td>Staph., gramneg. Stäbchen, <i>Pseudomonas</i></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout note"><span class="k">Pearl</span> &nbsp;„Listerien immer mitdenken — deshalb <b>Ampicillin</b> zur Cephalosporin-Therapie dazu."</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== 3. DIAGNOSTIK ===== -->
+    <section id="diagnostik" class="blk">
+      <div class="feature accent-red">
+        <div class="feat-head">
+          <h2>Diagnostik — akutes Vorgehen</h2>
+          <span class="clock">Ziel: Antibiose ≤ 1 h nach Aufnahme</span>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="num">1</div>
+            <div class="st">Stabilisieren &amp; Kulturen</div>
+            <div class="sd">ABC, Vitalparameter, Aufnahme. <b>2 Blutkultur-Sets VOR Antibiotika</b>; Labor inkl. Gerinnung, Procalcitonin, Laktat.</div>
+          </div>
+          <div class="step">
+            <div class="num">2</div>
+            <div class="st">Lumbalpunktion</div>
+            <div class="sd">Rasch, wenn keine ICP-Zeichen. Liquor: Gram, Zellzahl/-bild, Glukose, Laktat, Eiweiß, PCR, Kultur.</div>
+          </div>
+          <div class="step hot">
+            <div class="num">3</div>
+            <div class="st">Dexamethason + Antibiose</div>
+            <div class="sd"><b>Sofort</b> nach Blutkulturen — <b>nicht auf LP/CT warten</b>. Dexa vor/mit 1. AB-Gabe.</div>
+          </div>
+          <div class="step">
+            <div class="num">4</div>
+            <div class="st">Isolieren · melden · Kontakte</div>
+            <div class="sd">Tröpfchenisolation b. V. a. Meningokokken bis 24 h wirksame AB. Gesundheitsamt, Kontaktpersonen erfassen.</div>
+          </div>
+        </div>
+        <div class="redflags">
+          <div class="callout red"><span class="k">CT vor LP nur bei</span><br>Bewusstseinsstörung (GCS &lt; ~12) · fokal-neurologisches Defizit · neue Krampfanfälle · Immunsuppression · Stauungspapille. <b>KI der LP:</b> Hirndruck/Einklemmungsgefahr, Gerinnungsstörung, Hautinfekt an Einstichstelle.</div>
+          <div class="callout note"><span class="k">Nicht vergessen</span><br>Bei <b>Enzephalitiszeichen</b> (Wesensänderung, Anfälle, Herdzeichen) zusätzlich an <b>HSV</b> denken → Aciclovir. Antibiose nie für Bildgebung/LP verzögern.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 4. LIQUOR ===== -->
+    <section id="liquor" class="blk">
+      <div class="feature accent-teal">
+        <div class="feat-head"><h2>Liquorbefunde — bakteriell vs. viral</h2></div>
+        <div class="tablewrap">
+          <table class="liq">
+            <thead>
+              <tr><th>Parameter</th><th>Normal</th><th class="c-bact">Bakteriell (eitrig)</th><th class="c-viral">Viral</th></tr>
+            </thead>
+            <tbody>
+              <tr><th>Zellbild</th><td>Lympho/Mono</td><td class="bact"><b>granulozytär / neutrophil</b></td><td class="viral">lymphozytär</td></tr>
+              <tr><th>Zellzahl</th><td><span class="mono">&lt; 5/µl</span></td><td class="bact"><span class="mono">↑↑</span> meist hoch (&gt;1000/µl)</td><td class="viral">moderat (oft 30–300/µl)</td></tr>
+              <tr><th>Eiweiß</th><td><span class="mono">15–45</span> mg/dl</td><td class="bact"><span class="mono">↑↑</span> erhöht</td><td class="viral">normal / leicht erhöht</td></tr>
+              <tr><th>Glukose</th><td>~⅔ des Serums</td><td class="bact"><span class="em-bact">erniedrigt</span></td><td class="viral">normal</td></tr>
+              <tr><th>Glukose-Quotient (Liquor/Serum)</th><td><span class="mono">~0,6</span></td><td class="bact"><span class="mono">&lt; 0,3</span></td><td class="viral">meist normal</td></tr>
+              <tr><th>Laktat</th><td><span class="mono">&lt; 2,1</span> mmol/l</td><td class="bact"><span class="mono">&gt; 3,5</span> mmol/l</td><td class="viral">meist normal</td></tr>
+              <tr><th>Optik</th><td>wasserklar</td><td class="bact">oft trüb</td><td class="viral">meist klar</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout note" style="margin-top:14px;"><span class="k">Sonderform</span> &nbsp;<b>Tuberkulös / mykotisch:</b> „buntes" Zellbild (Lympho + Granulo ± Eos), Glukose ↓, Laktat ↑, Eiweiß ↑↑, subakut. — <span class="k" style="color:var(--bact);">Prüfungsnotiz</span> Frühe bakterielle Meningitis kann atypische Liquorbefunde zeigen; <b>Zellzahl &lt; 1000/µl schließt sie nie aus</b> — <b>die Klinik zählt</b>. Laktat ist robuster als der Glukose-Quotient.</div>
+      </div>
+    </section>
+
+    <!-- ===== 5. THERAPIE ===== -->
+    <section id="therapie" class="blk">
+      <div class="feature accent-red">
+        <div class="feat-head"><h2>Therapie der bakteriellen Meningitis</h2></div>
+        <p style="margin-bottom:14px;">Sofortige <b>kalkulierte</b> Therapie (ambulant erworben, Erwachsene) — nach Erregernachweis gezielt deeskalieren und Dauer anpassen.</p>
+        <div class="drugs">
+          <div class="drug key">
+            <div class="dn">Ceftriaxon</div>
+            <div class="dd">2 × 2 g/d i.v.</div>
+            <div class="dx">Cephalosporin 3a; breit, gut liquorgängig. Alt.: Cefotaxim 2 g alle 6–8 h.</div>
+          </div>
+          <div class="drug key">
+            <div class="dn">+ Ampicillin</div>
+            <div class="dd">6 × 2 g/d i.v.</div>
+            <div class="dx">Schließt die <b>Listerien-Lücke</b> der Cephalosporine.</div>
+          </div>
+          <div class="drug">
+            <div class="dn">Dexamethason</div>
+            <div class="dd">4 × 10 mg/d i.v.</div>
+            <div class="dx"><b>Vor/mit</b> 1. AB-Gabe. <b>4 Tage nur bei Pneumokokken</b>, sonst beenden; Meningokokken i. d. R. nein. Senkt Hörschäden/Letalität.</div>
+          </div>
+          <div class="drug">
+            <div class="dn">± Aciclovir</div>
+            <div class="dd">bei HSV-Verdacht</div>
+            <div class="dx">Bei Meningoenzephalitis / Enzephalitiszeichen zusätzlich, bis HSV ausgeschlossen.</div>
+          </div>
+        </div>
+        <div class="callout red" style="margin-top:14px;"><span class="k">Cave</span> &nbsp;<b>Penicillin G</b> bei Meningokokken nicht ohne Resistenztest (Resistenzen). &nbsp;·&nbsp; <b>Nosokomial / post-OP / Shunt:</b> Vancomycin 2 × 1 g + Meropenem 3 × 2 g. &nbsp;·&nbsp; <b>Dauer:</b> Meningo-/Pneumokokken ~7 d, Listerien ~21 d.</div>
+      </div>
+    </section>
+
+    <!-- ===== 6 + 7 grid: Meningokokken & Meldung ===== -->
+    <section id="meningokokken" class="blk">
+      <div class="blk-head">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="2.6"/><path d="M4.5 18.5a4.5 4.5 0 0 1 9 0"/><circle cx="16.5" cy="9" r="2.1"/><path d="M14.8 18.5a4 4 0 0 1 5.7-3.3"/></svg></span>
+        <div><h2>Meningokokken — Umgebungsmanagement</h2></div>
+      </div>
+      <div class="grid">
+
+        <div class="card lift">
+          <h3><span class="dot" style="background:var(--bact);"></span>Schützen &amp; vorbeugen</h3>
+          <ul class="check">
+            <li>Übertragung per <b>Tröpfchen</b> → Patient isolieren <b>bis 24 h</b> nach wirksamer Antibiose.</li>
+            <li><b>Chemoprophylaxe</b> enger Kontaktpersonen (Haushalt, Kuss, Speichel, ungeschützte Beatmung); ideal &lt; 24 h, sinnvoll bis 10 d — <b>unabhängig vom Impfstatus</b>.</li>
+            <li><b>Impfstatus</b> / Indikationsimpfung prüfen; Kontaktimpfung bei impfpräventabler Serogruppe (Gesundheitsamt).</li>
+          </ul>
+          <div class="tablewrap" style="min-width:0;margin-top:10px;">
+            <table class="mini">
+              <thead><tr><th>Wirkstoff</th><th>Dosis (Erw.)</th></tr></thead>
+              <tbody>
+                <tr><td>Rifampicin</td><td><span class="mono">2 × 600 mg/d</span>, 2 d p.o. · KI Schwangere</td></tr>
+                <tr><td>Ciprofloxacin</td><td><span class="mono">500 mg</span> einmalig p.o. · KI Schwangere</td></tr>
+                <tr><td style="color:var(--viral);">Ceftriaxon</td><td><span class="mono">250 mg i.m.</span> einmalig · <b>Wahl in der Schwangerschaft</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout red"><span class="k">Gefahr</span> &nbsp;<b>Waterhouse-Friderichsen-Syndrom</b>: Sepsis mit Petechien/Purpura, Schock, DIC, bilaterales Nebennierenversagen.</div>
+        </div>
+
+        <div class="card lift" id="meldung">
+          <h3><span class="dot"></span>Meldepflicht &amp; Wiederzulassung (IfSG)</h3>
+          <ul>
+            <li><b>Arzt — §6 Abs. 1 Nr. 1 j:</b> namentliche Meldung von <b>Verdacht, Erkrankung, Tod</b> an Meningokokken-Meningitis/-Sepsis → Gesundheitsamt <b>binnen 24 h</b>.</li>
+            <li><b>Labor — §7 Abs. 1 Nr. 35:</b> direkter Nachweis von <i>Neisseria meningitidis</i>.</li>
+            <li>Ebenfalls §7: invasive <i>H. influenzae</i>, <i>Listeria monocytogenes</i>. <span class="muted">Pneumokokken: keine bundesweite Meldepflicht (ggf. Landesrecht).</span></li>
+            <li><b>Wiederzulassung (§34):</b> Gemeinschaftseinrichtung 24 h nach Beginn der Chemoprophylaxe; ohne Prophylaxe frühestens 10 d nach Kontakt.</li>
+          </ul>
+          <div class="callout note"><span class="k">Merke</span> &nbsp;Nicht „Meningitis" pauschal ist meldepflichtig — entscheidend ist der <b>Erreger</b> (Meningokokken: Arzt + Labor).</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== 8. KOMPLIKATIONEN ===== -->
+    <section id="komplikationen" class="blk">
+      <div class="blk-head danger">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 3 19h18z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="16.6" r=".7" fill="currentColor" stroke="none"/></svg></span>
+        <div><h2>Komplikationen</h2></div>
+      </div>
+      <div class="grid">
+        <div class="card lift">
+          <h3><span class="dot" style="background:var(--bact);"></span>Systemisch &amp; früh</h3>
+          <ul class="warn">
+            <li><b>Sepsis / septischer Schock</b></li>
+            <li><b>Waterhouse-Friderichsen</b> (Nebennierenversagen, DIC)</li>
+            <li>SIADH</li>
+            <li>Septische Sinus-/Hirnvenenthrombose → i.v.-Heparin</li>
+          </ul>
+        </div>
+        <div class="card lift">
+          <h3><span class="dot" style="background:var(--bact);"></span>Neurologisch &amp; spät</h3>
+          <ul class="warn">
+            <li>Hirnödem / erhöhter ICP, Hydrozephalus</li>
+            <li>Krampfanfälle, fokale Defizite</li>
+            <li><b>Hirninfarkte / zerebrale Vaskulitis</b></li>
+            <li><b>Hörverlust</b> (v. a. Pneumokokken) — Dexa senkt das Risiko</li>
+            <li>Kognitive Residuen / neuropsychologische Defizite</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 9. PEARLS + DRILL ===== -->
+    <section id="pearls" class="blk">
+      <div class="blk-head">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9h12l-6 12z"/><path d="M6 9l2.5-4.5h7L18 9"/><line x1="6" y1="9" x2="18" y2="9"/><line x1="12" y1="4.5" x2="9.5" y2="9"/><line x1="12" y1="4.5" x2="14.5" y2="9"/></svg></span>
+        <div><h2>M3 / KP Pearls</h2></div>
+      </div>
+      <div class="grid">
+        <div class="card lift">
+          <h3><span class="dot"></span>Merksätze</h3>
+          <ol class="pearls">
+            <li>Pneumokokken sind bei Erwachsenen am häufigsten.</li>
+            <li>Listerien immer mitdenken → deshalb <b>Ampicillin</b>.</li>
+            <li><b>Petechien + Fieber = Meningokokken</b> bis zum Beweis des Gegenteils.</li>
+            <li>Blutkulturen vor Antibiose — aber Antibiose <b>nicht</b> hinauszögern.</li>
+            <li>CT vor LP <b>nicht routinemäßig</b>, nur bei klarer Indikation.</li>
+          </ol>
+        </div>
+        <div class="card lift">
+          <h3><span class="dot"></span>Schnell-Drill (Headline zuerst)</h3>
+          <div class="drill">
+            <div class="qa"><div class="q">Somnolent, Fieber, Petechien — was tun?</div><div class="a">Meningokokken-Sepsis: Blutkulturen, dann Dexa + Ceftriaxon + Ampicillin sofort, Isolation, melden, Kontakt-Prophylaxe.</div></div>
+            <div class="qa"><div class="q">Warum Ampicillin dazu?</div><div class="a">Cephalosporine erfassen keine Listerien (&gt;50 J, immunsupprimiert, Schwangere).</div></div>
+            <div class="qa"><div class="q">Wann CT vor LP?</div><div class="a">Bewusstseinsstörung, fokales Defizit, neue Anfälle, Immunsuppression, Stauungspapille.</div></div>
+            <div class="qa"><div class="q">Bakteriell oder viral?</div><div class="a">Laktat &gt;3,5, Granulozyten, Glukose-Quotient &lt;0,3, trüber Liquor = bakteriell.</div></div>
+          </div>
+          <div class="callout note" style="margin-top:12px;"><span class="k">„Show me"</span> &nbsp;Nackensteife, Kernig, Brudzinski benennen <b>und</b> vorführen. Nie einen nicht erhobenen Befund dokumentieren.</div>
+        </div>
+      </div>
+
+    </section>
+  </div><!-- /wrap -->
+
+  <footer>
+    <div class="wrap">
+      <b>Lernhilfe — keine verbindliche Therapieanweisung.</b> Dosierungen &amp; Vorgehen orientieren sich an der DGN-S2k-Leitlinie „Ambulant erworbene bakterielle Meningoenzephalitis im Erwachsenenalter" (AWMF 030-089) und am RKI-Ratgeber „Meningokokken, invasive Erkrankungen" (Meldepflicht §6/§7 IfSG, Chemoprophylaxe, §34 Wiederzulassung). Erreger-, alters- und resistenzabhängig anpassen; lokalen Hausstandard und ärztliche Supervision beachten.
+      <span class="src">Für Lernzwecke · kompakte prüfungsorientierte Übersicht · Stand der Leitlinie regelmäßig prüfen.</span>
+    </div>
+  </footer>
+
+</div><!-- /.mng -->
+
+<script>
+(function () {
+  try {
+    var nav = document.querySelector('.mng .nav');
+    var links = Array.prototype.slice.call(document.querySelectorAll('.mng .nav a'));
+    if (!links.length) return;
+    var map = {};
+    links.forEach(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      var el = document.getElementById(id);
+      if (el) map[id] = a;
+    });
+    var ids = Object.keys(map);
+    if (!ids.length || !('IntersectionObserver' in window)) return;
+
+    function setActive(id) {
+      links.forEach(function (a) { a.classList.remove('active'); });
+      var a = map[id];
+      if (a) {
+        a.classList.add('active');
+        // keep active chip visible in the horizontal scroller
+        var navWrap = nav && nav.querySelector('.wrap');
+        if (navWrap && navWrap.scrollWidth > navWrap.clientWidth) {
+          var l = a.offsetLeft, r = l + a.offsetWidth;
+          if (l < navWrap.scrollLeft + 12) navWrap.scrollTo({ left: l - 12, behavior: 'smooth' });
+          else if (r > navWrap.scrollLeft + navWrap.clientWidth - 12) navWrap.scrollTo({ left: r - navWrap.clientWidth + 12, behavior: 'smooth' });
+        }
+      }
+    }
+
+    var visible = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        visible[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0;
+      });
+      var best = null, bestR = 0;
+      ids.forEach(function (id) { if ((visible[id] || 0) > bestR) { bestR = visible[id]; best = id; } });
+      if (best) setActive(best);
+    }, { rootMargin: '-78px 0px -55% 0px', threshold: [0.05, 0.25, 0.5, 0.75] });
+
+    ids.forEach(function (id) { io.observe(document.getElementById(id)); });
+  } catch (err) { /* progressive enhancement: nav still works without JS */ }
+})();
+</script>
+</body>
+</html>

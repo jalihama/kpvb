@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calciumstörungen — ruhige Lernkarte</title>
+<style>
+  .ca {
+    --ink:    #1d2622;
+    --slate:  #5f6b66;
+    --line:   #e4e7e3;
+    --paper:  #f5f4ef;
+    --card:   #ffffff;
+
+    --teal:   #0f756a;     --teal-bg:  #e9f4f1;
+    --blue:   #2d62a8;     --blue-bg:  #eaf1fb;
+    --amber:  #ac6614;     --amber-bg: #fbefdc;
+    --crit:   #a13328;     --crit-bg:  #f8e6e2;
+
+    --accent:    var(--teal);
+    --accent-bg: var(--teal-bg);
+
+    --mono: "SF Mono","DejaVu Sans Mono","Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans: "Inter",-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    background: var(--paper);
+    margin: 0 auto;
+    max-width: 1060px;
+    padding: 26px 22px 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .ca *, .ca *::before, .ca *::after { box-sizing: border-box; }
+
+  /* masthead */
+  .ca-head { margin-bottom: 18px; }
+  .ca-head h1 { font-size: 27px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 4px; }
+  .ca-head .lead { color: var(--slate); font-size: 14.5px; margin: 0 0 12px; max-width: 72ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .lg { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600;
+        padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); }
+  .lg .dot { width: 11px; height: 11px; border-radius: 3px; }
+  .lg.hy .dot { background: var(--blue); } .lg.hr .dot { background: var(--amber); }
+  .lg .ar { font-weight: 800; }
+  .lg.hy { color: var(--blue); } .lg.hr { color: var(--amber); }
+
+  /* quick start */
+  .quick { border: 1px solid var(--line); border-left: 5px solid var(--teal);
+    background: var(--card); border-radius: 12px; padding: 16px 18px 14px; margin-bottom: 26px; }
+  .quick h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.07em;
+              color: var(--teal); margin: 0 0 10px; font-weight: 800; }
+  .quick ol { margin: 0; padding-left: 22px; }
+  .quick li { margin-bottom: 8px; } .quick li:last-child { margin-bottom: 0; }
+
+  /* section scaffold */
+  .block { margin-bottom: 30px; }
+  .block-head { display: flex; align-items: center; gap: 11px; margin-bottom: 12px; }
+  .block-head .n { font-family: var(--mono); font-size: 12px; font-weight: 700; color: #fff;
+    background: var(--ink); border-radius: 6px; padding: 2px 8px; flex: none; }
+  .block-head .t { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+  .block-head .hint { font-size: 12.5px; color: var(--slate); font-weight: 500; }
+
+  /* two-track pair */
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .pair { grid-template-columns: 1fr; } }
+  .col { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    border-top: 4px solid var(--accent); padding: 0 16px 14px; overflow: hidden; }
+  .col.hypo  { --accent: var(--blue);  --accent-bg: var(--blue-bg); }
+  .col.hyper { --accent: var(--amber); --accent-bg: var(--amber-bg); }
+  .col-head { display: flex; align-items: center; gap: 9px; margin: 0 -16px 11px;
+    padding: 9px 16px; background: var(--accent-bg); color: var(--accent); font-weight: 800; font-size: 15px; }
+  .col-head .dir { font-size: 19px; line-height: 1; }
+  .col-head .sub { margin-left: auto; font-size: 11.5px; font-weight: 600; color: var(--slate); }
+
+  /* neutral panel */
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    border-top: 4px solid var(--teal); padding: 0 18px 16px; }
+  .panel-head { margin: 0 -18px 13px; padding: 9px 18px; background: var(--teal-bg);
+    color: var(--teal); font-weight: 800; font-size: 15px; }
+
+  /* text bits */
+  .ca p { margin: 0 0 9px; }
+  .ca ul { margin: 0 0 9px; padding-left: 19px; }
+  .ca li { margin-bottom: 6px; }
+  .ca b, .ca strong { font-weight: 700; }
+  .lab { display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.04em;
+         text-transform: uppercase; color: var(--accent); margin: 13px 0 5px; }
+  .lab:first-child { margin-top: 2px; }
+  .mono { font-family: var(--mono); font-weight: 600; }
+
+  /* cause-axis header (not uppercase, calmer than .lab for long titles) */
+  .axis { font-weight: 800; color: var(--accent); font-size: 13.5px;
+          margin: 15px 0 6px; padding-bottom: 4px; border-bottom: 1px solid var(--accent-bg); }
+  .axis:first-of-type { margin-top: 4px; }
+  .axis .pat { font-weight: 600; color: var(--slate); font-size: 12px; }
+
+  .pill { font-family: var(--mono); font-size: 13px; font-weight: 700;
+          background: var(--accent-bg); color: var(--accent);
+          padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+
+  .merke { background: var(--accent-bg); border-radius: 9px; padding: 9px 12px; margin: 10px 0 4px; }
+  .merke .mh { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+               color: var(--accent); margin-bottom: 3px; }
+  .merke p { margin: 0; } .merke .quote { font-style: italic; }
+
+  /* quiet inline memory cue */
+  .m { font-style: italic; color: var(--slate); }
+
+  .formula { font-family: var(--mono); font-size: 14px; font-weight: 600;
+             background: var(--ink); color: #eafff6; border-radius: 9px;
+             padding: 11px 14px; margin: 6px 0 8px; line-height: 1.6; }
+  .formula .em { color: #7fe9cf; font-weight: 700; }
+  .note { font-size: 12.5px; color: var(--slate); font-style: italic; margin: 6px 0 0; }
+
+  /* red-flag callout */
+  .flag { border: 1px solid #e8c5be; background: var(--crit-bg); border-left: 5px solid var(--crit);
+          border-radius: 9px; padding: 11px 14px; margin: 12px 0; }
+  .flag .fh { font-weight: 800; color: var(--crit); font-size: 13.5px; margin-bottom: 3px;
+              display: flex; align-items: center; gap: 7px; }
+  .flag p { margin: 0; } .flag p + p { margin-top: 6px; }
+
+  /* constellation table */
+  table.kt { width: 100%; border-collapse: collapse; font-size: 13px; margin: 4px 0 6px; }
+  table.kt th { text-align: left; font-weight: 800; color: var(--slate); font-size: 11px;
+                text-transform: uppercase; letter-spacing: 0.03em;
+                border-bottom: 1px solid var(--line); padding: 3px 6px 4px; }
+  table.kt td { padding: 5px 6px; border-bottom: 1px solid #eef1ef; vertical-align: top; }
+  table.kt tr:last-child td { border-bottom: none; }
+  table.kt td:first-child { white-space: nowrap; font-family: var(--mono); font-weight: 700; }
+
+  /* flow strips */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin: 8px 0 6px; }
+  .flow .step { background: var(--teal-bg); color: var(--ink); border-radius: 8px;
+                padding: 7px 11px; font-size: 13px; flex: 1 1 0; min-width: 120px; }
+  .flow .step b { color: var(--teal); display: block; font-size: 11px; text-transform: uppercase;
+                  letter-spacing: 0.04em; margin-bottom: 2px; }
+  .flow .arr { align-self: center; color: var(--slate); font-weight: 800; font-size: 17px; }
+  @media (max-width: 560px) { .flow .arr { transform: rotate(90deg); align-self: center; } }
+
+  .seesaw { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0; }
+  @media (max-width: 560px) { .seesaw { grid-template-columns: 1fr; } }
+  .seesaw .sd { border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; }
+  .seesaw .sd.acid { border-left: 4px solid var(--amber); }
+  .seesaw .sd.alk  { border-left: 4px solid var(--blue); }
+  .seesaw .sd .tt { font-weight: 800; font-size: 13px; margin-bottom: 4px; }
+  .seesaw .sd.acid .tt { color: var(--amber); }
+  .seesaw .sd.alk  .tt { color: var(--blue); }
+  .seesaw .sd p { margin: 0; font-size: 13px; }
+
+  .ca-foot { margin-top: 8px; border-top: 1px solid var(--line); padding-top: 14px;
+             font-size: 12px; color: var(--slate); line-height: 1.5; }
+  .ca-foot b { color: var(--ink); }
+
+  @media print {
+    .ca { max-width: none; padding: 8mm; font-size: 10px; background: #fff; }
+    @page { margin: 10mm; }
+  }
+</style>
+<style id="kp-brand">
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+:root{ --bg:#eef5f8!important; --ink:#08222c!important; --ink-soft:#45697a!important; --slate:#45697a!important; --paper:#ffffff!important; --card:#ffffff!important; --line:#cddbe0!important; --sans:'Roboto Flex',-apple-system,system-ui,sans-serif!important; --mono:'Roboto Mono',ui-monospace,monospace!important; }
+html,body{background:#eef5f8}
+body,h1,h2,h3,h4,h5,h6,p,li,td,th,span,div,a,button{font-family:'Roboto Flex',-apple-system,system-ui,sans-serif !important}
+code,.mono,pre,kbd{font-family:'Roboto Mono',ui-monospace,monospace !important}
+</style>
+</head>
+<body>
+<div class="ca">
+
+  <header class="ca-head">
+    <h1>Calciumstörungen — ruhig sortiert</h1>
+    <p class="lead">Zwei Spiegelbilder nebeneinander statt durcheinander, eine Farbe pro Seite.
+       Merksätze stehen <span class="m">kursiv</span> direkt beim jeweiligen Fakt.</p>
+    <div class="legend">
+      <span class="lg hy"><span class="dot"></span><span class="ar">↓</span> Hypokalzämie = blau</span>
+      <span class="lg hr"><span class="dot"></span><span class="ar">↑</span> Hyperkalzämie = orange</span>
+      <span class="lg" style="color:var(--teal)"><span class="dot" style="background:var(--teal)"></span> geteilte Physiologie = teal</span>
+    </div>
+  </header>
+
+  <!-- QUICK START -->
+  <section class="quick">
+    <h2>Wenn du nur 5 Dinge mitnimmst</h2>
+    <ol>
+      <li>Nur das <b>ionisierte (freie) Calcium</b> macht Symptome. Gesamt-Ca immer mit dem <b>Albumin</b> lesen (Payne).</li>
+      <li>Zwei Gegenteile: <b style="color:var(--blue)">Hypo ↓ = übererregbar</b> (Tetanie, Pfötchen, <b>langes</b> QT) ↔ <b style="color:var(--amber)">Hyper ↑ = untererregbar</b> (Stein-Bein-Magenpein, <b>kurzes</b> QT).</li>
+      <li><b>PTH ist der Chef:</b> „Parathormon stellt Calcium parat.“ Es <b>hebt Ca</b>, <b>senkt Phosphat</b>.</li>
+      <li>Ursachen kurz — <b style="color:var(--amber)">Hyper</b>: primärer Hyperparathyreoidismus (ambulant) oder Malignom (stationär). <b style="color:var(--blue)">Hypo</b>: Hypoparathyreoidismus (oft nach Schilddrüsen-OP) oder Vitamin-D-Mangel.</li>
+      <li><b style="color:var(--crit)">Hyperkalzämische Krise</b> (>3,5 mmol/L): erst <b>Volumen</b>, dann Furosemid, dann Bisphosphonat/Calcitonin. <b>Digitalis + Calcium i.v. = verboten.</b></li>
+    </ol>
+  </section>
+
+  <!-- 1 — DEFINITION -->
+  <section class="block">
+    <div class="block-head"><span class="n">1</span><span class="t">Definition</span>
+      <span class="hint">Normbereich ≈ 2,2–2,65 mmol/L — drunter Hypo, drüber Hyper</span></div>
+    <div class="pair">
+      <div class="col hypo">
+        <div class="col-head"><span class="dir">↓</span> Hypokalzämie</div>
+        <p>Gesamtcalcium <span class="pill">&lt; 2,2 mmol/L</span></p>
+        <p>ionisiertes Ca <span class="pill">&lt; 1,15 mmol/L</span></p>
+        <p class="m" style="margin-top:6px">Symptomatisch nur, wenn das ionisierte Ca niedrig ist.</p>
+      </div>
+      <div class="col hyper">
+        <div class="col-head"><span class="dir">↑</span> Hyperkalzämie</div>
+        <p>Gesamtcalcium <span class="pill">&gt; 2,65 mmol/L</span></p>
+        <p>ionisiertes Ca <span class="pill">&gt; 1,35 mmol/L</span></p>
+        <p class="m" style="margin-top:6px">Leicht (2,75–2,9) oft symptomlos; Beschwerden meist ab &gt;3 mmol/L oder bei raschem Anstieg.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 — CALCIUM IM SERUM + PAYNE -->
+  <section class="block">
+    <div class="block-head"><span class="n">2</span><span class="t">Calcium im Serum &amp; Albumin-Korrektur</span></div>
+    <div class="panel">
+      <p>Etwa die <b>Hälfte</b> des Gesamtcalciums ist proteingebunden (v.a. <b>Albumin</b>), der Rest ist frei (= ionisiert = wirksam).
+         <span class="m">Frei macht Symptome, gebunden ist nur Statistik.</span></p>
+      <p>Wenig Albumin ⇒ niedriges <b>Gesamt</b>-Ca, aber das <b>ionisierte</b> Ca bleibt normal → <b>Pseudohypokalzämie</b>,
+         meist asymptomatisch (z.B. nephrotisches Syndrom, Leberzirrhose).</p>
+      <div class="formula">
+        korrigiertes Ca (mmol/L) = gemessenes Ca + <span class="em">0,025 × (40 − Albumin in g/L)</span>
+      </div>
+      <p class="note">Identisch zu „Ca + 1 − 0,025 × Albumin“ (0,025 × 40 = 1). Faustregel: pro 10 g/L Albumin-Abfall ≈ +0,25 mmol/L Ca.</p>
+      <div class="merke" style="--accent:var(--teal);--accent-bg:var(--teal-bg)"><div class="mh">Lies das so</div>
+        <p>Ist das Ca <b>nach</b> Korrektur immer noch niedrig → auch das <b>ionisierte</b> Ca ist echt erniedrigt.</p></div>
+    </div>
+  </section>
+
+  <!-- 3 — REGULATION -->
+  <section class="block">
+    <div class="block-head"><span class="n">3</span><span class="t">Wer regelt das Calcium?</span>
+      <span class="hint">PTH = wichtigster Faktor</span></div>
+    <div class="panel">
+      <div class="merke" style="--accent:var(--teal);--accent-bg:var(--teal-bg)"><div class="mh">Merksatz</div>
+        <p class="quote">„Parathormon stellt Calcium parat.“ &nbsp;PTH <b>hebt Ca</b>, <b>senkt Phosphat</b>.</p></div>
+      <div class="flow">
+        <div class="step"><b>Auslöser</b>ionisiertes Ca <span class="mono">&lt;1,25</span> → PTH↑</div>
+        <div class="arr">→</div>
+        <div class="step"><b>Niere</b>Ca-Rückresorption ↑<br>Phosphat-Ausscheidung ↑<br>Calcitriol-Bildung ↑</div>
+        <div class="arr">→</div>
+        <div class="step"><b>Knochen</b>Ca-Freisetzung (Osteoklasten)<br><span class="m" style="font-size:11px">v.a. bei stark erhöhtem PTH</span></div>
+        <div class="arr">→</div>
+        <div class="step" style="background:var(--blue-bg)"><b style="color:var(--blue)">Ergebnis</b>Serum-Ca ↑ (↺ hemmt PTH)</div>
+      </div>
+      <p style="margin-top:10px"><b>Vitamin D</b> hebt Serum-Ca (Niere &amp; Darm), fördert aber — anders als PTH — die <b>Knochenmineralisation</b>.
+         Synthese: Cholecalciferol (Haut/Nahrung) → 25-OH (Leber) → Calcitriol/1,25-(OH)₂ (Niere).
+         <span class="m">Leber macht die 25, die Niere setzt die 1 davor → 1,25 = aktiv.</span></p>
+      <p><b>Calcitonin</b> ist der Gegenspieler: hemmt den Knochenabbau → senkt Ca.
+         <span class="m">Calci-TONIN dreht den Ton runter; „Tonin“ = Tumormarker beim medullären Schilddrüsenkarzinom.</span></p>
+    </div>
+  </section>
+
+  <!-- 4 — CA / pH -->
+  <section class="block">
+    <div class="block-head"><span class="n">4</span><span class="t">Calcium &amp; pH — warum Hyperventilation Tetanie macht</span></div>
+    <div class="panel">
+      <p>Ca²⁺ und H⁺ konkurrieren um die Albumin-Bindungsstellen → ionisiertes Ca und pH laufen <b>gegenläufig</b>.
+         <span class="m">Alkalose klaut Calcium.</span></p>
+      <div class="seesaw">
+        <div class="sd alk">
+          <div class="tt">Alkalose ↑pH (z.B. Hyperventilation)</div>
+          <p>weniger H⁺ am Albumin → mehr Ca²⁺ bindet → <b>ionisiertes Ca ↓</b> → <b>Tetanie</b></p>
+        </div>
+        <div class="sd acid">
+          <div class="tt">Azidose ↓pH</div>
+          <p>mehr H⁺ besetzt Albumin → Ca²⁺ verdrängt → <b>ionisiertes Ca ↑</b></p>
+        </div>
+      </div>
+      <div class="merke" style="--accent:var(--teal);--accent-bg:var(--teal-bg)"><div class="mh">Prüfungs-Pointe</div>
+        <p>Nur <b>akut</b> relevant. Gesamt-Ca bleibt gleich, der Abfall ist kurz → <b>keine Calcium-Gabe</b>, sondern <b>Beruhigen + CO₂-Rückatmung</b>.</p></div>
+    </div>
+  </section>
+
+  <!-- 5 — URSACHEN -->
+  <section class="block">
+    <div class="block-head"><span class="n">5</span><span class="t">Ursachen</span>
+      <span class="hint">je Seite ein Denkgerüst — das ist zugleich die Merkstruktur</span></div>
+    <div class="pair">
+
+      <!-- HYPO causes -->
+      <div class="col hypo">
+        <div class="col-head"><span class="dir">↓</span> Hypokalzämie</div>
+        <div class="merke"><div class="mh">Denk in 3 Achsen</div>
+          <p>① PTH fehlt &nbsp;·&nbsp; ② Vitamin D fehlt &nbsp;·&nbsp; ③ Calcium gebunden / verloren / verschoben. Dazu die Pseudo-Form.</p></div>
+
+        <div class="axis">① PTH fehlt — Hypoparathyreoidismus <span class="pat">(PTH↓, Phosphat↑)</span></div>
+        <ul>
+          <li><b>Postoperativ</b> nach Schilddrüsen-/Nebenschilddrüsen-OP — <b>häufigste Ursache</b>.
+              <span class="m">Tetanie nach Struma-OP = Hypopara bis zum Beweis des Gegenteils.</span></li>
+          <li><b>DiGeorge-Syndrom</b> (22q11-Deletion, NSD-Aplasie).
+              <span class="m">CATCH-22: <u>C</u>ardiac, <u>A</u>bnormal facies, <u>T</u>hymushypoplasie, <u>C</u>left palate, <u>H</u>ypokalzämie, 22q11.</span></li>
+          <li>Schwere <b>Hypomagnesiämie</b> → funktioneller Hypopara.
+              <span class="m">Ohne Magnesium kein PTH — Calcium allein wirkt dann nicht.</span></li>
+          <li>Autoimmun (isoliert oder APS-1: + Candidiasis + Addison); infiltrativ (Hämochromatose, M. Wilson)</li>
+          <li><b>Pseudohypoparathyreoidismus</b>: PTH↑, aber Endorgan-Resistenz (Albright: kurze 4./5. Mittelhandknochen)</li>
+        </ul>
+
+        <div class="axis">② Vitamin-D-Mangel <span class="pat">→ sekundärer HPT: PTH↑, Phosphat↓</span></div>
+        <ul>
+          <li><b>Chronische Niereninsuffizienz</b>: kein Calcitriol + Phosphatretention (renale Osteopathie).
+              <span class="m">Niere kaputt → Calcitriol weg → Calcium runter.</span></li>
+          <li>Malabsorption (Zöliakie, M. Crohn, Z.n. Bariatrie, Pankreasinsuffizienz); Leberinsuffizienz</li>
+          <li>Wenig Sonne/Zufuhr (Heimbewohner, dunkle Haut, Alkohol); Antikonvulsiva (Phenytoin → Vit-D-Abbau↑)</li>
+        </ul>
+
+        <div class="axis">③ Calcium gebunden / verloren / verschoben <span class="pat">(PTH meist ↑)</span></div>
+        <ul>
+          <li><b>Akute Pankreatitis</b> → Verseifung (Ca + freie Fettsäuren).
+              <span class="m">Fett bindet Calcium → Hypokalzämie = Schweremarker (Ranson).</span></li>
+          <li><b>Hyperphosphatämie</b>: Tumorlyse, Rhabdomyolyse → Ca-Phosphat fällt aus</li>
+          <li><b>Citrat</b> (Massentransfusion, Citrat-Antikoagulation) — chelatiert Ca</li>
+          <li><b>Hungry-Bone-Syndrom</b> nach Parathyreoidektomie — Knochen saugt Ca auf</li>
+          <li><b>Schleifendiuretika</b> (renaler Ca-Verlust).
+              <span class="m">Schleife verliert Calcium, Thiazid behält es (→ Hyper, rechts).</span></li>
+          <li>Bisphosphonate/Denosumab, Calcitonin, Foscarnet, Cisplatin (via Mg↓); akute Alkalose (Umverteilung)</li>
+        </ul>
+
+        <div class="axis">Pseudohypokalzämie <span class="pat">Gesamt↓, ionisiert normal, symptomlos</span></div>
+        <ul>
+          <li>Hypoalbuminämie (nephrotisches Syndrom, Leberzirrhose, Sepsis); Gadolinium-Kontrastmittel (Laborinterferenz)</li>
+        </ul>
+      </div>
+
+      <!-- HYPER causes -->
+      <div class="col hyper">
+        <div class="col-head"><span class="dir">↑</span> Hyperkalzämie</div>
+        <div class="merke"><div class="mh">90 %-Regel + Master-Weiche</div>
+          <p><b>9 von 10</b> = primärer HPT (ambulant) oder Malignom (stationär). Sortiere über <b>PTH</b>: hoch → pHPT-Gruppe, supprimiert → alles andere.</p></div>
+
+        <div class="axis">PTH-vermittelt <span class="pat">PTH↑ oder inadäquat normal</span></div>
+        <ul>
+          <li><b>Primärer Hyperparathyreoidismus</b> (~80% ambulant): meist solitäres <b>Adenom</b> (~85%), seltener Hyperplasie/Karzinom. Labor: <b>Ca↑, Phosphat↓, PTH↑</b>.
+              <span class="m">MEN-1 = „3 P“: Parathyreoidea, Pankreas, Pituitary. MEN-2a = NSD + medulläres SD-CA + Phäo.</span></li>
+          <li><b>Tertiärer HPT</b>: autonome NSD nach langem sekundärem HPT (z.B. Dialyse) — jetzt Ca↑</li>
+          <li><b>FHH</b> (CaSR-Mutation, autosomal-dominant): wichtige DD zum pHPT.
+              <span class="m">Urin-Calcium niedrig → FHH, hoch → pHPT.</span></li>
+          <li>Lithium (verschiebt den CaSR-Sollwert)</li>
+        </ul>
+
+        <div class="axis">PTH-unabhängig <span class="pat">PTH supprimiert ↓</span></div>
+        <ul>
+          <li><b>Malignität</b> (häufigste stationär) — drei Wege: <b>PTHrP</b> (Plattenepithel-CA Lunge/HNO, Nierenzell-, Ovarial-, Mamma-CA), <b>Osteolyse</b> (multiples Myelom, Knochenmetastasen) oder Calcitriol-bildende <b>Lymphome</b>.
+              <span class="m">PTHrP = der Tumor-Doppelgänger des PTH (eigener Labortest).</span></li>
+          <li><b>Granulomatöse Erkrankungen</b> (Sarkoidose, TBC): Makrophagen bilden aktives Vit-D (1,25↑).
+              <span class="m">Granulome basteln ihr eigenes Vitamin D.</span></li>
+          <li><b>Thiaziddiuretika</b> (↑renale Ca-Rückresorption).
+              <span class="m">Thiazid behält Calcium (Spiegel zur „Schleife verliert“ links).</span></li>
+          <li>Vitamin-D-/Vitamin-A-Intoxikation; <b>Milch-Alkali-Syndrom</b> (Ca + resorbierbares Alkali → Hyperkalzämie + Alkalose + Niereninsuffizienz)</li>
+          <li>Endokrin: Hyperthyreose, NNR-Insuffizienz (Addison), Phäochromozytom, Akromegalie</li>
+          <li><b>Immobilisation</b> bei hohem Knochenturnover (M. Paget, Querschnitt)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 — SYMPTOME -->
+  <section class="block">
+    <div class="block-head"><span class="n">6</span><span class="t">Symptome</span>
+      <span class="hint">spiegelbildlich: Erregbarkeit ↑ vs. ↓</span></div>
+    <div class="pair">
+      <div class="col hypo">
+        <div class="col-head"><span class="dir">↓</span> Hypokalzämie <span class="sub">neuromuskulär ÜBER­erregbar</span></div>
+        <p class="m" style="margin-top:2px">Wenig Calcium = viel Erregung (klingt verkehrt, ist aber so).</p>
+        <span class="lab">Leitsymptom</span>
+        <p style="margin-bottom:6px"><b>Tetanie</b> (bei respiratorischer Alkalose = Hyperventilationstetanie)</p>
+        <ul>
+          <li>Kribbelparästhesien (typisch <b>perioral</b>)</li>
+          <li>Karpopedalspasmen: <b>Pfötchenstellung</b>, Spitzfuß · generalisierte Hyperreflexie</li>
+        </ul>
+        <span class="lab">Kardial &amp; weitere</span>
+        <ul>
+          <li><b>QT-Verlängerung</b> → Herzrhythmusstörungen (Torsade de pointes); Low-Output mit Hypotonie</li>
+          <li>epileptischer Anfall · Diarrhö · chronisch: Haar-/Nagel-/Zahnprobleme, Depression</li>
+        </ul>
+        <p class="m">Der Knackpunkt: Muskel übererregbar (Krampf), aber das Herz verlängert das QT — beides gehört zur Hypokalzämie.</p>
+      </div>
+      <div class="col hyper">
+        <div class="col-head"><span class="dir">↑</span> Hyperkalzämie <span class="sub">neuromuskulär UNTER­erregbar</span></div>
+        <div class="merke"><div class="mh">Merkbild</div>
+          <p class="quote"><b>„Stein · Bein · Magenpein · psychisches Sein.“</b></p></div>
+        <ul>
+          <li><b>Stein</b> (renal): Urolithiasis, Nephrokalzinose · Polyurie → Exsikkose · Harnwegsinfekte</li>
+          <li><b>Bein</b>: Muskelschwäche, Obstipation, Paresen · chronisch Gefäßkalzifizierungen</li>
+          <li><b>Magenpein</b> (GI): Übelkeit, Erbrechen · gastroduodenale Ulzera · Pankreatitis</li>
+          <li><b>Psychisches Sein</b>: Lethargie, Verwirrtheit, Depression, Psychose · Somnolenz/Koma (Krise!)</li>
+          <li>Kardial: Herzrhythmusstörungen (QT-Verkürzung)</li>
+        </ul>
+        <p class="m">Alltagsbild: müde, träge, verstopft, durstig, verwirrt — alles heruntergefahren.</p>
+      </div>
+    </div>
+    <div class="flag">
+      <div class="fh">⚠ Calcium &amp; Pankreatitis</div>
+      <p>Eine <b>Hyperkalzämie</b> kann eine Pankreatitis <b>auslösen</b>; eine <b>Hypokalzämie bei bestehender Pankreatitis</b> spricht für einen <b>nekrotisierenden</b> Verlauf.</p>
+    </div>
+  </section>
+
+  <!-- 7 — EKG -->
+  <section class="block">
+    <div class="block-head"><span class="n">7</span><span class="t">EKG in einem Satz</span>
+      <span class="hint">wenig Ca → langes QT · viel Ca → kurzes QT</span></div>
+    <div class="pair">
+      <div class="col hypo">
+        <div class="col-head"><span class="dir">↓</span> Hypokalzämie</div>
+        <p style="font-size:16px;margin:2px 0"><b>QT-Zeit verlängert</b></p>
+      </div>
+      <div class="col hyper">
+        <div class="col-head"><span class="dir">↑</span> Hyperkalzämie</div>
+        <p style="font-size:16px;margin:2px 0"><b>QT-Zeit verkürzt</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 — DIAGNOSTIK -->
+  <section class="block">
+    <div class="block-head"><span class="n">8</span><span class="t">Diagnostik</span>
+      <span class="hint">PTH ist bei beiden die Master-Weiche</span></div>
+
+    <div class="panel" style="margin-bottom:14px">
+      <p style="margin:0"><b>Basislabor</b> bei jeder Calciumstörung: Serum-Ca <b>inkl. ionisiertem Ca</b> · <b>Phosphat</b> · <b>Albumin</b>.
+         <span class="m">Erst PTH (hoch/niedrig?), dann Phosphat dazulegen — die zwei lösen fast jeden Fall.</span></p>
+    </div>
+
+    <div class="pair">
+      <div class="col hypo">
+        <div class="col-head"><span class="dir">↓</span> Hypokalzämie</div>
+        <span class="lab">Tetaniezeichen</span>
+        <ul>
+          <li><b>Chvostek:</b> Mundwinkelzucken beim Beklopfen des N. facialis (~2 cm vor dem Ohrläppchen)</li>
+          <li><b>Trousseau:</b> RR-Manschette über systolisch → nach Minuten Pfötchenstellung</li>
+          <li><b>Fibularis:</b> Beklopfen des Fibulaköpfchens → Pronation</li>
+        </ul>
+        <p class="m">Chvostek = Gesicht (N. facialis), Trousseau = Arm (Manschette → Pfötchen).</p>
+        <span class="lab">PTH + Phosphat = Schlüssel</span>
+        <table class="kt">
+          <tr><th>Konstellation</th><th>Verdacht</th></tr>
+          <tr><td>PTH↓ · Phos↑</td><td>Hypoparathyreoidismus (oft post-OP)</td></tr>
+          <tr><td>PTH↑ · Phos↓</td><td>Vitamin-D-Mangel / Pankreatitis</td></tr>
+          <tr><td>PTH↑ · Phos↔/↑</td><td>Rhabdomyolyse, RTA, Pseudohypopara</td></tr>
+        </table>
+        <p style="margin:6px 0 0">Ergänzend: Magnesium · 25-OH-Vit-D · Lipase (V.a. Pankreatitis)</p>
+      </div>
+      <div class="col hyper">
+        <div class="col-head"><span class="dir">↑</span> Hyperkalzämie</div>
+        <span class="lab">PTH = Schlüssel</span>
+        <table class="kt">
+          <tr><th>Konstellation</th><th>Verdacht</th></tr>
+          <tr><td>PTH↑</td><td>primärer Hyperparathyreoidismus</td></tr>
+          <tr><td>PTH↓</td><td>osteolytische Tumorhyperkalzämie</td></tr>
+          <tr><td>PTHrP↑</td><td>paraneoplastische Tumorhyperkalzämie</td></tr>
+        </table>
+        <span class="lab">Weitere Schritte</span>
+        <ul>
+          <li>25-OH-Vit-D↑ → Intoxikation · 1,25-(OH)₂-Vit-D↑ → V.a. Sarkoidose</li>
+          <li><b>Ca im 24-h-Urin:</b> &gt;200 mg → prim. HPT · &lt;100 mg → FHH · TSH↓ → Hyperthyreose</li>
+        </ul>
+        <p style="margin:6px 0 0">Tumorsuche: Röntgen-Thorax · Abdomensono · Mammografie (♀) · Immunfixation Serum/Urin.
+           <span class="m">Unklare Hyperkalzämie immer abklären — an okkulten Tumor denken.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 — THERAPIE -->
+  <section class="block">
+    <div class="block-head"><span class="n">9</span><span class="t">Therapie</span>
+      <span class="hint">Dosen = Orientierung, immer individualisieren</span></div>
+    <div class="pair">
+      <div class="col hypo">
+        <div class="col-head"><span class="dir">↓</span> Hypokalzämie</div>
+        <span class="lab">Akut / symptomatisch (Tetanie, HRST)</span>
+        <ul>
+          <li><b>Calciumgluconat 10% i.v.</b> ~10–20 mL langsam über ~10 min, dann ggf. Dauerinfusion (z.B. ~10 Amp. in 1000 mL G5%, nach Ca titriert)</li>
+          <li>Gluconat peripher bevorzugt (Calciumchlorid gewebetoxischer); begleitende <b>Hypomagnesiämie</b> ausgleichen</li>
+        </ul>
+        <span class="lab">Langfristig &amp; kausal</span>
+        <ul>
+          <li>Calcium p.o. ~1–3 g/Tag ± Vitamin D; bei Hypopara/Niereninsuff. aktives <b>Calcitriol</b></li>
+          <li>Grunderkrankung; Medikation prüfen (z.B. Thiazid statt Schleifendiuretikum)</li>
+          <li>Hyperventilation: Beruhigen, CO₂-Rückatmung</li>
+        </ul>
+        <div class="flag">
+          <div class="fh">⚠ Digitalis</div>
+          <p>Unter Digitalis-Präparaten <b>niemals Calcium i.v.</b> → Kammerflimmern-Risiko.</p>
+        </div>
+      </div>
+      <div class="col hyper">
+        <div class="col-head"><span class="dir">↑</span> Hyperkalzämie</div>
+        <p style="margin-top:2px"><b>Ambulant</b> bei chronisch 2,65–3,5 mmol/L ohne Symptome · <b>intensiv</b> bei raschem Anstieg oder ≥3,5 mmol/L.</p>
+        <span class="lab">Stufentherapie</span>
+        <ul>
+          <li><b>1. Volumen:</b> isotone NaCl 0,9% (~200–300 mL/h), Ziel-Diurese ~100–150 mL/h</li>
+          <li><b>2. Furosemid</b> ~20–40 mg <i>erst nach</i> Volumen; Kalium kontrollieren</li>
+          <li><b>3. Bisphosphonat:</b> Zoledronat 4 mg i.v. (Krea-Clearance &gt;35; verzögert)</li>
+          <li><b>4. Calcitonin</b> s.c. (schnell, aber Tachyphylaxie) · <b>5. Glucocorticoid</b> bei Sarkoidose/Lymphom/Myelom</li>
+          <li><b>6. Denosumab</b> (tumorinduziert/refraktär) · <b>7. Dialyse</b> (Ultima Ratio)</li>
+        </ul>
+        <p class="m">Reihenfolge: erst auffüllen (NaCl) → dann ausschwemmen (Furosemid) → dann Knochen bremsen.</p>
+        <div class="flag">
+          <div class="fh">⚠ Reihenfolge</div>
+          <p>Forcierte Diurese <b>immer erst nach</b> Volumengabe — initiale Volumenreduktion <b>verschlimmert</b> die Hyperkalzämie.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 — SONDERFORMEN -->
+  <section class="block">
+    <div class="block-head"><span class="n">10</span><span class="t">Sonder- &amp; Notfallformen</span></div>
+    <div class="flag">
+      <div class="fh">⚠ Hyperkalzämische Krise — letal bis 50%</div>
+      <p>Bei raschem Anstieg oder <b>&gt;3,5 mmol/L</b>: schwere <b>Exsikkose</b> (ADH-Resistenz, Erbrechen), Fieber, Psychose → <b>Koma</b>. Therapie: Stufenschema oben (Volumen zuerst).</p>
+    </div>
+    <div class="pair">
+      <div class="col hyper">
+        <div class="col-head"><span class="dir">↑</span> Familiäre hypokalziurische Hyperkalzämie (FHH)</div>
+        <ul>
+          <li>autosomal-dominant (CaSR-Mutation); meist <b>beschwerdefrei</b> (Zufallsbefund)</li>
+          <li>Hyperkalzämie + <b>Hypokalzurie</b> (Urin-Ca &lt;100 mg/24h); PTH in 10–15% leicht erhöht; keine Therapie nötig</li>
+        </ul>
+        <p class="m">Der Name sagt es: hypokalziurisch = wenig Ca im Urin — das trennt FHH vom pHPT.</p>
+      </div>
+      <div class="col hypo">
+        <div class="col-head"><span class="dir">↓</span> Paradoxe Hirnverkalkungen (M.-Fahr-Bild)</div>
+        <ul>
+          <li>Verkalkung der <b>Basalganglien</b> durch <b>Hypokalzämie</b> bei Hypoparathyreoidismus</li>
+          <li>Hypopara → Hyperphosphatämie → Löslichkeitsprodukt überschritten → Ca-Phosphat fällt aus</li>
+        </ul>
+        <p class="m">Paradox: zu wenig Calcium im Blut, aber Verkalkung im Hirn — Schuld ist das hohe Phosphat.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="ca-foot">
+    <b>Lernhilfe — keine verbindliche Dosierungsanweisung.</b> Inhalte sinngemäß aus dem AMBOSS-Lerntext „Elektrolytstörungen — Calcium“,
+    umstrukturiert, vereinfacht und um gängige endokrinologische Standardursachen ergänzt. Dosisangaben sind <b>Orientierungswerte</b>;
+    konkrete Dosis individualisieren, Hausstandard und ärztliche Supervision beachten.
+  </footer>
+
+</div>
+</body>
+</html>

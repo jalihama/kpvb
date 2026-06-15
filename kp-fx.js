@@ -22,6 +22,7 @@
   let items = [], parts = [], lastScroll = 0, glcanvas, fgcvs, fgctx, fgdots = [], fgRaf = null, skyCanvas, skyTex, objMats = [], cells = [], helixGroup, helixPath, hemi, _T, _N, _B, _off, UP_Y, UP_X, hxOff = 4, vyOff = -3;
   const SPAN = 15;                       // vertical world-wrap span
   const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
+  let showCells = true, showObject = true, showParticles = true, motion = "scroll", motionRaf = null, virt = 0;
   /* curated complementary firefly palette (cool cyan/mint ↔ warm amber/rose) */
   const FG_DARK = ["150,224,243", "130,226,168", "244,194,110", "240,138,160"];
   const FG_LIGHT = ["28,118,146", "46,134,92", "182,108,52", "166,80,108"];
@@ -226,6 +227,7 @@
   }
   function startFg() {
     if (REDUCE) return;                 // reduced motion → fireflies static (painted by render)
+    if (motion === "still" || !showParticles) return;
     if (fgRaf) return;
     let lastT = 0;
     const loop = (now) => { fgRaf = requestAnimationFrame(loop); if (now - lastT < 15.5) return; lastT = now; paintFg(now); };
@@ -325,22 +327,40 @@
       const taper = 0.65 + 0.55 * ct, r = c.offRad * taper;
       _off.copy(_N).multiplyScalar(Math.cos(c.offAng) * r).addScaledVector(_B, Math.sin(c.offAng) * r);
       c.mesh.position.copy(p).add(_off);
-      c.mesh.rotation.x += c.spin.x; c.mesh.rotation.y += c.spin.y; c.mesh.rotation.z += c.spin.z;
+      if (motion !== "still") { c.mesh.rotation.x += c.spin.x; c.mesh.rotation.y += c.spin.y; c.mesh.rotation.z += c.spin.z; }
       c.mesh.material.opacity = fadeCell(ct);
     }
   }
 
   function render(scroll) {
     if (!ready) return;
-    lastScroll = scroll;
+    if (motion === "scroll") lastScroll = scroll;   // only "scroll" mode follows the page; loop/still drive themselves
     updateCells();
     for (const it of items) {
+      it.visible = showObject;
       const u = it.userData;
-      it.rotation.y = u.rx0 + scroll * u.rxs;   // object moves only with scroll
+      it.rotation.y = u.rx0 + lastScroll * u.rxs;   // object moves only with scroll
     }
     composer.render();
     if (REDUCE) paintFg(performance.now());
   }
 
-  window.KPFX = { init, resize, render, setScene };
+  function stopFg() { if (fgRaf) { cancelAnimationFrame(fgRaf); fgRaf = null; } if (fgctx && fgcvs) fgctx.clearRect(0, 0, fgcvs.width, fgcvs.height); }
+  function setVisible(key, on) {
+    if (key === "cells") { showCells = on; if (helixGroup) helixGroup.visible = on; }
+    else if (key === "object") { showObject = on; }
+    else if (key === "particles") { showParticles = on; if (fgcvs) fgcvs.style.display = on ? "" : "none"; on ? startFg() : stopFg(); }
+    render(lastScroll);
+  }
+  function setMotion(mode) {
+    motion = mode;
+    if (motionRaf) { cancelAnimationFrame(motionRaf); motionRaf = null; }
+    if (mode === "still") { stopFg(); render(lastScroll); return; }
+    startFg();
+    if (mode === "loop") {
+      const step = () => { lastScroll += 0.9; render(); motionRaf = requestAnimationFrame(step); };
+      motionRaf = requestAnimationFrame(step);
+    }
+  }
+  window.KPFX = { init, resize, render, setScene, setVisible, setMotion };
 })();

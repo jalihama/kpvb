@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="kp-tree.css?v=68">
+<link rel="stylesheet" href="kp-tree.css?v=72">
 <style>
 /* ===== palette — bluer aqua/turquoise, dark + light ===== */
 :root, [data-theme="dark"]{
@@ -151,6 +151,40 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 .tb-brand .mark{box-shadow:none}
 .eyebrow .pulse{box-shadow:none}
 
+/* ===== minimal / "stare into space" mode ===== */
+.icon-btn.on{background:color-mix(in oklab,var(--accent) 16%,transparent); border-color:var(--accent); color:var(--accent)}
+[data-min] .search,[data-min] .types,[data-min] .tb-count,[data-min] #collapseAll,
+[data-min] .eyebrow,[data-min] .lede,[data-min] .countdown,[data-min] .foot{display:none !important}
+[data-min] .sys-count,[data-min] .topic-count,[data-min] .item-type,[data-min] .item-size{display:none !important}
+[data-min] .sys:not(.hl){display:none}
+[data-min] #root{grid-template-columns:1fr; max-width:680px; margin:0 auto}
+[data-min] .main{padding-bottom:135vh}
+@media (min-width:881px){
+  [data-min] .index{position:static; top:auto; max-height:none; overflow:visible}
+}
+
+/* ===== background control panel (right) ===== */
+.panel{position:fixed; top:0; right:0; height:100%; width:min(86vw,300px); z-index:50; background:var(--bg2); border-left:1px solid var(--line); padding:62px 16px 26px; overflow-y:auto; transform:translateX(105%); transition:transform .34s cubic-bezier(.3,.7,.2,1)}
+.panel.open{transform:none; box-shadow:-30px 0 80px -40px rgba(0,0,0,.5)}
+.panel-close{position:absolute; top:16px; right:14px; display:grid; place-items:center; width:34px;height:34px; border-radius:9px; background:var(--chip); border:1px solid var(--line); color:var(--ink); cursor:pointer; font-size:15px}
+.panel-title{font:600 11px/1 var(--mono); letter-spacing:.18em; text-transform:uppercase; color:var(--ink-dim); padding:0 10px 2px}
+.panel-title.sub{margin-top:24px}
+.panel-note{font-size:12.5px; color:var(--ink-soft); padding:8px 10px 14px; line-height:1.55}
+.panel-foot{font-size:11.5px; color:var(--ink-dim); padding:18px 10px 0; line-height:1.55; font-style:italic}
+.panel-links{display:flex; flex-direction:column; gap:2px; margin-top:18px; padding-top:14px; border-top:1px solid var(--line)}
+.panel-links a{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 10px; border-radius:9px; font:600 12px/1.3 var(--mono); letter-spacing:.02em; color:var(--ink-soft); text-decoration:none; transition:background .18s,color .18s}
+.panel-links a:hover{background:var(--chip); color:var(--ink)}
+.panel-links a span{opacity:.6}
+.seg-lang{display:flex; gap:6px; padding:8px 10px 0}
+.lang-btn{flex:1; font:600 12px/1 var(--mono); letter-spacing:.06em; color:var(--ink-soft); background:var(--chip); border:1px solid var(--line); border-radius:9px; padding:9px 0; cursor:pointer; transition:background .18s,color .18s}
+.lang-btn.on{background:var(--accent); color:#04202a; border-color:var(--accent)}
+.lang-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.ctl-group{display:flex; flex-direction:column; gap:3px}
+.switch{display:flex; align-items:center; gap:12px; padding:12px 11px; border-radius:11px; cursor:pointer; font-size:14.5px; color:var(--ink); transition:background .18s}
+.switch:hover{background:var(--chip)}
+.switch input{flex:0 0 auto; width:18px; height:18px; accent-color:var(--accent); cursor:pointer; margin:0}
+.icon-btn.on{background:color-mix(in oklab,var(--accent) 16%,transparent); border-color:var(--accent); color:var(--accent)}
+
 /* ===== in-page resource viewer ===== */
 .viewer{position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; background:var(--bg)}
 .viewer[hidden]{display:none}
@@ -201,6 +235,9 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
     <div class="tb-actions">
       <span class="tb-count"><b id="count">0</b> Ressourcen</span>
       <button class="ghost-btn" id="collapseAll"><svg class="ca-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 9 5-5 5 5"/><path d="m7 15 5 5 5-5"/></svg><span data-collapse-label>Alle einklappen</span></button>
+      <button class="icon-btn" id="viewBtn" aria-label="Hintergrund-Einstellungen" title="Hintergrund" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.1"/><circle cx="7" cy="17" r="2.1"/></svg>
+      </button>
       <button class="icon-btn" id="themeToggle" aria-label="Hell-/Dunkelmodus umschalten" title="Hell / Dunkel">
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></svg>
         <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.5A8 8 0 1 1 10.5 4a6.3 6.3 0 0 0 9.5 9.5z"/></svg>
@@ -222,6 +259,39 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 
   <footer class="foot">Ruhige Übersicht · keine Anmeldung, keine Daten gespeichert.<br>Material ergänzen: eine Zeile in <a href="kp-data.js">kp-data.js</a> kopieren, Felder anpassen, committen.</footer>
   <div class="scrim" id="scrim"></div>
+
+  <aside class="panel" id="panel" aria-label="Hintergrund-Einstellungen">
+    <button class="panel-close" id="panelClose" aria-label="Schließen">✕</button>
+    <div class="panel-title" data-i="view">Ansicht</div>
+    <div class="ctl-group">
+      <label class="switch"><input type="checkbox" id="focusMode" />Fokus-Modus (ein System)</label>
+    </div>
+    <div class="panel-title sub" data-i="bg">Hintergrund</div>
+    <p class="panel-note" data-i="note">Du entscheidest, was du siehst — von ganz ruhig bis lebendig.</p>
+    <div class="ctl-group">
+      <label class="switch"><input type="checkbox" id="cCells" checked />Zellen zeigen</label>
+      <label class="switch"><input type="checkbox" id="cShapes" checked />Formen zeigen</label>
+      <label class="switch"><input type="checkbox" id="cParts" checked />Lichtpunkte zeigen</label>
+      <label class="switch"><input type="checkbox" id="cGrad" checked />Farbverlauf</label>
+    </div>
+    <div class="panel-title sub" data-i="motion">Bewegung</div>
+    <div class="ctl-group">
+      <label class="switch"><input type="radio" name="motion" id="mScroll" checked />Auf Scrollen reagieren</label>
+      <label class="switch"><input type="radio" name="motion" id="mLoop" />Sanfte Endlosschleife</label>
+      <label class="switch"><input type="radio" name="motion" id="mStill" />Alles ruhig halten</label>
+    </div>
+    <p class="panel-foot" data-i="foot">Ohne Farbverlauf bleibt der Hintergrund schlicht — schwarz oder weiß, je nach Tag/Nacht-Schalter.</p>
+    <div class="panel-links">
+      <a href="VFX Breakdown.html" target="_blank" rel="noopener">VFX-Breakdown<span>↗</span></a>
+      <a href="Design Psychology.html" target="_blank" rel="noopener">Design-Psychologie<span>↗</span></a>
+    </div>
+    <div class="panel-title sub">Sprache · Language</div>
+    <div class="seg-lang" id="langSeg">
+      <button class="lang-btn on" id="langDe" type="button">DE</button>
+      <button class="lang-btn" id="langEn" type="button">EN</button>
+    </div>
+    <p class="panel-foot" data-i="langnote">Nur die Oberfläche ist zweisprachig — die Lerninhalte bleiben deutsch.</p>
+  </aside>
 </div>
 
 <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Ressourcen-Ansicht">
@@ -244,9 +314,9 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
   <div class="viewer-stage" id="vwStage"></div>
 </div>
 
-<script src="kp-data.js?v=68"></script>
-<script src="kp-icons.js?v=68"></script>
-<script src="kp-engine.js?v=68"></script>
+<script src="kp-data.js?v=75"></script>
+<script src="kp-icons.js?v=75"></script>
+<script src="kp-engine.js?v=75"></script>
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/BokehShader.js"></script>
@@ -258,7 +328,7 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
-<script src="kp-fx.js?v=68"></script>
+<script src="kp-fx.js?v=71"></script>
 <script>
 const REDUCE = matchMedia("(prefers-reduced-motion:reduce)").matches;
 
@@ -287,11 +357,12 @@ const JOURNEY = {
 const _hx = (h)=>{h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
 const _lp = (a,b,k)=>{const A=_hx(a),B=_hx(b);return [Math.round(A[0]+(B[0]-A[0])*k),Math.round(A[1]+(B[1]-A[1])*k),Math.round(A[2]+(B[2]-A[2])*k)];};
 const _rgb = (a)=>`rgb(${a[0]},${a[1]},${a[2]})`;
+let gradientOn = true;
 function applyJourney(){
   const dark = document.documentElement.getAttribute('data-theme') !== 'light';
   const j = dark ? JOURNEY.dark : JOURNEY.light;
   const max = (document.documentElement.scrollHeight - innerHeight) || 1;
-  const p = Math.min(1, Math.max(0, window.scrollY / max));
+  const p = gradientOn ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
   const s = document.documentElement.style;
   const arr = (k)=> _lp(j.from[k], j.to[k], p);
   const col = (k)=> _rgb(arr(k));
@@ -311,6 +382,12 @@ function applyJourney(){
   s.setProperty('--line', rgba(lt, la)); s.setProperty('--line-soft', rgba(lt, la*0.55)); s.setProperty('--line-hi', rgba(lt, la+0.12));
   s.setProperty('--chip', rgba(lt,.06)); s.setProperty('--item-hover', rgba(lt,.09));
   const ang = (dark ? (220 + p * 100) : (40 + p * 100)) * Math.PI / 180;
+  if (!gradientOn) {
+    const flat = dark ? '#060a0d' : '#ffffff';
+    s.setProperty('--bg', flat); s.setProperty('--bg2', flat);
+    if (window.KPFX && KPFX.setScene) KPFX.setScene(flat, flat, col('obj'), ang);
+    return;
+  }
   if (window.KPFX && KPFX.setScene) KPFX.setScene(col('hor'), col('top'), col('obj'), ang);   // rotating sun direction
 }
 
@@ -325,6 +402,38 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 
 /* 3D specimen scene */
 KPFX.init({ canvas: document.getElementById("gl") });
+
+/* minimal / stare-into-space mode — one system at a time, switch via side menu */
+(function(){
+  const cb = document.getElementById("focusMode");
+  if (!cb) return;
+  cb.addEventListener("change", () => {
+    const root = document.documentElement;
+    const on = cb.checked;
+    root.toggleAttribute("data-min", on);
+    if (on && !document.querySelector(".sys.hl")) {
+      const first = document.querySelector("#indexRoot .ix-link");
+      if (first) first.click();
+    }
+  });
+})();
+
+/* background control panel — agency over the scene */
+(function(){
+  const panel = document.getElementById("panel");
+  const viewBtn = document.getElementById("viewBtn");
+  const scrim = document.getElementById("scrim");
+  if (!panel || !viewBtn) return;
+  function openPanel(o){ panel.classList.toggle("open", o); viewBtn.classList.toggle("on", o); viewBtn.setAttribute("aria-expanded", String(o)); if (scrim) scrim.classList.toggle("show", o); }
+  viewBtn.addEventListener("click", () => openPanel(!panel.classList.contains("open")));
+  document.getElementById("panelClose").addEventListener("click", () => openPanel(false));
+  if (scrim) scrim.addEventListener("click", () => openPanel(false));
+  const V = (id, key) => document.getElementById(id).addEventListener("change", e => window.KPFX && KPFX.setVisible(key, e.target.checked));
+  V("cCells", "cells"); V("cShapes", "object"); V("cParts", "particles");
+  const M = (id, mode) => document.getElementById(id).addEventListener("change", () => window.KPFX && KPFX.setMotion(mode));
+  M("mScroll", "scroll"); M("mLoop", "loop"); M("mStill", "still");
+  document.getElementById("cGrad").addEventListener("change", e => { gradientOn = e.target.checked; applyJourney(); });
+})();
 
 /* smoothed scroll engine — gently scrub then settle static (Apple-style) */
 let target = window.scrollY, smooth = window.scrollY, raf = null;
@@ -485,6 +594,51 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 renderAll();
 applyJourney();
 addEventListener("load", () => { window.scrollTo(0,0); target = 0; smooth = 0; KPFX.resize(); renderAll(); applyJourney(); });
+
+/* ===== DE / EN — UI & UX only (study content stays German) ===== */
+(function(){
+  const q=s=>document.querySelector(s), qa=s=>Array.prototype.slice.call(document.querySelectorAll(s));
+  let lang='de';
+  const DE={ eyebrow:'Kenntnispr\u00fcfung \u00b7 Lernzentrale',
+    lede:'Alle Lernmaterialien \u2014 nach System und Krankheitsbild. Eine ruhige \u00dcbersicht, die sich beim Scrollen entfaltet.',
+    search:'Suche\u2026', systems:'Systeme', empty:'Keine Treffer. Suche oder Filter anpassen.', resources:'Ressourcen',
+    view:'Ansicht', focus:'Fokus-Modus (ein System)', bg:'Hintergrund',
+    note:'Du entscheidest, was du siehst \u2014 von ganz ruhig bis lebendig.',
+    cells:'Zellen zeigen', shapes:'Formen zeigen', parts:'Lichtpunkte zeigen', grad:'Farbverlauf',
+    motion:'Bewegung', mScroll:'Auf Scrollen reagieren', mLoop:'Sanfte Endlosschleife', mStill:'Alles ruhig halten',
+    foot:'Ohne Farbverlauf bleibt der Hintergrund schlicht \u2014 schwarz oder wei\u00df, je nach Tag/Nacht-Schalter.',
+    langnote:'Nur die Oberfl\u00e4che ist zweisprachig \u2014 die Lerninhalte bleiben deutsch.',
+    newtab:'Neuer Tab', open:'\u00d6ffnen', all:'Alle', types:{pdf:'PDF',html:'Seite',video:'Video',audio:'Audio',image:'Bild',link:'Link'} };
+  const EN={ eyebrow:'Kenntnispr\u00fcfung \u00b7 Study hub',
+    lede:'All study materials \u2014 by system and disease. A calm overview that unfolds as you scroll.',
+    search:'Search\u2026', systems:'Systems', empty:'No matches. Adjust your search or filter.', resources:'resources',
+    view:'View', focus:'Focus mode (one system)', bg:'Background',
+    note:'You decide what you see \u2014 from perfectly calm to lively.',
+    cells:'Show cells', shapes:'Show shapes', parts:'Show light points', grad:'Colour gradient',
+    motion:'Motion', mScroll:'React to scrolling', mLoop:'Gentle loop', mStill:'Hold still',
+    foot:'With the gradient off, the background stays plain \u2014 black or white, depending on the day/night switch.',
+    langnote:'Only the interface is bilingual \u2014 the study content stays in German.',
+    newtab:'New tab', open:'Open', all:'All', types:{pdf:'PDF',html:'Page',video:'Video',audio:'Audio',image:'Image',link:'Link'} };
+  function setLabel(id,txt){ const inp=document.getElementById(id); if(!inp)return; const lab=inp.closest('label'); if(!lab)return; const n=lab.lastChild; if(n&&n.nodeType===3)n.textContent=txt; else lab.appendChild(document.createTextNode(txt)); }
+  function apply(){ const D=lang==='en'?EN:DE;
+    const eb=q('.eyebrow'); if(eb){ const p=eb.querySelector('.pulse'); eb.textContent=''; if(p)eb.appendChild(p); eb.appendChild(document.createTextNode(D.eyebrow)); }
+    const lede=q('.lede'); if(lede)lede.textContent=D.lede;
+    const si=document.getElementById('search'); if(si)si.placeholder=D.search;
+    const it=q('.index-title'); if(it)it.textContent=D.systems;
+    const emp=document.getElementById('empty'); if(emp)emp.textContent=D.empty;
+    const cnt=document.getElementById('count'); if(cnt){ const n=cnt.nextSibling; if(n&&n.nodeType===3)n.textContent=' '+D.resources; }
+    qa('[data-i]').forEach(function(el){ const k=el.getAttribute('data-i'); if(D[k]!=null)el.textContent=D[k]; });
+    setLabel('focusMode',D.focus); setLabel('cCells',D.cells); setLabel('cShapes',D.shapes); setLabel('cParts',D.parts); setLabel('cGrad',D.grad);
+    setLabel('mScroll',D.mScroll); setLabel('mLoop',D.mLoop); setLabel('mStill',D.mStill);
+    const ext=document.getElementById('vwExt'); if(ext)ext.innerHTML=D.newtab+' \u2197';
+    qa('.type-btn').forEach(function(b){ const t=b.dataset.type; b.textContent = t==='all'?D.all:(D.types[t]||t); });
+    qa('.item-type').forEach(function(s){ const t=s.getAttribute('data-t'); if(D.types[t])s.textContent=D.types[t]; });
+    qa('.item-open').forEach(function(o){ const svg=o.querySelector('svg'); o.textContent=D.open; if(svg)o.appendChild(svg); });
+  }
+  function set(l){ lang=l; document.getElementById('langDe').classList.toggle('on',l==='de'); document.getElementById('langEn').classList.toggle('on',l==='en'); apply(); }
+  document.getElementById('langDe').addEventListener('click',function(){set('de');});
+  document.getElementById('langEn').addEventListener('click',function(){set('en');});
+})();
 </script>
 </body>
 </html>

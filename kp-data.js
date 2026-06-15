@@ -53,8 +53,10 @@ const ITEMS = [
   { title:"Hyponatriämie Untersuchungen", system:"Nephrologie", topic:"Elektrolytstörungen Natrium", type:"image", file:"files/hyponatriaemie-logik.svg", size:"1 S." },
   { title:"Hypernatriämie Untersuchungen", system:"Nephrologie", topic:"Elektrolytstörungen Natrium", type:"image", file:"files/urinuntersuchung_hypernatriaemie.svg", size:"1 S." },
   { title:"BGA-Interpreter", system:"Nephrologie", topic:"Säure-Basen-Haushalt", type:"html", file:"files/bga-tool.html" },
-  { title:"ANV — Ätiologie-Mindmap", system:"Nephrologie", topic:"Akute Nierenfunktionseinschränkung", type:"html", file:"files/anv-mindmap.html", size:"interaktiv" },
+  { title:"ANV — Ätiologie-Mindmap", system:"Nephrologie", topic:"Akute Nierenfunktionseinschränkung", type:"html", file:"files/anv-mindmap.html?v=3", size:"interaktiv" },
   { title:"Akutes Nierenversagen — Lernzusammenfassung", system:"Nephrologie", topic:"Akute Nierenfunktionseinschränkung", type:"html", file:"files/aki-zusammenfassung.html", size:"Zusammenf." },
+  { title:"Calciumstörungen — Mindmap", system:"Nephrologie", topic:"Elektrolytstörungen Calcium", type:"html", file:"files/calcium-mindmap.html", size:"interaktiv" },
+  { title:"Pyelonephritis — One-Pager", system:"Nephrologie", topic:"Pyelonephritis", type:"html", file:"files/pyelonephritis-onepager.html", size:"1 S." },
 
   // — Endokrinologie —
   { title:"Orale Antidiabetika & GLP-1-RA", system:"Endokrinologie", topic:"Diabetes mellitus", type:"html", file:"files/antidiabetika.html", size:"1 S." },
@@ -70,6 +72,8 @@ const ITEMS = [
   { title:"Antibiotika — Übersicht für die KP", system:"Infektiologie", topic:"Antibiotika", type:"html", file:"files/antibiotika-uebersicht.html", size:"interaktiv" },
   { title:"Opportunistische Infektionen nach CD4", system:"Infektiologie", topic:"HIV-Infektion", type:"html", file:"files/opportunistische-infektionen.html", size:"1 S." },
   { title:"Opportunistische Infektionen — Filterbar", system:"Infektiologie", topic:"HIV-Infektion", type:"html", file:"files/opportunistische-infektionen-detail.html", size:"interaktiv" },
+  { title:"Sepsis & septischer Schock — Notfall-Lernkarte", system:"Infektiologie", topic:"Sepsis", type:"html", file:"files/sepsis-onepager.html", size:"1 S." },
+  { title:"Meningitis — One-Pager", system:"Infektiologie", topic:"Meningitis", type:"html", file:"files/meningitis-onepager.html", size:"1 S." },
 
   // — Notfallmedizin —
   { title:"DKA — Therapieverlauf & Details", system:"Notfallmedizin", topic:"Hyperglykämisches Koma", type:"html", file:"files/dka-timeline.html", size:"Timeline + Details" },
@@ -96,6 +100,7 @@ const ITEMS = [
 
   // — Klinische Übungen, Skills, Sonstiges —
   { title:"Lernkarten-Index — Innere & Chirurgie", system:"Klinische Übungen, Skills, Sonstiges", topic:"Lernkarten", type:"html", file:"files/lernkarten-index.html", size:"interaktiv" },
+  { title:"5-Wochen-Lernplan", system:"Klinische Übungen, Skills, Sonstiges", topic:"Lernplan", type:"html", file:"files/lernplan-5-wochen.html", size:"interaktiv" },
   // …add your lines here…
 ];
 

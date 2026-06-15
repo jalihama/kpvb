@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VFX Breakdown — Hamas KP Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a2733; --bg2:#08222c; --panel:#0f3848; --panel2:#0c2f3d;
+    --ink:#e3eef2; --ink-soft:#9fc0cc; --line:#1c4253; --line-hi:#2b6173;
+    --accent:#24c4e6; --accent-dim:#1f93b0;
+    --red:#e0726a; --amber:#d6a23e; --violet:#a78bdb; --green:#3fbf9f;
+    --f:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --m:'Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  html{background:var(--bg)}
+  body{font-family:var(--f);color:var(--ink);background:
+      radial-gradient(120% 80% at 80% -10%, #0e3a49 0%, var(--bg) 55%, var(--bg2) 100%);
+      min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  .mono{font-family:var(--m)}
+
+  /* ---------- header ---------- */
+  header{padding:64px 0 26px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font:600 11px/1 var(--m);
+    letter-spacing:.32em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+  .eyebrow::before,.eyebrow::after{content:"";width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--accent-dim))}
+  .eyebrow::after{transform:scaleX(-1)}
+  h1{font-size:clamp(2.1rem,6vw,3.7rem);font-weight:700;letter-spacing:-.02em;line-height:1.02}
+  h1 .glow{color:var(--accent)}
+  .lede{max-width:620px;margin:18px auto 0;color:var(--ink-soft);font-size:clamp(1rem,2.4vw,1.18rem)}
+  .meta{margin-top:22px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .pill{font:600 11px/1 var(--m);letter-spacing:.06em;color:var(--ink-soft);
+    border:1px solid var(--line);border-radius:999px;padding:8px 13px;background:rgba(15,56,72,.5)}
+  .pill b{color:var(--ink);font-weight:600}
+
+  section{padding:50px 0}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+  .sec-num{font:600 12px/1 var(--m);color:var(--accent);letter-spacing:.1em}
+  .sec-title{font-size:clamp(1.4rem,3.4vw,2rem);font-weight:700;letter-spacing:-.01em}
+  .sec-sub{color:var(--ink-soft);margin-bottom:30px;max-width:680px}
+
+  /* ---------- exploded 3D stack ---------- */
+  .stage3d{position:relative;height:540px;perspective:1500px;perspective-origin:50% 42%;margin:74px 0 4px}
+  .stack{position:absolute;inset:0;transform-style:preserve-3d;
+    transform:rotateX(53deg) rotateZ(34deg);transition:transform .8s cubic-bezier(.4,0,.15,1)}
+  .plane{position:absolute;top:50%;left:50%;width:340px;height:215px;margin:-107px 0 0 -170px;
+    border-radius:12px;overflow:hidden;border:1px solid var(--line-hi);
+    box-shadow:0 18px 50px rgba(0,0,0,.45);transition:transform .8s cubic-bezier(.4,0,.15,1),box-shadow .8s;
+    background:var(--panel2)}
+  .plane canvas{width:100%;height:100%;display:block}
+  .plane .tag{position:absolute;left:10px;top:9px;display:flex;gap:7px;align-items:center;
+    font:600 10px/1 var(--m);letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink);background:rgba(8,34,44,.66);backdrop-filter:blur(3px);
+    padding:6px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.08);transform:translateZ(.1px)}
+  .plane .tag i{width:7px;height:7px;border-radius:50%;background:var(--accent);font-style:normal}
+  .leader{position:absolute;top:50%;left:50%;pointer-events:none;transform-style:preserve-3d}
+  .stage-controls{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+  button.ctl{font:600 13px/1 var(--f);color:var(--ink);background:var(--panel);
+    border:1px solid var(--line-hi);border-radius:10px;padding:11px 16px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;transition:border-color .2s,background .2s}
+  button.ctl:hover{border-color:var(--accent-dim);background:var(--panel2)}
+  button.ctl:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .hint{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:6px}
+
+  /* ---------- passes ---------- */
+  .pass{display:grid;grid-template-columns:minmax(0,1.05fr) 1fr;gap:30px;align-items:center;
+    padding:26px 0;border-top:1px solid var(--line)}
+  .pass:nth-child(even) .pass-media{order:2}
+  .pass-media{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line-hi);
+    background:var(--panel2);aspect-ratio:16/10;box-shadow:0 14px 40px rgba(0,0,0,.4)}
+  .pass-media canvas{width:100%;height:100%;display:block}
+  .pass-media .corner{position:absolute;right:11px;bottom:10px;font:600 10px/1 var(--m);
+    letter-spacing:.1em;color:var(--ink-soft);background:rgba(8,34,44,.6);padding:6px 9px;border-radius:6px}
+  .pass-n{font:600 12px/1 var(--m);color:var(--accent);letter-spacing:.12em}
+  .pass h3{font-size:1.5rem;font-weight:700;margin:8px 0 10px;letter-spacing:-.01em}
+  .pass p{color:var(--ink-soft);margin-bottom:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font:600 11px/1 var(--m);letter-spacing:.04em;color:var(--ink-soft);
+    border:1px solid var(--line);border-radius:7px;padding:7px 10px;background:rgba(15,56,72,.45)}
+  .chip b{color:var(--accent);font-weight:600}
+
+  /* ---------- composite ---------- */
+  .comp{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line-hi);
+    aspect-ratio:16/9;background:#06212b;box-shadow:0 22px 70px rgba(0,0,0,.5)}
+  .comp .lyr{position:absolute;inset:0;width:100%;height:100%;transition:opacity .4s}
+  .comp .lyr.off{opacity:0}
+  .comp .frost{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    background:color-mix(in oklab,#0a2733 26%,transparent)}
+  #cFire{mix-blend-mode:screen}
+  .comp-ui{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:6%;gap:14px;pointer-events:none}
+  .comp-ui .ce{font:600 11px/1 var(--m);letter-spacing:.3em;text-transform:uppercase;color:var(--accent)}
+  .comp-ui .ct{font-size:clamp(1.3rem,3.6vw,2.6rem);font-weight:700;letter-spacing:-.02em;max-width:62%}
+  .comp-ui .cc{display:flex;gap:9px;margin-top:6px}
+  .comp-ui .card{width:clamp(120px,20vw,190px);height:54px;border-radius:11px;
+    border:1px solid rgba(255,255,255,.14);background:rgba(15,56,72,.5);
+    backdrop-filter:blur(4px);display:flex;align-items:center;gap:9px;padding:0 13px}
+  .comp-ui .card i{width:11px;height:11px;border-radius:3px;font-style:normal}
+  .comp-ui .card span{height:7px;border-radius:4px;background:rgba(255,255,255,.22);flex:1}
+  .toggles{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .tg{display:inline-flex;align-items:center;gap:8px;font:600 12px/1 var(--m);letter-spacing:.04em;
+    color:var(--ink);background:var(--panel);border:1px solid var(--line-hi);border-radius:9px;
+    padding:9px 12px;cursor:pointer;user-select:none;transition:opacity .2s,border-color .2s}
+  .tg.off{opacity:.42;border-color:var(--line)}
+  .tg i{width:9px;height:9px;border-radius:50%;background:var(--accent);font-style:normal;flex:0 0 auto}
+  .tg .x{font-family:var(--m);color:var(--ink-soft);font-size:11px}
+  .scrub{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .scrub label{font:600 11px/1 var(--m);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+  .scrub input[type=range]{flex:1;min-width:200px;accent-color:var(--accent);height:4px}
+  .scrub .val{font:600 12px/1 var(--m);color:var(--accent);min-width:128px;text-align:right}
+
+  footer{padding:50px 0 80px;text-align:center;color:var(--ink-soft);border-top:1px solid var(--line);margin-top:24px}
+  footer .big{color:var(--ink);font-weight:600;font-size:1.05rem;margin-bottom:6px}
+
+  @media (max-width:760px){
+    .pass{grid-template-columns:1fr;gap:16px}
+    .pass:nth-child(even) .pass-media{order:0}
+  .stage3d{position:relative;height:430px;perspective:1100px;perspective-origin:50% 44%;margin:48px 0 4px}
+    .plane{width:260px;height:165px;margin:-82px 0 0 -130px}
+  }
+  @media (prefers-reduced-motion:reduce){.stack{transition:none}.plane{transition:none}}
+
+  /* ---------- mechanics labs ---------- */
+  .lab{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:20px;margin-bottom:18px}
+  .lab-top{display:flex;align-items:baseline;gap:12px;margin-bottom:3px}
+  .lab-n{font:600 11px/1 var(--m);color:var(--accent);letter-spacing:.14em}
+  .lab h3{font-size:1.2rem;font-weight:700;letter-spacing:-.01em}
+  .lab .sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:16px;max-width:760px}
+  .lab .sub b{color:var(--ink);font-weight:600}
+  .lab-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:stretch}
+  .lab-media{position:relative;border-radius:11px;overflow:hidden;border:1px solid var(--line);background:#06212b;height:236px}
+  .lab-media canvas{width:100%;height:100%;display:block}
+  .lab-side{display:flex;flex-direction:column;gap:11px;justify-content:center}
+  .formula{font:500 12.5px/1.55 var(--m);color:var(--ink);background:rgba(8,34,44,.6);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+  .formula .c{color:var(--accent)}.formula .cm{color:var(--amber)}
+  .lrow{display:flex;align-items:center;gap:11px}
+  .lrow label{font:600 11px/1 var(--m);letter-spacing:.03em;color:var(--ink-soft);width:84px;flex:0 0 auto}
+  .lrow input[type=range]{flex:1;accent-color:var(--accent);height:4px;min-width:70px}
+  .lrow .lv{font:600 12px/1 var(--m);color:var(--accent);width:58px;text-align:right;flex:0 0 auto}
+  .lgraph{width:100%;height:74px;border-radius:8px;border:1px solid var(--line);display:block}
+  .readout{display:flex;gap:8px;flex-wrap:wrap}
+  .swatch{flex:1;min-width:96px;border-radius:8px;padding:10px 6px;text-align:center;font:600 10px/1.3 var(--m);border:1px solid rgba(255,255,255,.12)}
+  .meter{display:flex;align-items:center;gap:9px}
+  .meter label{font:600 10px/1 var(--m);color:var(--ink-soft);width:118px;flex:0 0 auto;letter-spacing:.02em}
+  .meter .bar{flex:1;height:7px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden}
+  .meter .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent-dim),var(--accent));border-radius:5px;transition:width .12s}
+  .meter .mv{font:600 10px/1 var(--m);color:var(--ink-soft);width:38px;text-align:right}
+  .lab .note{font-size:12px;color:var(--ink-soft);font-style:italic;line-height:1.5}
+  .lab .note b{color:var(--ink-soft);font-style:normal;font-weight:600}
+  .blendbtns{display:flex;gap:8px;flex-wrap:wrap}
+  @media (max-width:760px){.lab-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="eyebrow">VFX Breakdown</div>
+  <h1>Hamas KP&nbsp;Atlas — <span class="glow">Layer by Layer</span></h1>
+  <p class="lede">The opening scene looks like a single image. It's actually six layers,
+    composited in real time, every frame. Here they are, pulled apart.</p>
+  <div class="meta">
+    <span class="pill"><b>6</b> render layers</span>
+    <span class="pill"><b>WebGL</b> + Canvas 2D</span>
+    <span class="pill">~<b>60</b> fps</span>
+    <span class="pill"><b>0</b> images · all drawn live</span>
+  </div>
+</header>
+
+<!-- ===== exploded stack ===== -->
+<section class="wrap">
+  <div class="sec-head"><span class="sec-num">01</span><span class="sec-title">The Layer Stack</span></div>
+  <p class="sec-sub">Back to front: sky, blood-cell helix, molecule object, frosted glass,
+    fireflies, and the interface on top. Pull them apart or stack them together.</p>
+  <div class="stage3d">
+    <div class="stack" id="stack"></div>
+  </div>
+  <div class="stage-controls">
+    <button class="ctl" id="toggleExplode">Stack together</button>
+    <button class="ctl" id="spinBtn">Pause spin</button>
+  </div>
+  <p class="hint">Tip: each plate shows exactly one layer — isolated, live.</p>
+</section>
+
+<!-- ===== passes ===== -->
+<section class="wrap">
+  <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">Each Pass, Alone</span></div>
+  <p class="sec-sub">Every layer does one thing. Together they create the depth and calm of the scene.</p>
+  <div id="passes"></div>
+</section>
+
+<!-- ===== composite ===== -->
+<section class="wrap">
+  <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">The Composite</span></div>
+  <p class="sec-sub">Everything together — interactive. Toggle layers on and off, and drag the “Journey”
+    slider to see the day/night transition that scrolling drives in the real Atlas.</p>
+
+  <div class="comp" id="comp">
+    <canvas class="lyr" id="cSky"></canvas>
+    <canvas class="lyr" id="cHelix"></canvas>
+    <canvas class="lyr" id="cObject"></canvas>
+    <div class="lyr frost" id="cFrost"></div>
+    <canvas class="lyr" id="cFire"></canvas>
+    <div class="lyr comp-ui" id="cUI">
+      <div class="ce">Kenntnisprüfung · Study Hub</div>
+      <div class="ct">A calm overview of every system.</div>
+      <div class="cc">
+        <div class="card"><i style="background:var(--accent)"></i><span></span></div>
+        <div class="card"><i style="background:var(--violet)"></i><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggles" id="toggles"></div>
+
+  <div class="scrub">
+    <label>Journey</label>
+    <input type="range" id="journey" min="0" max="100" value="20" />
+    <span class="val mono" id="journeyVal">Day</span>
+    <button class="ctl" id="autoBtn" style="padding:9px 14px">Auto</button>
+  </div>
+</section>
+
+<!-- ===== mechanics & dynamics ===== -->
+<section class="wrap">
+  <div class="sec-head"><span class="sec-num">04</span><span class="sec-title">Mechanics &amp; Dynamics</span></div>
+  <p class="sec-sub">For the engineers: the actual curves, mappings and interactions behind each layer.
+    Every control below is live — drag it and watch the math respond.</p>
+  <div class="labs" id="labs"></div>
+</section>
+
+<footer class="wrap">
+  <div class="big">That's the whole “magic.”</div>
+  Six simple layers, recomputed every frame — no video, no tricks.<br />
+  Built for the Kenntnisprüfung · Hamas KP Atlas
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const TAU = Math.PI * 2;
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const clamp = (v,a,b)=>v<a?a:v>b?b:v;
+  function hex(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+  function mix(a,b,t){const A=hex(a),B=hex(b);return `rgb(${A[0]+(B[0]-A[0])*t|0},${A[1]+(B[1]-A[1])*t|0},${A[2]+(B[2]-A[2])*t|0})`;}
+  function rgbToHex(s){const m=s.match(/\d+/g);return m?('#'+m.slice(0,3).map(n=>(+n).toString(16).padStart(2,'0')).join('').toUpperCase()):s;}
+  function skyStops(j){return {top:mix('#0f3d4e','#b5623c',j),mid:mix('#0b3242','#5a2f3f',j),bot:mix('#06202a','#241433',j)};}
+  function easeInOut(x){return x<0.5?2*x*x:1-Math.pow(-2*x+2,2)/2;}
+
+  // ---- shared journey state ----
+  let journey = 0.2;     // 0 = Tag, 1 = Dämmerung/Dawn
+  let autoJ = false;
+
+  // ---- layer registry: one rAF drives every canvas on the page ----
+  const layers = [];
+  function reg(canvas, draw, opts){
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const o = Object.assign({on:()=>true}, opts||{});
+    layers.push({canvas, ctx, draw, o});
+  }
+  let DPR = Math.min(window.devicePixelRatio||1, 2);
+  function sizeAll(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    for(const l of layers){
+      const r = l.canvas.getBoundingClientRect();
+      if(!r.width) continue;
+      l.canvas.width = Math.round(r.width*DPR);
+      l.canvas.height = Math.round(r.height*DPR);
+    }
+  }
+
+  /* ===================== PASS RENDERERS ===================== */
+  // each: (ctx,w,h,t,j)   w/h in device px
+
+  function drawSky(ctx,w,h,t,j){
+    ctx.clearRect(0,0,w,h);
+    // vertical sky gradient, day -> dusk
+    const ss=skyStops(j);
+    const g=ctx.createLinearGradient(0,0,0,h);
+    g.addColorStop(0, ss.top);
+    g.addColorStop(0.55, ss.mid);
+    g.addColorStop(1, ss.bot);
+    ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+    // sun arc: left -> right, dips as day -> dusk
+    const sx = lerp(0.16, 0.86, clamp(t*0.02 % 1, 0,1));
+    const ang = lerp(0.12, 0.5, j);
+    const px = w*lerp(0.2, 0.8, (Math.sin(t*0.18)*0.5+0.5));
+    const py = h*(0.2 + ang*0.6);
+    const rad = Math.max(w,h)*0.5;
+    const sun=ctx.createRadialGradient(px,py,0,px,py,rad);
+    const warm = mix('#bfe9f2', '#ffcf9e', j);
+    sun.addColorStop(0, warm.replace('rgb','rgba').replace(')',`,${lerp(0.32,0.5,j)})`));
+    sun.addColorStop(0.4, warm.replace('rgb','rgba').replace(')',',0.10)'));
+    sun.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle=sun; ctx.fillRect(0,0,w,h);
+    ctx.globalCompositeOperation='source-over';
+  }
+
+  function drawHelix(ctx,w,h,t,j){
+    ctx.clearRect(0,0,w,h);
+    const N=46, turns=2.4;
+    const cornerX=w*0.96, cornerY=h*0.94;
+    const centerX=w*0.46, centerY=h*0.42;
+    const flow=t*0.10;
+    for(let i=0;i<N;i++){
+      let tt=((i/N)+flow)%1;                 // 0 near camera -> 1 deep
+      const ang = tt*turns*TAU + t*0.25;
+      const tube = lerp(w*0.16, w*0.02, tt); // wide vessel near, tight far
+      const bx = lerp(cornerX, centerX, tt);
+      const by = lerp(cornerY, centerY, tt);
+      const x = bx + Math.cos(ang)*tube;
+      const y = by + Math.sin(ang)*tube*0.62;
+      const depth = 1-tt;
+      const r = lerp(2.2, 15, depth)*DPR;
+      const a = lerp(0.05, 0.85, depth);
+      ctx.globalAlpha=a;
+      ctx.shadowBlur = lerp(18,0,depth)*DPR; ctx.shadowColor='rgba(210,70,60,.5)';
+      const col = mix('#7a2b28', '#e0726a', depth);
+      ctx.fillStyle=col;
+      ctx.beginPath(); ctx.ellipse(x,y,r,r*0.78,ang,0,TAU); ctx.fill();
+      // pale centre (biconcave hint) on near cells
+      if(depth>0.45){ ctx.globalAlpha=a*0.5; ctx.fillStyle='rgba(255,190,180,.5)';
+        ctx.beginPath(); ctx.ellipse(x,y,r*0.4,r*0.32,ang,0,TAU); ctx.fill(); }
+    }
+    ctx.globalAlpha=1; ctx.shadowBlur=0;
+  }
+
+  function drawObject(ctx,w,h,t,j){ ctx.clearRect(0,0,w,h); drawObjectCore(ctx,w,h,t*0.5); }
+  function drawObjectCore(ctx,w,h,ry){
+    const cx=w*0.5, cy=h*0.5, R=Math.min(w,h)*0.27;
+    const nodes=22;
+    const pts=[];
+    for(let i=0;i<nodes;i++){
+      const u=i/nodes*TAU*2;                 // a looping ribbon path
+      const v=Math.sin(u*1.5)*0.6;
+      let x=Math.cos(u), y=Math.sin(u*0.8)*0.7+v*0.4, z=Math.sin(u);
+      // rotateY
+      const xz = x*Math.cos(ry)-z*Math.sin(ry);
+      const zz = x*Math.sin(ry)+z*Math.cos(ry);
+      pts.push({x:cx+xz*R, y:cy+y*R, z:zz});
+    }
+    pts.sort((a,b)=>a.z-b.z);
+    // links
+    ctx.lineWidth=2*DPR;
+    for(let i=0;i<pts.length-1;i++){
+      const p=pts[i],q=pts[i+1];
+      const d=(p.z+1)/2;
+      ctx.strokeStyle=`rgba(36,196,230,${0.12+d*0.28})`;
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
+    }
+    for(const p of pts){
+      const d=(p.z+1)/2;
+      ctx.globalAlpha=0.35+d*0.65;
+      ctx.fillStyle=mix('#15545f', '#7fe3f3', d);
+      ctx.beginPath(); ctx.arc(p.x,p.y,(2.4+d*5)*DPR,0,TAU); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function drawFrostPass(ctx,w,h,t,j){
+    ctx.clearRect(0,0,w,h);
+    // illustrative: blurred blobs + milky veil = "frost"
+    ctx.save();
+    ctx.filter='blur('+(7*DPR)+'px)';
+    const blobs=[['#e0726a',0.7,0.7],['#24c4e6',0.4,0.4],['#a78bdb',0.55,0.3]];
+    for(const [c,fx,fy] of blobs){
+      const x=w*(fx+Math.sin(t*0.3+fx*9)*0.06), y=h*(fy+Math.cos(t*0.26+fy*9)*0.06);
+      ctx.fillStyle=c; ctx.globalAlpha=0.55;
+      ctx.beginPath(); ctx.arc(x,y,Math.min(w,h)*0.22,0,TAU); ctx.fill();
+    }
+    ctx.restore();
+    ctx.globalAlpha=1;
+    ctx.fillStyle='rgba(180,212,222,.16)'; ctx.fillRect(0,0,w,h);
+    // subtle frosted streaks
+    ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=DPR;
+    for(let i=0;i<5;i++){ const y=h*(i+0.5)/5; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y+8*DPR); ctx.stroke(); }
+  }
+
+  const fireSeed=[];
+  function fireflies(n){ const a=[]; for(let i=0;i<n;i++) a.push({x:Math.random(),y:Math.random(),
+    r:0.5+Math.random()*1.2, ph:Math.random()*TAU, sp:0.5+Math.random()*0.9,
+    dx:(Math.random()-0.5)*0.02, dy:(Math.random()-0.5)*0.02, warm:Math.random()<0.3}); return a; }
+  function drawFire(ctx,w,h,t,j,seed){
+    ctx.clearRect(0,0,w,h);
+    ctx.globalCompositeOperation='lighter';
+    for(const p of seed){
+      const blink=Math.pow(Math.sin(t*p.sp+p.ph)*0.5+0.5,6);   // sharp slow blink
+      if(blink<0.02) continue;
+      const x=(p.x + Math.sin(t*0.2+p.ph)*0.03 + p.dx*t%1)*w;
+      const y=(p.y + Math.cos(t*0.17+p.ph)*0.03)*h;
+      const r=p.r*DPR*(2.4+blink*3.5);
+      const col = p.warm ? '210,200,120' : '120,225,235';
+      const g=ctx.createRadialGradient(x,y,0,x,y,r*3);
+      g.addColorStop(0,`rgba(${col},${0.9*blink})`);
+      g.addColorStop(0.3,`rgba(${col},${0.4*blink})`);
+      g.addColorStop(1,`rgba(${col},0)`);
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*3,0,TAU); ctx.fill();
+    }
+    ctx.globalCompositeOperation='source-over';
+  }
+
+  const SYS=['#24c4e6','#a78bdb','#3fbf9f','#d6a23e','#e0726a'];
+  function drawUI(ctx,w,h,t,j){
+    ctx.clearRect(0,0,w,h);
+    const pad=w*0.08, cardH=h*0.13, gap=h*0.05, x=pad, top=h*0.2, cw=w-pad*2;
+    ctx.textBaseline='middle';
+    for(let i=0;i<4;i++){
+      const y=top+i*(cardH+gap);
+      ctx.fillStyle='rgba(15,56,72,.85)';
+      rr(ctx,x,y,cw,cardH,10*DPR); ctx.fill();
+      ctx.strokeStyle='rgba(43,97,115,.9)'; ctx.lineWidth=DPR; rr(ctx,x,y,cw,cardH,10*DPR); ctx.stroke();
+      // icon chip
+      ctx.fillStyle=SYS[i%SYS.length];
+      rr(ctx,x+cardH*0.28,y+cardH*0.28,cardH*0.44,cardH*0.44,5*DPR); ctx.fill();
+      // title bar
+      ctx.fillStyle='rgba(227,238,242,.55)';
+      rr(ctx,x+cardH*1.0,y+cardH*0.34,cw*0.4,cardH*0.16,4*DPR); ctx.fill();
+      ctx.fillStyle='rgba(159,192,204,.4)';
+      rr(ctx,x+cardH*1.0,y+cardH*0.58,cw*0.24,cardH*0.12,4*DPR); ctx.fill();
+      // count dot
+      ctx.fillStyle=SYS[i%SYS.length];
+      ctx.beginPath(); ctx.arc(x+cw-cardH*0.5,y+cardH*0.5,cardH*0.16,0,TAU); ctx.fill();
+    }
+  }
+  function rr(ctx,x,y,w,h,r){ if(ctx.roundRect){ctx.beginPath();ctx.roundRect(x,y,w,h,r);} else {ctx.beginPath();ctx.rect(x,y,w,h);} }
+
+  /* ===================== PASS DEFINITIONS ===================== */
+  const PASSES=[
+    {key:'sky', n:'01', dot:'var(--accent)', title:'Sky & Journey', draw:drawSky,
+     desc:'A canvas color gradient as the sky. As you scroll it shifts from day to dusk; a bright band sweeps across like the sun.',
+     chips:['<b>Canvas 2D</b>','linear gradient','sun glow','scroll-driven']},
+    {key:'helix', n:'02', dot:'var(--red)', title:'Blood-Cell Helix', draw:drawHelix,
+     desc:'Red blood cells spiral out of the lower-right corner into the distance. Large and sharp up front, small and soft far away — real depth of field.',
+     chips:['<b>Three.js</b>','InstancedMesh','Bokeh / DoF','wide vessel']},
+    {key:'object', n:'03', dot:'var(--accent)', title:'Molecule Object', draw:drawObject,
+     desc:'A real 3D model (antibody / ribbon, as a .glb). Matte-lit, slowly rotating around the Y axis as you scroll.',
+     chips:['<b>glTF .glb</b>','PBR material','env map','Y rotation']},
+    {key:'frost', n:'04', dot:'var(--violet)', title:'Frosted Glass', draw:drawFrostPass,
+     desc:'A frosted layer between the scene and the content. It gently softens the 3D so the text always stays calm and readable.',
+     chips:['<b>backdrop-filter</b>','blur 6px','2px on phones']},
+    {key:'fire', n:'05', dot:'var(--amber)', title:'Fireflies & Dust', draw:(c,w,h,t,j)=>drawFire(c,w,h,t,j,passFire), 
+     desc:'A few small particles that drift slowly and blink (a sharp sin⁶ curve). Screen-blended so they glow through the sky.',
+     chips:['<b>Canvas 2D</b>','screen blend','sin⁶ blink']},
+    {key:'ui', n:'06', dot:'var(--green)', title:'Interface & Content', draw:drawUI,
+     desc:'On top: the collapsible system→disease hierarchy, the glass cards, and the resource viewer. Plain HTML/CSS, no frameworks.',
+     chips:['<b>HTML/CSS</b>','vanilla JS','one file']},
+  ];
+  const passFire = fireflies(26);
+
+  /* ===================== BUILD EXPLODED STACK ===================== */
+  const stack=document.getElementById('stack');
+  const planeFireSeeds=[];
+  PASSES.forEach((p,i)=>{
+    const plane=document.createElement('div'); plane.className='plane'; plane.dataset.i=i;
+    const cv=document.createElement('canvas'); plane.appendChild(cv);
+    const tag=document.createElement('div'); tag.className='tag';
+    tag.innerHTML=`<i style="background:${p.dot}"></i>${p.n} · ${p.title}`;
+    plane.appendChild(tag); stack.appendChild(plane);
+    if(p.key==='fire'){ const seed=fireflies(20); planeFireSeeds[i]=seed;
+      reg(cv,(c,w,h,t,j)=>drawFire(c,w,h,t,j,seed)); }
+    else reg(cv, p.draw);
+  });
+  const planes=[...stack.querySelectorAll('.plane')];
+  let exploded=true, gap=104;
+  function layout(){
+    const g = exploded?gap:6;
+    planes.forEach((pl,i)=>{
+      const k=i-(planes.length-1)/2;
+      pl.style.transform=`translateZ(${k*g}px) translateY(${-k*g*0.16}px)`;
+      pl.style.boxShadow = exploded? '0 22px 60px rgba(0,0,0,.5)' : '0 10px 24px rgba(0,0,0,.4)';
+    });
+  }
+  layout();
+  document.getElementById('toggleExplode').addEventListener('click',(e)=>{
+    exploded=!exploded; layout(); e.target.textContent=exploded?'Stack together':'Pull apart';
+  });
+  // slow auto spin of the stack
+  let spin=true, spinA=34;
+  document.getElementById('spinBtn').addEventListener('click',(e)=>{
+    spin=!spin; e.target.textContent=spin?'Pause spin':'Spin';
+  });
+
+  /* ===================== BUILD PASSES ===================== */
+  const passWrap=document.getElementById('passes');
+  PASSES.forEach((p)=>{
+    const row=document.createElement('div'); row.className='pass';
+    const media=document.createElement('div'); media.className='pass-media';
+    const cv=document.createElement('canvas'); media.appendChild(cv);
+    const corner=document.createElement('div'); corner.className='corner mono'; corner.textContent='PASS '+p.n;
+    media.appendChild(corner);
+    const txt=document.createElement('div');
+    txt.innerHTML=`<div class="pass-n">PASS ${p.n}</div><h3>${p.title}</h3><p>${p.desc}</p>
+      <div class="chips">${p.chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div>`;
+    row.appendChild(media); row.appendChild(txt); passWrap.appendChild(row);
+    reg(cv, p.draw);
+  });
+
+  /* ===================== COMPOSITE ===================== */
+  reg(document.getElementById('cSky'), drawSky);
+  reg(document.getElementById('cHelix'), drawHelix);
+  reg(document.getElementById('cObject'), drawObject);
+  const compFire=fireflies(34);
+  reg(document.getElementById('cFire'), (c,w,h,t,j)=>drawFire(c,w,h,t,j,compFire));
+
+  const compLayers={
+    sky:document.getElementById('cSky'), helix:document.getElementById('cHelix'),
+    object:document.getElementById('cObject'), frost:document.getElementById('cFrost'),
+    fire:document.getElementById('cFire'), ui:document.getElementById('cUI')
+  };
+  const togWrap=document.getElementById('toggles');
+  PASSES.forEach(p=>{
+    const t=document.createElement('button'); t.className='tg'; t.dataset.key=p.key;
+    t.innerHTML=`<i style="background:${p.dot}"></i>${p.title}<span class="x">on</span>`;
+    t.addEventListener('click',()=>{
+      const el=compLayers[p.key]; const off=el.classList.toggle('off');
+      t.classList.toggle('off',off); t.querySelector('.x').textContent=off?'off':'on';
+    });
+    togWrap.appendChild(t);
+  });
+
+  // journey scrub
+  const jr=document.getElementById('journey'), jv=document.getElementById('journeyVal');
+  function jLabel(v){ if(v<0.2)return 'Day'; if(v<0.45)return 'Afternoon'; if(v<0.7)return 'Golden hour'; if(v<0.9)return 'Dusk'; return 'Night'; }
+  jr.addEventListener('input',()=>{ journey=jr.value/100; autoJ=false; jv.textContent=jLabel(journey); });
+  document.getElementById('autoBtn').addEventListener('click',(e)=>{
+    autoJ=!autoJ; e.target.textContent=autoJ?'Stop':'Auto';
+  });
+
+  /* ===================== MECHANICS LABS ===================== */
+  function drawHelixLab(ctx,w,h,t,st){
+    ctx.clearRect(0,0,w,h);
+    const N=st.count|0, turns=2.4;
+    const cornerX=w*0.96,cornerY=h*0.94,centerX=w*0.46,centerY=h*0.42, flow=t*0.10;
+    for(let i=0;i<N;i++){
+      let tt=((i/N)+flow)%1;
+      const ang=tt*turns*TAU+t*0.25;
+      const tube=lerp(w*0.16,w*0.02,tt);
+      const bx=lerp(cornerX,centerX,tt),by=lerp(cornerY,centerY,tt);
+      const x=bx+Math.cos(ang)*tube,y=by+Math.sin(ang)*tube*0.62;
+      const depth=1-tt, r=lerp(2.2,15,depth)*DPR;
+      const blur=Math.min(st.maxBlur,Math.abs(depth-st.focus)*st.spread);
+      ctx.globalAlpha=lerp(0.12,0.9,depth); ctx.shadowBlur=blur*DPR; ctx.shadowColor='rgba(210,70,60,.5)';
+      ctx.fillStyle=mix('#7a2b28','#e0726a',depth);
+      ctx.beginPath(); ctx.ellipse(x,y,r,r*0.78,ang,0,TAU); ctx.fill();
+    }
+    ctx.globalAlpha=1; ctx.shadowBlur=0;
+  }
+  function drawMiniComp(ctx,w,h,t,st,seed){
+    drawSky(ctx,w,h,t,st.s);
+    drawObjectCore(ctx,w,h, t*0.3 + st.s*TAU*0.5);
+    ctx.globalCompositeOperation='lighter';
+    for(const p of seed){
+      const b=Math.pow(Math.sin(t*p.sp+p.ph)*0.5+0.5,6); if(b<0.03)continue;
+      const x=((p.x+Math.sin(t*0.2+p.ph)*0.03+st.s*0.30)%1)*w, y=(p.y+Math.cos(t*0.17+p.ph)*0.03)*h;
+      const r=p.r*DPR*(2+b*3), g=ctx.createRadialGradient(x,y,0,x,y,r*3);
+      g.addColorStop(0,`rgba(150,225,235,${0.8*b})`); g.addColorStop(1,'rgba(150,225,235,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*3,0,TAU); ctx.fill();
+    }
+    ctx.globalCompositeOperation='source-over';
+  }
+  const labsEl=document.getElementById('labs');
+  function labCard(n,title,sub){
+    const d=document.createElement('div');d.className='lab';
+    d.innerHTML=`<div class="lab-top"><span class="lab-n">${n}</span><h3>${title}</h3></div><div class="sub">${sub}</div>`;
+    const grid=document.createElement('div');grid.className='lab-grid';
+    const media=document.createElement('div');media.className='lab-media';
+    const side=document.createElement('div');side.className='lab-side';
+    grid.appendChild(media);grid.appendChild(side);d.appendChild(grid);labsEl.appendChild(d);
+    return {media,side};
+  }
+  function mkCanvas(p){const c=document.createElement('canvas');p.appendChild(c);return c;}
+  function sideGraph(side){const c=document.createElement('canvas');c.className='lgraph';side.appendChild(c);return c;}
+  function sRow(side,label,min,max,step,val,fmt,onin){
+    const row=document.createElement('div');row.className='lrow';
+    const l=document.createElement('label');l.textContent=label;
+    const inp=document.createElement('input');inp.type='range';inp.min=min;inp.max=max;inp.step=step;inp.value=val;
+    const v=document.createElement('span');v.className='lv';v.textContent=fmt(+val);
+    inp.addEventListener('input',()=>{v.textContent=fmt(+inp.value);onin(+inp.value);});
+    row.appendChild(l);row.appendChild(inp);row.appendChild(v);side.appendChild(row);return inp;
+  }
+  function fRow(side,html){const f=document.createElement('div');f.className='formula';f.innerHTML=html;side.appendChild(f);}
+  function nRow(side,html){const n=document.createElement('div');n.className='note';n.innerHTML=html;side.appendChild(n);}
+  function gridBg(c,w,h){c.fillStyle='rgba(8,34,44,.6)';c.fillRect(0,0,w,h);c.strokeStyle='rgba(255,255,255,.06)';c.lineWidth=DPR;for(let i=0;i<=4;i++){const y=6*DPR+i/4*(h-12*DPR);c.beginPath();c.moveTo(6*DPR,y);c.lineTo(w-6*DPR,y);c.stroke();}}
+  function plot(c,w,h,fn,color,dash){c.strokeStyle=color;c.lineWidth=2*DPR;c.setLineDash(dash?[4*DPR,4*DPR]:[]);c.beginPath();for(let i=0;i<=64;i++){const x=i/64,y=clamp(fn(x),0,1),px=6*DPR+x*(w-12*DPR),py=h-6*DPR-y*(h-12*DPR);i?c.lineTo(px,py):c.moveTo(px,py);}c.stroke();c.setLineDash([]);}
+  function playhead(c,w,h,x){const px=6*DPR+clamp(x,0,1)*(w-12*DPR);c.strokeStyle='rgba(255,255,255,.42)';c.lineWidth=DPR;c.beginPath();c.moveTo(px,3*DPR);c.lineTo(px,h-3*DPR);c.stroke();}
+
+  // A — sky colour interpolation
+  (function(){
+    const {media,side}=labCard('A','Journey colour interpolation','One scalar <b>j</b> drives the whole sky. Every gradient stop is a linear blend between a day colour and a dusk colour.');
+    const cv=mkCanvas(media); const st={j:0.2};
+    fRow(side,`top = <span class="c">mix</span>(#0f3d4e, #b5623c, <span class="c">j</span>)<br>mid = <span class="c">mix</span>(#0b3242, #5a2f3f, j)<br>bot = <span class="c">mix</span>(#06202a, #241433, j)`);
+    const ro=document.createElement('div');ro.className='readout';side.appendChild(ro);
+    const sw=[0,1,2].map(()=>{const s=document.createElement('div');s.className='swatch';ro.appendChild(s);return s;});
+    function upd(){const s=skyStops(st.j),k=['top','mid','bot'];k.forEach((kk,i)=>{sw[i].style.background=s[kk];sw[i].style.color=st.j>0.55&&i<2?'#1a0e16':'#cfe6ee';sw[i].textContent=['TOP','MID','BOT'][i]+' '+rgbToHex(s[kk]);});}
+    sRow(side,'journey j',0,1,0.01,0.2,v=>v.toFixed(2),v=>{st.j=v;upd();});
+    nRow(side,'In the Atlas, <b>j = scroll progress</b>. Light theme runs day→dusk; dark runs midnight→dawn.');
+    reg(cv,(c,w,h,t)=>drawSky(c,w,h,t,st.j)); upd();
+  })();
+
+  // B — depth of field
+  (function(){
+    const {media,side}=labCard('B','Depth of field','Each cell’s blur, radius and opacity are functions of its <b>depth</b>. Sharp at the focus plane, softening with distance — solid line = blur, dashed = radius.');
+    const cv=mkCanvas(media); const g=sideGraph(side);
+    const st={focus:0.9,spread:16,maxBlur:14,count:46};
+    fRow(side,`blur = <span class="c">min</span>(maxBlur, |depth − <span class="c">focus</span>| · spread)`);
+    sRow(side,'focus',0,1,0.01,0.9,v=>v.toFixed(2),v=>st.focus=v);
+    sRow(side,'max blur',0,24,1,14,v=>v+'px',v=>st.maxBlur=v);
+    sRow(side,'cells',8,90,1,46,v=>(v|0),v=>st.count=v);
+    reg(cv,(c,w,h,t)=>drawHelixLab(c,w,h,t,st));
+    reg(g,(c,w,h)=>{gridBg(c,w,h);
+      plot(c,w,h,d=>Math.min(st.maxBlur,Math.abs(d-st.focus)*st.spread)/24,'#e0726a');
+      plot(c,w,h,d=>lerp(0.12,1,d),'#24c4e6',true);});
+  })();
+
+  // C — firefly blink curve
+  (function(){
+    const {media,side}=labCard('C','Firefly blink curve','Brightness is a sine pushed through a high power. Higher exponent → rare, sharp flashes instead of a smooth pulse — solid = sin^p, dashed = plain sine.');
+    const cv=mkCanvas(media); const g=sideGraph(side);
+    const st={p:6,speed:1}; const seed=fireflies(22);
+    fRow(side,`blink = (½·<span class="c">sin</span>(t·speed + φ) + ½)<span class="c">^p</span>`);
+    sRow(side,'exponent p',1,16,1,6,v=>(v|0),v=>st.p=v);
+    sRow(side,'speed',0.2,3,0.1,1,v=>v.toFixed(1),v=>st.speed=v);
+    nRow(side,'Each firefly gets its own phase φ, so they never blink in unison.');
+    reg(cv,(c,w,h,t)=>{c.clearRect(0,0,w,h);c.globalCompositeOperation='lighter';
+      for(const p of seed){const b=Math.pow(Math.sin(t*st.speed+p.ph)*0.5+0.5,st.p);if(b<0.02)continue;
+        const x=p.x*w,y=p.y*h,r=p.r*DPR*(2.4+b*4),gr=c.createRadialGradient(x,y,0,x,y,r*3);
+        gr.addColorStop(0,`rgba(140,225,235,${0.9*b})`);gr.addColorStop(1,'rgba(140,225,235,0)');
+        c.fillStyle=gr;c.beginPath();c.arc(x,y,r*3,0,TAU);c.fill();}
+      c.globalCompositeOperation='source-over';});
+    reg(g,(c,w,h,t)=>{gridBg(c,w,h);
+      plot(c,w,h,x=>Math.pow(Math.sin(x*TAU)*0.5+0.5,st.p),'#d6a23e');
+      plot(c,w,h,x=>Math.sin(x*TAU)*0.5+0.5,'#9fc0cc',true);
+      playhead(c,w,h,(t*st.speed/TAU)%1);});
+  })();
+
+  // D — blend mode
+  (function(){
+    const {media,side}=labCard('D','Blend mode','The same fireflies over the same sky. <b>Normal</b> covers; <b>Screen</b> adds light — only the glow survives, never a dark box.');
+    const cv=mkCanvas(media); const st={mode:'lighter'}; const seed=fireflies(30);
+    const btns=document.createElement('div');btns.className='blendbtns';side.appendChild(btns);
+    [['Normal','source-over'],['Screen (add)','lighter']].forEach(([lbl,m])=>{
+      const b=document.createElement('button');b.className='ctl';b.textContent=lbl;b.style.padding='9px 13px';
+      if(m===st.mode)b.style.borderColor='var(--accent)';
+      b.onclick=()=>{st.mode=m;[...btns.children].forEach(x=>x.style.borderColor='var(--line-hi)');b.style.borderColor='var(--accent)';};
+      btns.appendChild(b);});
+    fRow(side,`ctx.<span class="c">globalCompositeOperation</span> = '<span class="cm">lighter</span>'`);
+    nRow(side,'In CSS the same idea is <b>mix-blend-mode: screen</b> on the particle canvas.');
+    reg(cv,(c,w,h,t)=>{drawSky(c,w,h,t,0.55);c.globalCompositeOperation=st.mode;
+      for(const p of seed){const b=Math.pow(Math.sin(t*p.sp+p.ph)*0.5+0.5,4);if(b<0.04)continue;
+        const x=p.x*w,y=p.y*h,r=p.r*DPR*(2+b*3),gr=c.createRadialGradient(x,y,0,x,y,r*3);
+        gr.addColorStop(0,`rgba(212,200,130,${0.85*b})`);gr.addColorStop(1,'rgba(212,200,130,0)');
+        c.fillStyle=gr;c.beginPath();c.arc(x,y,r*3,0,TAU);c.fill();}
+      c.globalCompositeOperation='source-over';});
+  })();
+
+  // E — scroll dynamics (one input -> many eased outputs)
+  (function(){
+    const {media,side}=labCard('E','Scroll dynamics','One input — scroll position — fans out into several outputs, each with its own gain and easing. That coupling is what makes the scene feel alive.');
+    const cv=mkCanvas(media); const g=sideGraph(side); const st={s:0.3}; const seed=fireflies(26);
+    const meters=[];
+    function meter(label){const m=document.createElement('div');m.className='meter';const l=document.createElement('label');l.textContent=label;const bar=document.createElement('div');bar.className='bar';const fill=document.createElement('i');bar.appendChild(fill);const v=document.createElement('span');v.className='mv';m.appendChild(l);m.appendChild(bar);m.appendChild(v);side.appendChild(m);meters.push({fill,v});return meters.length-1;}
+    sRow(side,'scrollY',0,1,0.01,0.3,v=>v.toFixed(2),v=>{st.s=v;updM();});
+    const mJ=meter('journey ·1.0'),mR=meter('object rot · ease'),mP=meter('sky parallax ·.15'),mF=meter('firefly drift ·.30');
+    function set(i,val,max){meters[i].fill.style.width=(clamp(val/max,0,1)*100).toFixed(0)+'%';meters[i].v.textContent=val.toFixed(2);}
+    function updM(){set(mJ,st.s,1);set(mR,easeInOut(st.s),1);set(mP,st.s*0.15,0.15);set(mF,st.s*0.30,0.30);}
+    nRow(side,'Dashed = linear input, solid = eased output. Scroll is the single source of truth.');
+    reg(cv,(c,w,h,t)=>drawMiniComp(c,w,h,t,st,seed));
+    reg(g,(c,w,h)=>{gridBg(c,w,h);plot(c,w,h,x=>x,'#9fc0cc',true);plot(c,w,h,x=>easeInOut(x),'#24c4e6');playhead(c,w,h,st.s);});
+    updM();
+  })();
+
+  /* ===================== MAIN LOOP ===================== */
+  let last=performance.now(), acc=0;
+  function frame(now){
+    const dt=Math.min(0.05,(now-last)/1000); last=now;
+    if(autoJ){ journey=(Math.sin(now*0.00018)*0.5+0.5); jr.value=journey*100; jv.textContent=jLabel(journey); }
+    if(spin){ spinA += dt*6; stack.style.transform=`rotateX(53deg) rotateZ(${spinA}deg)`; }
+    const t=now/1000;
+    for(const l of layers){
+      const r=l.canvas.getBoundingClientRect();
+      // skip offscreen for perf
+      if(r.bottom<-120||r.top>window.innerHeight+120) continue;
+      if(!l.canvas.width) continue;
+      l.draw(l.ctx, l.canvas.width, l.canvas.height, t, journey);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function boot(){ sizeAll(); jv.textContent=jLabel(journey); requestAnimationFrame(frame); }
+  window.addEventListener('resize', ()=>{ clearTimeout(window.__rz); window.__rz=setTimeout(sizeAll,120); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(sizeAll);
+  boot();
+})();
+</script>
+</body>
+</html>

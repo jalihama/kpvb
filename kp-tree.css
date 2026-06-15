@@ -112,7 +112,7 @@
 .item-type[data-t="image"]{--tc:oklch(.83 .09 150)}
 .item-type[data-t="link"]{--tc:oklch(.8 .02 220)}
 .item-title{flex:1 1 auto; font-size:14.5px; line-height:1.35; color:var(--ink); text-wrap:pretty}
-.item-size{flex:0 0 auto; font:500 11px/1 var(--mono); color:var(--ink-dim); white-space:nowrap}
+.item-size{display:none; flex:0 0 auto; font:500 11px/1 var(--mono); color:var(--ink-dim); white-space:nowrap}
 .item-open{
   flex:0 0 auto; display:inline-flex; align-items:center; gap:4px;
   font:500 12px/1 var(--mono); color:var(--ink-dim);

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Design Psychology — Hamas KP Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a2733; --bg2:#08222c; --panel:#0f3848; --panel2:#0c2f3d;
+    --ink:#e3eef2; --ink-soft:#9fc0cc; --line:#1c4253; --line-hi:#2b6173;
+    --accent:#24c4e6; --accent-dim:#1f93b0;
+    --red:#e0726a; --amber:#d6a23e; --violet:#a78bdb; --green:#3fbf9f;
+    --f:'Roboto Flex',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --m:'Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  html{background:var(--bg);scroll-behavior:smooth}
+  body{font-family:var(--f);color:var(--ink);
+    background:radial-gradient(125% 80% at 78% -8%, #0e3a49 0%, var(--bg) 52%, var(--bg2) 100%);
+    min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  .mono{font-family:var(--m)}
+
+  header{padding:74px 0 30px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font:600 11px/1 var(--m);
+    letter-spacing:.32em;text-transform:uppercase;color:var(--accent);margin-bottom:22px}
+  .eyebrow::before,.eyebrow::after{content:"";width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--accent-dim))}
+  .eyebrow::after{transform:scaleX(-1)}
+  h1{font-size:clamp(2rem,5.4vw,3.4rem);font-weight:700;letter-spacing:-.02em;line-height:1.04}
+  h1 .glow{color:var(--accent)}
+  .lede{max-width:640px;margin:20px auto 0;color:var(--ink-soft);font-size:clamp(1rem,2.3vw,1.15rem)}
+
+  /* thesis */
+  .thesis{max-width:880px;margin:46px auto 0;padding:34px 30px;border:1px solid var(--line-hi);
+    border-radius:18px;background:linear-gradient(180deg,rgba(15,56,72,.6),rgba(12,47,61,.6));text-align:center}
+  .thesis .tag{font:600 11px/1 var(--m);letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  .thesis p{font-size:clamp(1.25rem,3.4vw,1.9rem);font-weight:600;letter-spacing:-.01em;line-height:1.3}
+  .thesis p em{color:var(--accent);font-style:normal}
+
+  /* layer overview */
+  .overview{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0 8px}
+  .ov{border:1px solid var(--line);border-radius:13px;background:var(--panel2);padding:18px;
+    text-decoration:none;color:inherit;transition:border-color .2s,transform .2s}
+  .ov:hover{border-color:var(--accent-dim);transform:translateY(-2px)}
+  .ov .n{font:600 11px/1 var(--m);color:var(--accent);letter-spacing:.1em}
+  .ov h4{font-size:1.05rem;font-weight:700;margin:9px 0 5px}
+  .ov p{font-size:12.5px;color:var(--ink-soft)}
+
+  section{padding:46px 0}
+  .layer-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .layer-num{font:600 12px/1 var(--m);color:var(--accent);letter-spacing:.12em}
+  .layer-title{font-size:clamp(1.5rem,3.6vw,2.1rem);font-weight:700;letter-spacing:-.01em}
+  .layer-sub{color:var(--ink-soft);margin-bottom:30px;max-width:700px}
+
+  /* principle card */
+  .pcard{border:1px solid var(--line);border-radius:15px;background:var(--panel2);padding:22px;margin-bottom:20px}
+  .pcard-top{display:flex;align-items:baseline;gap:11px;margin-bottom:14px}
+  .pcard-n{font:600 11px/1 var(--m);color:var(--accent);letter-spacing:.12em;flex:0 0 auto}
+  .pcard h3{font-size:1.22rem;font-weight:700;letter-spacing:-.01em}
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+  .pgrid.wide-demo{grid-template-columns:1.15fr .85fr}
+  .demo{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--demo-bg,#06212b);min-height:230px}
+  .ptext .risk,.ptext .move{display:flex;gap:10px;margin-bottom:12px}
+  .ptext .k{font:600 10px/1.4 var(--m);letter-spacing:.1em;text-transform:uppercase;flex:0 0 64px;padding-top:2px}
+  .risk .k{color:var(--red)} .move .k{color:var(--green)}
+  .ptext .t{font-size:13.5px;color:var(--ink-soft)} .ptext .t b{color:var(--ink);font-weight:600}
+  .line{margin-top:6px;font-size:13.5px;color:var(--ink);font-style:italic;border-left:2px solid var(--accent);padding-left:12px}
+  .demo-ctl{display:flex;gap:8px;flex-wrap:wrap;padding:12px;border-top:1px solid var(--line);background:rgba(8,34,44,.5)}
+  button.ctl{font:600 12.5px/1 var(--f);color:var(--ink);background:var(--panel);
+    border:1px solid var(--line-hi);border-radius:9px;padding:10px 14px;cursor:pointer;transition:border-color .2s,background .2s}
+  button.ctl:hover{border-color:var(--accent-dim)}
+  button.ctl.on{border-color:var(--accent);background:rgba(36,196,230,.12);color:#bfeefb}
+  button.ctl:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .demo-stage{padding:18px;min-height:230px;display:flex;flex-direction:column;justify-content:center}
+  canvas.demo-cv{width:100%;height:100%;display:block;min-height:230px}
+
+  /* A1 room */
+  .room{transition:all .6s cubic-bezier(.4,0,.15,1);margin:0 auto;width:100%}
+  .room .rrow{height:13px;border-radius:4px;background:rgba(159,192,204,.18);margin-bottom:7px}
+  .room.narrow{max-width:150px;background:#081a22;border:1px solid #163542;border-radius:8px;padding:14px}
+  .room.narrow .rrow{background:rgba(159,192,204,.30)}
+  .room.open{max-width:100%;background:linear-gradient(180deg,#1a5e6e,#0e3a49 60%,#0a2733);border:1px solid #2b6173;border-radius:12px;padding:26px}
+  .room.open .rrow{background:rgba(255,255,255,.16);max-width:62%}
+  .room .label{font:600 10px/1 var(--m);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px}
+
+  /* A4 swatches */
+  .swrow{display:flex;gap:8px;margin-top:14px}
+  .sw{flex:1;border-radius:8px;padding:11px 6px;text-align:center;font:600 10px/1.3 var(--m);border:1px solid rgba(255,255,255,.12)}
+  .slider-row{display:flex;align-items:center;gap:12px;margin-top:14px}
+  .slider-row label{font:600 10px/1 var(--m);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  .slider-row input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+  .slider-row .v{font:600 12px/1 var(--m);color:var(--accent);min-width:96px;text-align:right}
+
+  /* B1 disclosure */
+  .discl{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;max-height:200px;overflow:hidden}
+  .discl .chip{font:600 10px/1 var(--m);color:var(--ink-soft);border:1px solid var(--line);
+    border-radius:6px;padding:7px 8px;background:rgba(15,56,72,.5);white-space:nowrap}
+  .discl.calm{flex-direction:column;flex-wrap:nowrap}
+  .discl.calm .chip{display:flex;align-items:center;gap:8px;padding:11px 12px;font-size:11px;color:var(--ink)}
+  .discl.calm .chip i{width:9px;height:9px;border-radius:3px;font-style:normal}
+  .discl .chip.hide{display:none}
+  .loadbar{display:flex;align-items:center;gap:10px;margin-top:14px}
+  .loadbar label{font:600 10px/1 var(--m);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);flex:0 0 auto}
+  .loadbar .bar{flex:1;height:8px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden}
+  .loadbar .bar i{display:block;height:100%;border-radius:5px;transition:width .5s,background .5s}
+  .loadbar .v{font:600 11px/1 var(--m);min-width:84px;text-align:right}
+
+  /* B2 focus */
+  .focuslist{display:flex;flex-direction:column;gap:8px}
+  .frow{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel2);cursor:pointer;transition:opacity .35s,border-color .25s,background .25s}
+  .frow i{width:11px;height:11px;border-radius:3px;flex:0 0 auto;font-style:normal}
+  .frow span{height:8px;border-radius:5px;background:rgba(159,192,204,.4);flex:1;max-width:60%}
+  .focuslist.has-sel .frow{opacity:.28}
+  .focuslist.has-sel .frow.sel{opacity:1;border-color:var(--accent);background:rgba(36,196,230,.10)}
+
+  /* B4 countdown */
+  .cd{display:flex;align-items:center;justify-content:center;gap:10px;padding:18px;border-radius:11px;
+    border:1px dashed var(--line-hi);background:rgba(8,34,44,.5);font:600 13px/1 var(--m);color:var(--ink-soft);transition:all .3s}
+  .cd.on{border-style:solid;border-color:var(--amber);color:var(--amber);background:rgba(214,162,62,.08)}
+  .cd b{font-size:20px;color:var(--ink)} .cd.on b{color:var(--amber)}
+
+  /* C1 prose vs flow */
+  .prose{font-size:13px;line-height:1.75;color:var(--ink-soft);background:rgba(8,34,44,.5);
+    border:1px solid var(--line);border-radius:10px;padding:15px}
+  .prose .hl{background:rgba(224,114,106,.22);color:#f3c4bf;border-radius:3px;padding:0 2px}
+  .flow{display:flex;flex-direction:column;gap:9px}
+  .fnode{display:flex;align-items:center;gap:10px}
+  .fbox{flex:1;border:1px solid var(--line-hi);border-radius:9px;padding:10px 13px;background:var(--panel);
+    font:600 12px/1.3 var(--f);color:var(--ink);display:flex;align-items:center;gap:9px}
+  .fbox i{width:8px;height:8px;border-radius:50%;background:var(--accent);font-style:normal;flex:0 0 auto}
+  .fbox.branch{background:rgba(36,196,230,.10);border-color:var(--accent-dim)}
+  .farrow{align-self:center;color:var(--accent);font-size:16px;line-height:1}
+  .frowsplit{display:flex;gap:10px}
+  .frowsplit .fbox{font-size:11px;padding:8px 11px}
+  .wm{margin-top:14px}
+  .wm .wl{font:600 10px/1 var(--m);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+  .wm .slots{display:flex;gap:5px}
+  .wm .slot{flex:1;height:22px;border-radius:5px;border:1px solid var(--line);background:rgba(8,34,44,.6)}
+  .wm .slot.on{background:linear-gradient(180deg,var(--red),#a8423b);border-color:var(--red)}
+  .wm .slot.ok{background:linear-gradient(180deg,var(--green),#1f7a64);border-color:var(--green)}
+  .wm .cap{font-size:12px;color:var(--ink-soft);margin-top:8px}
+  .wm .cap b{color:var(--ink)}
+
+  /* synthesis */
+  .syn{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+  .syncol{border:1px solid var(--line);border-radius:13px;background:var(--panel2);padding:18px}
+  .syncol .h{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .syncol .h i{width:11px;height:11px;border-radius:3px;font-style:normal}
+  .syncol .h b{font-size:13px}
+  .syncol ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .syncol li{font-size:12px;color:var(--ink-soft);padding-left:14px;position:relative}
+  .syncol li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+  .closing{margin-top:30px;padding:30px;border:1px solid var(--line-hi);border-radius:16px;
+    background:linear-gradient(180deg,rgba(15,56,72,.55),rgba(12,47,61,.55));text-align:center}
+  .closing p{font-size:clamp(1.05rem,2.6vw,1.4rem);font-weight:600;line-height:1.4;max-width:760px;margin:0 auto}
+  .closing p em{color:var(--accent);font-style:normal}
+
+  footer{padding:48px 0 80px;text-align:center;color:var(--ink-soft);border-top:1px solid var(--line);margin-top:30px}
+  footer .big{color:var(--ink);font-weight:600;font-size:1.05rem;margin-bottom:6px}
+  .disclaimer{max-width:720px;margin:18px auto 0;font-size:11.5px;color:var(--ink-soft);opacity:.8;line-height:1.6}
+
+  @media (max-width:760px){
+    .overview,.syn{grid-template-columns:1fr}
+    .pgrid,.pgrid.wide-demo{grid-template-columns:1fr;gap:16px}
+    .ptext{order:2}
+  }
+</style>
+</head>
+<body>
+
+<style>
+  :root[data-theme="light"]{
+    --bg:#eef5f8;--bg2:#e7f0f3;--panel:#ffffff;--panel2:#f2f7f8;
+    --ink:#08222c;--ink-soft:#45697a;--line:#cddbe0;--line-hi:#9fc0cc;
+    --accent:#0a7c9c;--accent-dim:#1f93b0;
+    --red:#b9514a;--amber:#a9762a;--violet:#7a5fc0;--green:#1f8a6e;
+  }
+  :root[data-theme="light"] body{background:radial-gradient(125% 80% at 78% -8%, #e3eef3 0%, #eef5f8 52%, #e7f0f3 100%)}
+  :root[data-theme="light"] .thesis,:root[data-theme="light"] .closing{background:linear-gradient(180deg,#ffffff,#eef5f8);border-color:var(--line-hi)}
+  :root[data-theme="light"] .thesis p{color:var(--ink)}
+  :root[data-theme="light"]{--demo-bg:#dce8ed}
+  :root[data-theme="light"] #autoCv,:root[data-theme="light"] #scrubCv{background:#dce8ed}
+  :root[data-theme="light"] .segbtn.on{color:#f2fbff}
+  .topbar{position:sticky;top:0;z-index:60;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:11px 22px;background:var(--bg);border-bottom:1px solid var(--line)}
+  .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .segbtn{font:600 11px/1 var(--m);letter-spacing:.04em;color:var(--ink-soft);background:transparent;border:none;padding:9px 12px;cursor:pointer;transition:background .18s,color .18s}
+  .segbtn.on{background:var(--accent);color:#04202a}
+  .segbtn:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  @media(max-width:760px){.topbar{padding:9px 14px;gap:6px}.segbtn{padding:8px 9px;font-size:10px}}
+</style>
+<div class="topbar" id="topbar">
+  <div class="seg" role="group" aria-label="Language">
+    <button class="segbtn on" id="langPro" type="button">Designer</button>
+    <button class="segbtn" id="langPlain" type="button">Plain</button>
+  </div>
+  <div class="seg" role="group" aria-label="Theme">
+    <button class="segbtn on" id="thDark" type="button">Dark</button>
+    <button class="segbtn" id="thLight" type="button">Light</button>
+  </div>
+</div>
+
+<header class="wrap">
+  <div class="eyebrow">Human–Device Interaction · Trauma-Informed Design</div>
+  <h1>Design Psychology — <span class="glow">a regulated surface for a dysregulated state</span></h1>
+  <p class="lede">The Atlas addresses a user in a plausibly dysregulated state — autonomically aroused by exam stress, fatigued, traumatised, or neurodivergent. Interaction is treated as nervous-system design: every device behaviour is evaluated for the regulatory load it imposes before any learning is attempted.</p>
+
+  <div class="thesis">
+    <div class="tag">The Thesis</div>
+    <p>Minimise the <em>regulatory load</em> — autonomic, attentional, cognitive — that a stressed or atypical nervous system must absorb <em>before</em> it can engage the material.</p>
+  </div>
+
+  <div class="overview">
+    <a class="ov" href="#ambient"><div class="n">LAYER 01</div><h4>Ambient</h4><p>Pre-attentive environment — perceived safety before the first interaction.</p></a>
+    <a class="ov" href="#agency"><div class="n">LAYER 02</div><h4>Agency</h4><p>User-governed rendering — locus of control over what the device does.</p></a>
+    <a class="ov" href="#behavioral"><div class="n">LAYER 03</div><h4>Interaction</h4><p>Event architecture — disclosure, attention, reversibility, opt-in stressors.</p></a>
+    <a class="ov" href="#cognitive"><div class="n">LAYER 04</div><h4>Cognitive</h4><p>Knowledge representation — external memory, dual coding, chunking.</p></a>
+  </div>
+</header>
+
+<!-- ===================== AMBIENT ===================== -->
+<section class="wrap" id="ambient">
+  <div class="layer-head"><span class="layer-num">LAYER 01</span><span class="layer-title">Ambient — the pre-attentive environment</span></div>
+  <p class="layer-sub">Before any deliberate interaction, the rendered surface is appraised by the threat-detection system. These properties are tuned to be read as <i>safe</i> pre-attentively — beneath conscious notice.</p>
+
+  <!-- A1 open vs narrow -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">A1</span><h3>Spatial openness, not enclosure</h3></div>
+    <div class="pgrid wide-demo">
+      <div class="demo">
+        <div class="demo-stage"><div class="room open" id="room"><div class="label" id="roomLabel">OPEN · room to breathe</div><div class="rrow"></div><div class="rrow"></div><div class="rrow"></div></div></div>
+        <div class="demo-ctl"><button class="ctl on" id="roomOpen">Open</button><button class="ctl" id="roomNarrow">Enclosed</button></div>
+      </div>
+      <div class="ptext">
+        <div class="risk"><span class="k">Stressor</span><span class="t">Enclosure and visual density are common interoceptive triggers for anxiety and PTSD; a dense content field is appraised as a narrowing space and raises autonomic arousal.</span></div>
+        <div class="move"><span class="k">Response</span><span class="t">Counter it <b>spatially</b> — an open, horizon-like field with generous negative space, so the container is appraised as expansive rather than confining.</span></div>
+        <div class="line"><b>Safety.</b> The autonomic system down-regulates before the cognitive system is asked to engage.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A2 familiarity -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">A2</span><h3>Familiarity priming before demand</h3></div>
+    <div class="pgrid">
+      <div class="demo"><div class="demo-stage"><canvas class="demo-cv" id="cellsCv"></canvas></div></div>
+      <div class="ptext">
+        <div class="risk"><span class="k">Stressor</span><span class="t">The first rendered object calibrates threat appraisal; a novel, complex stimulus primes intimidation and defensive arousal.</span></div>
+        <div class="move"><span class="k">Response</span><span class="t">Populate the field with <b>erythrocytes</b> — the most over-learned object in medicine. Fluent recognition signals competence pre-consciously, lowering the threat estimate before any content is parsed.</span></div>
+        <div class="line"><b>Priming.</b> Establish mastery, not difficulty, as the first impression.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A3 motion agency -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">A3</span><h3>User-initiated motion, never system-initiated</h3></div>
+    <div class="pgrid wide-demo">
+      <div class="demo">
+        <div class="demo-stage" style="flex-direction:row;gap:12px;align-items:stretch">
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+            <div style="font:600 9px/1.3 var(--m);letter-spacing:.1em;color:var(--red);text-transform:uppercase">Acts on you</div>
+            <canvas class="demo-cv" id="autoCv" style="min-height:150px;border-radius:8px;border:1px solid var(--line)"></canvas>
+            <div style="font-size:10px;color:var(--ink-soft)">Moves on its own. A startle you can't predict.</div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+            <div style="font:600 9px/1.3 var(--m);letter-spacing:.1em;color:var(--green);text-transform:uppercase">Responds to you</div>
+            <canvas class="demo-cv" id="scrubCv" style="min-height:150px;border-radius:8px;border:1px solid var(--line)"></canvas>
+            <input type="range" id="scrubR" min="0" max="100" value="20" style="width:100%;accent-color:var(--accent)" aria-label="drag to move the scene" />
+          </div>
+        </div>
+      </div>
+      <div class="ptext">
+        <div class="risk"><span class="k">Stressor</span><span class="t">System-initiated motion is an event that <b>acts on</b> the user — unpredictable, and for a hypervigilant or dissociating nervous system, a potential startle or trigger.</span></div>
+        <div class="move"><span class="k">Response</span><span class="t">All motion is <b>input-coupled</b>: the scene advances only as a function of user scroll. The device responds; it never initiates. The same drift then functions as a <b>grounding signal</b> — temporal orientation held by the user.</span></div>
+        <div class="line"><b>Agency.</b> Relocating the locus of control from device to user is itself regulating. Drag the right panel — nothing occurs until you cause it.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A4 palette -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">A4</span><h3>Circadian-affective grading</h3></div>
+    <div class="pgrid wide-demo">
+      <div class="demo"><div class="demo-stage" style="padding:0"><canvas class="demo-cv" id="skyCv"></canvas></div></div>
+      <div class="ptext">
+        <div class="move"><span class="k">Response</span><span class="t">The full surface is graded along a <b>teal → golden-hour</b> axis — a circadian-affective register reliably associated with low arousal and perceived safety.</span></div>
+        <div class="t" style="font-size:12.5px;color:var(--ink-soft);margin-bottom:8px">Both trajectories — day→dusk and midnight→dawn — resolve <b style="color:var(--ink)">toward</b> warmth; the affective arc always terminates in a safer state than it began.</div>
+        <div class="swrow" id="skySw"></div>
+        <div class="slider-row"><label>journey</label><input type="range" id="skyR" min="0" max="100" value="20" /><span class="v mono" id="skyV">Day</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .agtog{display:flex;align-items:center;gap:7px;font:600 11px/1 var(--m);color:var(--ink-soft);cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--panel)}
+  .agtog input{accent-color:var(--accent);width:14px;height:14px}
+  .agseg{display:flex;gap:7px;flex-wrap:wrap}
+</style>
+<!-- ===================== AGENCY ===================== -->
+<section class="wrap" id="agency">
+  <div class="layer-head"><span class="layer-num">LAYER 02</span><span class="layer-title">Agency — user-governed rendering</span></div>
+  <p class="layer-sub">Trauma-informed practice centres <i>voice and choice</i>; HDI frames the same construct as <i>locus of control</i>. The Atlas exposes its own rendering as a settings surface, so the user — not the designer — determines what the device does. Perceived control is itself anxiolytic.</p>
+
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">AG1</span><h3>From barebones to alive — the user sets the floor</h3></div>
+    <div class="pgrid wide-demo">
+      <div class="demo">
+        <div class="demo-stage" style="padding:0;min-height:200px"><canvas class="demo-cv" id="agPrev" style="min-height:200px"></canvas></div>
+        <div class="demo-ctl" style="flex-direction:column;align-items:stretch;gap:9px">
+          <div class="agseg">
+            <label class="agtog"><input type="checkbox" id="agCells" checked />Show cells</label>
+            <label class="agtog"><input type="checkbox" id="agPoints" checked />Show light points</label>
+            <label class="agtog"><input type="checkbox" id="agGrad" checked />Colour gradient</label>
+          </div>
+          <div class="agseg">
+            <button class="ctl on" id="agScroll">React to scrolling</button>
+            <button class="ctl" id="agLoop">Gentle loop</button>
+            <button class="ctl" id="agStill">Hold still</button>
+          </div>
+          <input type="range" id="agScrubR" min="0" max="100" value="25" style="accent-color:var(--accent);height:4px" aria-label="scroll position" />
+        </div>
+      </div>
+      <div class="ptext">
+        <div class="risk"><span class="k">Stressor</span><span class="t">No single level of ambient animation suits every nervous system; what soothes one user over-stimulates another, and the designer cannot predict which.</span></div>
+        <div class="move"><span class="k">Response</span><span class="t">Expose every ambient layer as a plain-language control — <i>Show cells</i>, <i>React to scrolling</i>, <i>Hold still</i>, <i>Colour gradient</i>. The user dials from a static, barebones surface to a continuously alive one, with no jargon to decode.</span></div>
+        <div class="line"><b>Voice &amp; choice.</b> The regulating party is the user, not the interface.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">AG2</span><h3>A stillness floor — and what is deliberately not exposed</h3></div>
+    <div class="pgrid">
+      <div class="demo"><div class="demo-stage">
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div class="agtog" style="justify-content:space-between;cursor:default"><span>Hold still</span><span style="color:var(--green)">freezes all motion</span></div>
+          <div class="agtog" style="justify-content:space-between;cursor:default"><span>Colour gradient off</span><span style="color:var(--green)">flat black / white</span></div>
+          <div class="agtog" style="justify-content:space-between;cursor:default"><span>Focus mode</span><span style="color:var(--green)">one system, minimal chrome</span></div>
+          <div class="agtog" style="justify-content:space-between;opacity:.6;cursor:default"><span>Diffusion / legibility</span><span style="color:var(--ink-soft)">not user-exposed</span></div>
+        </div>
+      </div></div>
+      <div class="ptext">
+        <div class="move"><span class="k">Floor</span><span class="t">Combined, <b>Hold still</b>, <b>gradient off</b>, and <b>Focus mode</b> reduce the surface to its lowest-stimulation state — a near-static, single-system, flat-background reading view.</span></div>
+        <div class="move"><span class="k">Boundary</span><span class="t">One parameter is <b>withheld</b>: the diffusion layer that keeps text legible over the scene. Exposing it would let a user degrade their own readability — a control whose only outcomes are harmful is not offered.</span></div>
+        <div class="line"><b>Bounded autonomy.</b> Agency over affect and stimulation; never over legibility or safety.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BEHAVIORAL ===================== -->
+<section class="wrap" id="behavioral">
+  <div class="layer-head"><span class="layer-num">LAYER 03</span><span class="layer-title">Interaction — the event model</span></div>
+  <p class="layer-sub">One invariant governs the event model: <b>the user initiates; the device responds.</b> Disclosure is opt-in, attention is single-focus, actions are reversible, and stressors are never imposed.</p>
+
+  <!-- B1 disclosure -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">B1</span><h3>Progressive disclosure — nothing rendered until requested</h3></div>
+    <div class="pgrid wide-demo">
+      <div class="demo">
+        <div class="demo-stage"><div class="discl calm" id="discl"></div>
+          <div class="loadbar"><label>overwhelm</label><div class="bar"><i id="loadFill"></i></div><span class="v mono" id="loadV"></span></div>
+        </div>
+        <div class="demo-ctl"><button class="ctl" id="wallBtn">Show everything</button><button class="ctl on" id="calmBtn">Collapsed (default)</button></div>
+      </div>
+      <div class="ptext">
+        <div class="risk"><span class="k">Stressor</span><span class="t">Rendering more than fifty resources across thirteen systems simultaneously presents a high-density threat surface with no visual point of rest.</span></div>
+        <div class="move"><span class="k">Response</span><span class="t"><b>All branches collapse by default.</b> The interface presents a short set of system labels; the user titrates their own exposure, deciding how much information enters the field and when.</span></div>
+        <div class="line"><b>Self-pacing.</b> The optimisation target is non-overwhelm, not engagement — a deliberate inversion of the conventional metric.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B2 single focus -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">B2</span><h3>Single-focus attention model</h3></div>
+    <div class="pgrid wide-demo">
+      <div class="demo"><div class="demo-stage"><div class="focuslist" id="focus"></div></div>
+        <div class="demo-ctl"><span style="font:500 11px/1.5 var(--m);color:var(--ink-soft)">Click a row — watch the others recede.</span></div>
+      </div>
+      <div class="ptext">
+        <div class="risk"><span class="k">Stressor</span><span class="t">Under autonomic load, parallel decision sets exceed available attentional bandwidth.</span></div>
+        <div class="move"><span class="k">Response</span><span class="t">Selecting a system <b>foregrounds it and recedes the rest</b>. The architecture enforces one active locus; competing options are suppressed, not removed. In Focus mode the surface renders that single system alone.</span></div>
+        <div class="line"><b>Attentional economy.</b> De-cluttering by suppression, not deletion.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B3 exit + B4 opt-in -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">B3 · B4</span><h3>Reversibility and opt-in stressors</h3></div>
+    <div class="pgrid">
+      <div class="demo"><div class="demo-stage" style="gap:16px">
+        <div class="cd" id="cd">Exam countdown — <b>off</b> by default</div>
+        <div class="demo-ctl" style="border:none;background:none;padding:0;justify-content:center">
+          <button class="ctl" id="cdOn">Set a date</button><button class="ctl on" id="cdOff">Leave it off</button>
+        </div>
+      </div></div>
+      <div class="ptext">
+        <div class="move"><span class="k">Reversibility</span><span class="t">Every resource opens with a persistent return control and honours native back-navigation. State is always reversible; the user is never trapped in a view — the interaction equivalent of a visible exit.</span></div>
+        <div class="move"><span class="k">Opt-in</span><span class="t">The exam countdown is <b>disabled by default</b>. Rather than imposing a salient stress cue, the system requires the user to instantiate it. Temporal pressure is opt-in.</span></div>
+        <div class="line"><b>Trustworthiness.</b> The device introduces no stressor the user did not choose.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COGNITIVE ===================== -->
+<section class="wrap" id="cognitive">
+  <div class="layer-head"><span class="layer-num">LAYER 04</span><span class="layer-title">Cognitive — knowledge representation</span></div>
+  <p class="layer-sub">The same load-minimisation applied to the information itself: lower the working-memory cost of comprehension before it is demanded.</p>
+
+  <!-- C1 prose vs flow -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">C1</span><h3>Externalising sequence — offloading working memory</h3></div>
+    <div class="pgrid">
+      <div class="demo"><div class="demo-stage" id="c1stage"></div>
+        <div class="demo-ctl"><button class="ctl" id="proseBtn">As prose</button><button class="ctl on" id="flowBtn">As flowchart</button></div>
+      </div>
+      <div class="ptext">
+        <div class="risk"><span class="k">Stressor</span><span class="t">Prose requires the reader to <b>maintain</b> antecedent clauses in working memory while parsing subsequent ones — taxing the precise resource depleted by stress, fatigue, ADHD, or autism.</span></div>
+        <div class="move"><span class="k">Response</span><span class="t">Re-represent narrative as a <b>directed graph</b>. The arrows externalise sequence onto the display; order is held by the page, not the reader. Text is retained only where it outperforms structure.</span></div>
+        <div class="line"><b>Dual coding.</b> Recruiting the visuospatial channel alongside the verbal distributes load across two subsystems rather than one bottleneck.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C2 compartmentalize -->
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">C2</span><h3>Bounded units — one chunk at a time</h3></div>
+    <div class="pgrid">
+      <div class="demo"><div class="demo-stage">
+        <div class="focuslist" style="gap:7px">
+          <div class="frow" style="opacity:1;border-color:var(--accent);background:rgba(36,196,230,.10)"><i style="background:var(--accent)"></i><span style="max-width:50%"></span><span style="flex:0 0 auto;font:600 10px/1 var(--m);color:var(--accent);margin-left:auto">open</span></div>
+          <div class="frow" style="opacity:.3"><i style="background:var(--violet)"></i><span></span></div>
+          <div class="frow" style="opacity:.3"><i style="background:var(--green)"></i><span></span></div>
+          <div class="frow" style="opacity:.3"><i style="background:var(--amber)"></i><span></span></div>
+        </div>
+      </div></div>
+      <div class="ptext">
+        <div class="move"><span class="k">Response</span><span class="t">Knowledge is <b>chunked</b> into self-contained units — system → disease → a single graph. The user enters a bounded scope, completes it, and exits.</span></div>
+        <div class="t" style="font-size:13px;color:var(--ink-soft)">One disease's logic is reasoned about <i>without</i> co-activating the entire domain; never more than one bounded unit is resident at a time.</div>
+        <div class="line"><b>Chunking.</b> The working-memory thesis at the scale of the knowledge map.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pcard">
+    <div class="pcard-top"><span class="pcard-n">C3</span><h3>Suppressing non-essential signal</h3></div>
+    <div class="pgrid">
+      <div class="demo"><div class="demo-stage">
+        <div class="focuslist" style="gap:7px">
+          <div class="frow" style="opacity:1"><i style="background:var(--accent)"></i><span style="max-width:44%"></span><span style="flex:0 0 auto;font:600 10px/1 var(--m);color:var(--ink-soft);margin-left:auto;text-decoration:line-through;opacity:.5">12 ·</span></div>
+          <div class="frow" style="opacity:1"><i style="background:var(--violet)"></i><span style="max-width:54%"></span><span style="flex:0 0 auto;font:600 10px/1 var(--m);color:var(--ink-soft);margin-left:auto;text-decoration:line-through;opacity:.5">7 ·</span></div>
+          <div class="frow" style="opacity:1"><i style="background:var(--green)"></i><span style="max-width:38%"></span><span style="flex:0 0 auto;font:600 10px/1 var(--m);color:var(--ink-soft);margin-left:auto;text-decoration:line-through;opacity:.5">23 ·</span></div>
+        </div>
+      </div></div>
+      <div class="ptext">
+        <div class="move"><span class="k">Response</span><span class="t">Per-item quantity indicators were <b>withdrawn from the surface</b>. Under load, counts are navigational noise — extraneous cognitive load in Sweller's sense — so they are no longer rendered, while remaining intact in the data model.</span></div>
+        <div class="line"><b>Extraneous-load reduction.</b> Every rendered glyph must justify its cost; the architecture is preserved, the signal is not shown.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SYNTHESIS ===================== -->
+<section class="wrap">
+  <div class="layer-head"><span class="layer-num">05</span><span class="layer-title">One thesis, four layers</span></div>
+  <p class="layer-sub">The layers are one construct expressed across four media. None contradicts the others — that coherence is the claim.</p>
+  <div class="syn">
+    <div class="syncol"><div class="h"><i style="background:var(--accent)"></i><b>Ambient</b></div>
+      <ul><li>Spatial openness vs. enclosure</li><li>Familiarity primes competence</li><li>User-initiated motion only</li><li>Circadian-affective grading</li></ul></div>
+    <div class="syncol"><div class="h"><i style="background:#7fd6ec"></i><b>Agency</b></div>
+      <ul><li>Plain-language rendering controls</li><li>Barebones → alive, user sets it</li><li>Stillness &amp; flat-background floor</li><li>Bounded autonomy (legibility withheld)</li></ul></div>
+    <div class="syncol"><div class="h"><i style="background:var(--violet)"></i><b>Interaction</b></div>
+      <ul><li>Progressive disclosure by default</li><li>Single-focus attention model</li><li>Reversible state, visible exit</li><li>Opt-in stressors only</li></ul></div>
+    <div class="syncol"><div class="h"><i style="background:var(--green)"></i><b>Cognitive</b></div>
+      <ul><li>Sequence externalised to graphs</li><li>Dual coding — words + space</li><li>Bounded chunks, one at a time</li><li>Non-essential signal suppressed</li></ul></div>
+  </div>
+  <div class="closing">
+    <p>Four layers — ambient, agency, interaction, cognitive — each removing one class of load between a dysregulated nervous system and the material it must engage. <em>That</em> is the design.</p>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div class="big">Regulation is not an aesthetic here. It is the specification.</div>
+  Human–Device Interaction · Trauma-Informed Design · Hamas KP Atlas
+  <p class="disclaimer">A note on rigour: these choices are trauma-<i>informed</i> and grounded in established constructs — locus of control and perceived control (HDI), progressive disclosure, cognitive-load theory, dual coding, and the SAMHSA trauma-informed principles of safety, trustworthiness, and choice &amp; control. They are offered as a coherent design rationale, not a clinically validated intervention; intent, coherence, and care are the claims. Everything here reflects the author's personal opinions and interpretation — a point of view, not professional, medical, or psychological advice, and no particular outcome is promised.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const TAU=Math.PI*2, lerp=(a,b,t)=>a+(b-a)*t, clamp=(v,a,b)=>v<a?a:v>b?b:v;
+  function hex(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+  function mix(a,b,t){const A=hex(a),B=hex(b);return `rgb(${A[0]+(B[0]-A[0])*t|0},${A[1]+(B[1]-A[1])*t|0},${A[2]+(B[2]-A[2])*t|0})`;}
+  function rgbToHex(s){const m=s.match(/\d+/g);return m?('#'+m.slice(0,3).map(n=>(+n).toString(16).padStart(2,'0')).join('').toUpperCase()):s;}
+  function skyStops(j){return {top:mix('#0f3d4e','#b5623c',j),mid:mix('#0b3242','#5a2f3f',j),bot:mix('#06202a','#241433',j)};}
+
+  // canvas registry
+  const layers=[]; let DPR=Math.min(devicePixelRatio||1,2);
+  function reg(c,draw){ if(!c)return; layers.push({c,ctx:c.getContext('2d'),draw}); }
+  function sizeAll(){ DPR=Math.min(devicePixelRatio||1,2);
+    for(const l of layers){const r=l.c.getBoundingClientRect(); if(!r.width)continue; l.c.width=Math.round(r.width*DPR); l.c.height=Math.round(r.height*DPR);} }
+
+  // shared firefly/cell seed
+  function seeds(n,fn){const a=[];for(let i=0;i<n;i++)a.push(fn());return a;}
+
+  // A2 — red cells drifting (familiar object)
+  const cellSeed=seeds(16,()=>({x:Math.random(),y:Math.random(),r:0.5+Math.random()*1.1,
+    a:Math.random()*TAU,sp:0.1+Math.random()*0.3,ph:Math.random()*TAU}));
+  reg(document.getElementById('cellsCv'),(c,w,h,t)=>{
+    c.clearRect(0,0,w,h);
+    for(const p of cellSeed){
+      const x=(p.x+Math.sin(t*0.12+p.ph)*0.05)*w, y=(p.y+Math.cos(t*0.1+p.ph)*0.05)*h, R=p.r*0.05*Math.min(w,h);
+      c.globalAlpha=0.85; c.fillStyle='#c0473f'; c.beginPath(); c.ellipse(x,y,R,R*0.82,p.a,0,TAU); c.fill();
+      c.globalAlpha=0.5; c.fillStyle='rgba(255,190,180,.6)'; c.beginPath(); c.ellipse(x,y,R*0.42,R*0.34,p.a,0,TAU); c.fill();
+    }
+    c.globalAlpha=1;
+  });
+
+  // A3 — autonomous vs scrubbed
+  const dotsAuto=seeds(16,()=>({x:Math.random(),y:Math.random(),r:1+Math.random()*2,ph:Math.random()*TAU,sp:0.3+Math.random()*0.6}));
+  const dotsScrub=seeds(16,()=>({x:Math.random(),y:Math.random(),r:1+Math.random()*2,ph:Math.random()*TAU}));
+  reg(document.getElementById('autoCv'),(c,w,h,t)=>{ c.clearRect(0,0,w,h); const L=document.documentElement.getAttribute('data-theme')==='light';
+    c.globalCompositeOperation=L?'source-over':'lighter';
+    for(const p of dotsAuto){const x=(p.x+Math.sin(t*p.sp+p.ph)*0.12)*w, y=(p.y+Math.cos(t*p.sp*0.8+p.ph)*0.12)*h, r=p.r*DPR*2.2;
+      if(L){c.fillStyle='rgba(176,81,74,.55)';c.beginPath();c.arc(x,y,p.r*DPR*1.5,0,TAU);c.fill();}
+      else{const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba(224,114,106,.8)');g.addColorStop(1,'rgba(224,114,106,0)');
+      c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,TAU);c.fill();}}
+    c.globalCompositeOperation='source-over'; });
+  let scrubV=0.2;
+  reg(document.getElementById('scrubCv'),(c,w,h)=>{ c.clearRect(0,0,w,h); const L=document.documentElement.getAttribute('data-theme')==='light';
+    c.globalCompositeOperation=L?'source-over':'lighter';
+    for(const p of dotsScrub){const x=((p.x+scrubV*0.5)%1)*w, y=(p.y+Math.sin(p.ph+scrubV*4)*0.06)*h, r=p.r*DPR*2.2;
+      if(L){c.fillStyle='rgba(10,124,156,.55)';c.beginPath();c.arc(x,y,p.r*DPR*1.5,0,TAU);c.fill();}
+      else{const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba(120,225,235,.85)');g.addColorStop(1,'rgba(120,225,235,0)');
+      c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,TAU);c.fill();}}
+    c.globalCompositeOperation='source-over'; });
+  document.getElementById('scrubR').addEventListener('input',e=>scrubV=e.target.value/100);
+
+  // A4 — sky palette
+  let skyJ=0.2;
+  reg(document.getElementById('skyCv'),(c,w,h)=>{ const s=skyStops(skyJ);
+    const g=c.createLinearGradient(0,0,0,h); g.addColorStop(0,s.top); g.addColorStop(0.55,s.mid); g.addColorStop(1,s.bot);
+    c.fillStyle=g; c.fillRect(0,0,w,h);
+    const px=w*lerp(0.2,0.8,skyJ), py=h*lerp(0.28,0.66,skyJ), rad=Math.max(w,h)*0.55;
+    const warm=mix('#bfe9f2','#ffcf9e',skyJ);
+    const sun=c.createRadialGradient(px,py,0,px,py,rad);
+    sun.addColorStop(0,warm.replace('rgb','rgba').replace(')',`,${lerp(0.34,0.5,skyJ)})`));
+    sun.addColorStop(1,'rgba(0,0,0,0)');
+    c.globalCompositeOperation='lighter'; c.fillStyle=sun; c.fillRect(0,0,w,h); c.globalCompositeOperation='source-over'; });
+  const skySw=document.getElementById('skySw'),skyR=document.getElementById('skyR'),skyV=document.getElementById('skyV');
+  const sw=['TOP','MID','BOT'].map(()=>{const d=document.createElement('div');d.className='sw';skySw.appendChild(d);return d;});
+  function jLabel(v){return v<0.2?'Day':v<0.45?'Afternoon':v<0.7?'Golden hour':v<0.9?'Dusk':'Night';}
+  function updSky(){const s=skyStops(skyJ),k=['top','mid','bot'];k.forEach((kk,i)=>{sw[i].style.background=s[kk];sw[i].style.color=skyJ>0.55&&i<2?'#1a0e16':'#cfe6ee';sw[i].textContent=['TOP','MID','BOT'][i]+' '+rgbToHex(s[kk]);});skyV.textContent=jLabel(skyJ);}
+  skyR.addEventListener('input',e=>{skyJ=e.target.value/100;updSky();}); updSky();
+
+  // A1 — room toggle
+  const room=document.getElementById('room'),roomLabel=document.getElementById('roomLabel');
+  document.getElementById('roomOpen').addEventListener('click',e=>{room.className='room open';roomLabel.textContent='OPEN · room to breathe';setOn(e.target,'roomOpen','roomNarrow');});
+  document.getElementById('roomNarrow').addEventListener('click',e=>{room.className='room narrow';roomLabel.textContent='NARROW';setOn(e.target,'roomNarrow','roomOpen');});
+  function setOn(btn,onId,offId){document.getElementById(onId).classList.add('on');document.getElementById(offId).classList.remove('on');}
+
+  // B1 — disclosure
+  const SYSTEMS=['Cardiology','Pulmonology','Gastroenterology','Nephrology','Endocrinology','Haematology','Infectious dis.','Rheumatology','Emergency','Surgery','Orthopaedics','Labs','Pharmacology'];
+  const SYSCOL=['#24c4e6','#3fbf9f','#a78bdb','#d6a23e','#e0726a','#7fd6ec','#82d7c7','#bdb7f1','#f0a58a','#8cdab1','#eec98f','#9fd1e1','#c5a3e8'];
+  const discl=document.getElementById('discl'),loadFill=document.getElementById('loadFill'),loadV=document.getElementById('loadV');
+  function buildDiscl(mode){ discl.innerHTML=''; 
+    if(mode==='wall'){ discl.className='discl';
+      for(let i=0;i<56;i++){const c=document.createElement('div');c.className='chip';c.textContent=SYSTEMS[i%SYSTEMS.length]+' '+((i%7)+1);discl.appendChild(c);} }
+    else { discl.className='discl calm';
+      SYSTEMS.forEach((s,i)=>{const c=document.createElement('div');c.className='chip';c.innerHTML=`<i style="background:${SYSCOL[i]}"></i>${s}`;discl.appendChild(c);}); }
+    const load=mode==='wall'?0.92:0.18; loadFill.style.width=(load*100)+'%';
+    loadFill.style.background=mode==='wall'?'linear-gradient(90deg,#d6a23e,#e0726a)':'linear-gradient(90deg,var(--accent-dim),var(--accent))';
+    loadV.textContent=mode==='wall'?'56 competing':'13 calm'; loadV.style.color=mode==='wall'?'#e0726a':'var(--accent)';
+  }
+  document.getElementById('wallBtn').addEventListener('click',e=>{buildDiscl('wall');setOn(e.target,'wallBtn','calmBtn');});
+  document.getElementById('calmBtn').addEventListener('click',e=>{buildDiscl('calm');setOn(e.target,'calmBtn','wallBtn');});
+  buildDiscl('calm');
+
+  // B2 — focus
+  const focus=document.getElementById('focus');
+  SYSTEMS.slice(0,7).forEach((s,i)=>{const r=document.createElement('div');r.className='frow';r.innerHTML=`<i style="background:${SYSCOL[i]}"></i><span></span>`;
+    r.addEventListener('click',()=>{focus.classList.add('has-sel');[...focus.children].forEach(x=>x.classList.remove('sel'));r.classList.add('sel');});focus.appendChild(r);});
+
+  // B4 — countdown
+  const cd=document.getElementById('cd');
+  document.getElementById('cdOn').addEventListener('click',e=>{cd.className='cd on';cd.innerHTML='still <b>23</b> days until the exam';setOn(e.target,'cdOn','cdOff');});
+  document.getElementById('cdOff').addEventListener('click',e=>{cd.className='cd';cd.innerHTML='Exam countdown — <b>off</b> by default';setOn(e.target,'cdOff','cdOn');});
+
+  // C1 — prose vs flow
+  const c1=document.getElementById('c1stage');
+  const PROSE=`<div class="prose">If the <span class="hl">finding</span> is present, first obtain the <span class="hl">baseline test</span>; should the value fall below the <span class="hl">threshold</span>, <span class="hl">withhold</span> the agent and <span class="hl">correct</span> the deficit before proceeding — otherwise begin at the low rate while monitoring, and only once the value <span class="hl">normalises</span> may you escalate to maintenance.</div>
+    <div class="wm"><div class="wl">Working memory</div><div class="slots"><div class="slot on"></div><div class="slot on"></div><div class="slot on"></div><div class="slot on"></div><div class="slot on"></div><div class="slot on"></div></div><div class="cap">You must <b>hold ~6 conditions</b> in your head at once.</div></div>`;
+  const FLOW=`<div class="flow">
+    <div class="fnode"><div class="fbox"><i></i>Finding present</div></div><div class="farrow">↓</div>
+    <div class="fnode"><div class="fbox"><i></i>Baseline test</div></div><div class="farrow">↓</div>
+    <div class="fnode"><div class="fbox branch">Below threshold?</div></div>
+    <div class="frowsplit"><div class="fbox">YES → correct first</div><div class="fbox">NO → start low + monitor</div></div>
+    <div class="farrow">↓</div><div class="fnode"><div class="fbox"><i></i>Normalised → maintenance</div></div>
+    <div class="wm"><div class="wl">Working memory</div><div class="slots"><div class="slot ok"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div></div><div class="cap">Hold <b>~1</b> — the page holds the rest.</div></div></div>`;
+  function setC1(m){ c1.innerHTML=m==='prose'?PROSE:FLOW; }
+  document.getElementById('proseBtn').addEventListener('click',e=>{setC1('prose');setOn(e.target,'proseBtn','flowBtn');});
+  document.getElementById('flowBtn').addEventListener('click',e=>{setC1('flow');setOn(e.target,'flowBtn','proseBtn');});
+  setC1('flow');
+
+  // main loop
+  function frame(now){ const t=now/1000;
+    for(const l of layers){ const r=l.c.getBoundingClientRect();
+      if(r.bottom<-100||r.top>innerHeight+100||!l.c.width) continue; l.draw(l.ctx,l.c.width,l.c.height,t); }
+    requestAnimationFrame(frame); }
+  addEventListener('resize',()=>{clearTimeout(window.__r);window.__r=setTimeout(sizeAll,120);});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(sizeAll);
+  sizeAll(); requestAnimationFrame(frame);
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  const TAU=Math.PI*2;
+  function hx(h){h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+  function mix(a,b,t){const A=hx(a),B=hx(b);return`rgb(${A[0]+(B[0]-A[0])*t|0},${A[1]+(B[1]-A[1])*t|0},${A[2]+(B[2]-A[2])*t|0})`;}
+  const cv=document.getElementById('agPrev'); if(!cv)return; const ctx=cv.getContext('2d');
+  let DPR=Math.min(devicePixelRatio||1,2);
+  function size(){const r=cv.getBoundingClientRect(); if(!r.width)return; cv.width=r.width*DPR|0; cv.height=r.height*DPR|0;}
+  const st={cells:true,points:true,grad:true,motion:'scroll',scrub:0.25};
+  const cells=[],pts=[];
+  for(let i=0;i<10;i++)cells.push({x:Math.random(),y:Math.random(),r:0.5+Math.random()*1.0,a:Math.random()*TAU,ph:Math.random()*TAU});
+  for(let i=0;i<16;i++)pts.push({x:Math.random(),y:Math.random(),r:0.6+Math.random()*1.4,ph:Math.random()*TAU,sp:0.4+Math.random()*0.7});
+  function ph(t){ if(st.motion==='still')return 0; if(st.motion==='loop')return t*0.25; return st.scrub*2.2; }
+  function jval(t){ if(st.motion==='scroll')return st.scrub; if(st.motion==='loop')return Math.sin(t*0.1)*0.5+0.5; return 0.25; }
+  function draw(t){
+    const w=cv.width,h=cv.height; if(!w)return; const p=ph(t);
+    const L=document.documentElement.getAttribute('data-theme')==='light';
+    if(st.grad){const j=jval(t);const g=ctx.createLinearGradient(0,0,0,h);
+      if(L){g.addColorStop(0,mix('#cfe7ef','#f4d9b6',j));g.addColorStop(0.6,mix('#e2eef2','#efd0c2',j));g.addColorStop(1,mix('#eef5f8','#e9d2dc',j));}
+      else{g.addColorStop(0,mix('#0f3d4e','#b5623c',j));g.addColorStop(0.6,mix('#0b3242','#5a2f3f',j));g.addColorStop(1,mix('#06202a','#241433',j));}
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);}
+    else{ctx.fillStyle=L?'#eef5f8':'#060a0d';ctx.fillRect(0,0,w,h);}
+    if(st.cells){for(const c of cells){const x=((c.x+p*0.12)%1)*w,y=(c.y+Math.sin(c.ph+p)*0.04)*h,R=c.r*0.05*Math.min(w,h);
+      ctx.globalAlpha=.85;ctx.fillStyle='#c0473f';ctx.beginPath();ctx.ellipse(x,y,R,R*0.8,c.a,0,TAU);ctx.fill();
+      ctx.globalAlpha=.5;ctx.fillStyle='rgba(255,190,180,.6)';ctx.beginPath();ctx.ellipse(x,y,R*.4,R*.32,c.a,0,TAU);ctx.fill();ctx.globalAlpha=1;}}
+    if(st.points){const still=st.motion==='still';
+      if(L){ctx.globalCompositeOperation='source-over';for(const q of pts){const b=still?0.55:Math.pow(Math.sin(t*q.sp+q.ph)*0.5+0.5,4); if(!still&&b<0.04)continue;
+        const x=((q.x+p*0.1)%1)*w,y=(q.y+Math.cos(q.ph+p)*0.03)*h;
+        ctx.fillStyle=`rgba(10,124,156,${0.5*(still?0.6:b)})`;ctx.beginPath();ctx.arc(x,y,q.r*DPR*1.4,0,TAU);ctx.fill();}}
+      else{ctx.globalCompositeOperation='lighter';for(const q of pts){const b=still?0.55:Math.pow(Math.sin(t*q.sp+q.ph)*0.5+0.5,4); if(!still&&b<0.04)continue;
+        const x=((q.x+p*0.1)%1)*w,y=(q.y+Math.cos(q.ph+p)*0.03)*h,r=q.r*DPR*2.4*(still?1:(1.5+b*2));
+        const col=st.grad?'150,225,235':'210,220,225';const g=ctx.createRadialGradient(x,y,0,x,y,r);
+        g.addColorStop(0,`rgba(${col},${0.8*(still?0.6:b)})`);g.addColorStop(1,`rgba(${col},0)`);ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();}}
+      ctx.globalCompositeOperation='source-over';}
+  }
+  function frame(now){const r=cv.getBoundingClientRect();if(r.bottom>-50&&r.top<innerHeight+50&&cv.width)draw(now/1000);requestAnimationFrame(frame);}
+  function setMotion(m,btn){st.motion=m;['agScroll','agLoop','agStill'].forEach(id=>document.getElementById(id).classList.remove('on'));btn.classList.add('on');document.getElementById('agScrubR').style.opacity=m==='scroll'?'1':'.35';}
+  document.getElementById('agCells').onchange=e=>st.cells=e.target.checked;
+  document.getElementById('agPoints').onchange=e=>st.points=e.target.checked;
+  document.getElementById('agGrad').onchange=e=>st.grad=e.target.checked;
+  document.getElementById('agScroll').onclick=e=>setMotion('scroll',e.target);
+  document.getElementById('agLoop').onclick=e=>setMotion('loop',e.target);
+  document.getElementById('agStill').onclick=e=>setMotion('still',e.target);
+  document.getElementById('agScrubR').oninput=e=>st.scrub=e.target.value/100;
+  addEventListener('resize',()=>{clearTimeout(window.__ag);window.__ag=setTimeout(size,120);});
+  size();requestAnimationFrame(frame);
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+  const root=document.documentElement;
+  let plainOn=false;
+
+  const PL={
+    eyebrow:["The thinking behind the calm — in plain words"],
+    glow:["a calm place to study when you're stressed"],
+    lede:["This page explains the thinking behind the study site. It was made for someone opening it while stressed, tired, or overwhelmed — and almost every choice has the same goal: help you feel calm enough to actually study."],
+    thesis:["Take away the stress and clutter your mind has to deal with — so there's room left over to learn."],
+    ov:[
+      "How the page feels the moment it opens — open, familiar, calm.",
+      "You're in control — you decide what moves, what shows, what stays still.",
+      "How the page behaves — it waits for you, and never surprises you.",
+      "How the information is shaped — pictures and steps, not walls of text."
+    ],
+    sub:[
+      "Before you read a single word, the page already feels a certain way. Everything here is set up to feel safe and roomy.",
+      "You — not the designer — decide what the background does. Being in control is calming all on its own.",
+      "The page only ever reacts to you. It never moves, nags, or rushes you on its own.",
+      "The same care, now applied to the information itself: make it easy to take in before asking anything of you.",
+      "All four parts say the same thing in different ways — and none of them work against each other."
+    ],
+    h3:[
+      "Open space, not a tight box",
+      "Something familiar first",
+      "It moves when you move — never on its own",
+      "Warm, end-of-day colours",
+      "From bare and still to gently alive — your call",
+      "A \u2018keep it simple\u2019 setting — and one thing we don't let you change",
+      "Nothing opens until you open it",
+      "One thing at a time, the rest fades back",
+      "Always a way back — and no pressure you didn't ask for",
+      "The steps live on the page, not in your head",
+      "One topic at a time",
+      "Less clutter, fewer numbers"
+    ],
+    k:[
+      "Problem","What we did","Problem","What we did","Problem","What we did","What we did",
+      "Problem","What we did","Simplest","The one limit","Problem","What we did","Problem","What we did",
+      "Way back","Your choice","Problem","What we did","What we did","What we did"
+    ],
+    t:[
+      "Tight, busy spaces can make anxious feelings worse. A screen packed with text can feel like the walls are closing in.",
+      "We give it lots of open space, like a wide horizon, so the page feels roomy instead of cramped.",
+      "The first thing you see sets the mood. Something strange or complicated makes everything feel scary.",
+      "We fill the background with red blood cells — something every medic knows cold. Seeing something familiar quietly says: you've got this.",
+      "Things that move on their own can startle you, or pull your focus away when you're already on edge.",
+      "The background only moves as you scroll. It follows you; it never jumps at you. That gentle drift also reminds you that you're here and time is passing — at your own pace.",
+      "The whole page is coloured like a sunset — soft teal turning to warm gold — the kind of light that feels calm and safe to nearly everyone.",
+      "Whether it starts as day or night, it always drifts toward warmth, ending somewhere gentler than it began.",
+      "No single amount of background movement is right for everyone. What relaxes one person is too much for another.",
+      "So every part of the background has a simple on/off you control — show the cells, react to scrolling, hold still, colours on or off. Make it as bare or as alive as you like.",
+      "Together, hold still, colours off, and focus mode strip the page back to its quietest: almost no movement, one topic, a plain background.",
+      "There's one thing we don't let you switch off — the soft blur that keeps text readable over the background. Turning it off could only make things harder to read, so we don't offer it.",
+      "Showing every single resource at once is a lot to take in, with nowhere for your eyes to rest.",
+      "So everything starts closed. You see a short list of topics and open only what you want, when you want.",
+      "When you're stressed, lots of choices at once is too much to handle.",
+      "Pick one topic and it stands out while the rest fade back. Focus mode shows just that one, on its own.",
+      "Everything you open has a clear way back, and the browser's back button always works. You can never get stuck.",
+      "The exam countdown is off unless you turn it on. We won't put a ticking clock in front of you — you choose if you want one.",
+      "A paragraph makes you hold the earlier part in your head while you read the rest — hard when you're tired or stressed.",
+      "So we turn it into a flowchart. The arrows hold the order for you, right there on the page. Words stay only where they actually help.",
+      "Information is split into small, self-contained pieces — one topic, one chart. You go in, finish it, and come out.",
+      "You can think about one illness without holding all of medicine in your head at the same time.",
+      "We took the little number counts off each item. When you're overwhelmed, they're just extra noise — so they're hidden (still there underneath, just not shown)."
+    ],
+    line:[
+      "<b>Feeling safe.</b> Your body can relax before your mind has to work.",
+      "<b>Confidence first.</b> Start with something you know, not something hard.",
+      "<b>You're in charge.</b> Try the slider — nothing moves until you move it.",
+      "<b>Your choice.</b> You set the mood, not the screen.",
+      "<b>Your control has limits — kind ones.</b> You can change how it feels, never what keeps it readable.",
+      "<b>At your pace.</b> The aim is to not overwhelm you — not to keep you clicking.",
+      "<b>One thing at a time.</b> The rest steps back; it isn't gone.",
+      "<b>You can trust it.</b> Nothing stressful shows up unless you ask for it.",
+      "<b>Words and pictures together.</b> Two easy channels instead of one hard one.",
+      "<b>Small pieces.</b> One topic in your head at a time.",
+      "<b>Less to look at.</b> Everything you need, nothing you don't."
+    ],
+    li:[
+      "Open space, not a tight box","Something familiar to start","Moves only when you do","Warm, calming colours",
+      "Simple on/off controls","From bare to lively — your call","A quiet, still setting","You control the feel, not the basics",
+      "Everything starts closed","One thing at a time","Always a way back","No pressure you didn't pick",
+      "Steps shown as charts","Words and pictures together","Small pieces, one at a time","Less clutter"
+    ],
+    closing:["Four parts — how it feels, what you control, how it behaves, and how the information is shaped — each one removing something that gets between a stressed mind and learning. <em>That</em> is the whole idea."],
+    big:["Calm isn't decoration here. It's the whole point."],
+    disc:["In short: these ideas come from real research on stress, attention and memory, and from trauma-informed care. This is careful, caring design — not medical treatment. And it's just my own take — my opinions, not expert advice or any kind of promise."]
+  };
+  const MAP=[['.eyebrow',PL.eyebrow],['.glow',PL.glow],['.lede',PL.lede],['.thesis p',PL.thesis],
+    ['.ov p',PL.ov],['.layer-sub',PL.sub],['.pcard h3',PL.h3],['.ptext .k',PL.k],['.ptext .t',PL.t],
+    ['.line',PL.line],['.syncol li',PL.li],['.closing p',PL.closing],['footer .big',PL.big],['.disclaimer',PL.disc]];
+  function apply(){ MAP.forEach(([sel,arr])=>{ $$(sel).forEach((el,i)=>{
+    if(i>=arr.length||arr[i]==null)return;
+    if(!el.hasAttribute('data-pro')) el.setAttribute('data-pro', el.innerHTML);
+    el.innerHTML = plainOn ? arr[i] : el.getAttribute('data-pro');
+  }); }); }
+  function lang(p){ plainOn=p; $('#langPlain').classList.toggle('on',p); $('#langPro').classList.toggle('on',!p); apply(); }
+  $('#langPlain').onclick=()=>lang(true);
+  $('#langPro').onclick=()=>lang(false);
+
+  function theme(t){ root.setAttribute('data-theme',t); $('#thDark').classList.toggle('on',t==='dark'); $('#thLight').classList.toggle('on',t==='light'); }
+  $('#thDark').onclick=()=>theme('dark');
+  $('#thLight').onclick=()=>theme('light');
+  theme('dark');
+})();
+</script>
+</body>
+</html>

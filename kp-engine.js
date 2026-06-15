@@ -154,7 +154,8 @@
       head.addEventListener("click", () => {
         const willOpen = section.classList.contains("collapsed");
         toggle(section, head);
-        sysNodes.forEach(o => o.wrap.classList.toggle("hl", o.wrap === section && willOpen));
+        const minimal = document.documentElement.hasAttribute("data-min");
+        sysNodes.forEach(o => o.wrap.classList.toggle("hl", o.wrap === section && (willOpen || minimal)));
       });
       section.appendChild(head);
       section.appendChild(body);

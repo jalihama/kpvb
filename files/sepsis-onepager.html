@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sepsis &amp; septischer Schock — Notfall-Lernkarte (KP)</title>
+<style>
+  /* ============================================================
+     Sepsis-Lernkarte — KP-Vorbereitung
+     Responsives Web-One-Pager, klinisches Design (PC + Smartphone)
+     ============================================================ */
+
+  .sx {
+    --ink: #16201d;          /* clinical near-black, green-shifted */
+    --paper: #ffffff;
+    --bg: #f7f9f8;
+    --line: #d4dad6;         /* hairline */
+    --line-soft: #eef1f0;
+    --teal: #0f6b63;         /* clinical accent */
+    --teal-soft: #e7f1ef;
+    --slate: #5f6d68;        /* muted captions */
+
+    --target: #1f7a4d;       /* green zone  */
+    --target-bg: #e6f3eb;
+    --warn1: #c8821a;        /* amber */
+    --warn1-bg: #fbf0dd;
+    --warn2: #b85c1a;        /* orange */
+    --warn2-bg: #f9e6d6;
+    --crit: #9e2a22;         /* deep red */
+    --crit-bg: #f6dcd9;
+    --hypo: #c2362f;         /* red emphasis */
+
+    --mono: "SF Mono", "DejaVu Sans Mono", "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.45;
+    background: var(--bg);
+    margin: 0 auto;
+    padding: 22px clamp(14px, 4vw, 34px) 40px;
+    max-width: 1240px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .sx * { box-sizing: border-box; }
+
+  /* ---- Masthead -------------------------------------------------------- */
+  .sx-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 18px; flex-wrap: wrap;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 12px; margin-bottom: 16px;
+  }
+  .sx-title { margin: 0; font-size: clamp(22px, 4.5vw, 30px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
+  .sx-title .sub { display: block; font-size: clamp(11px, 2.2vw, 13px); font-weight: 600; color: var(--teal); letter-spacing: 0.05em; text-transform: uppercase; margin-top: 5px; }
+  .sx-tag { text-align: right; font-size: 11px; color: var(--slate); max-width: 330px; line-height: 1.4; }
+  .sx-tag b { color: var(--ink); }
+
+  /* ---- Top facts strip ------------------------------------------------- */
+  .sx-strip {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
+    border: 1px solid var(--line); border-radius: 9px; overflow: hidden;
+    background: var(--paper); margin-bottom: 18px;
+  }
+  .sx-fact { padding: 10px 13px; border-right: 1px solid var(--line); }
+  .sx-fact:last-child { border-right: none; }
+  .sx-fact .lab { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--slate); font-weight: 700; margin-bottom: 3px; }
+  .sx-fact .val { font-size: 12.5px; font-weight: 600; line-height: 1.32; }
+  .sx-fact .val .mono { font-family: var(--mono); font-weight: 700; }
+  @media (max-width: 860px) { .sx-strip { grid-template-columns: repeat(2, 1fr); }
+    .sx-fact { border-bottom: 1px solid var(--line); }
+    .sx-fact:nth-child(odd) { border-right: 1px solid var(--line); }
+    .sx-fact:nth-child(even) { border-right: none; }
+    .sx-fact:last-child { grid-column: 1 / -1; border-bottom: none; }
+  }
+  @media (max-width: 460px) { .sx-strip { grid-template-columns: 1fr; }
+    .sx-fact, .sx-fact:nth-child(odd) { border-right: none; }
+    .sx-fact:last-child { grid-column: auto; }
+  }
+
+  /* ---- HERO: 1-Stunden-Bündel ----------------------------------------- */
+  .bundle {
+    border: 1.5px solid var(--teal); border-radius: 11px;
+    background: var(--paper); padding: 13px 15px 15px; margin-bottom: 20px;
+    box-shadow: 0 1px 0 rgba(15,107,99,0.06);
+  }
+  .bundle-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .bundle-head h2 { margin: 0; font-size: 16px; font-weight: 800; color: var(--teal); letter-spacing: 0.01em; }
+  .bundle-clock {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+    background: var(--teal); color: #fff; border-radius: 20px; padding: 3px 10px;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .bundle-sub { font-size: 11.5px; color: var(--slate); margin: 0 0 12px; }
+  .bundle-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; }
+  .step {
+    position: relative; border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 11px 11px; background: var(--bg);
+  }
+  .step .num {
+    font-family: var(--mono); font-size: 11px; font-weight: 800;
+    background: var(--ink); color: #fff; border-radius: 6px;
+    width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 6px;
+  }
+  .step .st { font-size: 12.5px; font-weight: 800; margin: 0 0 3px; letter-spacing: 0.01em; }
+  .step .sd { font-size: 11px; color: var(--slate); line-height: 1.35; margin: 0; }
+  .step.crit { border-color: var(--crit); background: var(--crit-bg); }
+  .step.crit .num { background: var(--crit); }
+  .step.crit .st { color: var(--crit); }
+  .step .arr {
+    position: absolute; right: -8px; top: 50%; transform: translateY(-50%);
+    font-family: var(--mono); font-weight: 800; color: var(--teal); font-size: 15px; z-index: 2;
+  }
+  .step:last-child .arr { display: none; }
+  @media (max-width: 900px) {
+    .bundle-flow { grid-template-columns: repeat(2, 1fr); }
+    .step .arr { display: none; }
+  }
+  @media (max-width: 480px) { .bundle-flow { grid-template-columns: 1fr; } }
+  .bundle-note { font-size: 11px; color: var(--slate); font-style: italic; margin: 11px 0 0; }
+  .bundle-note b { color: var(--ink); font-style: normal; }
+
+  /* ---- Card grid ------------------------------------------------------- */
+  .sx-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 15px; align-items: start;
+  }
+  @media (max-width: 680px) { .sx-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    border: 1px solid var(--line); border-radius: 9px;
+    padding: 13px 15px 15px; background: var(--paper);
+  }
+  .card.accent { border-color: var(--teal); border-width: 1.5px; }
+  .card.accent .h { color: var(--teal); }
+
+  .h {
+    font-size: 14.5px; font-weight: 800; letter-spacing: 0.005em;
+    margin: 0 0 9px; display: flex; align-items: center; gap: 8px; line-height: 1.2;
+  }
+  .h .n {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+    background: var(--ink); color: #fff; border-radius: 5px;
+    padding: 2px 6px; letter-spacing: 0.02em; flex: none;
+  }
+  .card.accent .h .n { background: var(--teal); }
+
+  .sx p { margin: 0 0 7px; }
+  .sx ul { margin: 0 0 7px; padding-left: 17px; }
+  .sx li { margin-bottom: 4px; }
+  .sx b, .sx strong { font-weight: 700; }
+  .mono { font-family: var(--mono); }
+  .danger { color: var(--hypo); font-weight: 700; }
+  .note { font-size: 11px; color: var(--slate); font-style: italic; margin-top: 6px; }
+  .note b { color: var(--ink); font-style: normal; }
+
+  .pill {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    background: var(--teal-soft); color: var(--teal);
+    padding: 1px 6px; border-radius: 4px; white-space: nowrap;
+  }
+
+  /* ---- Criteria rows (qSOFA / SIRS) ----------------------------------- */
+  .crit-list { list-style: none; padding: 0; margin: 0 0 6px; }
+  .crit-list li {
+    display: flex; align-items: baseline; gap: 9px;
+    padding: 6px 0; border-bottom: 1px solid var(--line-soft); margin: 0;
+  }
+  .crit-list li:last-child { border-bottom: none; }
+  .crit-list .box {
+    flex: none; width: 15px; height: 15px; border: 1.5px solid var(--teal);
+    border-radius: 4px; margin-top: 1px;
+  }
+  .crit-list .ct { font-size: 13px; line-height: 1.32; }
+  .crit-list .ct .mono { font-weight: 700; }
+  .threshold {
+    display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 800;
+    color: var(--crit); background: var(--crit-bg); border-radius: 5px;
+    padding: 3px 8px; margin: 2px 0 8px;
+  }
+
+  /* ---- Definition split ------------------------------------------------ */
+  .defrow { border-left: 3px solid var(--teal); padding: 2px 0 2px 11px; margin: 0 0 10px; }
+  .defrow .dt { font-weight: 800; font-size: 13.5px; margin: 0 0 2px; }
+  .defrow.shock { border-left-color: var(--crit); }
+  .defrow.shock .dt { color: var(--crit); }
+  .defrow p { font-size: 12.5px; margin: 0; line-height: 1.4; }
+
+  /* ---- Lactate readout band ------------------------------------------- */
+  .readout { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 8px; }
+  .ro-row { display: grid; grid-template-columns: 120px 1fr; align-items: stretch; border-radius: 6px; overflow: hidden; }
+  .ro-bz {
+    font-family: var(--mono); font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; padding: 7px 6px; text-align: center; line-height: 1.15;
+  }
+  .ro-act {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 11px; font-size: 12px; font-weight: 600; background: var(--paper);
+    border: 1px solid var(--line); border-left: none; border-radius: 0 6px 6px 0;
+  }
+  .ro-tag { font-family: var(--mono); font-weight: 800; font-size: 12px; }
+  .z-target .ro-bz { background: var(--target); }
+  .z-w1     .ro-bz { background: var(--warn1); }
+  .z-crit   .ro-bz { background: var(--crit); }
+  .z-target .ro-tag { color: var(--target); }
+  .z-w1     .ro-tag { color: var(--warn1); }
+  .z-crit   .ro-tag { color: var(--crit); }
+  @media (max-width: 360px) { .ro-row { grid-template-columns: 96px 1fr; } }
+
+  /* ---- Mini tables ----------------------------------------------------- */
+  table.kt { width: 100%; border-collapse: collapse; font-size: 12px; margin: 3px 0 7px; }
+  table.kt th { text-align: left; font-weight: 700; color: var(--slate); border-bottom: 1px solid var(--line); padding: 4px 5px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+  table.kt td { padding: 4px 5px; border-bottom: 1px solid var(--line-soft); vertical-align: top; line-height: 1.34; }
+  table.kt tr:last-child td { border-bottom: none; }
+  table.kt td .mono { font-weight: 700; }
+
+  /* ---- PEARL band ------------------------------------------------------ */
+  .pearl {
+    border: 1.5px solid var(--warn1); border-radius: 11px; overflow: hidden;
+    background: var(--paper); margin-top: 20px;
+  }
+  .pearl-bar {
+    background: var(--warn1); color: #fff; padding: 8px 16px;
+    font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .pearl-bar .tagdot { font-size: 14px; }
+  .pearl-body { padding: 14px 16px 16px; }
+  .pearl-body .lead { font-size: 14px; font-weight: 700; margin: 0 0 9px; }
+  .pearl-chain {
+    display: flex; align-items: stretch; flex-wrap: wrap; gap: 7px; margin: 4px 0 13px;
+  }
+  .chain-node {
+    flex: 1 1 150px; border: 1px solid var(--line); border-radius: 8px;
+    padding: 9px 11px; background: var(--bg); position: relative;
+  }
+  .chain-node .cl { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate); font-weight: 700; margin-bottom: 3px; }
+  .chain-node .cv { font-size: 12.5px; font-weight: 700; line-height: 1.3; }
+  .chain-node.end { border-color: var(--crit); background: var(--crit-bg); }
+  .chain-node.end .cv { color: var(--crit); }
+  .chain-arr { display: flex; align-items: center; font-family: var(--mono); font-weight: 800; color: var(--warn1); font-size: 17px; }
+  @media (max-width: 620px) { .chain-arr { display: none; } .chain-node { flex: 1 1 100%; } }
+  .pearl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 620px) { .pearl-grid { grid-template-columns: 1fr; } }
+  .pearl-grid h4 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--teal); font-weight: 800; }
+  .pearl-grid ul { margin: 0; padding-left: 17px; font-size: 12.5px; }
+  .pearl-grid li { margin-bottom: 5px; }
+  .examq {
+    background: var(--ink); color: #eafff6; border-radius: 8px;
+    padding: 11px 13px; margin-top: 13px; font-size: 12.5px; line-height: 1.5;
+  }
+  .examq b { color: #7fe9cf; }
+  .examq .mono { font-family: var(--mono); }
+
+  /* ---- Footer ---------------------------------------------------------- */
+  .sx-foot {
+    margin-top: 22px; border-top: 1px solid var(--line); padding-top: 12px;
+    font-size: 10.5px; color: var(--slate); line-height: 1.5;
+  }
+  .sx-foot b { color: var(--ink); }
+
+  @media print {
+    .sx { background: #fff; font-size: 9px; padding: 8mm; max-width: none; }
+    .card, .bundle, .pearl, .sx-strip { box-shadow: none; }
+    .bundle-flow { grid-template-columns: repeat(5, 1fr); }
+    .sx-grid { grid-template-columns: repeat(3, 1fr); }
+    @page { size: A4 landscape; margin: 8mm; }
+  }
+</style>
+<style id="kp-brand">
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&family=Roboto+Mono:wght@400;500;600&display=swap');
+:root{ --bg:#eef5f8!important; --ink:#08222c!important; --ink-soft:#45697a!important; --slate:#45697a!important; --paper:#ffffff!important; --card:#ffffff!important; --line:#cddbe0!important; --sans:'Roboto Flex',-apple-system,system-ui,sans-serif!important; --mono:'Roboto Mono',ui-monospace,monospace!important; }
+html,body{background:#eef5f8}
+body,h1,h2,h3,h4,h5,h6,p,li,td,th,span,div,a,button{font-family:'Roboto Flex',-apple-system,system-ui,sans-serif !important}
+code,.mono,pre,kbd{font-family:'Roboto Mono',ui-monospace,monospace !important}
+</style>
+</head>
+<body>
+<div class="sx">
+
+  <!-- ===== MASTHEAD ===== -->
+  <header class="sx-head">
+    <h1 class="sx-title">Sepsis &amp; septischer Schock
+      <span class="sub">Erkennung · 1-Stunden-Bündel · Fokuskontrolle · KP-Pearl</span>
+    </h1>
+    <div class="sx-tag"><b>Notfall-Lernkarte (KP).</b> Orientierung nach Sepsis-3 &amp; Surviving Sepsis Campaign. Therapie individualisieren, Hausstandard &amp; ärztliche Supervision beachten.</div>
+  </header>
+
+  <!-- ===== TOP FACTS ===== -->
+  <section class="sx-strip">
+    <div class="sx-fact">
+      <div class="lab">Sepsis (Sepsis-3)</div>
+      <div class="val">Infektion + Organdysfunktion (SOFA <span class="mono">↑ ≥ 2</span>)</div>
+    </div>
+    <div class="sx-fact">
+      <div class="lab">Septischer Schock</div>
+      <div class="val">Vasopressor f. MAP <span class="mono">≥ 65</span> + Laktat <span class="mono">&gt; 2</span> trotz Volumen</div>
+    </div>
+    <div class="sx-fact">
+      <div class="lab">Antibiotika</div>
+      <div class="val">kalkuliert · breit · so früh wie möglich <span class="mono">(≤ 1 h)</span></div>
+    </div>
+    <div class="sx-fact">
+      <div class="lab">MAP-Ziel</div>
+      <div class="val"><span class="mono">≥ 65</span> mmHg · 1. Wahl <b>Noradrenalin</b></div>
+    </div>
+    <div class="sx-fact">
+      <div class="lab">Laktat</div>
+      <div class="val"><span class="mono">&gt; 2</span> mmol/l (&gt; 18 mg/dl) = Hypoperfusion</div>
+    </div>
+  </section>
+
+  <!-- ===== HERO: 1-STUNDEN-BÜNDEL ===== -->
+  <section class="bundle">
+    <div class="bundle-head">
+      <h2>1-Stunden-Bündel — initiale Resuscitation</h2>
+      <span class="bundle-clock">⏱ Start bei Erkennung</span>
+    </div>
+    <p class="bundle-sub">Sepsis und septischer Schock sind <b>Notfälle</b>. Maßnahmen unverzüglich beginnen — die Reihenfolge ist praxisnah, Elemente überlappen.</p>
+
+    <div class="bundle-flow">
+      <div class="step">
+        <span class="num">1</span>
+        <p class="st">Laktat messen</p>
+        <p class="sd">Marker der Hypoperfusion. Bei &gt; 2 mmol/l erneute Verlaufskontrolle.</p>
+        <span class="arr">→</span>
+      </div>
+      <div class="step">
+        <span class="num">2</span>
+        <p class="st">Blutkulturen</p>
+        <p class="sd">2 Paar <b>vor</b> Antibiotikagabe — Antibiotika aber <b>nicht</b> verzögern.</p>
+        <span class="arr">→</span>
+      </div>
+      <div class="step crit">
+        <span class="num">3</span>
+        <p class="st">Breitband-Antibiotika</p>
+        <p class="sd">Kalkuliert, i.v., sofort. Jede Stunde Verzögerung ↑ Letalität.</p>
+        <span class="arr">→</span>
+      </div>
+      <div class="step">
+        <span class="num">4</span>
+        <p class="st">Kristalloide</p>
+        <p class="sd">30 ml/kg i.v. bei Hypotonie <b>oder</b> Laktat ≥ 4 mmol/l.</p>
+        <span class="arr">→</span>
+      </div>
+      <div class="step">
+        <span class="num">5</span>
+        <p class="st">Vasopressoren</p>
+        <p class="sd">Noradrenalin, wenn MAP &lt; 65 mmHg trotz Volumengabe.</p>
+        <span class="arr">→</span>
+      </div>
+    </div>
+    <p class="bundle-note"><b>Merke:</b> Blutkulturen vor Antibiotika — aber die Antibiotikagabe niemals dafür hinauszögern. Laktat + Kulturen werden praktisch gleich zu Beginn abgenommen.</p>
+  </section>
+
+  <!-- ===== CARD GRID ===== -->
+  <section class="sx-grid">
+
+    <!-- 1 — DEFINITIONEN -->
+    <div class="card accent">
+      <div class="h"><span class="n">1</span>Definitionen (Sepsis-3, 2016)</div>
+      <div class="defrow">
+        <p class="dt">Sepsis</p>
+        <p>Lebensbedrohliche Organdysfunktion durch eine <b>dysregulierte Wirtsantwort</b> auf eine Infektion. Operationalisiert: Infektion + akuter <b>SOFA-Anstieg ≥ 2 Punkte</b> (Krankenhausletalität &gt; 10 %).</p>
+      </div>
+      <div class="defrow shock">
+        <p class="dt">Septischer Schock</p>
+        <p>Subgruppe mit schwerer Kreislauf-/Zellstoffwechselstörung: <b>Vasopressorbedarf</b> für MAP ≥ 65 mmHg <b>UND Laktat &gt; 2 mmol/l</b> trotz adäquater Volumentherapie (Letalität ~40 %).</p>
+      </div>
+      <p class="note"><b>Merke:</b> Der Begriff „schwere Sepsis" entfällt seit Sepsis-3; SIRS ist nicht mehr Teil der Definition — bleibt aber klinisch zur Infekterkennung nützlich.</p>
+      <p style="font-size:12px; margin-top:8px;"><b>SOFA</b> prüft 6 Systeme: Atmung (PaO₂/FiO₂), Gerinnung (Thrombozyten), Leber (Bilirubin), Kreislauf (MAP/Katecholamine), ZNS (GCS), Niere (Kreatinin/Urin).</p>
+    </div>
+
+    <!-- 2 — LEITSYMPTOME -->
+    <div class="card">
+      <div class="h"><span class="n">2</span>Leitsymptome &amp; Warnzeichen</div>
+      <ul>
+        <li><b>Fieber</b> oder <b>Hypothermie</b></li>
+        <li><b>Tachykardie</b> · <b>Tachypnoe</b></li>
+        <li><b>Hypotonie</b></li>
+        <li><b>Vigilanzminderung</b> / Verwirrtheit</li>
+        <li><b>Oligurie</b></li>
+      </ul>
+      <p class="note danger" style="font-style:normal;">Warnzeichen: kalte/marmorierte Haut, Verwirrtheit, Laktaterhöhung, rasche Verschlechterung.</p>
+      <p class="note"><b>Merksatz:</b> Infektion + Organdysfunktion = an Sepsis denken. Sepsis ist ein Notfall.</p>
+    </div>
+
+    <!-- 3 — qSOFA -->
+    <div class="card">
+      <div class="h"><span class="n">3</span>qSOFA — Bedside-Screening</div>
+      <div class="threshold">≥ 2 von 3 → erhöhtes Risiko</div>
+      <ul class="crit-list">
+        <li><span class="box"></span><span class="ct"><b>Atemfrequenz</b> <span class="mono">≥ 22/min</span></span></li>
+        <li><span class="box"></span><span class="ct"><b>Veränderter mentaler Status</b> (GCS <span class="mono">&lt; 15</span>)</span></li>
+        <li><span class="box"></span><span class="ct"><b>Systolischer RR</b> <span class="mono">≤ 100 mmHg</span></span></li>
+      </ul>
+      <p class="note"><b>Wichtig:</b> qSOFA ist ein Risiko-/Screening-Tool, <b>kein diagnostisches Kriterium</b>. Es soll zur weiteren Organdysfunktions-Abklärung anstoßen. SSC 2021 rät von qSOFA als alleinigem Screening ab (eher SIRS / NEWS / MEWS).</p>
+    </div>
+
+    <!-- 4 — SIRS -->
+    <div class="card">
+      <div class="h"><span class="n">4</span>SIRS-Kriterien</div>
+      <div class="threshold">≥ 2 von 4 erfüllt</div>
+      <ul class="crit-list">
+        <li><span class="box"></span><span class="ct"><b>Temperatur</b> <span class="mono">&gt; 38 °C</span> oder <span class="mono">&lt; 36 °C</span></span></li>
+        <li><span class="box"></span><span class="ct"><b>Herzfrequenz</b> <span class="mono">&gt; 90/min</span></span></li>
+        <li><span class="box"></span><span class="ct"><b>Atemfrequenz</b> <span class="mono">&gt; 20/min</span> oder paCO₂ <span class="mono">&lt; 32 mmHg</span></span></li>
+        <li><span class="box"></span><span class="ct"><b>Leukozyten</b> <span class="mono">&gt; 12.000</span> / <span class="mono">&lt; 4.000/µl</span> oder &gt; 10 % Stabkernige</span></li>
+      </ul>
+      <p class="note">Historisch (Sepsis-1/2) — sensitiv, aber unspezifisch. Nicht mehr in der Sepsis-Definition, weiterhin zur Erkennung einer Infektion/Entzündung verwendet.</p>
+    </div>
+
+    <!-- 5 — DIAGNOSTIK -->
+    <div class="card">
+      <div class="h"><span class="n">5</span>Diagnostik — akutes Vorgehen</div>
+      <ul>
+        <li><b>ABCDE</b> · Vitalparameter · Monitoring</li>
+        <li>Sepsis-Screening &amp; Organdysfunktion erfassen (qSOFA, SOFA)</li>
+        <li><b>Labor:</b> BGA, Laktat, Blutbild, <b>CRP/PCT</b>, Kreatinin, Bilirubin, Gerinnung</li>
+        <li>Mind. <b>2 Blutkultur-Sets</b> + Fokusdiagnostik <b>vor</b> Antiinfektiva (ohne relevante Verzögerung)</li>
+        <li><b>Fokussuche:</b> Anamnese, Status, Urin, Sputum/Trachealsekret, Wundabstrich, Bildgebung je nach Verdacht</li>
+        <li>Diurese, Kreislauf &amp; Laktat-Verlauf reevaluieren</li>
+      </ul>
+      <p class="note danger" style="font-style:normal;">Antibiotika nicht durch Diagnostik verzögern!</p>
+      <p style="font-weight:700; font-size:12px; margin:9px 0 2px;">Typische Befunde</p>
+      <table class="kt">
+        <tr><th>Parameter</th><th>Befund</th></tr>
+        <tr><td>Leukozyten</td><td><span class="mono">↑</span> oder <span class="mono">↓</span></td></tr>
+        <tr><td>Thrombozyten</td><td>oft <span class="mono">↓</span></td></tr>
+        <tr><td>Kreatinin / Diurese</td><td>Kreatinin <span class="mono">↑</span> / Oligurie</td></tr>
+        <tr><td>Bilirubin / INR</td><td>können <span class="mono">↑</span> sein</td></tr>
+        <tr><td>BGA</td><td>metabolische Azidose möglich</td></tr>
+      </table>
+      <p class="note"><b>Prüfungsnotiz:</b> Positive Blutkulturen sind für die Diagnose einer Sepsis <b>nicht zwingend</b> erforderlich.</p>
+    </div>
+
+    <!-- 6 — LAKTAT -->
+    <div class="card">
+      <div class="h"><span class="n">6</span>Laktat — ablesen &amp; einordnen</div>
+      <div class="readout">
+        <div class="ro-row z-target">
+          <div class="ro-bz">&lt; 2,0<br><span style="font-size:9px;opacity:.9">&lt; 18 mg/dl</span></div>
+          <div class="ro-act"><span class="ro-tag">NORMAL</span> kein Hinweis auf Hypoperfusion</div>
+        </div>
+        <div class="ro-row z-w1">
+          <div class="ro-bz">2,0–3,9<br><span style="font-size:9px;opacity:.9">18–35 mg/dl</span></div>
+          <div class="ro-act"><span class="ro-tag">↑</span> Hypoperfusion → Verlaufskontrolle</div>
+        </div>
+        <div class="ro-row z-crit">
+          <div class="ro-bz">≥ 4,0<br><span style="font-size:9px;opacity:.9">≥ 36 mg/dl</span></div>
+          <div class="ro-act"><span class="ro-tag">↑↑</span> schwere Hypoperfusion → 30 ml/kg</div>
+        </div>
+      </div>
+      <p style="font-size:12.5px;">Laktat ↑ durch <b>anaerobe Glykolyse</b> bei Gewebehypoperfusion (zusätzlich verminderte hepatische Clearance).</p>
+      <p class="note"><b>Steuerung:</b> serielle Messung zur Resuscitation (Laktat-Clearance) — <b>nicht</b> bis zur Normalisierung „volltanken". Laktat &gt; 2 mmol/l + Vasopressorbedarf = septischer Schock.</p>
+    </div>
+
+    <!-- 7 — ANTIBIOTIKA & VASOPRESSOREN -->
+    <div class="card">
+      <div class="h"><span class="n">7</span>Antibiotika &amp; Vasopressoren</div>
+      <p><b>Antibiotika:</b> kalkuliert/breit, i.v., <b>so früh wie möglich</b> <span class="pill">≤ 1 h</span> (septischer Schock). Auswahl nach Fokus, Vorerkrankungen &amp; lokaler Resistenzlage. <b>Deeskalation</b> nach Erregernachweis/Antibiogramm.</p>
+      <table class="kt">
+        <tr><th>Situation</th><th>Beispiel (fokusabhängig)</th></tr>
+        <tr><td>Breit, kalkuliert</td><td>Piperacillin/Tazobactam</td></tr>
+        <tr><td>Alternativ</td><td>Cephalosporin 3./4. Gen. (Ceftriaxon/Cefepim)</td></tr>
+        <tr><td>MRE-Risiko / schwer</td><td>Carbapenem (Meropenem)</td></tr>
+        <tr><td>MRSA-Risiko</td><td>+ Vancomycin / Linezolid</td></tr>
+      </table>
+      <p><b>Volumen:</b> 30 ml/kg balancierte Kristalloide, danach an Hämodynamik/Ansprechen titrieren.</p>
+      <p><b>Vasopressoren:</b> <b>Noradrenalin 1. Wahl</b> (Ziel MAP ≥ 65 mmHg); Vasopressin als Zusatz; Dobutamin bei myokardialer Dysfunktion; Hydrocortison bei katecholaminrefraktärem Schock.</p>
+      <p style="margin-bottom:0;"><b>Organunterstützung n. Bedarf:</b> O₂ / Beatmung, Intensivtherapie, Nierenersatzverfahren.</p>
+    </div>
+
+    <!-- 8 — ERREGER -->
+    <div class="card">
+      <div class="h"><span class="n">8</span>Häufige Erreger</div>
+      <ul>
+        <li><b>Gramnegativ:</b> z. B. <i>E. coli</i>, <i>Klebsiella</i>, <i>Pseudomonas</i></li>
+        <li><b>Grampositiv:</b> z. B. <i>Staphylococcus aureus</i>, Streptokokken, Enterokokken</li>
+        <li>Bei Risikokonstellation auch <b>Pilze</b> (Candida) / Viren bedenken</li>
+      </ul>
+      <p class="note"><b>Der vermutete Fokus bestimmt das zu erwartende Erregerspektrum</b> — und damit die kalkulierte Antibiotikawahl.</p>
+    </div>
+
+    <!-- 9 — FOKUSKONTROLLE -->
+    <div class="card">
+      <div class="h"><span class="n">9</span>Fokuskontrolle (Source Control)</div>
+      <p>Fokus identifizieren <b>und sanieren</b> — so früh wie möglich (idealerweise ≤ 6–12 h):</p>
+      <table class="kt">
+        <tr><th>Fokus</th><th>Maßnahme</th></tr>
+        <tr><td>Abszess</td><td>Drainage</td></tr>
+        <tr><td>Infizierter Katheter / ZVK / Implantat</td><td>Entfernung</td></tr>
+        <tr><td>Nekrotisierende Fasziitis</td><td>chirurgisches Débridement</td></tr>
+        <tr><td>Harnstau (Urosepsis)</td><td>Nephrostomie / DJ-Stent</td></tr>
+        <tr><td>Cholangitis</td><td>ERCP / Galleableitung</td></tr>
+        <tr><td>Perforation / Peritonitis</td><td>operative Sanierung</td></tr>
+      </table>
+      <p class="note danger" style="font-style:normal;">Ohne Fokuskontrolle versagt die Antibiotikatherapie.</p>
+    </div>
+
+    <!-- 10 — SEPSISFOKUS -->
+    <div class="card">
+      <div class="h"><span class="n">10</span>Häufige Sepsisquellen</div>
+      <ul>
+        <li><b>Atemwege / Pneumonie</b> — häufigste Quelle</li>
+        <li><b>Harnwege / Urosepsis</b></li>
+        <li><b>Intraabdominell</b> — Cholangitis, Divertikulitis, Peritonitis</li>
+        <li><b>Haut / Weichteile</b> — Erysipel, Fasziitis</li>
+        <li><b>Katheter- / Device-assoziiert</b> — ZVK, Port</li>
+        <li>Seltener: Endokarditis, Meningitis / ZNS</li>
+      </ul>
+      <p class="note">Anamnese + körperliche Untersuchung + Bildgebung gezielt zur Fokussuche — bestimmt die kalkulierte Antibiotikawahl.</p>
+    </div>
+
+    <!-- 11 — KOMPLIKATIONEN -->
+    <div class="card">
+      <div class="h"><span class="n">11</span>Komplikationen</div>
+      <ul>
+        <li><b>Multiorganversagen</b> (MODS)</li>
+        <li><b>ARDS</b></li>
+        <li><b>Akute Niereninsuffizienz</b></li>
+        <li><b>DIC</b> / Thrombozytopenie</li>
+        <li>Septische <b>Enzephalopathie</b></li>
+        <li>Septische <b>Kardiomyopathie</b></li>
+        <li>Tod</li>
+      </ul>
+      <p class="note">Sepsis ist dynamisch — frühe Erkennung und Bündel-Therapie senken die Letalität.</p>
+    </div>
+
+  </section>
+
+  <!-- ===== PEARL: METAMIZOL → AGRANULOZYTOSE → SEPSIS ===== -->
+  <section class="pearl">
+    <div class="pearl-bar"><span class="tagdot">⚠</span> KP-Pearl · Prüfungsbrücke</div>
+    <div class="pearl-body">
+      <p class="lead">Metamizol-induzierte Agranulozytose — eine wiederkehrende Brücke zu „Fieber / Sepsis".</p>
+
+      <div class="pearl-chain">
+        <div class="chain-node">
+          <div class="cl">Auslöser</div>
+          <div class="cv">Metamizol (Novalgin® / Novaminsulfon) — sehr häufiges Analgetikum in DE</div>
+        </div>
+        <div class="chain-arr">→</div>
+        <div class="chain-node">
+          <div class="cl">Nebenwirkung</div>
+          <div class="cv">Agranulozytose: Neutrophile <span class="mono">&lt; 500/µl</span> · nicht dosisabhängig · jederzeit</div>
+        </div>
+        <div class="chain-arr">→</div>
+        <div class="chain-node">
+          <div class="cl">Klinik</div>
+          <div class="cv">Fieber (oft einziges Frühsymptom), Halsschmerzen, Stomatitis / Schleimhautläsionen</div>
+        </div>
+        <div class="chain-arr">→</div>
+        <div class="chain-node end">
+          <div class="cl">Komplikation</div>
+          <div class="cv">Sepsis / febrile Neutropenie — Notfall</div>
+        </div>
+      </div>
+
+      <div class="pearl-grid">
+        <div>
+          <h4>Falle erkennen</h4>
+          <ul>
+            <li>Metamizol <b>gegen Fieber</b> oder kombiniert mit Antibiotika kann Frühsymptome <b>verschleiern</b>.</li>
+            <li>Mediane Latenz ~2 Tage — aber auch nach komplikationsloser Vortherapie und kurz nach Absetzen möglich.</li>
+            <li><b>Febrile Neutropenie:</b> Neutrophile &lt; 500/µl + Fieber (einmalig ≥ 38,3 °C oder ≥ 38,0 °C über ≥ 1 h).</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Vorgehen (Notfall)</h4>
+          <ul>
+            <li><b>Metamizol sofort absetzen.</b></li>
+            <li><b>Blutbild + Differenzialblutbild</b> abnehmen.</li>
+            <li>Bei Agranulozytose + Fieber: <b>unverzüglich</b> kalkulierte, pseudomonaswirksame Antibiotika (Piperacillin/Tazobactam, Cefepim oder Carbapenem) + Blutkulturen + Laktat.</li>
+            <li>Ggf. <b>G-CSF</b> (Filgrastim) + supportiv (Hydrierung, Antipyrese).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="examq">
+        <b>Prüfungslogik:</b> „Patient unter Metamizol mit Fieber" → an <span class="mono">Differenzialblutbild</span> denken → Agranulozytose → Sepsis-Pfad. Die Sepsis-Antwort will: <b>frühe Antibiotika + Laktat</b> (+ Blutkulturen, Fokuskontrolle).
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="sx-foot">
+    <b>Lernhilfe — keine verbindliche Behandlungsanweisung.</b> Werte orientieren sich an Sepsis-3 (Singer et al. 2016) und der Surviving Sepsis Campaign (Hour-1-Bundle); Metamizol-Angaben nach BfArM / Rote-Hand-Brief. Konkretes Vorgehen stets individualisieren, lokalen Hausstandard, Erregerspektrum und ärztliche Supervision beachten. Antibiotika-Beispiele sind fokus- und resistenzabhängig zu wählen.
+  </footer>
+
+</div>
+</body>
+</html>
