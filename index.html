@@ -458,13 +458,18 @@ KPFX.init({ canvas: document.getElementById("gl") });
 /* smoothed scroll engine — gently scrub then settle static (Apple-style) */
 let target = window.scrollY, smooth = window.scrollY, raf = null;
 function renderAll(){ KPFX.render(smooth); }
+const IS_PHONE = innerWidth < 760;
+let cjTimer = null;
 function tick(){
   smooth += (target - smooth) * 0.09;
-  applyJourney();
+  if (!IS_PHONE) applyJourney();
   if (Math.abs(target - smooth) < 0.4){ smooth = target; renderAll(); raf = null; return; }
   renderAll(); raf = requestAnimationFrame(tick);
 }
-function onScroll(){ target = window.scrollY; updCompact(); if (REDUCE){ smooth = target; applyJourney(); renderAll(); return; } if (!raf) raf = requestAnimationFrame(tick); }
+function onScroll(){ target = window.scrollY; updCompact();
+  if (IS_PHONE){ if (cjTimer) clearTimeout(cjTimer); cjTimer = setTimeout(applyJourney, 130); }
+  if (REDUCE){ smooth = target; if (!IS_PHONE) applyJourney(); renderAll(); return; }
+  if (!raf) raf = requestAnimationFrame(tick); }
 const toolbarEl = document.querySelector(".toolbar"), heroEl = document.querySelector(".hero");
 let heroH = heroEl.offsetHeight;
 function updCompact(){ toolbarEl.classList.toggle("compact", window.scrollY > heroH - 90); }
