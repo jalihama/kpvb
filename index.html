@@ -81,7 +81,7 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 .toolbar{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:13px; flex-wrap:wrap; padding:13px clamp(16px,4vw,40px); background:var(--panel2); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--line); transition:background-color .5s ease, padding .28s ease}
 .toolbar.compact{padding-top:9px; padding-bottom:9px}
 @media (max-width:760px){.toolbar.compact{padding-top:13px; padding-bottom:13px}}
-.toolbar.compact .types{display:none}
+.toolbar.compact .type-filter{display:none}
 .tb-brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.01em; font-size:16px}
 .tb-brand .mark{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#06202b;background:var(--accent);box-shadow:0 0 14px -3px var(--glow)}
 .tb-brand .mark svg{width:16px;height:16px}
@@ -92,6 +92,18 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 .search input:focus{border-color:var(--accent); background:color-mix(in oklab,var(--accent) 7%,transparent)}
 .types{display:flex; gap:7px; flex-wrap:wrap; overflow-x:auto; scrollbar-width:none}
 .types::-webkit-scrollbar{display:none}
+.type-filter{position:relative; flex:0 0 auto}
+.filter-btn{display:inline-flex; align-items:center; gap:7px; font-weight:600; font-size:13px; color:var(--ink-soft); background:var(--chip); border:1px solid var(--line); border-radius:10px; padding:9px 12px; cursor:pointer; white-space:nowrap}
+.filter-btn:hover{border-color:var(--line-hi); color:var(--ink)}
+.filter-btn svg{width:15px;height:15px}
+.filter-btn .fdot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:none}
+.filter-btn.has-filter{border-color:var(--accent); color:var(--accent)}
+.filter-btn.has-filter .fdot{display:block}
+.filter-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.types-pop{position:absolute; top:calc(100% + 8px); left:0; z-index:45; display:none; background:var(--bg2); border:1px solid var(--line); border-radius:12px; padding:8px; box-shadow:0 18px 50px -24px rgba(0,0,0,.6); min-width:152px}
+.types-pop.open{display:block}
+.types-pop .types{flex-direction:column; flex-wrap:nowrap; overflow:visible; gap:3px}
+.types-pop .type-btn{width:100%; justify-content:flex-start; text-align:left}
 .tb-actions{display:flex; align-items:center; gap:9px; margin-left:auto}
 .tb-count{font:500 12.5px/1 var(--mono); color:var(--ink-dim); white-space:nowrap}
 .tb-count b{color:var(--accent)}
@@ -128,7 +140,8 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
   .main{grid-template-columns:1fr; padding-top:24px}
   .drawer-toggle{display:inline-flex; align-items:center; gap:7px}
   .tb-brand{display:none}
-  .toolbar .types{display:none}
+  .toolbar .type-filter{display:none}
+  .toolbar{backdrop-filter:none; -webkit-backdrop-filter:none}
   .tb-count{display:none}
   .toolbar{gap:9px}
   .search{flex:1 1 110px; min-width:96px}
@@ -229,9 +242,14 @@ h1.title{margin:0; font-weight:600; letter-spacing:-.03em; line-height:.98; font
 
   <nav class="toolbar" aria-label="Suche und Filter">
     <button class="ghost-btn drawer-toggle" id="drawerBtn" aria-label="Systeme öffnen"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Systeme</button>
-    <div class="tb-brand"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3c5 4 5 4 10 0M7 21c5-4 5-4 10 0M8 6h8M8 18h8M9.5 9.5h5M9.5 14.5h5"/></svg></span>Hamas KP Atlas</div>
+    <div class="tb-brand">Hamas KP Atlas</div>
     <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input id="search" type="search" placeholder="Suche… EKG, DKA, Aufnahmebrief" aria-label="Ressourcen durchsuchen" /></label>
-    <div class="types" id="typeBar" role="group" aria-label="Nach Typ filtern"></div>
+    <div class="type-filter">
+      <button class="filter-btn" id="filterBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Nach Typ filtern"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Filter<span class="fdot" aria-hidden="true"></span></button>
+      <div class="types-pop" id="typesPop">
+        <div class="types" id="typeBar" role="group" aria-label="Nach Typ filtern"></div>
+      </div>
+    </div>
     <div class="tb-actions">
       <span class="tb-count"><b id="count">0</b> Ressourcen</span>
       <button class="ghost-btn" id="collapseAll"><svg class="ca-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 9 5-5 5 5"/><path d="m7 15 5 5 5-5"/></svg><span data-collapse-label>Alle einklappen</span></button>
@@ -440,10 +458,11 @@ let target = window.scrollY, smooth = window.scrollY, raf = null;
 function renderAll(){ KPFX.render(smooth); }
 function tick(){
   smooth += (target - smooth) * 0.09;
+  applyJourney();
   if (Math.abs(target - smooth) < 0.4){ smooth = target; renderAll(); raf = null; return; }
   renderAll(); raf = requestAnimationFrame(tick);
 }
-function onScroll(){ target = window.scrollY; updCompact(); applyJourney(); if (REDUCE){ smooth = target; renderAll(); return; } if (!raf) raf = requestAnimationFrame(tick); }
+function onScroll(){ target = window.scrollY; updCompact(); if (REDUCE){ smooth = target; applyJourney(); renderAll(); return; } if (!raf) raf = requestAnimationFrame(tick); }
 const toolbarEl = document.querySelector(".toolbar"), heroEl = document.querySelector(".hero");
 let heroH = heroEl.offsetHeight;
 function updCompact(){ toolbarEl.classList.toggle("compact", window.scrollY > heroH - 90); }
@@ -638,6 +657,16 @@ addEventListener("load", () => { window.scrollTo(0,0); target = 0; smooth = 0; K
   function set(l){ lang=l; document.getElementById('langDe').classList.toggle('on',l==='de'); document.getElementById('langEn').classList.toggle('on',l==='en'); apply(); }
   document.getElementById('langDe').addEventListener('click',function(){set('de');});
   document.getElementById('langEn').addEventListener('click',function(){set('en');});
+})();
+</script>
+<script>
+(function(){
+  const fb=document.getElementById('filterBtn'), pop=document.getElementById('typesPop'), bar=document.getElementById('typeBar');
+  if(!fb||!pop||!bar)return;
+  function close(){ pop.classList.remove('open'); fb.setAttribute('aria-expanded','false'); }
+  fb.addEventListener('click', function(e){ e.stopPropagation(); const open=pop.classList.toggle('open'); fb.setAttribute('aria-expanded', open?'true':'false'); });
+  document.addEventListener('click', function(e){ if(!pop.contains(e.target) && !fb.contains(e.target)) close(); });
+  bar.addEventListener('click', function(e){ const b=e.target.closest('.type-btn'); if(!b)return; fb.classList.toggle('has-filter', b.dataset.type!=='all'); close(); });
 })();
 </script>
 </body>
