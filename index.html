@@ -60,6 +60,10 @@ body{
 @media (max-width:760px){.frost{backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px)}}
 #fgdots{position:fixed; inset:0; z-index:2; pointer-events:none; mix-blend-mode:screen}
 @media (max-width:760px){#fgdots{mix-blend-mode:normal}}
+@media (max-width:760px){
+  body{transition:background-color .55s ease}
+  .systems *, .toolbar *, .index *, .lede, .eyebrow, .sys, .panel *{transition:background-color .55s ease, color .55s ease, border-color .55s ease}
+}
 .wrap{position:relative; z-index:3}
 
 /* ===== hero ===== */
